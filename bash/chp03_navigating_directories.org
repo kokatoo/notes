@@ -61,7 +61,7 @@
    For the second type of scripts, it is useful to change to the directory where
    the script is stored. This can be done with the following command:
 
-   ~cd "$(dirname "$(readlink -f "$0")")"~
+   =cd "$(dirname "$(readlink -f "$0")")"=
 
    This command runs 3 commands:
    
