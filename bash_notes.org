@@ -16,5 +16,77 @@
     Output Hello World by typing the following:
 
 #+begin_src bash
+  echo "Hello World"
+#+end_src
+
+**Notes**
+
+    * You can change the shell by just typing the name of the shell in terminal.
+      For example: sh, **bash**, etc.
+
+    * **echo** is a Bash builtin command that writes the arguments it receives
+      to the standard output. It appends a newline to the output, by default.
+
+*** Non-Interactive Shell
+
+    The Bash shell can also be run non-interactively from a script, making the
+    shell require no human interaction. Interactive behavior and scripted
+    behavior should be identical – an important design consideration of Unix V7
+    Bourne shell and transitively Bash. Therefore anything that can be done at
+    the command line can be put in a script file for reuse. Follow these steps to
+    create a Hello World script:
+
+    Follow these steps to create a Hello World script: 
+
+    1. Create a new ﬁle called hello-world.sh
+#+begin_src bash
+touch hello-world.sh
+#+end_src
+
+    2. Make the script executable by running 
+#+begin_src bash
+chmod +x hello-world.sh
+#+end_src
+
+    3. Add this code:
+#+begin_src bash
+#!/bin/bash 
 echo "Hello World"
 #+end_src
+
+    4. Execute the hello-world.sh script from the command line using one of the
+       following:
+       * ./hello-world.sh – most commonly used, and recommended
+       * /bin/bash hello-world.sh
+       * bash hello-world.sh – assuming /bin is in your $PATH
+       * sh hello-world.sh
+
+    For real production use, you would omit the .sh extension (which is
+    misleading anyway, since this is a Bash script, not a sh script) and perhaps
+    move the ﬁle to a directory within your PATH so that it is available to you
+    regardless of your current working directory, just like a system command
+    such as cat or ls.
+
+    Common mistakes include:
+
+    1. Forgetting to apply execute permission on the file, i.e., chmod +x
+       hello-world.sh, resulting in the output of ./hello-world.sh: Permission
+       denied.
+    2. Editing the script on Windows, which produces incorrect line ending
+       characters that Bash cannot handle. 
+
+       A common symptom is : command not found where the carriage return has forced the cursor to the beginning of
+       line, overwriting the text before the colon in the error message. 
+
+       The script can be ﬁxed using the dos2unix program. 
+
+       An example use: dos2unix hello-world.sh 
+
+       /dos2unix edits the ﬁle inline./
+
+
+
+
+        
+       
+
