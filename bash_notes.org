@@ -22,9 +22,9 @@
 **Notes**
 
     * You can change the shell by just typing the name of the shell in terminal.
-      For example: sh, **bash**, etc.
+      For example: sh, *bash*, etc.
 
-    * **echo** is a Bash builtin command that writes the arguments it receives
+    * *echo* is a Bash builtin command that writes the arguments it receives
       to the standard output. It appends a newline to the output, by default.
 
 *** Non-Interactive Shell
@@ -56,10 +56,10 @@ echo "Hello World"
 
     4. Execute the hello-world.sh script from the command line using one of the
        following:
-       * ./hello-world.sh – most commonly used, and recommended
-       * /bin/bash hello-world.sh
-       * bash hello-world.sh – assuming /bin is in your $PATH
-       * sh hello-world.sh
+       * ~./hello-world.sh~ – most commonly used, and recommended
+       * ~/bin/bash hello-world.sh~
+       * ~bash hello-world.sh~ – assuming /bin is in your $PATH
+       * ~sh hello-world.sh~
 
     For real production use, you would omit the .sh extension (which is
     misleading anyway, since this is a Bash script, not a sh script) and perhaps
@@ -80,9 +80,25 @@ echo "Hello World"
 
        The script can be ﬁxed using the dos2unix program. 
 
-       An example use: dos2unix hello-world.sh 
+       An example use: ~dos2unix hello-world.sh~
 
        /dos2unix edits the ﬁle inline./
+
+    3. Using sh ./hello-world.sh, not realizing that bash and sh are distinct
+       shells with distinct features (though since Bash is backwards-compatible,
+       the opposite mistake is harmless).
+
+       Anyway, simply relying on the script's shebang line is vastly preferable
+       to explicitly writing bash or sh (or python or perl or awk or ruby or...)
+       before each script's ﬁle name.
+
+       A common shebang line to use in order to make your script more portable
+       is to use ~#!/usr/bin/env bash~ instead of hard-coding a path to Bash. That
+       way, /usr/bin/env has to exist, but beyond that point, bash just needs to
+       be on your PATH. On many systems, /bin/bash doesn't exist, and you should
+       use /usr/local/bin/bash or some other absolute path; this change avoids
+       having to ﬁgure out the details of that.
+
 
 
 
