@@ -327,6 +327,3 @@ $uglify && echo "will uglify... uglify = $uglify"
 # ./script.sh --deploy true --uglify false
 #+end_src
 
-
-* Chapter 2: Script shebang
-
