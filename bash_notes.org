@@ -1,0 +1,20 @@
+#+STARTUP: showeverything
+#+title: Bash Notes
+
+* Getting Started with Bash
+
+** Hello World
+
+*** Interactive Shell
+    
+    The Bash shell is commonly used interactively: It lets you enter and edit
+    commands, then executes them when you press the Return key. Many Unix-based
+    and Unix-like operating systems use Bash as their default shell (notably
+    Linux and macOS). The terminal automatically enters an interactive Bash
+    shell process on startup. Output Hello World by typing the following:
+
+    Output Hello World by typing the following:
+
+#+begin_src bash
+echo "Hello World"
+#+end_src
