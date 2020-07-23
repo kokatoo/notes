@@ -41,7 +41,6 @@ drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
    all the files in the listed directory. It then displays eight columns of
    information for each file in the listed directory. Below are the details for
    each column in the output:
-
 | Col No. | Example      | Description                 |
 |---------+--------------+-----------------------------|
 |     1.1 | d            | File type (see table below) |
@@ -56,7 +55,6 @@ drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
    *File Type*
 
    The file type can be one of any of the following characters.
-
 | Char | File Type                                      |
 |------+------------------------------------------------|
 | b    | Block special file                             |
@@ -70,6 +68,7 @@ drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
 | p    | FIFO (named pipe)                              |
 | P    | Port (special system file in Solaris 10+ only) |
 | s    | Socket ? Some other file type                  |
+
 
 ** Section 4.2: List the Ten Most Recently Modified Files
 
