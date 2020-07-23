@@ -199,5 +199,5 @@ Howdy world!
 #+end_src
 
    Notice that greetings.txt.gz is a single file and is decompressed as the
-   single file greeting.txt. Contrast this with ~tar -czf hello.txt howdy.txt~ >
-   greetings.tar.gz, which keeps the files separate inside the tarball.
+   single file greeting.txt. Contrast this with ~tar -czf hello.txt howdy.txt >
+   greetings.tar.gz~, which keeps the files separate inside the tarball.
