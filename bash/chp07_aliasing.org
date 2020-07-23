@@ -12,7 +12,10 @@
    Sometimes you may want to bypass an alias temporarily, without disabling it.
    To work with a concrete example, consider this alias:
 
-   ~alias ls='ls --color=auto'~
+#+begin_src basn
+alias ls='ls --color=auto'
+#+end_src
+
 
    And let's say you want to use the ls command without disabling the alias. You
    have several options:
@@ -24,7 +27,9 @@
 
 ** Section 7.2: Create an Alias
    
-   ~alias word='command'~
+#+begin_src bash
+alias word='command'
+#+end_src
 
    Invoking word will run command. Any arguments supplied to the alias are
    simply appended to the target of the alias:

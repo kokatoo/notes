@@ -1,0 +1,224 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 8: Jobs and Processes
+
+** Section 8.1: Job handling
+
+*** Creating jobs
+    
+    To create an job, just append a single & after the command:
+
+#+begin_src bash
+$ sleep 10 &
+[1] 20024
+#+end_src
+    
+    You can also make a running process a job by pressing Ctrl + z:
+
+#+begin_src bash
+$ sleep 10
+^Z
+[1]+ Stopped sleep 10 
+#+end_src
+
+*** Background and foreground a process
+
+    To bring the Process to the foreground, the command fg is used together
+    with %
+
+#+begin_src bash
+$ sleep 10 &
+[1] 20024
+
+$ fg %1
+sleep 10
+#+end_src
+
+    Now you can interact with the process. To bring it back to the background
+    you can use the bg command. Due to the occupied terminal session, you need
+    to stop the process first by pressing Ctrl + z.
+
+ #+begin_src bash
+$ sleep 10
+^Z
+[1]+ Stopped   sleep 10
+
+$ bg %1
+[1]+ sleep 10 &
+ #+end_src
+
+    Due to the laziness of some Programmers, all these commands also work with
+    a single % if there is only one process, or for the first process in the
+    list. For Example:
+
+#+begin_src bash
+$ sleep 10 &
+[1] 20024
+
+$ fg % # to bring a process to foreground 'fg %' is also working.
+sleep 10
+#+end_src
+
+    or just
+
+#+begin_src bash
+$ % # laziness knows no boundaries, '%' is also working.
+sleep 10
+#+end_src
+
+    Additionally, just typing fg or bg without any argument handles the last
+    job:
+
+#+begin_src bash
+$ sleep 20 &
+$ sleep 10 &
+
+$ fg
+sleep 10 ^C
+
+$ fg
+sleep 20
+#+end_src
+
+*** Killing running jobs
+
+#+begin_src bash
+$ sleep 10 &
+[1] 20024
+
+$ kill %1
+[1]+ Terminated   sleep 10
+#+end_src
+
+    The sleep process runs in the background with process id (pid) 20024 and
+    job number 1. In order to reference the process, you can use either the pid
+    or the job number. If you use the job number, you must prefix it with %. The
+    default kill signal sent by kill is SIGTERM, which allows the target
+    process to exit gracefully.
+
+    Some common kill signals are shown below. To see a full list, run kill -l.
+
+| Signal name | Signal value | Effect                  |
+|-------------+--------------+-------------------------|
+| SIGHUP      |            1 | Hangup                  |
+| SIGINT      |            2 | Interrupt from keyboard |
+| SIGKILL     |            9 | Kill signal             |
+| SIGTERM     |           15 | Termination signal      |
+
+*** Start and kill specific processes
+
+    Probably the easiest way of killing a running process is by selecting it
+    through the process name as in the following example using pkill command as
+
+    ~pkill -f test.py~
+
+    (or) a more fool-proof way using pgrep to search for the actual process-id
+
+#+begin_src bash
+kill $(pgrep -f 'python test.py')
+#+end_src
+
+    The same result can be obtained using grep over ps -ef | grep
+    name_of_process then killing the process associated with the resulting pid
+    (process id). Selecting a process using its name is convenient in a testing
+    environment but can be really dangerous when the script is used in
+    production: it is virtually impossible to be sure that the name will match
+    the process you actually want to kill. In those cases, the following
+    approach is actually much safe.
+
+    Start the script that will eventually killed with the following approach.
+    Let's assume that the command you want to execute and eventually kill is
+    python test.py.
+
+#+begin_src bash
+  #!/bin/bash
+
+  # Check if the file already exists and if so do not run another process.
+  if [[ ! -e /tmp/test.py.pid ]]; then
+    python test.py &
+    echo $! > /tmp/test.py.pid
+  else
+    echo -n "ERROR: The process is already running with pid "
+    cat /tmp/test.py.pid
+    echo
+  fi
+#+end_src
+
+    that will kill exactly the process associated with your command, without
+    relying on any volatile information (like the string used to run the
+    command). Even in this case if the file does not exist, the script assume
+    that you want to kill a non-running process.
+
+    This last example can be easily improved for running the same command
+    multiple times (appending to the pid file instead of overwriting it, for
+    example) and to manage cases where the process dies before being killed.
+
+** Section 8.2: Check which process running on specific port
+
+  To check which process running on port 8080
+
+  ~lsof -i :8080~
+
+** Section 8.3: Disowning background job
+
+#+begin_src bash
+$ gzip extremelylargefile.txt &
+$ bg
+$ disown %1
+#+end_src
+
+   This allows a long running process to continue once your shell (terminal,
+   ssh, etc) is closed.
+
+** Section 8.4: List Current Jobs
+
+#+begin_src bash
+$ tail -f /var/log/syslog > log.txt
+[1]+ Stopped    tail -f /var/log/syslog > log.txt
+
+$ sleep 10 &
+
+$ jobs
+[1]+ Stopped    tail -f /var/log/syslog > log.txt
+[2]- Running    sleep 10 &
+#+end_src
+
+** Section 8.5: Finding information about a running process
+
+#+begin_src bash
+ps aux | grep <search-term> # shows processes matching search-term 
+#+end_src
+
+  Example:
+
+#+begin_src bash
+root@server7:~# ps aux | grep nginx
+root     315 0.0 0.3  144392 1020 ?     Ss May28 0:00 nginx: master process
+/usr/sbin/nginx
+www-data 5647 0.0 1.1 145124 3048 ?     S  Jul18 2:53 nginx: worker process
+www-data 5648 0.0 0.1 144392  376 ?     S  Jul18 0:00 nginx: cache manager process
+root    13134 0.0 0.3   4960  920 pts/0 S+ 14:33 0:00 grep --color=auto nginx root@server7:~#
+#+end_src
+
+  Here, second column is the process id. For example, if you want to kill the
+  nginx process, you can use the command kill 5647. It is always adviced to use
+  the kill command with SIGTERM rather than SIGKILL.
+
+** Section 8.6: List all processes
+
+  There are two common ways to list all processes on a system. Both list all
+  processes running by all users, though they differ in the format they output
+  (the reason for the differences are historical).
+
+#+begin_src bash
+ps -ef # lists all processes 
+ps aux # lists all processes in alternative format (BSD)
+#+end_src
+
+  This can be used to check if a given application is running. For example, to
+  check if the SSH server (sshd) is running:
+
+#+begin_src bash
+ps -ef | grep sshd
+#+end_src
