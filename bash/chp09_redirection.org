@@ -17,8 +17,8 @@
    These examples write the output of the ls command into the file file.txt
 
 #+begin_src bash
-ls > file.txt
-> file.txt ls
+  ls > file.txt
+  > file.txt ls
 #+end_src
 
    The target file is created if it doesn't exists, otherwise this file is
@@ -29,7 +29,7 @@ ls > file.txt
    standard output explicitly indicated:
 
 #+begin_src bash
-ls 1>file.txt
+  ls 1>file.txt
 #+end_src
 
    Note: the redirection is initialized by the executed shell and not by the
@@ -44,11 +44,11 @@ ls 1>file.txt
     3. Write to file
 
 #+begin_src bash
-$ echo "first line" > /tmp/lines
-$ echo "second line" > /tmp/lines
+  $ echo "first line" > /tmp/lines
+  $ echo "second line" > /tmp/lines
 
-$ cat /tmp/lines
-second line
+  $ cat /tmp/lines
+  second line
 #+end_src
 
 *** Append >>
@@ -57,15 +57,15 @@ second line
      2. Append file (writing at end of file).
 
 #+begin_src bash
-# Overwrite existing file
-$ echo "first line" > /tmp/lines
+  # Overwrite existing file
+  $ echo "first line" > /tmp/lines
 
-# Append a second line
-$ echo "second line" >> /tmp/lines
+  # Append a second line
+  $ echo "second line" >> /tmp/lines
 
-$ cat /tmp/lines
-first line
-second line
+  $ cat /tmp/lines
+  first line
+  second line
 #+end_src
 
 ** Section 9.3: Redirecting both STDOUT and STDERR
@@ -77,17 +77,17 @@ second line
    points to.
 
 #+begin_src bash
-# STDERR is redirect to STDOUT and STDOUT is redirected to /dev/null,
-# effectually redirecting both STDERR and STDOUT to /dev/null
-echo 'hello' > /dev/null 2>&1
+  # STDERR is redirect to STDOUT and STDOUT is redirected to /dev/null,
+  # effectively redirecting both STDERR and STDOUT to /dev/null
+  echo 'hello' > /dev/null 2>&1
 
-Version ≥ 4.0
+  Version ≥ 4.0
 #+end_src
 
    This can be further shortened to the following:
 
 #+begin_src bash
-echo 'hello' &> /dev/null
+  echo 'chp01_helloworld.orgo' &> /dev/null
 #+end_src
 
    However, this form may be undesirable in production if shell compatibility is
@@ -95,17 +95,17 @@ echo 'hello' &> /dev/null
    without this feature will misinterpret it:
 
 #+begin_src bash
-# Actual code
-echo 'hello' &> /dev/null
-echo 'hello' &> /dev/null 'goodbye'
+  # Actual code
+  echo 'hello' &> /dev/null
+  echo 'hello' &> /dev/null 'goodbye'
 
-# Desired behavior
-echo 'hello' > /dev/null 2>&1
-echo 'hello' 'goodbye' > /dev/null 2>&1
+  # Desired behavior
+  echo 'hello' > /dev/null 2>&1
+  echo 'hello' 'goodbye' > /dev/null 2>&1
 
-# Actual behavior
-echo 'hello' &
-echo 'hello' & goodbye > /dev/null
+  # Actual behavior
+  echo 'hello' &
+  echo 'hello' & goodbye > /dev/null
 #+end_src
 
    NOTE: &> is known to work as desired in both Bash and Zsh.
@@ -116,15 +116,15 @@ echo 'hello' & goodbye > /dev/null
    another program, but can't use a standard pipe.
 
 #+begin_src bash
-ls -l | grep ".log"
+  ls -l | grep ".log"
 #+end_src
 
    You could simply write to a temporary file:
 
 #+begin_src bash
-touch tempFile.txt
-ls -l > tempFile.txt
-grep ".log" < tempFile.txt
+  touch tempFile.txt
+  ls -l > tempFile.txt
+  grep ".log" < tempFile.txt
 #+end_src
 
    This works fine for most applications, however, nobody will know what tempFile
@@ -132,19 +132,19 @@ grep ".log" < tempFile.txt
    directory. This is where a named pipe comes into play:
 
 #+begin_src bash
-mkfifo myPipe
-ls -l > myPipe
-grep ".log" < myPipe
+  mkfifo myPipe
+  ls -l > myPipe
+  grep ".log" < myPipe
 #+end_src
 
    myPipe is technically a file (everything is in Linux), so let's do ls -l in an
    empty directory that we just created a pipe in:
 
 #+begin_src bash
-mkdir pipeFolder
-cd pipeFolder
-mkfifo myPipe
-ls -l
+  mkdir pipeFolder
+  cd pipeFolder
+  mkfifo myPipe
+  ls -l
 #+end_src
 
    The output is:
@@ -189,7 +189,7 @@ ls -l
    terminals or run one or the other in the background:
 
 #+begin_src bash
-ls -l /tmp > myPipe & cat < myPipe
+  ls -l /tmp > myPipe & cat < myPipe
 #+end_src
 
 *** More examples using named pipes:
@@ -197,18 +197,18 @@ ls -l /tmp > myPipe & cat < myPipe
     * Example 1 - all commands on the same terminal / same shell
 
 #+begin_src bash
-$ { ls -l && cat file3; } >mypipe &
-$ cat <mypipe
-# Output: Prints ls -l data and then prints file3 contents on screen
+  $ { ls -l && cat file3; } >  mypipe &
+  $ cat < mypipe
+  # Output: Prints ls -l data and then prints file3 contents on screen
 #+end_src
 
     * Example 2 - all commands on the same terminal / same shell
       
 #+begin_src bash
-$ ls -l >mypipe &
-$ cat file3 >mypipe &
-$ cat <mypipe
-#Output: This prints on screen the contents of mypipe.
+  $ ls -l > mypipe &
+  $ cat file3 > mypipe &
+  $ cat < mypipe
+  #Output: This prints on screen the contents of mypipe.
 #+end_src
 
       Mind that first contents of file3 are displayed and then the ls -l data is
@@ -217,9 +217,9 @@ $ cat <mypipe
     * Example 3 - all commands on the same terminal / same shell
 
 #+begin_src bash
-$ { pipedata=$(<mypipe) && echo "$pipedata"; } &
-$ ls >mypipe
-# Output: Prints the output of ls directly on screen
+  $ { pipedata=$(<mypipe) && echo "$pipedata"; } &
+  $ ls > mypipe
+  # Output: Prints the output of ls directly on screen
 #+end_src
 
       Mind that the variable $pipedata is not available for usage in the main
@@ -229,11 +229,11 @@ $ ls >mypipe
     * Example 4 - all commands on the same terminal / same shell
 
 #+begin_src bash
-$ export pipedata
-$ pipedata=$(<mypipe) &
-$ ls -l *.sh >mypipe
-$ echo "$pipedata"
-#Output : Prints correctly the contents of mypipe
+  $ export pipedata
+  $ pipedata=$(<mypipe) &
+  $ ls -l *.sh > mypipe
+  $ echo "$pipedata"
+  #Output : Prints correctly the contents of mypipe
 #+end_src
 
        This prints correctly the value of $pipedata variable in the main shell
@@ -251,9 +251,9 @@ $ echo "$pipedata"
    For example, to send a simple web request one could do:
 
 #+begin_src bash
-exec 3</dev/tcp/www.google.com/80
-printf 'GET / HTTP/1.0\r\n\r\n' >&3
-cat <&3
+  exec 3</dev/tcp/www.google.com/80
+  printf 'GET / HTTP/1.0\r\n\r\n' >&3
+  cat <&3
 #+end_src
 
    and the results of www.google.com's default web page will be printed to
@@ -262,19 +262,18 @@ cat <&3
    Similarly
 
 #+begin_src bash
-printf 'HI\n' >/dev/udp/192.168.1.1/6666
+  printf 'HI\n' >/dev/udp/192.168.1.1/6666
 #+end_src
 
    would send a UDP message containing HI\n to a listener on 192.168.1.1:6666
 
-   
 ** Section 9.6: Print error messages to stderr
 
    Error messages are generally included in a script for debugging purposes or
    for providing rich user experience. Simply writing error message like this:
 
 #+begin_src bash
-cmd || echo 'cmd failed'
+  cmd || echo 'cmd failed'
 #+end_src
 
    may work for simple cases but it's not the usual way. In this example, the
@@ -284,7 +283,7 @@ cmd || echo 'cmd failed'
    In short, error message should go to stderr not stdout. It's pretty simple:
 
 #+begin_src bash
-cmd || echo 'cmd failed' >/dev/stderr
+  cmd || echo 'cmd failed' > /dev/stderr
 #+end_src
 
    Another example:
@@ -293,7 +292,7 @@ cmd || echo 'cmd failed' >/dev/stderr
   if cmd; then
       echo 'success'
   else
-      echo 'cmd failed' >/dev/stderr
+      echo 'cmd failed' > /dev/stderr
   fi
 #+end_src
 
@@ -311,7 +310,7 @@ cmd || echo 'cmd failed' >/dev/stderr
    Now, when you have to print an error:
 
 #+begin_src bash
-err "My error message"
+  err "My error message"
 #+end_src
 
 ** Section 9.7: Redirecting multiple commands to the same file
@@ -333,13 +332,13 @@ err "My error message"
    Note: Internal file descriptor defaults to 0 (STDIN) for <
 
 #+begin_src bash
-$ echo "b" > /tmp/list.txt
-$ echo "a" >> /tmp/list.txt
-$ echo "c" >> /tmp/list.txt
-$ sort < /tmp/list.txt
-a
-b
-c
+  $ echo "b" > /tmp/list.txt
+  $ echo "a" >> /tmp/list.txt
+  $ echo "c" >> /tmp/list.txt
+  $ sort < /tmp/list.txt
+  a
+  b
+  c
 #+end_src
 
 ** Section 9.9: Redirecting STDERR
@@ -347,7 +346,7 @@ c
    2 is STDERR.
 
 #+begin_src bash
-$ echo_to_stderr 2>/dev/null # echos nothing
+  $ echo_to_stderr 2>/dev/nullll # echos nothing
 #+end_src
 
    Definitions:
@@ -359,8 +358,8 @@ $ echo_to_stderr 2>/dev/null # echos nothing
       echo stderr >&2
   }
 
-$ echo_to_stderr
-stderr
+  $ echo_to_stderr
+  stderr
 #+end_src
 
 ** Section 9.10: STDIN, STDOUT and STDERR explained
@@ -373,8 +372,8 @@ stderr
 *** STDIN
 
 #+begin_src bash
-root@server~# read
-Type some text here
+  root@server~# read
+  Type some text here
 #+end_src
 
     Standard input is used to provide input to a program. (Here we're using the
@@ -383,8 +382,8 @@ Type some text here
 *** STDOUT
 
 #+begin_src bash
-root@server~# ls file
-file
+  root@server~# ls file
+  file
 #+end_src
 
     Standard output is generally used for "normal" output from a command. For
@@ -393,8 +392,8 @@ file
 *** STDERR
 
 #+begin_src bash
-root@server~# ls anotherfile
-ls: cannot access 'anotherfile': No such file or directory
+  root@server~# ls anotherfile
+  ls: cannot access 'anotherfile': No such file or directory
 #+end_src
 
     Standard error is (as the name implies) used for error messages. Because
@@ -403,10 +402,10 @@ ls: cannot access 'anotherfile': No such file or directory
     STDIN, STDOUT and STDERR are the three standard streams. They are identified
     to the shell by a number rather than a name:
 
-    0 = Standard in
-    1 = Standard out
-    2 = Standard error
-
+    | 0 = Standard in    |
+    | 1 = Standard out   |
+    | 2 = Standard error |
+    
     By default, STDIN is attached to the keyboard, and both STDOUT and STDERR
     appear in the terminal. However, we can redirect either STDOUT or STDERR to
     whatever we need. For example, let's say that you only need the standard out
@@ -418,8 +417,8 @@ ls: cannot access 'anotherfile': No such file or directory
     Taking the previous example,
 
 #+begin_src bash
-root@server~# ls anotherfile 2>/dev/null
-root@server~#
+  root@server~# ls anotherfile 2>/dev/null
+  root@server~#
 #+end_src
 
     In this case, if there is any STDERR, it will be redirected to /dev/null (a
