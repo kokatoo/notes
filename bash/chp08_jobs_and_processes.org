@@ -211,6 +211,9 @@ root    13134 0.0 0.3   4960  920 pts/0 S+ 14:33 0:00 grep --color=auto nginx ro
   processes running by all users, though they differ in the format they output
   (the reason for the differences are historical).
 
+  1. UNIX options, which may be grouped and must be preceded by a dash.
+  2. BSD options, which may be grouped and must not be used with a dash. 
+
 #+begin_src bash
 ps -ef # lists all processes 
 ps aux # lists all processes in alternative format (BSD)
