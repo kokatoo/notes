@@ -14,7 +14,7 @@
    > redirect the standard output (aka STDOUT) of the current command into a
    file or another descriptor.
 
-   These examples write the output of the ls command into the file file.txt
+   These examples write the output of the ~ls~ command into the file file.txt
 
 #+begin_src bash
   ls > file.txt
@@ -71,9 +71,9 @@
 ** Section 9.3: Redirecting both STDOUT and STDERR
 
    File descriptors like 0 and 1 are pointers. We change what file descriptors
-   point to with redirection. >/dev/null means 1 points to /dev/null.
+   point to with redirection. ~> /dev/null~ means 1 points to ~/dev/null~.
 
-   First we point 1 (STDOUT) to /dev/null then point 2 (STDERR) to whatever 1
+   First we point 1 (STDOUT) to ~/dev/null~ then point 2 (STDERR) to whatever 1
    points to.
 
 #+begin_src bash
@@ -176,7 +176,7 @@
    You'll notice that after hello from the other side is output, the program in
    the first terminal finishes, as does that in the second terminal.
 
-   Now run the commands in reverse. Start with cat < myPipe and then echo
+   Now run the commands in reverse. Start with ~cat < myPipe~ and then echo
    something into it. It still works, because a program will wait until
    something is put into the pipe before terminating, because it knows it has to
    get something.
@@ -199,7 +199,7 @@
 #+begin_src bash
   $ { ls -l && cat file3; } >  mypipe &
   $ cat < mypipe
-  # Output: Prints ls -l data and then prints file3 contents on screen
+  # Output: Prints ls -l data and then prints file3 contents on screen. Need to append ; if {} on same line
 #+end_src
 
     * Example 2 - all commands on the same terminal / same shell
@@ -208,7 +208,7 @@
   $ ls -l > mypipe &
   $ cat file3 > mypipe &
   $ cat < mypipe
-  #Output: This prints on screen the contents of mypipe.
+  # Output: This prints on screen the contents of mypipe.
 #+end_src
 
       Mind that first contents of file3 are displayed and then the ls -l data is
@@ -233,7 +233,7 @@
   $ pipedata=$(<mypipe) &
   $ ls -l *.sh > mypipe
   $ echo "$pipedata"
-  #Output : Prints correctly the contents of mypipe
+  #  Output : Prints correctly the contents of mypipe
 #+end_src
 
        This prints correctly the value of $pipedata variable in the main shell
@@ -302,7 +302,7 @@
    A better way to print error message is to define a function:
 
 #+begin_src bash
-  err(){ 
+  err() { 
       echo "E: $*" >>/dev/stderr
   }
 #+end_src
@@ -326,8 +326,8 @@
 
    < reads from its right argument and writes to its left argument.
 
-   To write a file into STDIN we should read /tmp/a_file and write into STDIN i.e
-   0</tmp/a_file
+   To write a file into STDIN we should read ~/tmp/a_file~ and write into STDIN i.e
+   ~0< /tmp/a_file~ or ~< /tmp/a_file~
 
    Note: Internal file descriptor defaults to 0 (STDIN) for <
 
@@ -339,6 +339,10 @@
   a
   b
   c
+  $ sort 0< /tmp/list.txt
+  a
+  b
+  c
 #+end_src
 
 ** Section 9.9: Redirecting STDERR
@@ -346,7 +350,7 @@
    2 is STDERR.
 
 #+begin_src bash
-  $ echo_to_stderr 2>/dev/nullll # echos nothing
+  $ echo_to_stderr 2> /dev/null # echos nothing
 #+end_src
 
    Definitions:
@@ -355,7 +359,7 @@
 
 #+begin_src bash
   echo_to_stderr () { 
-      echo stderr >&2
+      echo stderr >& 2
   }
 
   $ echo_to_stderr
@@ -387,7 +391,7 @@
 #+end_src
 
     Standard output is generally used for "normal" output from a command. For
-    example, ls lists files, so the files are sent to STDOUT.
+    example, ~ls~ lists files, so the files are sent to STDOUT.
 
 *** STDERR
 
@@ -412,17 +416,17 @@
     and all error messages printed on standard error should be suppressed.
     That's when we use the descriptors 1 and 2.
 
-*** Redirecting STDERR to /dev/null
+*** Redirecting STDERR to ~/dev/null~
 
     Taking the previous example,
 
 #+begin_src bash
-  root@server~# ls anotherfile 2>/dev/null
+  root@server~# ls anotherfile 2> /dev/null
   root@server~#
 #+end_src
 
-    In this case, if there is any STDERR, it will be redirected to /dev/null (a
+    In this case, if there is any STDERR, it will be redirected to ~/dev/null~ (a
     special file which ignores anything put into it), so you won't get any error
     output on the shell.root@server~# In this case, if there is any STDERR, it
-    will be redirected to /dev/null (a special file which ignores anything put
+    will be redirected to ~/dev/null~ (a special file which ignores anything put
     into it), so you won't get any error output on the shell.

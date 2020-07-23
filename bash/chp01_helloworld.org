@@ -22,9 +22,9 @@
 *Notes*
 
     * You can change the shell by just typing the name of the shell in terminal.
-      For example: sh, *bash*, etc.
+      For example: sh, bash, etc.
 
-    * *echo* is a Bash builtin command that writes the arguments it receives
+    * ~echo~ is a Bash builtin command that writes the arguments it receives
       to the standard output. It appends a newline to the output, by default.
 
 *** Non-Interactive Shell
@@ -65,13 +65,14 @@ echo "Hello World"
     misleading anyway, since this is a Bash script, not a sh script) and perhaps
     move the ﬁle to a directory within your PATH so that it is available to you
     regardless of your current working directory, just like a system command
-    such as cat or ls.
+    such as ~cat~ or ~ls~.
 
     Common mistakes include:
 
-    1. Forgetting to apply execute permission on the file, i.e., chmod +x
-       hello-world.sh, resulting in the output of ./hello-world.sh: Permission
+    1. Forgetting to apply execute permission on the file, i.e., ~chmod +x
+       hello-world.sh~, resulting in the output of ./hello-world.sh: Permission
        denied.
+
     2. Editing the script on Windows, which produces incorrect line ending
        characters that Bash cannot handle. 
 
