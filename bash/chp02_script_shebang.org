@@ -6,8 +6,8 @@
 ** Section 2.1: Env shebang
 
    To execute a script file with the bash executable found in the ~PATH~
-   environment variable by using the executable env, the ﬁrst line of a script
-   file must indicate the absolute path to the env executable with the argument
+   environment variable by using the executable ~env~, the first line of a script
+   file must indicate the absolute path to the ~env~ executable with the argument
    bash: 
 
 #+begin_src bash

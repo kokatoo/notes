@@ -11,7 +11,7 @@
     commands, then executes them when you press the Return key. Many Unix-based
     and Unix-like operating systems use Bash as their default shell (notably
     Linux and macOS). The terminal automatically enters an interactive Bash
-    shell process on startup. Output Hello World by typing the following:
+    shell process on startup. Output ~Hello World~ by typing the following:
 
     Output Hello World by typing the following:
 
@@ -22,7 +22,7 @@
 *Notes*
 
     * You can change the shell by just typing the name of the shell in terminal.
-      For example: sh, bash, etc.
+      For example: ~sh~, ~bash~, etc.
 
     * ~echo~ is a Bash builtin command that writes the arguments it receives
       to the standard output. It appends a newline to the output, by default.
@@ -36,9 +36,9 @@
     the command line can be put in a script file for reuse. Follow these steps to
     create a Hello World script:
 
-    Follow these steps to create a Hello World script: 
+    Follow these steps to create a ~Hello World~ script: 
 
-    1. Create a new ﬁle called hello-world.sh
+    1. Create a new file called ~hello-world.sh~
 #+begin_src bash
   touch hello-world.sh
 #+end_src
@@ -58,12 +58,12 @@
        following:
        * ~./hello-world.sh~ – most commonly used, and recommended
        * ~/bin/bash hello-world.sh~
-       * ~bash hello-world.sh~ – assuming /bin is in your ~$PATH~
+       * ~bash hello-world.sh~ – assuming ~/bin~ is in your ~$PATH~
        * ~sh hello-world.sh~
 
     For real production use, you would omit the .sh extension (which is
     misleading anyway, since this is a Bash script, not a sh script) and perhaps
-    move the ﬁle to a directory within your ~PATH~ so that it is available to you
+    move the file to a directory within your ~PATH~ so that it is available to you
     regardless of your current working directory, just like a system command
     such as ~cat~ or ~ls~.
 
@@ -76,15 +76,15 @@
     2. Editing the script on Windows, which produces incorrect line ending
        characters that Bash cannot handle. 
 
-       A common symptom is : command not found where the carriage return has
+       A common symptom is ~: command not found~ where the carriage return has
        forced the cursor to the beginning of line, overwriting the text before
        the colon in the error message. 
 
-       The script can be ﬁxed using the dos2unix program. 
+       The script can be fixed using the dos2unix program. 
 
        An example use: ~dos2unix hello-world.sh~
 
-       /dos2unix edits the ﬁle inline./
+       /dos2unix edits the file inline./
 
     3. Using ~sh ./hello-world.s~, not realizing that bash and sh are distinct
        shells with distinct features (though since Bash is backwards-compatible,
@@ -92,18 +92,20 @@
 
        Anyway, simply relying on the script's shebang line is vastly preferable
        to explicitly writing bash or sh (or python or perl or awk or ruby or...)
-       before each script's ﬁle name.
+       before each script's file name.
 
        A common shebang line to use in order to make your script more portable
-       is to use ~#!/usr/bin/env bash~ instead of hard-coding a path to Bash. That
-       way, ~/usr/bin/env~ has to exist, but beyond that point, bash just needs to
-       be on your ~PATH~. On many systems, /bin/bash doesn't exist, and you should
-       use ~/usr/local/bin/bash` or some other absolute path; this change avoids
-       having to ﬁgure out the details of that.
+       is to use ~#!/usr/bin/env bash~ (adding bash to your ~PATH~) instead of
+       hard-coding a path to Bash. That way, ~/usr/bin/env~ has to exist, but
+       beyond that point, bash just needs to be on your ~PATH~. On many systems,
+       ~/bin/bash~ doesn't exist, and you should use ~/usr/local/bin/bash~ or
+       some other absolute path; this change avoids having to figure out the
+       details of that.
+
        
 ** Section 1.2: Hello World Using Variables
    
-   Create a new ﬁle called hello.sh with the following content and give it
+   Create a new file called hello.sh with the following content and give it
    executable permissions with ~chmod +x hello.sh~.
 
    Execute/Run via: ~./hello.sh~
@@ -122,13 +124,13 @@
 
     This will print ~Hello, World~ to standard output when executed. 
 
-    To tell bash where the script is you need to be very speciﬁc, by pointing it
+    To tell bash where the script is you need to be very specific, by pointing it
     to the containing directory, normally with ~./~ if it is your working
     directory, where ~.~ is an alias to the current directory. If you do not
     specify the directory, bash tries to locate the script in one of the
     directories contained in the ~$PATH~ environment variable. 
 
-    The following code accepts an argument $1, which is the ﬁrst command line
+    The following code accepts an argument $1, which is the first command line
     argument, and outputs it in a formatted string, following ~Hello,~.
 
     Execute/Run via: ~./hello.sh World~
@@ -137,9 +139,9 @@
   printf "Hello, %s\n" "$1"
 #+end_src
 
-    It is important to note that $1 has to be quoted in double quote, not single
-    quote. "$1" expands to the ﬁrst command line argument, as desired, while
-    '$1' evaluates to literal string $1.
+    It is important to note that ~$1~ has to be quoted in double quote, not single
+    quote. ~"$1"~ expands to the first command line argument, as desired, while
+    ~'$1'~ evaluates to literal string ~$1~.
 
     *Security Note:*
      Read [[https://unix.stackexchange.com/questions/171346/security-implications-of-forgetting-to-quote-a-variable-in-bash-posix-shells][Security implications of forgetting to quote a variable in bash shells]]
@@ -195,7 +197,7 @@
    You are Sleeping.
 #+end_src
 
-   Here when user enters an action, "ing" is appended to that action while
+   Here when user enters an action, ~"ing"~ is appended to that action while
    printing.
 
 ** Section 1.4: Importance of Quoting in Strings
@@ -205,8 +207,8 @@
 
    *There are two types of quoting:*
 
-   * Weak: uses double quotes: ~"~
-   * Strong: uses single quotes: ~'~
+   * Weak: uses double quotes: ="=
+   * Strong: uses single quotes: ='=
 
    If you want to bash to expand your argument, you can use Weak Quoting:
 
@@ -239,7 +241,7 @@
 
    ~help <command>~
 
-   This will display the Bash help (manual) page for the speciﬁed built-in. 
+   This will display the Bash help (manual) page for the specified built-in. 
 
    For example, ~help unset~ will show:
 
@@ -311,6 +313,7 @@ To see a list of all built-ins with a short description, use
   + expr 5 + s 
   expr: non-integer argument 
   + v=
+  + v=5
 #+end_src
 
 ** Section 1.7: Handling Named Arguments
