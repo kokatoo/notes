@@ -70,14 +70,15 @@ echo "Hello World"
     Common mistakes include:
 
     1. Forgetting to apply execute permission on the file, i.e., ~chmod +x
-       hello-world.sh~, resulting in the output of ./hello-world.sh: Permission
-       denied.
+       hello-world.sh~, resulting in the output of ~./hello-world.sh: Permission
+       denied~.
 
     2. Editing the script on Windows, which produces incorrect line ending
        characters that Bash cannot handle. 
 
-       A common symptom is : command not found where the carriage return has forced the cursor to the beginning of
-       line, overwriting the text before the colon in the error message. 
+       A common symptom is : command not found where the carriage return has
+       forced the cursor to the beginning of line, overwriting the text before
+       the colon in the error message. 
 
        The script can be ﬁxed using the dos2unix program. 
 
@@ -85,7 +86,7 @@ echo "Hello World"
 
        /dos2unix edits the ﬁle inline./
 
-    3. Using sh ./hello-world.sh, not realizing that bash and sh are distinct
+    3. Using ~sh ./hello-world.s~, not realizing that bash and sh are distinct
        shells with distinct features (though since Bash is backwards-compatible,
        the opposite mistake is harmless).
 
@@ -95,9 +96,9 @@ echo "Hello World"
 
        A common shebang line to use in order to make your script more portable
        is to use ~#!/usr/bin/env bash~ instead of hard-coding a path to Bash. That
-       way, /usr/bin/env has to exist, but beyond that point, bash just needs to
+       way, ~/usr/bin/env~ has to exist, but beyond that point, bash just needs to
        be on your PATH. On many systems, /bin/bash doesn't exist, and you should
-       use /usr/local/bin/bash or some other absolute path; this change avoids
+       use ~/usr/local/bin/bash` or some other absolute path; this change avoids
        having to ﬁgure out the details of that.
        
 ** Section 1.2: Hello World Using Variables
@@ -119,7 +120,7 @@ printf "Hello, %s\n" "$whom_variable"
 #> Hello, World
 #+end_src
 
-    This will print ~Hello, World~ to standard output when executed. 
+    This will print =Hello, World= to standard output when executed. 
 
     To tell bash where the script is you need to be very speciﬁc, by pointing it
     to the containing directory, normally with ./ if it is your working
