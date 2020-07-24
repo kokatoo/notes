@@ -1,4 +1,4 @@
-!#+STARTUP: showeverything
+#+STARTUP: showeverything
 #+title: Bash Notes for Professionals
 
 * Chapter 13: Associative arrays
@@ -10,15 +10,16 @@
 #+begin_src bash
   #!/usr/bin/env bash
 
-  declare -A assoc_array=([key_string]=value \
-  [one]="something" \
-  [two]="another thing" \
-  [ three ]='mind the blanks!' \
-  [ " four" ]='count the blanks of this key later!' \
-  [IMPORTANT]='SPACES DO ADD UP!!!' \
-  [1]='there are no integers!' \
-  [info]="to avoid history expansion " \
-  [info2]="quote exclamation mark with single quotes" \ )
+  declare -A assoc_array=(
+      [key_string]=value \
+      [one]="something" \
+      [two]="another thing" \
+      [ three ]='mind the blanks!' \
+      [ " four" ]='count the blanks of this key later!' \
+      [IMPORTANT]='SPACES DO ADD UP!!!' \
+      [1]='there are no integers!' \
+      [info]="to avoid history expansion " \
+      [info2]="quote exclamation mark with single quotes" \ )
 
   echo # just a blank line
   echo now here are the values of assoc_array:

@@ -427,6 +427,7 @@
 #+begin_src bash
   stringVar="Apple+Orange+Banana+Mango"
   arrayVar=(${stringVar//+/ })
+
   echo ${arrayVar[0]} # will print Apple
   echo ${arrayVar[2]} # will print Banana
 #+end_src
