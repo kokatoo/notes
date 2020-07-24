@@ -6,43 +6,41 @@
 | File Operators    | Details                                                |
 |-------------------+--------------------------------------------------------|
 | ~-e “$file”~      | Returns true if the file exists.                       |
-| ~-d "$file"~ ​     | Returns true if the file exists and is a directory     |
-| ~-f "$file"~      | Returns true if the file exists and is a regular file  |
-| ~-h "$file"~      | Returns true if the file exists and is a symbolic link |
+| ~-d “$file”~ ​     | Returns true if the file exists and is a directory     |
+| ~-f “$file”~      | Returns true if the file exists and is a regular file  |
+| ~-h “$file”~      | Returns true if the file exists and is a symbolic link |
 
-| String Comparators | Details                                                                                                                   |
-|--------------------+---------------------------------------------------------------------------------------------------------------------------|
-| ~-n "$str~           | True if length of string is non-zero                                                                                      |
-| ~"$str" = "$str2"~  | True if string $str is equal to string $str2. Not best for integers. It may work but will be "$str" = "$str2" inconsitent |
-| "$str" != "$str2"  | True if the strings are not equal                                                                                         |
+| String Comparators  | Details                                                                                                                         |
+|---------------------+---------------------------------------------------------------------------------------------------------------------------------|
+| ~-n “$str”~         | True if length of string is non-zero                                                                                            |
+| ~“$str” = “$str2”~  | True if string ~$str~ is equal to string ~$str2~. Not best for integers. It may work but will be ~“$str” = “$str2”~ inconsitent |
+| ~“$str” != “$str2”~ | True if the strings are not equal                                                                                               |
 
-| Integer Comparators | Details                                       |
-|---------------------+-----------------------------------------------|
-| "$int1" -eq "$int2" | True if the integers are equal                |
-| "$int1" -ne "$int2" | True if the integers are not equals           |
-| "$int1" -gt "$int2" | True if int1 is greater than int 2            |
-| "$int1" -ge "$int2" | True if int1 is greater than or equal to int2 |
-| "$int1" -lt "$int2" | True if int1 is less than int 2               |
-| "$int1" -le "$int2" | True if int1 is less than or equal to int2    |
+| Integer Comparators   | Details                                       |
+|-----------------------+-----------------------------------------------|
+| ~“$int1” -eq “$int2”~ | True if the integers are equal                |
+| ~“$int1” -ne “$int2”~ | True if the integers are not equals           |
+| ~“$int1” -gt “$int2”~ | True if int1 is greater than int 2            |
+| ~“$int1” -ge “$int2”~ | True if int1 is greater than or equal to int2 |
+| ~“$int1” -lt “$int2”~ | True if int1 is less than int 2               |
+| ~“$int1” -le “$int2”~ | True if int1 is less than or equal to int2    |
 
 ** Section 10.1: Conditional execution of command lists
 
 *** How to use conditional execution of command lists
 
     Any builtin command, expression, or function, as well as any external
-    command or script can be executed conditionally using the ~&&~(and) and ~||~(or)
+    command or script can be executed conditionally using the ~&&~ (and) and ~||~ (or)
     operators.
-
 
     For example, this will only print the current directory if the cd command
     was successful.
-
 
 #+begin_src bash
   cd my_directory && pwd
 #+end_src
 
-    Likewise, this will exit if the cd command fails, preventing catastrophe:
+    Likewise, this will exit if the ~cd~ command fails, preventing catastrophe:
 
 #+begin_src bash
   cd my_directory || exit
@@ -59,11 +57,11 @@
   cd my_directory && pwd || echo "No such directory"
 #+end_src
 
-    * If the cd succeeds, the && pwd executes and the current working directory
-      name is printed. Unless pwd fails (a rarity) the ~|| echo ...~ will not be
+    * If the ~cd~ succeeds, the ~&&~ pwd executes and the current working directory
+      name is printed. Unless ~pwd~ fails (a rarity) the ~|| echo ...~ will not be
       executed.
 
-    * If the cd fails, the && pwd will be skipped and the ~|| echo ...~ will run.
+    * If the ~cd~ fails, the && pwd will be skipped and the ~|| echo ...~ will run.
 
     But this will not (if you're thinking if...then...else)...
 
@@ -71,11 +69,11 @@
   cd my_directory && ls || echo "No such directory"
 #+end_src
 
-    * If the cd fails, the ~&& ls~ is skipped and the ~|| echo ...~ is executed.
-    * If the cd succeeds, the ~&& ls~ is executed.
-      * If the ls succeeds, the ~|| echo ...~ is ignored. (so far so good)
-      * BUT... if the ls fails, the ~|| echo ...~ will also be executed.
-        It is the ls, not the cd, that is the previous command.
+    * If the ~cd~ fails, the ~&& ls~ is skipped and the ~|| echo ...~ is executed.
+    * If the ~cd~ succeeds, the ~&& ls~ is executed.
+      * If the ~ls~ succeeds, the ~|| echo ...~ is ignored. (so far so good)
+      * BUT... if the ~ls~ fails, the ~|| echo ...~ will also be executed.
+        It is the ~ls~, not the ~cd~, that is the previous command.
 
 *** Why use conditional execution of command lists
 
@@ -113,7 +111,7 @@
 
 #+begin_src bash
   if [[ $1 -eq 1 ]]; then
-    echo "1 was passed in the first parameter"
+      echo "1 was passed in the first parameter"
   elif [[ $1 -gt 2 ]]; then
       echo "2 was not passed in the first parameter"
   else
@@ -147,7 +145,7 @@
 
 #+begin_src bash
   if (( $1 + 5 > 91 )); then
-    echo "$1 is greater than 86"
+      echo "$1 is greater than 86"
   fi
 #+end_src
 
@@ -159,7 +157,7 @@
   if [ "$1" -eq 1 ]; then
       echo "1 was passed in the first parameter"
   elif [ "$1" -gt 2 ]; then
-    echo "2 was not passed in the first parameter"
+      echo "2 was not passed in the first parameter"
   else
       echo "The first parameter was not 1 and is not more than 2."
   fi
@@ -171,17 +169,18 @@
 
 #+begin_src bash
   arr=(a b c d e f)
+
   for i in "${arr[@]}";do
       echo "$i"
-    done
+  done
 #+end_src
 
    Or
 
 #+begin_src bash
-    for ((i=0;i<${#arr[@]};i++));do
+  for ((i=0; i<${#arr[@]}; i++));do
       echo "${arr[$i]}"
-    done
+  done
 #+end_src
 
    while loop:
@@ -208,7 +207,7 @@
 
 #+begin_src bash
   #!/bin/bash
-  for i in {1..10}; do # {1..10} expands to "1 2 3 4 5 6 7 8 9 10"
+  for i in {1..10};do # {1..10} expands to "1 2 3 4 5 6 7 8 9 10"
       echo $i
   done
 #+end_src
@@ -233,8 +232,7 @@
    Example for continue
 
 #+begin_src bash
-  for i in [series]
-  do
+  for i in [series];do
       command 1
       command 2
       if (condition) # Condition to jump over command 3
@@ -247,7 +245,7 @@
    Example for break
 
 #+begin_src bash
-  for i in [series] do
+  for i in [series];do
 
    command 4
 
@@ -398,7 +396,7 @@ i=8
 i=9
 #+end_src
 
-   When i reaches 10 the condition in until loop becomes true and the loop ends.
+   When ~i~ reaches 10 the condition in until loop becomes true and the loop ends.
 
 ** Section 10.10: Switch statement with case
 
