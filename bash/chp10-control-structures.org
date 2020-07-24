@@ -3,35 +3,36 @@
 
 * Chapter 10: Control Structures
 
-| File Operators    | Details                                                |
-|-------------------+--------------------------------------------------------|
-| ~-e “$file”~      | Returns true if the file exists.                       |
-| ~-d “$file”~ ​     | Returns true if the file exists and is a directory     |
-| ~-f “$file”~      | Returns true if the file exists and is a regular file  |
-| ~-h “$file”~      | Returns true if the file exists and is a symbolic link |
+| File Operators | Details                                                |
+|----------------+--------------------------------------------------------|
+| ~-e $file~     | Returns true if the file exists.                       |
+| ~-d $file~ ​    | Returns true if the file exists and is a directory     |
+| ~-f $file~     | Returns true if the file exists and is a regular file  |
+| ~-h $file~     | Returns true if the file exists and is a symbolic link |
 
-| String Comparators  | Details                                                                                                                         |
-|---------------------+---------------------------------------------------------------------------------------------------------------------------------|
-| ~-n “$str”~         | True if length of string is non-zero                                                                                            |
-| ~“$str” = “$str2”~  | True if string ~$str~ is equal to string ~$str2~. Not best for integers. It may work but will be ~“$str” = “$str2”~ inconsitent |
-| ~“$str” != “$str2”~ | True if the strings are not equal                                                                                               |
+| String Comparators | Details                                                                                                                      |
+|--------------------+------------------------------------------------------------------------------------------------------------------------------|
+| ~-n $str~          | True if length of string is non-zero                                                                                         |
+| ~$str = $str2~     | True if string ~$str~ is equal to string ~$str2~. Not best for integers. It may work but will be ~$str = $str2~ inconsistent |
+| ~$str != $str2~    | True if the strings are not equal                                                                                            |
 
-| Integer Comparators   | Details                                       |
-|-----------------------+-----------------------------------------------|
-| ~“$int1” -eq “$int2”~ | True if the integers are equal                |
-| ~“$int1” -ne “$int2”~ | True if the integers are not equals           |
-| ~“$int1” -gt “$int2”~ | True if int1 is greater than int 2            |
-| ~“$int1” -ge “$int2”~ | True if int1 is greater than or equal to int2 |
-| ~“$int1” -lt “$int2”~ | True if int1 is less than int 2               |
-| ~“$int1” -le “$int2”~ | True if int1 is less than or equal to int2    |
+| Integer Comparators | Details                                           |
+|---------------------+---------------------------------------------------|
+| ~$int1 -eq $int2~   | True if the integers are equal                    |
+| ~$int1 -ne $int2~   | True if the integers are not equals               |
+| ~$int1 -gt $int2~   | True if ~int1~ is greater than ~int2~             |
+| ~$int1 -ge $int2~   | True if ~int1~ is greater than or equal to ~int2~ |
+| ~$int1 -lt $int2~   | True if ~int1~ is less than ~int2~                |
+| ~$int1 -le $int2~   | True if ~int1~ is less than or equal to ~int2~    |
+
 
 ** Section 10.1: Conditional execution of command lists
 
 *** How to use conditional execution of command lists
 
     Any builtin command, expression, or function, as well as any external
-    command or script can be executed conditionally using the ~&&~ (and) and ~||~ (or)
-    operators.
+    command or script can be executed conditionally using the ~&&~ (and) and
+    ~||~ (or) operators.
 
     For example, this will only print the current directory if the cd command
     was successful.
@@ -57,7 +58,7 @@
   cd my_directory && pwd || echo "No such directory"
 #+end_src
 
-    * If the ~cd~ succeeds, the ~&&~ pwd executes and the current working directory
+    * If the ~cd~ succeeds, the ~&& pwd~ executes and the current working directory
       name is printed. Unless ~pwd~ fails (a rarity) the ~|| echo ...~ will not be
       executed.
 
@@ -102,6 +103,7 @@
       # work with the argument. exit on failure
       do_something_with "$1" || return 1
       do_something_else || return 1
+
       # Success! no failures detected, or we wouldn't be here
       return 0
   }
@@ -119,7 +121,7 @@
   fi
 #+end_src
 
-   The closing ~fi~ is necessary, but the ~elif~ and/or the else clauses can be
+   The closing ~fi~ is necessary, but the ~elif~ and/or the ~else~ clauses can be
    omitted.
 
    The semicolons before then are standard syntax for combining two commands on
@@ -170,7 +172,7 @@
 #+begin_src bash
   arr=(a b c d e f)
 
-  for i in "${arr[@]}";do
+  for i in "${arr[@]}"; do
       echo "$i"
   done
 #+end_src
@@ -178,7 +180,7 @@
    Or
 
 #+begin_src bash
-  for ((i=0; i<${#arr[@]}; i++));do
+  for ((i=0; i<${#arr[@]}; i++)); do
       echo "${arr[$i]}"
   done
 #+end_src
@@ -187,7 +189,7 @@
 
 #+begin_src bash
   i=0
-  while [ $i -lt ${#arr[@]} ];do
+  while [ $i -lt ${#arr[@]} ]; do
       echo "${arr[$i]}"
       i=$(expr $i + 1)
   done
@@ -197,7 +199,7 @@
 
 #+begin_src bash
   i=0
-  while (( $i < ${#arr[@]} ));do
+  while (( $i < ${#arr[@]} )); do
     echo "${arr[$i]}"
     ((i++))
   done
@@ -207,7 +209,7 @@
 
 #+begin_src bash
   #!/bin/bash
-  for i in {1..10};do # {1..10} expands to "1 2 3 4 5 6 7 8 9 10"
+  for i in {1..10}; do # {1..10} expands to "1 2 3 4 5 6 7 8 9 10"
       echo $i
   done
 #+end_src
@@ -232,12 +234,14 @@
    Example for continue
 
 #+begin_src bash
-  for i in [series];do
+  for i in [series]; do
       command 1
       command 2
-      if (condition) # Condition to jump over command 3
-       continue # skip to the next value in "series"
+
+      if (condition); then # Condition to jump over command 3
+          continue # skip to the next value in "series"
       fi
+
       command 3
   done
 #+end_src
@@ -249,10 +253,9 @@
 
    command 4
 
-   if (condition) # Condition to break the loop
-   then
-     command 5 # Command if the loop needs to be broken
-     break
+   if (condition); then # Condition to break the loop
+       command 5 # Command if the loop needs to be broken
+       break
    fi
 
    command 6 # Command to run if the "condition" is never true
@@ -267,10 +270,10 @@
 #+begin_src bash
   arr=(a b c d e f)
 
-  for i in "${arr[@]}";do
+  for i in "${arr[@]}"; do
       echo "$i"
 
-      for j in "${arr[@]}";do
+      for j in "${arr[@]}"; do
         echo "$j"
         break 2
       done
@@ -288,11 +291,11 @@ a
 
 #+begin_src bash
   arr=(a b c d e f)
-  for i in "${arr[@]}";do
+  for i in "${arr[@]}"; do
 
       echo "$i"
 
-      for j in "${arr[@]}";do
+      for j in "${arr[@]}"; do
           echo "$j"
           break
       done
@@ -323,10 +326,10 @@ a
 
   i=0
 
-  while [ $i -lt 5 ] #While i is less than 5
-  do
-    echo "i is currently $i"
-    i=$[$i+1] #Not the lack of spaces around the brackets. This makes it a not a test expression
+  while [ $i -lt 5 ]; do # While i is less than 5
+      echo "i is currently $i"
+
+      i=$[$i+1] # Not the lack of spaces around the brackets. This makes it a not a test expression
   done #ends the loop
 #+end_src
 
@@ -334,12 +337,12 @@ a
    while statement). These spaces are necessary.
 
    This loop outputs:
-#+begin_src
-i is currently 0
-i is currently 1
-i is currently 2
-i is currently 3
-i is currently 4
+#+begin_src bash
+  i is currently 0
+  i is currently 1
+  i is currently 2
+  i is currently 3
+  i is currently 4
 #+end_src
 
 ** Section 10.8: For Loop with C-style syntax
@@ -353,22 +356,20 @@ i is currently 4
    Notes:
    
    * The assignment of the variable inside C-style for loop can contain spaces unlike the usual assignment
-   * Variables inside C-style for loop aren't preceded with $.
+   * Variables inside C-style for loop aren't preceded with ~$~.
 
    Example:
 
 #+begin_src bash
-  for (( i = 0; i < 10; i++ ))
-  do
-    echo "The iteration number is $i"
+  for (( i = 0; i < 10; i++ )); do
+      echo "The iteration number is $i"
   done
 #+end_src
 
    Also we can process multiple variables inside C-style for loop:
 
 #+begin_src bash
-  for (( i = 0, j = 0; i < 10; i++, j = i * i ))
-  do
+  for (( i = 0, j = 0; i < 10; i++, j = i * i )); do
       echo "The square of $i is equal to $j"
   done
 #+end_src
@@ -378,22 +379,23 @@ i is currently 4
    Until loop executes until condition is true
 
 #+begin_src bash
-    i=5
+  i=5
 
-    until [[ i -eq 10 ]]; do #Checks if i=10
-      echo "i=$i" #Print the value of i
-      i=$((i+1)) #Increment i by 1
-    done
+  until [[ i -eq 10 ]]; do #Checks if i=10
+      echo "i=$i" # Print the value of i
+
+      i=$((i+1)) # Increment i by 1
+  done
 #+end_src
 
    Output:
 
-#+begin_src 
-i=5
-i=6
-i=7
-i=8
-i=9
+#+begin_src bash
+  i=5
+  i=6
+  i=7
+  i=8
+  i=9
 #+end_src
 
    When ~i~ reaches 10 the condition in until loop becomes true and the loop ends.

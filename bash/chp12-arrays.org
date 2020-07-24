@@ -43,8 +43,8 @@
 *** Assignment by name (associative array)
 
 #+begin_src bash
-  Version ≥ 4.0
   declare -A array
+
   array[first]='First element'
   array[second]='Second element'
 #+end_src
@@ -70,13 +70,15 @@
   while read -r; do
       #array+=("$REPLY") # Array append
       array[$i]="$REPLY" # Assignment by index
+
       let i++ # Increment index
-  done < <(seq 1 10) # command substitution
+  done < <(seq 1 10) # process substitution
 
   echo ${array[@]} # output: 1 2 3 4 5 6 7 8 9 10
 #+end_src
 
-     where ~$REPLY~ is always the current input
+     where ~$REPLY~ is always the current input. The syntax for process
+     substitution is <(list). This is done to make the list act like a file.
 
 ** Section 12.2: Accessing Array Elements
 
@@ -84,14 +86,12 @@
 
 #+begin_src bash
   echo "${array[0]}"
-  Version < 4.3
 #+end_src
 
    Print last element using substring expansion syntax
 
 #+begin_src bash
-  echo "${arr[@]: -1 }"
-  Version ≥ 4.3
+  echo "${arr[@]: -1 }"  
 #+end_src
 
    Print last element using subscript syntax
@@ -145,7 +145,6 @@
 
 #+begin_src bash
   array[10]="elevenths element" # because it's starting with 0
-  Version ≥ 3.1
 #+end_src
 
 *** Append
@@ -174,9 +173,11 @@
 
 #+begin_src bash
   arr=(a b c d)
+
   # insert an element at index 2
   i=2
   arr=("${arr[@]:0:$i}" 'new' "${arr[@]:$i}")
+
   echo "${arr[2]}" #output: new
 #+end_src
 
@@ -184,11 +185,16 @@
 
     Delete array indexes using the ~unset~ builtin:
 
+    ~${!array[@]}~ gives the keys of the array ~${array[@]}~:
+
 #+begin_src bash
   arr=(a b c)
+
   echo "${arr[@]}" # outputs: a b c
   echo "${!arr[@]}" # outputs: 0 1 2
+
   unset -v 'arr[1]'
+
   echo "${arr[@]}" # outputs: a c
   echo "${!arr[@]}" # outputs: 0 2
 #+end_src
@@ -209,10 +215,11 @@
 
 ** Section 12.4: Array Iteration
 
-   Array iteration comes in two ﬂavors, foreach and the classic for-loop:
+   Array iteration comes in two flavors, foreach and the classic for-loop:
 
 #+begin_src bash
   a=(1 2 3 4)
+
   # foreach loop
   for y in "${a[@]}"; do
     # act on $y
@@ -229,7 +236,8 @@
 *** You can also iterate over the output of a command:
 
 #+begin_src bash
-  a=($(tr ',' ' ' <<<"a,b,c,d")) # tr can transform one character to another
+  a=($(tr ',' ' ' <<<"a,b,c,d")) # tr can transform one character to another and <<< is here-string
+
   for y in "${a[@]}"; do
     echo "$y"
   done
@@ -251,9 +259,7 @@
 #+end_src
 
 ** Section 12.6: Associative Arrays
-
-   ~Version ≥ 4.0~
-
+   
 *** Declare an associative array
 
 #+begin_src bash
@@ -336,14 +342,13 @@
 #+begin_src bash
   for i in "${arr[@]}"; do
       echo "$i"
-  done
-  Version ≥ 2.04
+  done  
 #+end_src
 
    Using C-style for loop:
 
 #+begin_src bash
-  for ((i=0;i<${#arr[@]};i++)); do
+  for ((i=0; i<${#arr[@]}; i++)); do
     echo "${arr[$i]}"
   done
 #+end_src
@@ -352,38 +357,42 @@
 
 #+begin_src bash
   i=0
+
   while [ $i -lt ${#arr[@]} ]; do
     echo "${arr[$i]}"
+
     i=$((i + 1))
   done
-  Version ≥ 2.04
 #+end_src
 
   Using ~while~ loop with numerical conditional:
 
 #+begin_src bash
-    i=0
-    while (( $i < ${#arr[@]} )); do
-        echo "${arr[$i]}" ((i++))
-    done
+  i=0
+
+  while (($i < ${#arr[@]})); do
+      echo "${arr[$i]}"
+      ((i++))
+  done
 #+end_src
 
    Using an ~until~ loop:
 
 #+begin_src bash
   i=0
+
   until [ $i -ge ${#arr[@]} ]; do
       echo "${arr[$i]}"
       i=$((i + 1))
-  done
-  Version ≥ 2.04
+  done  
 #+end_src
 
    Using an ~until~ loop with numerical conditional:
 
 #+begin_src bash
   i=0
-  until (( $i >= ${#arr[@]} )); do
+
+  until (($i >= ${#arr[@]})); do
       echo "${arr[$i]}"
       ((i++))
   done
@@ -424,7 +433,7 @@
 
 ** Section 12.10: List of initialized indexes
 
-   Get the list of inialized indexes in an array
+   Get the list of initialized indexes in an array
 
 #+begin_src bash
   $ arr[2]='second'
@@ -446,10 +455,10 @@
 
 #+begin_src bash
   arr=()
+
   while IFS= read -r line; do
       arr+=("$line")
   done
-  Version ≥ 4.0
 #+end_src
 
    Using mapfile or readarray (which are synonymous):
@@ -476,16 +485,21 @@
       # element : Element to insert
       ##################################################
       '
-      [[ $1 = -h ]] && { echo "$h" >/dev/stderr; return 1; }
+      [[ $1 = -h ]] && { echo "$h" > /dev/stderr; return 1; }
+
       declare -n __arr__=$1 # reference to the array variable
+
       i=$2 # index to insert at
       el="$3" # element to insert
+
       # handle errors
       [[ ! "$i" =~ ^[0-9]+$ ]] && { echo "E: insert: index must be a valid integer" >/dev/stderr;
-      return 1; }
-    (( $1 < 0 )) && { echo "E: insert: index can not be negative" >/dev/stderr; return 1; }
-    # Now insert $el at $i
-    __arr__=("${__arr__[@]:0:$i}" "$el" "${__arr__[@]:$i}") }
+                                    return 1; }
+
+      (( $1 < 0 )) && { echo "E: insert: index can not be negative" >/dev/stderr; return 1; }
+
+      # Now insert $el at $i
+      __arr__=("${__arr__[@]:0:$i}" "$el" "${__arr__[@]:$i}") }
 #+end_src
 
    Usage:
@@ -496,11 +510,14 @@
 
 #+begin_src bash
   arr=(a b c d)
+
   echo "${arr[2]}" # output: c
+
   # Now call the insert function and pass the array variable name,
   # index to insert at
   # and the element to insert
   insert arr 2 'New Element'
+
   # 'New Element' was inserted at index 2 in arr, now print them
   echo "${arr[2]}" # output: New Element
   echo "${arr[3]}" # output: c
