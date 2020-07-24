@@ -3,17 +3,17 @@
 
 * Chapter 10: Control Structures
 
-| File Operators | Details                                                |
-|----------------+--------------------------------------------------------|
-| ~-e "$file"~   | Returns true if the file exists.                       |
-| ~-d "$file"~   | Returns true if the file exists and is a directory     |
-| ~-f "$file"~   | Returns true if the file exists and is a regular file  |
-| ~-h "$file"~   | Returns true if the file exists and is a symbolic link |
+| File Operators | Details                                               |
+|----------------+-------------------------------------------------------|
+| ~-e "$file""~    | Returns true if the file exists.                       |
+| ~-d "$file"~     | Returns true if the file exists and is a directory     |
+| ~-f "$file"~     | Returns true if the file exists and is a regular file   |
+| ~-h "$file"~     | Returns true if the file exists and is a symbolic link |
 
 | String Comparators | Details                                                                                                                   |
 |--------------------+---------------------------------------------------------------------------------------------------------------------------|
-| ~-n "$str~         | True if length of string is non-zero                                                                                      |
-| ~\"$str" = "$str2"~  | True if string $str is equal to string $str2. Not best for integers. It may work but will be "$str" = "$str2" inconsitent |
+| ~-n "$str~           | True if length of string is non-zero                                                                                      |
+| ~"$str" = "$str2"~  | True if string $str is equal to string $str2. Not best for integers. It may work but will be "$str" = "$str2" inconsitent |
 | "$str" != "$str2"  | True if the strings are not equal                                                                                         |
 
 | Integer Comparators | Details                                       |
