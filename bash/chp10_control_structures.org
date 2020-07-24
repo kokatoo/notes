@@ -1,0 +1,440 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 10: Control Structures
+
+| File Operators | Details                                               |
+|----------------+-------------------------------------------------------|
+| -e "$file"     | Returns true if the ﬁle exists.                       |
+| -d "$file"     | Returns true if the ﬁle exists and is a directory     |
+| -f "$file"     | Returns true if the ﬁle exists and is a regular ﬁle   |
+| -h "$file"     | Returns true if the ﬁle exists and is a symbolic link |
+
+| String Comparators | Details                                                                                                                   |
+|--------------------+---------------------------------------------------------------------------------------------------------------------------|
+| -n "$str           | True if length of string is non-zero                                                                                      |
+| "$str" = "$str2"   | True if string $str is equal to string $str2. Not best for integers. It may work but will be "$str" = "$str2" inconsitent |
+| "$str" != "$str2"  | True if the strings are not equal                                                                                         |
+
+| Integer Comparators | Details                                       |
+|---------------------+-----------------------------------------------|
+| "$int1" -eq "$int2" | True if the integers are equal                |
+| "$int1" -ne "$int2" | True if the integers are not equals           |
+| "$int1" -gt "$int2" | True if int1 is greater than int 2            |
+| "$int1" -ge "$int2" | True if int1 is greater than or equal to int2 |
+| "$int1" -lt "$int2" | True if int1 is less than int 2               |
+| "$int1" -le "$int2" | True if int1 is less than or equal to int2    |
+
+** Section 10.1: Conditional execution of command lists
+
+*** How to use conditional execution of command lists
+
+    Any builtin command, expression, or function, as well as any external
+    command or script can be executed conditionally using the ~&&~(and) and ~||~(or)
+    operators.
+
+
+    For example, this will only print the current directory if the cd command
+    was successful.
+
+
+#+begin_src bash
+  cd my_directory && pwd
+#+end_src
+
+    Likewise, this will exit if the cd command fails, preventing catastrophe:
+
+#+begin_src bash
+  cd my_directory || exit
+  rm -rf *
+#+end_src
+
+    When combining multiple statements in this manner, it's important to
+    remember that (unlike many C-style languages) these operators have no
+    precedence and are left-associative.
+
+    Thus, this statement will work as expected...
+
+#+begin_src bash
+  cd my_directory && pwd || echo "No such directory"
+#+end_src
+
+    * If the cd succeeds, the && pwd executes and the current working directory
+      name is printed. Unless pwd fails (a rarity) the ~|| echo ...~ will not be
+      executed.
+
+    * If the cd fails, the && pwd will be skipped and the ~|| echo ...~ will run.
+
+    But this will not (if you're thinking if...then...else)...
+
+#+begin_src bash
+  cd my_directory && ls || echo "No such directory"
+#+end_src
+
+    * If the cd fails, the ~&& ls~ is skipped and the ~|| echo ...~ is executed.
+    * If the cd succeeds, the ~&& ls~ is executed.
+      * If the ls succeeds, the ~|| echo ...~ is ignored. (so far so good)
+      * BUT... if the ls fails, the ~|| echo ...~ will also be executed.
+        It is the ls, not the cd, that is the previous command.
+
+*** Why use conditional execution of command lists
+
+    Conditional execution is a hair faster than if...then but its main advantage
+    is allowing functions and scripts to exit early, or "short circuit".
+
+    Unlike many languages like C where memory is explicitly allocated for
+    structs and variables and such (and thus must be deallocated), bash handles
+    this under the covers. In most cases, we don't have to clean up anything
+    before leaving the function. A return statement will deallocate everything
+    local to the function and pickup execution at the return address on the
+    stack.
+
+    Returning from functions or exiting scripts as soon as possible can thus
+    signiﬁcantly improve performance and reduce system load by avoiding the
+    unnecessary execution of code. For example...
+
+#+begin_src bash
+  my_function () {
+
+      ### ALWAYS CHECK THE RETURN CODE
+
+      # one argument required. "" evaluates to false(1)
+      [[ "$1" ]] || return 1
+
+      # work with the argument. exit on failure
+      do_something_with "$1" || return 1
+      do_something_else || return 1
+      # Success! no failures detected, or we wouldn't be here
+      return 0
+  }
+#+end_src
+
+** Section 10.2: If statement
+
+#+begin_src bash
+  if [[ $1 -eq 1 ]]; then
+    echo "1 was passed in the first parameter"
+  elif [[ $1 -gt 2 ]]; then
+      echo "2 was not passed in the first parameter"
+  else
+      echo "The first parameter was not 1 and is not more than 2."
+  fi
+#+end_src
+
+   The closing ~fi~ is necessary, but the ~elif~ and/or the else clauses can be
+   omitted.
+
+   The semicolons before then are standard syntax for combining two commands on
+   a single line; they can be omitted only if then is moved to the next line.
+
+   It's important to understand that the brackets ~[[~ are not part of the syntax,
+   but are treated as a command; it is the exit code from this command that is
+   being tested. Therefore, you must always include spaces around the brackets.
+
+   This also means that the result of any command can be tested. If the exit
+   code from the command is a zero, the statement is considered true.
+
+#+begin_src bash
+  if grep "foo" bar.txt; then
+      echo "foo was found"
+  else
+      echo "foo was not found"
+  fi
+#+end_src
+
+   Mathematical expressions, when placed inside double parentheses, also return
+   ~0~ or ~1~ in the same way, and can also be tested:
+
+#+begin_src bash
+  if (( $1 + 5 > 91 )); then
+    echo "$1 is greater than 86"
+  fi
+#+end_src
+
+   You may also come across if statements with single brackets. These are deﬁned
+   in the POSIX standard and are guaranteed to work in all POSIX-compliant
+   shells including Bash. The syntax is very similar to that in Bash:
+
+#+begin_src bash
+  if [ "$1" -eq 1 ]; then
+      echo "1 was passed in the first parameter"
+  elif [ "$1" -gt 2 ]; then
+    echo "2 was not passed in the first parameter"
+  else
+      echo "The first parameter was not 1 and is not more than 2."
+  fi
+#+end_src
+
+** Section 10.3: Looping over an array
+
+   for loop:
+
+#+begin_src bash
+  arr=(a b c d e f)
+  for i in "${arr[@]}";do
+      echo "$i"
+    done
+#+end_src
+
+   Or
+
+#+begin_src bash
+    for ((i=0;i<${#arr[@]};i++));do
+      echo "${arr[$i]}"
+    done
+#+end_src
+
+   while loop:
+
+#+begin_src bash
+  i=0
+  while [ $i -lt ${#arr[@]} ];do
+      echo "${arr[$i]}"
+      i=$(expr $i + 1)
+  done
+#+end_src
+
+   Or
+
+#+begin_src bash
+  i=0
+  while (( $i < ${#arr[@]} ));do
+    echo "${arr[$i]}"
+    ((i++))
+  done
+#+end_src
+
+** Section 10.4: Using For Loop to List Iterate Over Numbers
+
+#+begin_src bash
+  #!/bin/bash
+  for i in {1..10}; do # {1..10} expands to "1 2 3 4 5 6 7 8 9 10"
+      echo $i
+  done
+#+end_src
+
+   This outputs the following:
+
+#+begin_src 
+   1
+   2
+   3
+   4
+   5
+   6
+   7
+   8
+   8
+   10
+#+end_src
+
+** Section 10.5: continue and break
+
+   Example for continue
+
+#+begin_src bash
+  for i in [series]
+  do
+      command 1
+      command 2
+      if (condition) # Condition to jump over command 3
+       continue # skip to the next value in "series"
+      fi
+      command 3
+  done
+#+end_src
+
+   Example for break
+
+#+begin_src bash
+  for i in [series] do
+
+   command 4
+
+   if (condition) # Condition to break the loop
+   then
+     command 5 # Command if the loop needs to be broken
+     break
+   fi
+
+   command 6 # Command to run if the "condition" is never true
+
+  done
+#+end_src
+
+** Section 10.6: Loop break
+
+   Break multiple loop:
+
+#+begin_src bash
+  arr=(a b c d e f)
+
+  for i in "${arr[@]}";do
+      echo "$i"
+
+      for j in "${arr[@]}";do
+        echo "$j"
+        break 2
+      done
+  done
+#+end_src
+
+   Output:
+
+#+begin_src
+a
+a
+#+end_src
+
+   Break single loop:
+
+#+begin_src bash
+  arr=(a b c d e f)
+  for i in "${arr[@]}";do
+
+      echo "$i"
+
+      for j in "${arr[@]}";do
+          echo "$j"
+          break
+      done
+  done
+#+end_src
+
+   Output:
+
+#+begin_src 
+a
+a
+b
+a
+c
+a
+d
+a
+e
+a
+f
+a
+#+end_src
+
+** Section 10.7: While Loop
+
+#+begin_src bash
+  #! /bin/bash
+
+  i=0
+
+  while [ $i -lt 5 ] #While i is less than 5
+  do
+    echo "i is currently $i"
+    i=$[$i+1] #Not the lack of spaces around the brackets. This makes it a not a test expression
+  done #ends the loop
+#+end_src
+
+   Watch that there are spaces around the brackets during the test (after the
+   while statement). These spaces are necessary.
+
+   This loop outputs:
+#+begin_src
+i is currently 0
+i is currently 1
+i is currently 2
+i is currently 3
+i is currently 4
+#+end_src
+
+** Section 10.8: For Loop with C-style syntax
+
+   The basic format of C-style for loop is:
+   
+#+begin_src bash
+  for (( variable assignment; condition; iteration process ))
+#+end_src
+
+   Notes:
+   
+   * The assignment of the variable inside C-style for loop can contain spaces unlike the usual assignment
+   * Variables inside C-style for loop aren't preceded with $.
+
+   Example:
+
+#+begin_src bash
+  for (( i = 0; i < 10; i++ ))
+  do
+    echo "The iteration number is $i"
+  done
+#+end_src
+
+   Also we can process multiple variables inside C-style for loop:
+
+#+begin_src bash
+  for (( i = 0, j = 0; i < 10; i++, j = i * i ))
+  do
+      echo "The square of $i is equal to $j"
+  done
+#+end_src
+
+** Section 10.9: Until Loop
+
+   Until loop executes until condition is true
+
+#+begin_src bash
+    i=5
+
+    until [[ i -eq 10 ]]; do #Checks if i=10
+      echo "i=$i" #Print the value of i
+      i=$((i+1)) #Increment i by 1
+    done
+#+end_src
+
+   Output:
+
+#+begin_src 
+i=5
+i=6
+i=7
+i=8
+i=9
+#+end_src
+
+   When i reaches 10 the condition in until loop becomes true and the loop ends.
+
+** Section 10.10: Switch statement with case
+
+   With the case statement you can match values against one variable.
+
+   The argument passed to case is expanded and try to match against each
+   patterns.
+
+   If a match is found, the commands upto ~;;~ are executed.
+
+#+begin_src bash
+  case "$BASH_VERSION" in
+      [34]*) echo {1..4} ;;
+      ,*) seq -s" " 1 4
+  esac
+#+end_src
+
+   Pattern are not regular expressions but shell pattern matching (aka globs).
+
+** Section 10.11: For Loop without a list-of-words parameter
+
+#+begin_src bash
+  for arg; do
+    echo arg=$arg
+  done
+#+end_src
+
+   A for loop without a list of words parameter will iterate over the positional
+   parameters instead. In other words, the above example is equivalent to this
+   code:
+
+#+begin_src bash
+  for arg in "$@"; do
+    echo arg=$arg
+  done
+#+end_src
+
+   In other words, if you catch yourself writing ~for i in "$@"; do ...; done~,
+   just drop the in part, and write simply ~for i; do ...; done~.

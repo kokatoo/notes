@@ -11,7 +11,7 @@
 
 ** Section 9.1: Redirecting standard output
 
-   > redirect the standard output (aka STDOUT) of the current command into a
+   ~>~ redirect the standard output (aka STDOUT) of the current command into a
    file or another descriptor.
 
    These examples write the output of the ~ls~ command into the file file.txt
@@ -24,12 +24,12 @@
    The target file is created if it doesn't exists, otherwise this file is
    truncated.
 
-   The default redirection descriptor is the standard output or 1 when none is
+   The default redirection descriptor is the standard output or ~1~ when none is
    specified. This command is equivalent to the previous examples with the
    standard output explicitly indicated:
 
 #+begin_src bash
-  ls 1>file.txt
+  ls 1> file.txt
 #+end_src
 
    Note: the redirection is initialized by the executed shell and not by the
@@ -108,7 +108,7 @@
   echo 'hello' & goodbye > /dev/null
 #+end_src
 
-   NOTE: &> is known to work as desired in both Bash and Zsh.
+   NOTE: ~&>~ is known to work as desired in both Bash and Zsh.
    
 ** Section 9.4: Using named pipes
 
@@ -128,7 +128,7 @@
 #+end_src
 
    This works fine for most applications, however, nobody will know what tempFile
-   does and someone might remove it if it contains the output of ls -l in that
+   does and someone might remove it if it contains the output of ~ls -l~ in that
    directory. This is where a named pipe comes into play:
 
 #+begin_src bash
@@ -137,7 +137,7 @@
   grep ".log" < myPipe
 #+end_src
 
-   myPipe is technically a file (everything is in Linux), so let's do ls -l in an
+   myPipe is technically a file (everything is in Linux), so let's do ~ls -l~ in an
    empty directory that we just created a pipe in:
 
 #+begin_src bash
@@ -211,7 +211,7 @@
   # Output: This prints on screen the contents of mypipe.
 #+end_src
 
-      Mind that first contents of file3 are displayed and then the ls -l data is
+      Mind that first contents of file3 are displayed and then the ~ls -l~ data is
       displayed (LIFO configuration).
 
     * Example 3 - all commands on the same terminal / same shell
@@ -222,7 +222,7 @@
   # Output: Prints the output of ls directly on screen
 #+end_src
 
-      Mind that the variable $pipedata is not available for usage in the main
+      Mind that the variable ~$pipedata~ is not available for usage in the main
       terminal / main shell since the use of & invokes a subshell and $pipedata
       was only available in this subshell.
 
@@ -238,7 +238,7 @@
 
        This prints correctly the value of $pipedata variable in the main shell
        due to the export declaration of the variable. The main terminal/main
-       shell is not hanging due to the invocation of a background shell (&).
+       shell is not hanging due to the invocation of a background shell (~&~).
 
 ** Section 9.5: Redirection to network addresses
 
@@ -253,7 +253,7 @@
 #+begin_src bash
   exec 3</dev/tcp/www.google.com/80
   printf 'GET / HTTP/1.0\r\n\r\n' >&3
-  cat <&3
+  cat <& 3
 #+end_src
 
    and the results of www.google.com's default web page will be printed to
@@ -329,7 +329,7 @@
    To write a file into STDIN we should read ~/tmp/a_file~ and write into STDIN i.e
    ~0< /tmp/a_file~ or ~< /tmp/a_file~
 
-   Note: Internal file descriptor defaults to 0 (STDIN) for <
+   Note: Internal file descriptor defaults to ~0~ (STDIN) for ~<~
 
 #+begin_src bash
   $ echo "b" > /tmp/list.txt
@@ -347,7 +347,7 @@
 
 ** Section 9.9: Redirecting STDERR
 
-   2 is STDERR.
+   ~2~ is STDERR.
 
 #+begin_src bash
   $ echo_to_stderr 2> /dev/null # echos nothing
@@ -414,7 +414,7 @@
     appear in the terminal. However, we can redirect either STDOUT or STDERR to
     whatever we need. For example, let's say that you only need the standard out
     and all error messages printed on standard error should be suppressed.
-    That's when we use the descriptors 1 and 2.
+    That's when we use the descriptors ~1~ and ~2~.
 
 *** Redirecting STDERR to ~/dev/null~
 

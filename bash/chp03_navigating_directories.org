@@ -65,7 +65,7 @@
 
    This command runs 3 commands:
    
-   1. =readlink -f "$0"= determines the path to the current script (~$0~)
+   1. ~readlink -f~ "$0" determines the path to the current script (~$0~)
    2. ~dirname~ converts the path to script to the path to its directory
    3. ~cd~ changes the current work directory to the directory it receives from ~dirname~
    4. the ~cd~ happens only in the shell and will not persist once the shell exits

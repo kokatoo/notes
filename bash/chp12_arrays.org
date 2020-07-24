@@ -1,0 +1,507 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 12: Arrays
+
+** Section 12.1: Array Assignments
+
+*** List Assignment
+
+    If you are familiar with Perl, C, or Java, you might think that Bash would
+    use commas to separate array elements, however this is not the case;
+    instead, Bash uses spaces:
+
+#+begin_src bash
+  # Array in Perl
+  my @array = (1, 2, 3, 4);
+
+  # Array in Bash
+  array=(1 2 3 4)
+#+end_src
+
+    Create an array with new elements:
+
+#+begin_src bash
+  array=('first element' 'second element' 'third element')
+#+end_src
+
+*** Subscript Assignment
+
+    Create an array with explicit element indices:
+
+#+begin_src bash
+  array=([3]='fourth element' [4]='fifth element')
+#+end_src
+
+*** Assignment by index
+
+#+begin_src bash
+  array[0]='first element'
+  array[1]='second element'
+#+end_src
+
+*** Assignment by name (associative array)
+
+#+begin_src bash
+  Version ≥ 4.0
+  declare -A array
+  array[first]='First element'
+  array[second]='Second element'
+#+end_src
+
+*** Dynamic Assignment
+
+    Create an array from the output of other command, for example use ~seq~ to get
+    a range from 1 to 10:
+
+#+begin_src bash
+  array=(`seq 1 10`)
+#+end_src
+
+    Assignment from script's input arguments:
+
+#+begin_src bash
+  array=("$@")
+#+end_src
+
+    Assignment within loops:
+
+#+begin_src bash
+  while read -r; do
+      #array+=("$REPLY") # Array append
+      array[$i]="$REPLY" # Assignment by index
+      let i++ # Increment index
+  done < <(seq 1 10) # command substitution
+
+  echo ${array[@]} # output: 1 2 3 4 5 6 7 8 9 10
+#+end_src
+
+     where ~$REPLY~ is always the current input
+
+** Section 12.2: Accessing Array Elements
+
+   Print element at index 0
+
+#+begin_src bash
+  echo "${array[0]}"
+  Version < 4.3
+#+end_src
+
+   Print last element using substring expansion syntax
+
+#+begin_src bash
+  echo "${arr[@]: -1 }"
+  Version ≥ 4.3
+#+end_src
+
+   Print last element using subscript syntax
+
+#+begin_src bash
+  echo "${array[-1]}"
+#+end_src
+
+   Print all elements, each quoted separately
+
+#+begin_src bash
+  echo "${array[@]}"
+#+end_src
+
+   Print all elements as a single quoted string
+
+#+begin_src bash
+  echo "${array[*]}"
+#+end_src
+
+   Print all elements from index 1, each quoted separately
+
+#+begin_src bash
+  echo "${array[@]:1}"
+#+end_src
+
+   Print 3 elements from index 1, each quoted separately
+
+#+begin_src bash
+  echo "${array[@]:1:3}"
+#+end_src
+
+*** String Operations
+
+    If referring to a single element, string operations are permitted:
+
+#+begin_src bash
+  array=(zero one two)
+  echo "${array[0]:0:3}" # gives out zer (chars at position 0, 1 and 2 in the string zero)
+  echo "${array[0]:1:3}" # gives out ero (chars at position 1, 2 and 3 in the string zero)
+#+end_src
+
+    so ~${array[$i]:N:M}~ gives out a string from the Nth position (starting
+    from 0) in the string ~${array[$i]}~ with M following chars.
+
+** Section 12.3: Array Modification
+
+*** Change Index
+
+    Initialize or update a particular element in the array
+
+#+begin_src bash
+  array[10]="elevenths element" # because it's starting with 0
+  Version ≥ 3.1
+#+end_src
+
+*** Append
+
+    Modify array, adding elements to the end if no subscript is specified.
+
+#+begin_src bash
+  array+=('fourth element' 'fifth element')
+#+end_src
+
+    Replace the entire array with a new parameter list.
+
+#+begin_src bash
+  array=("${array[@]}" "fourth element" "fifth element")
+#+end_src
+
+    Add an element at the beginning:
+
+#+begin_src bash
+  array=("new element" "${array[@]}")
+#+end_src
+
+*** Insert
+
+    Insert an element at a given index:
+
+#+begin_src bash
+  arr=(a b c d)
+  # insert an element at index 2
+  i=2
+  arr=("${arr[@]:0:$i}" 'new' "${arr[@]:$i}")
+  echo "${arr[2]}" #output: new
+#+end_src
+
+*** Delete
+
+    Delete array indexes using the ~unset~ builtin:
+
+#+begin_src bash
+  arr=(a b c)
+  echo "${arr[@]}" # outputs: a b c
+  echo "${!arr[@]}" # outputs: 0 1 2
+  unset -v 'arr[1]'
+  echo "${arr[@]}" # outputs: a c
+  echo "${!arr[@]}" # outputs: 0 2
+#+end_src
+
+*** Merge
+
+#+begin_src bash
+  array3=("${array1[@]}" "${array2[@]}")
+#+end_src
+
+     This works for sparse arrays as well. Re-indexing an array This can be
+     useful if elements have been removed from an array, or if you're unsure
+     whether there are gaps in the array. To recreate the indices without gaps:
+
+#+begin_src bash
+  array=("${array[@]}")
+#+end_src
+
+** Section 12.4: Array Iteration
+
+   Array iteration comes in two ﬂavors, foreach and the classic for-loop:
+
+#+begin_src bash
+  a=(1 2 3 4)
+  # foreach loop
+  for y in "${a[@]}"; do
+    # act on $y
+    echo "$y"
+  done
+
+  # classic for-loop
+  for ((idx=0; idx < ${#a[@]}; ++idx)); do
+    # act on ${a[$idx]}
+    echo "${a[$idx]}"
+  done
+#+end_src
+
+*** You can also iterate over the output of a command:
+
+#+begin_src bash
+  a=($(tr ',' ' ' <<<"a,b,c,d")) # tr can transform one character to another
+  for y in "${a[@]}"; do
+    echo "$y"
+  done
+#+end_src
+
+** Section 12.5: Array Length
+
+   ~${#array[@]}~ gives the length of the array ~${array[@]}~:
+
+#+begin_src bash
+  array=('first element' 'second element' 'third element')
+  echo "${#array[@]}" # gives out a length of 3
+#+end_src
+
+   This works also with Strings in single elements:
+
+#+begin_src bash
+  echo "${#array[0]}" # gives out the length of the string at element 0: 13
+#+end_src
+
+** Section 12.6: Associative Arrays
+
+   ~Version ≥ 4.0~
+
+*** Declare an associative array
+
+#+begin_src bash
+  declare -A aa
+#+end_src
+
+    Declaring an associative array before initialization or use is mandatory.
+
+*** Initialize elements
+
+    You can initialize elements one at a time as follows:
+
+#+begin_src bash
+  aa[hello]=world
+  aa[ab]=cd
+  aa["key with space"]="hello world"
+#+end_src
+
+    You can also initialize an entire associative array in a single statement:
+
+#+begin_src bash
+  aa=([hello]=world [ab]=cd ["key with space"]="hello world")
+#+end_src
+
+*** Access an associative array element
+
+#+begin_src bash
+  echo ${aa[hello]}
+  # Out: world
+#+end_src
+
+*** Listing associative array keys
+
+#+begin_src bash
+  echo "${!aa[@]}"
+  #Out: hello ab key with space
+#+end_src
+
+*** Listing associative array values
+
+#+begin_src bash
+  echo "${aa[@]}"
+  #Out: world cd hello world
+#+end_src
+
+*** Iterate over associative array keys and values
+
+#+begin_src bash
+  for key in "${!aa[@]}"; do
+    echo "Key: ${key}"
+    echo "Value: ${array[$key]}"
+  done
+
+  # Out:
+  # Key: hello
+  # Value: world
+  # Key: ab
+  # Value: cd
+  # Key: key with space
+  # Value: hello world
+#+end_src
+
+*** Count associative array elements
+
+#+begin_src bash
+  echo "${#aa[@]}"
+  # Out: 3
+#+end_src
+
+** Section 12.7: Looping through an array
+
+   Our example array:
+
+#+begin_src bash
+  arr=(a b c d e f)
+#+end_src
+
+   Using a ~for..in~ loop:
+
+#+begin_src bash
+  for i in "${arr[@]}"; do
+      echo "$i"
+  done
+  Version ≥ 2.04
+#+end_src
+
+   Using C-style for loop:
+
+#+begin_src bash
+  for ((i=0;i<${#arr[@]};i++)); do
+    echo "${arr[$i]}"
+  done
+#+end_src
+
+   Using while loop:
+
+#+begin_src bash
+  i=0
+  while [ $i -lt ${#arr[@]} ]; do
+    echo "${arr[$i]}"
+    i=$((i + 1))
+  done
+  Version ≥ 2.04
+#+end_src
+
+  Using ~while~ loop with numerical conditional:
+
+#+begin_src bash
+    i=0
+    while (( $i < ${#arr[@]} )); do
+        echo "${arr[$i]}" ((i++))
+    done
+#+end_src
+
+   Using an ~until~ loop:
+
+#+begin_src bash
+  i=0
+  until [ $i -ge ${#arr[@]} ]; do
+      echo "${arr[$i]}"
+      i=$((i + 1))
+  done
+  Version ≥ 2.04
+#+end_src
+
+   Using an ~until~ loop with numerical conditional:
+
+#+begin_src bash
+  i=0
+  until (( $i >= ${#arr[@]} )); do
+      echo "${arr[$i]}"
+      ((i++))
+  done
+#+end_src
+
+** Section 12.8: Destroy, Delete, or Unset an Array
+
+   To destroy, delete, or unset an array:
+
+   ~unset array~
+
+   To destroy, delete, or unset a single array element:
+
+   ~unset array[10]~
+
+** Section 12.9: Array from string
+
+#+begin_src bash
+  stringVar="Apple Orange Banana Mango"
+  arrayVar=(${stringVar// / })
+#+end_src
+
+   Each space in the string denotes a new item in the resulting array.
+
+#+begin_src bash
+  echo ${arrayVar[0]} # will print Apple
+  echo ${arrayVar[3]} # will print Mango
+#+end_src
+
+   Similarly, other characters can be used for the delimiter.
+
+#+begin_src bash
+  stringVar="Apple+Orange+Banana+Mango"
+  arrayVar=(${stringVar//+/ })
+  echo ${arrayVar[0]} # will print Apple
+  echo ${arrayVar[2]} # will print Banana
+#+end_src
+
+** Section 12.10: List of initialized indexes
+
+   Get the list of inialized indexes in an array
+
+#+begin_src bash
+  $ arr[2]='second'
+  $ arr[10]='tenth'
+  $ arr[25]='twenty five'
+  $ echo ${!arr[@]}
+  2 10 25
+#+end_src
+
+** Section 12.11: Reading an entire file into an array
+
+   Reading in a single step:
+
+#+begin_src bash
+  IFS=$'\n' read -r -a arr < file
+#+end_src
+
+   Reading in a loop:
+
+#+begin_src bash
+  arr=()
+  while IFS= read -r line; do
+      arr+=("$line")
+  done
+  Version ≥ 4.0
+#+end_src
+
+   Using mapfile or readarray (which are synonymous):
+
+#+begin_src bash
+  mapfile -t arr < file
+  readarray -t arr < file
+#+end_src
+
+** Section 12.12: Array insert function
+
+   This function will insert an element into an array at a given index:
+
+#+begin_src bash
+  insert(){
+      h='
+      ################## insert ########################
+      # Usage:
+      # insert arr_name index element
+      #
+      # Parameters:
+      # arr_name : Name of the array variable
+      # index : Index to insert at
+      # element : Element to insert
+      ##################################################
+      '
+      [[ $1 = -h ]] && { echo "$h" >/dev/stderr; return 1; }
+      declare -n __arr__=$1 # reference to the array variable
+      i=$2 # index to insert at
+      el="$3" # element to insert
+      # handle errors
+      [[ ! "$i" =~ ^[0-9]+$ ]] && { echo "E: insert: index must be a valid integer" >/dev/stderr;
+      return 1; }
+    (( $1 < 0 )) && { echo "E: insert: index can not be negative" >/dev/stderr; return 1; }
+    # Now insert $el at $i
+    __arr__=("${__arr__[@]:0:$i}" "$el" "${__arr__[@]:$i}") }
+#+end_src
+
+   Usage:
+
+   ~insert array_variable_name index element~
+
+   Example:
+
+#+begin_src bash
+  arr=(a b c d)
+  echo "${arr[2]}" # output: c
+  # Now call the insert function and pass the array variable name,
+  # index to insert at
+  # and the element to insert
+  insert arr 2 'New Element'
+  # 'New Element' was inserted at index 2 in arr, now print them
+  echo "${arr[2]}" # output: New Element
+  echo "${arr[3]}" # output: c
+#+end_src

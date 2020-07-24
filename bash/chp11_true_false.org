@@ -1,0 +1,52 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 11: true, false and : commands
+
+** Section 11.1: Inﬁnite Loop
+
+#+begin_src bash
+    while true; do
+        echo ok
+    done
+#+end_src
+
+    or
+
+#+begin_src bash
+    while :; do
+      echo ok
+    done
+#+end_src
+
+    or
+
+#+begin_src bash
+  until false; do
+     echo ok
+  done
+#+end_src
+
+** Section 11.2: Function Return
+
+#+begin_src bash
+  function positive() {
+      return 0
+  }
+
+  function negative() {
+    return 1
+  }
+#+end_src
+
+** Section 11.3: Code that will always/never be executed
+
+#+begin_src bash
+  if true; then
+    echo Always executed
+  fi
+
+  if false; then
+    echo Never executed
+  fi
+#+end_src

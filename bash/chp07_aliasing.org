@@ -12,12 +12,12 @@
    Sometimes you may want to bypass an alias temporarily, without disabling it.
    To work with a concrete example, consider this alias:
 
-#+begin_src basn
-alias ls='ls --color=auto'
+#+begin_src bash
+  alias ls='ls --color=auto'
 #+end_src
 
 
-   And let's say you want to use the ls command without disabling the alias. You
+   And let's say you want to use the ~ls~ command without disabling the alias. You
    have several options:
 
    * Use the command builtin: command ~ls~
@@ -28,15 +28,15 @@ alias ls='ls --color=auto'
 ** Section 7.2: Create an Alias
    
 #+begin_src bash
-alias word='command'
+  alias word='command'
 #+end_src
 
    Invoking word will run command. Any arguments supplied to the alias are
    simply appended to the target of the alias:
 
 #+begin_src bash
-alias myAlias='some command --with --options'
-myAlias foo bar baz
+  alias myAlias='some command --with --options'
+  myAlias foo bar baz
 #+end_src
 
    The shell will then execute:
@@ -56,19 +56,19 @@ myAlias foo bar baz
    Example:
 
 #+begin_src bash
-# create an alias
-$ alias now='date'
+  # create an alias
+  $ alias now='date'
 
-# preview the alias
-$ now
-Thu Jul 21 17:11:25 CEST 2016
+  # preview the alias
+  $ now
+  Thu Jul 21 17:11:25 CEST 2016
 
-# remove the alias
-$ unalias now
+  # remove the alias
+  $ unalias now
 
-# test if removed
-$ now
--bash: now: command not found
+  # test if removed
+  $ now
+  -bash: now: command not found
 #+end_src
 
 ** Section 7.4: The BASH_ALIASES is an internal bash assoc array
