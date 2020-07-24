@@ -3,12 +3,12 @@
 
 * Chapter 10: Control Structures
 
-| File Operators | Details                                               |
-|----------------+-------------------------------------------------------|
-| ~-e "$file""~    | Returns true if the file exists.                       |
-| ~-d "$file"~     | Returns true if the file exists and is a directory     |
-| ~-f "$file"~     | Returns true if the file exists and is a regular file   |
-| ~-h "$file"~     | Returns true if the file exists and is a symbolic link |
+| File Operators    | Details                                                |
+|-------------------+--------------------------------------------------------|
+| ~-e “$file”~      | Returns true if the file exists.                       |
+| ~-d "$file"~ ​     | Returns true if the file exists and is a directory     |
+| ~-f "$file"~      | Returns true if the file exists and is a regular file  |
+| ~-h "$file"~      | Returns true if the file exists and is a symbolic link |
 
 | String Comparators | Details                                                                                                                   |
 |--------------------+---------------------------------------------------------------------------------------------------------------------------|
