@@ -7,7 +7,7 @@
 
 *** Creating jobs
     
-    To create an job, just append a single & after the command:
+    To create an job, just append a single ~&~ after the command:
 
 #+begin_src bash
   $ sleep 10 &
@@ -24,8 +24,8 @@
 
 *** Background and foreground a process
 
-    To bring the Process to the foreground, the command fg is used together
-    with %
+    To bring the Process to the foreground, the command ~fg~ is used together
+    with ~%~
 
 #+begin_src bash
   $ sleep 10 &
@@ -93,7 +93,7 @@
 
     The sleep process runs in the background with process id (pid) 20024 and
     job number 1. In order to reference the process, you can use either the pid
-    or the job number. If you use the job number, you must prefix it with %. The
+    or the job number. If you use the job number, you must prefix it with ~%~. The
     default kill signal sent by kill is SIGTERM, which allows the target
     process to exit gracefully.
 
@@ -111,16 +111,18 @@
     Probably the easiest way of killing a running process is by selecting it
     through the process name as in the following example using ~pkill~ command as
 
-    ~pkill -f test.py~
-
-    (or) a more fool-proof way using pgrep to search for the actual process-id
+#+begin_src bash
+  pkill -f test.py
+#+end_src
+  
+    (or) a more fool-proof way using ~pgrep~ to search for the actual process-id
 
 #+begin_src bash
   kill $(pgrep -f 'python test.py')
 #+end_src
 
-    The same result can be obtained using grep over ~ps -ef | grep~
-    name_of_process then killing the process associated with the resulting pid
+    The same result can be obtained using grep over ~ps -ef | grep
+    name_of_process~ then killing the process associated with the resulting pid
     (process id). Selecting a process using its name is convenient in a testing
     environment but can be really dangerous when the script is used in
     production: it is virtually impossible to be sure that the name will match
@@ -202,7 +204,7 @@
 #+end_src
 
   Here, second column is the process id. For example, if you want to kill the
-  nginx process, you can use the command kill 5647. It is always adviced to use
+  nginx process, you can use the command ~kill 5647~. It is always adviced to use
   the kill command with SIGTERM rather than SIGKILL.
 
 ** Section 8.6: List all processes

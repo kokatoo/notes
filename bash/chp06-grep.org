@@ -9,10 +9,10 @@
 
    ~grep foo ~/Desktop/bar~
 
-   To find all lines that do not contain foo in the file bar:
+   To find all lines that do not contain ~foo~ in the file ~bar~:
 
    ~grep –v foo ~/Desktop/bar~
 
-   To use find all words containing foo in the end (Wildcard Expansion):
+   To use find all words containing ~foo~ in the end (Wildcard Expansion):
 
    ~grep "*foo" ~/Desktop/bar~
