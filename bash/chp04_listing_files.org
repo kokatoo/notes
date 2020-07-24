@@ -3,25 +3,25 @@
 
 * Chapter 4: Listing Files
 
-| Option               | Description                                          |
-|----------------------+------------------------------------------------------|
-| -A, --almost-all     | List all entries excluding . and ..                  |
-| -d, --directory      | List directory entries                               |
-| -h, --human-readable | Show sizes in human readable format (i.e. K, M)      |
-| -l                   | Show contents in long-listing format                 |
-| -o                   | Long -listing format without group info              |
-| -r, --reverse        | Show contents in reverse order                       |
-| -s, --size           | Print size of each file in blocks                    |
-| -S                   | Sort by file size                                    |
-| --sort=WORD          | Sort contents by a word. (i.e size, version, status) |
-| -t                   | Sort by modification time                            |
-| -u                   | Sort by last access time                             |
-| -v                   | Sort by version                                      |
-| -1                   | List one file per line                               |
+| Option                   | Description                                          |
+|--------------------------+------------------------------------------------------|
+| ~-A~, ~--almost-all~     | List all entries excluding ~.~ and ~..~              |
+| ~-d~, ~--directory~      | List directory entries                               |
+| ~-h~, ~--human-readable~ | Show sizes in human readable format (i.e. K, M)      |
+| ~-l~                     | Show contents in long-listing format                 |
+| ~-o~                     | Long listing format without group info               |
+| ~-r~, ~--reverse~        | Show contents in reverse order                       |
+| ~-s~, ~--size~           | Print size of each file in blocks                    |
+| ~-S~                     | Sort by file size                                    |
+| ~--sort=WORD~            | Sort contents by a word. (i.e size, version, status) |
+| ~-t~                     | Sort by modification time                            |
+| ~-u~                     | Sort by last access time                             |
+| ~-v~                     | Sort by version                                      |
+| ~-1~                     | List one file per line                               |
 
 ** Section 4.1: List Files in a Long Listing Format
 
-   The ls command's -l option prints a specified directory's contents in a long
+   The ~ls~ command's ~-l~ option prints a specified directory's contents in a long
    listing format. If no directory is specified then, by default, the contents of
    the current directory are listed.
 
@@ -29,18 +29,19 @@
 
    Example Output:
 
-#+begin_src
-total 1204
-drwxr-xr-x 3 root root 4096 Apr 21 03:44 acpi 
--rw-r--r-- 1 root root 3028 Apr 21 03:38 adduser.conf 
-drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
-...
+#+begin_src bash
+  total 1204
+  drwxr-xr-x 3 root root 4096 Apr 21 03:44 acpi 
+  -rw-r--r-- 1 root root 3028 Apr 21 03:38 adduser.conf 
+  drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
+  ...
 #+end_src
    
-   The output first displays total, which indicates the total size in blocks of
+   The output first displays ~total~, which indicates the total size in blocks of
    all the files in the listed directory. It then displays eight columns of
    information for each file in the listed directory. Below are the details for
    each column in the output:
+
 | Col No. | Example      | Description                 |
 |---------+--------------+-----------------------------|
 |     1.1 | d            | File type (see table below) |
@@ -55,6 +56,7 @@ drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
    *File Type*
 
    The file type can be one of any of the following characters.
+
 | Char | File Type                                      |
 |------+------------------------------------------------|
 | b    | Block special file                             |
@@ -73,37 +75,37 @@ drwxr-xr-x 2 root root 4096 Jun 11 20:42 alternatives
 ** Section 4.2: List the Ten Most Recently Modified Files
 
     The following will list up to ten of the most recently modified files in the
-    current directory, using a long listing format (-l) and sorted by time (-t).
+    current directory, using a long listing format (~-l~) and sorted by time (~-t~).
 
     ~ls -lt | head~
 
 ** Section 4.3: List All Files Including Dotfiles
 
-   A dotfile is a file whose names begin with a .. These are normally hidden by ls
+   A dotfile is a file whose names begin with a ~.~. These are normally hidden by ~ls~
    and not listed unless requested.
 
-   For example the following output of ls:
+   For example the following output of ~ls~:
 #+begin_src bash
-$ ls
-bin pki
+  $ ls
+  bin pki
 #+end_src
 
-   The -a or --all option will list all files, including dotfiles.
+   The ~-a~ or ~--all~ option will list all files, including dotfiles.
 
 #+begin_src bash
-$ ls -a
-.  .ansible      .bash_logout  .bashrc .lesshst .puppetlabs .viminfo
-.. .bash_history .bash_profile bin      pki     .ssh
+  $ ls -a
+  .  .ansible      .bash_logout  .bashrc .lesshst .puppetlabs .viminfo
+  .. .bash_history .bash_profile bin      pki     .ssh
 #+end_src
 
-   The -A or --almost-all option will list all files, including dotfiles, but does
-   not list implied . and ... Note that . is the current directory and .. is the
+   The ~-A~ or ~--almost-all~ option will list all files, including dotfiles, but does
+   not list implied ~.~ and ~..~. Note that ~.~ is the current directory and ~..~ is the
    parent directory.
 
 #+begin_src bash
-$ ls -A
-.ansible      .bash_logout  .bashrc .lesshst .puppetlabs .viminfo
-.bash_history .bash_profile bin     pki      .ssh
+  $ ls -A
+  .ansible      .bash_logout  .bashrc .lesshst .puppetlabs .viminfo
+  .bash_history .bash_profile bin     pki      .ssh
 #+end_src
 
 ** Section 4.4: List Files Without Using `ls`
@@ -112,14 +114,14 @@ $ ls -A
     obtain the filenames:
 
 #+begin_src bash
-# display the files and directories that are in the current directory
-printf "%s\n" *
+  # display the files and directories that are in the current directory
+  printf "%s\n" *
 
-# display only the directories in the current director
-printf "%s\n" */
+  # display only the directories in the current director
+  printf "%s\n" */
 
-# display only (some) image files
-printf "%s\n" *.{gif,jpg,png}
+  # display only (some) image files
+  printf "%s\n" *.{gif,jpg,png}
 #+end_src
 
    To capture a list of files into a variable for processing, it is typically good
@@ -136,7 +138,7 @@ printf "%s\n" *.{gif,jpg,png}
 
 ** Section 4.5: List Files
 
-   The ls command lists the contents of a specified directory, excluding dotfiles.
+   The ~ls~ command lists the contents of a specified directory, excluding dotfiles.
    If no directory is specified then, by default, the contents of the current
    directory are listed.
 
@@ -144,14 +146,14 @@ printf "%s\n" *.{gif,jpg,png}
    they don’t fit on one line.
 
 #+begin_src bash
-$ ls
-apt configs Documents Fonts Music    Programming Templates workspace
-bin Desktop eclipse   git   Pictures Public      Videos
+  $ ls
+  apt configs Documents Fonts Music    Programming Templates workspace
+  bin Desktop eclipse   git   Pictures Public      Videos
 #+end_src
 
 ** Section 4.6: List Files in a Tree-Like Format
 
-   The tree command lists the contents of a specified directory in a tree-like
+   The ~tree~ command lists the contents of a specified directory in a tree-like
    format. If no directory is specified then, by default, the contents of the
    current directory are listed.
 
@@ -166,35 +168,35 @@ bin Desktop eclipse   git   Pictures Public      Videos
      └── image.FPWTJY.png
 #+end_src
 
-   Use the tree command's -L option to limit the display depth, the -d option
-   to only list directories, and -a to list hidden files as well.
+   Use the tree command's ~-L~ option to limit the display depth, the ~-d~ option
+   to only list directories, and ~-a~ to list hidden files as well.
 
    Example Output:
 
 #+begin_src bash
-$ tree -L 1 -d /tmp
-/tmp
-└── evince-20965
+  $ tree -L 1 -d /tmp/
+  /tmp
+  └── evince-20965
 #+end_src
 
 ** Section 4.7: List Files Sorted by Size
 
-   The ls command's -S option sorts the files in descending order of file size.
+   The ~ls~ command's ~-S~ option sorts the files in descending order of file size.
 
 #+begin_src bash
-$ ls -l -S ./Fruits
-total 444
--rw-rw-rw- 1 root root 295303 Jul 28 19:19 apples.jpg
--rw-rw-rw- 1 root root 102283 Jul 28 19:19 kiwis.jpg
--rw-rw-rw- 1 root root 50197 Jul 28 19:19 bananas.jpg
+  $ ls -l -S ./Fruits
+  total 444
+  -rw-rw-rw- 1 root root 295303 Jul 28 19:19 apples.jpg
+  -rw-rw-rw- 1 root root 102283 Jul 28 19:19 kiwis.jpg
+  -rw-rw-rw- 1 root root 50197 Jul 28 19:19 bananas.jpg
 #+end_src
 
-   When used with the -r option the sort order is reversed.
+   When used with the ~-r~ option the sort order is reversed.
 
 #+begin_src bash
-$ ls -l -S -r /Fruits
-total 444
--rw-rw-rw- 1 root root 50197 Jul 28 19:19 bananas.jpg
--rw-rw-rw- 1 root root 102283 Jul 28 19:19 kiwis.jpg
--rw-rw-rw- 1 root root 295303 Jul 28 19:19 apples.jpg
+  $ ls -l -S -r /Fruits
+  total 444
+  -rw-rw-rw- 1 root root 50197 Jul 28 19:19 bananas.jpg
+  -rw-rw-rw- 1 root root 102283 Jul 28 19:19 kiwis.jpg
+  -rw-rw-rw- 1 root root 295303 Jul 28 19:19 apples.jpg
 #+end_src

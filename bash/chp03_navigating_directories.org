@@ -37,7 +37,7 @@
 ** Section 3.3: Change to the home directory
 
    The default directory is the home directory (~$HOME~, typically
-   ~/home/username~), so cd without any directory takes you there 
+   ~/home/username~), so ~cd~ without any directory takes you there 
 
    ~cd~
 
@@ -45,7 +45,7 @@
 
    ~cd $HOME~
 
-   A shortcut for the home directory is ~~~, so that could be used as well.
+   A shortcut for the home directory is =~=, so that could be used as well.
 
    ~cd ~~
    
@@ -65,7 +65,7 @@
 
    This command runs 3 commands:
    
-   1. ~readlink -f "$0"~ determines the path to the current script (~$0~)
+   1. =readlink -f "$0"= determines the path to the current script (~$0~)
    2. ~dirname~ converts the path to script to the path to its directory
    3. ~cd~ changes the current work directory to the directory it receives from ~dirname~
    4. the ~cd~ happens only in the shell and will not persist once the shell exits
