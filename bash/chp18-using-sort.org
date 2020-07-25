@@ -1,0 +1,151 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 18: Using sort
+
+| Option | Meaning                          |
+|--------+----------------------------------|
+| ~-u~   | Make each lines of output unique |
+
+sort is a Unix command to order data in file(s) in a sequence.
+
+** Section 18.1: Sort command output
+   
+   sort command is used to sort a list of lines.
+
+*** Input from a file
+
+#+begin_src bash
+  sort file.txt
+#+end_src
+
+*** Input from a command
+
+    You can sort any output command. In the example a list of file following a pattern.
+
+#+begin_src bash
+  find * -name pattern  | sort
+#+end_src
+
+** Section 18.2: Make output unique
+
+   If each lines of the output need to be unique, add -u option.
+
+   To display owner of files in folder
+
+#+begin_src bash
+  ls -l | awk '{print $3}' | sort -u
+#+end_src
+
+** Section 18.3: Numeric sort
+
+   Suppose we have this file:
+
+#+begin_src bash
+  test>>cat chp04-listing-files.org
+  10.Gryffindor
+  4.Hogwarts
+  2.Harry
+  3.Dumbledore
+  1.The sorting hat
+#+end_src
+
+   Reversing sort order: To reverse the order of the sort use the -r option
+
+   To reverse the sort order of the above file use:
+
+#+begin_src bash
+  sort -rn file
+#+end_src
+
+   This should sort the file as below:
+
+#+begin_src bash
+  10.Gryffindor
+  4.Hogwarts
+  3.Dumbledore
+  2.Harry
+  1.The sorting hat
+#+end_src
+
+** Section 18.4: Sort by keys
+
+   Suppose we have this file:
+
+#+begin_src bash
+  test>>cat Hogwarts
+  Harry      Malfoy     Rowena    Helga
+  Gryffindor Slytherin  Ravenclaw Hufflepuff
+  Hermione   Goyle      Lockhart  Tonks
+  Ron        Snape      Olivander Newt
+  Ron        Goyle      Flitwick  Sprout
+#+end_src
+
+   To sort this file using a column as key use the k option:
+
+#+begin_src bash
+  test>>sort -k 2 Hogwarts
+#+end_src
+
+   This will sort the file with column 2 as the key:
+
+#+begin_src bash
+  Ron        Goyle     Flitwick  Sprout
+  Hermione   Goyle     Lockhart  Tonks
+  Harry      Malfoy    Rowena    Helga
+  Gryffindor Slytherin Ravenclaw Hufflepuff
+  Ron        Snape     Olivander Newt
+#+end_src
+
+   Now if we have to sort the file with a secondary key along with the primary
+   key use:
+
+#+begin_src bash
+  sort -k 2,2 -k 1,1 Hogwarts
+#+end_src
+
+   This will first sort the file with column 2 as primary key, and then sort the
+   file with column 1 as secondary key:
+
+#+begin_src bash
+  Hermione   Goyle     Lockhart  Tonks
+  Ron        Goyle     Flitwick  Sprout
+  Harry      Malfoy    Rowena    Helga
+  Gryffindor Slytherin Ravenclaw Hufflepuff
+  Ron        Snape     Olivander Newt
+#+end_src
+
+   If we need to sort a file with more than 1 key , then for every -k option we
+   need to specify where the sort ends. So - k1,1 means start the sort at the
+   first column and end sort at first column.
+
+*** -t option
+
+    In the previous example the file had the default delimeter - tab. In case of
+    sorting a file that has non-default delimeter we need the -t option to
+    specify the delimeter. Suppose we have the file as below:
+
+#+begin_src bash
+  test>>cat file
+  5.|Gryffindor
+  4.|Hogwarts
+  2.|Harry
+  3.|Dumbledore
+  1.|The sorting hat
+#+end_src
+
+   To sort this file as per the second column, use:
+
+#+begin_src bash
+  test>>sort -t "|" -k 2 file
+#+end_src
+
+   This will sort the file as below:
+
+#+begin_src bash
+  3.|Dumbledore
+  5.|Gryffindor
+  2.|Harry
+  4.|Hogwarts
+  1.|The sorting hat
+#+end_src

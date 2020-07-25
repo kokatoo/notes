@@ -1,0 +1,218 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 20: Here documents and here strings
+
+** Section 20.1: Execute command with here document
+
+#+begin_src bash
+  ssh -p 21 example@example.com <<EOF
+  echo 'printingpwd'
+  echo "\$(pwd)"
+  ls -a
+  find '*.txt'
+  EOF
+#+end_src
+
+   ~$~ is escaped because we do not want it to be expanded by the current shell
+   i.e ~$(pwd)~ is to be executed on the remote shell.
+
+   Another way:
+
+#+begin_src bash
+    ssh -p 21 example@example.com <<'EOF'
+         echo 'printing pwd'
+         echo "$(pwd)"
+         ls -a
+         find '*.txt'
+    EOF
+#+end_src
+
+   Note: The closing EOF should be at the beginning of the line (No whitespaces
+   before). If indentation is required, tabs may be used if you start your
+   heredoc with ~<<-~. See the Indenting here documents and Limit Strings examples
+   for more information.
+
+
+** Section 20.2: Indenting here documents
+
+   You can indent the text inside here documents with tabs, you need to use the
+   ~<<-~ redirection operator instead of ~<<~:
+
+#+begin_src bash
+$ cat <<- EOF
+This is some content indented with tabs `\t`.
+You cannot indent with spaces you __have__ to use tabs.
+Bash will remove empty space before these lines.
+__Note__: Be sure to replace spaces with tabs when copying this example.
+EOF
+
+This is some content indented with tabs _\t_.
+You cannot indent with spaces you __have__ to use tabs.
+Bash will remove empty space before these lines.
+__Note__: Be sure to replace spaces with tabs when copying this example.
+#+end_src
+
+   One practical use case of this (as mentioned in man bash) is in shell
+   scripts, for example:
+
+#+begin_src bash
+  if cond; then
+      cat <<- EOF
+          hello
+          there
+      EOF
+  fi
+#+end_src
+
+   It is customary to indent the lines within code blocks as in this if
+   statement, for better readability. Without the ~<<-~ operator syntax, we
+   would be forced to write the above code like this:
+
+#+begin_src bash
+  if cond; then
+      cat << EOF
+        hello
+        there
+      EOF
+  fi
+#+end_src
+
+   That's very unpleasant to read, and it gets much worse in a more complex
+   realistic script.
+
+** Section 20.3: Create a ﬁle
+
+   A classic use of here documents is to create a ﬁle by typing its content:
+
+#+begin_src bash
+  cat > fruits.txt << EOF
+  apple
+  orange
+  lemon
+  EOF
+#+end_src
+
+   The here-document is the lines between the ~<< EOF~ and ~EOF~. This here
+   document becomes the input of the cat command. The cat command simply outputs
+   its input, and using the output redirection operator > we redirect to a ﬁle
+   ~fruits.txt~.
+
+   As a result, the fruits.txt ﬁle will contain the lines:
+
+#+begin_src bash
+  apple
+  orange
+  lemon
+#+end_src
+
+   The usual rules of output redirection apply: if ~fruits.txt~ did not exist
+   before, it will be created. If it existed before, it will be truncated.
+
+** Section 20.4: Here strings
+
+   You can feed a command using here strings like this:
+
+#+begin_src bash
+$ awk '{print $2}' <<< "hello world - how are you?"
+world
+
+$ awk '{print $1}' <<< "hello how are you
+> she is fine"
+hello
+she
+#+end_src
+
+   You can also feed a while loop with a here string:
+
+#+begin_src bash
+  $ while IFS=" " read -r word1 word2 rest
+  > do
+  > echo "$word1"
+  > done <<< "hello how are you - i am fine"
+  manjaro-hello
+#+end_src
+
+** Section 20.5: Run several commands with sudo
+
+#+begin_src bash
+  sudo -s <<EOF
+       a='var'
+       echo 'Running serveral commands with sudo'
+       mktemp -d
+       echo "\$a"
+  EOF
+#+end_src
+
+   * $a needs to be escaped to prevent it to be expanded by the current shell
+
+   Or
+
+#+begin_src bash
+  sudo -s <<'EOF'
+       a='var'
+       echo 'Running serveral commands with sudo'
+       mktemp -d
+       echo "$a"
+  EOF
+#+end_src
+
+** Section 20.6: Limit Strings
+
+   A heredoc uses the limitstring to determine when to stop consuming input. The
+   terminating limitstring must
+
+   * Be at the start of a line.
+   * Be the only text on the line Note: If you use <<- the limitstring can be
+     preﬁxed with tabs \t
+
+   Correct:
+
+#+begin_src bash
+cat <<limitstring
+line 1
+line 2
+limitstring
+#+end_src
+
+   This will output:
+
+#+begin_src bash
+line 1
+line 2
+#+end_src
+
+   Incorrect use:
+
+#+begin_src bash
+cat <<limitstring
+line 1
+line 2
+limitstring
+#+end_src
+
+   Since limitstring on the last line is not exactly at the start of the line,
+   the shell will continue to wait for further input, until it sees a line that
+   starts with limitstring and doesn't contain anything else. Only then it will
+   stop waiting for input, and proceed to pass the here-document to the cat
+   command.
+
+   Note that when you preﬁx the initial limitstring with a hyphen, any tabs at
+   the start of the line are removed before parsing, so the data and the limit
+   string can be indented with tabs (for ease of reading in shell scripts).
+
+#+begin_src bash
+  cat <<-limitstring
+      line 1    has a tab each before the words line and has
+         line 2 has two leading tabs
+      limitstring
+#+end_src
+
+   will produce
+
+#+begin_src bash
+line 1    has a tab each before the words line and has
+line 2 has two leading tabs with the leading tabs (but not the internal tabs) removed.
+#+end_src
+
+   with the leading tabs (but not the internal tabs) removed.

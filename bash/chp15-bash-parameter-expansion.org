@@ -181,7 +181,7 @@ $ echo "$#"
   # Set positional parameter $1
   set -- 0123456789abcdef
 
-  # Define offset
+  # Define offset (note there is only 1 param)
   $ printf '%s\n' "${1:5}"
   56789abcdef
 
@@ -339,14 +339,14 @@ $ echo "$#"
   #Out: /tmp/example
 #+end_src
 
-   To emulate basename $FILENAME and return the filename of a file path:
+   To emulate basename ~$FILENAME~ and return the filename of a file path:
 
 #+begin_src bash
   echo "${FILENAME##*/}"
   #Out: myfile.txt
 #+end_src
 
-   To emulate basename $FILENAME .txt and return the filename without the .txt.
+   To emulate basename ~$FILENAME~ .txt and return the filename without the .txt.
    extension:
 
 #+begin_src bash
@@ -427,7 +427,7 @@ I am
    Variables don't necessarily have to expand to their values - substrings can
    be extracted during expansion, which can be useful for extracting file
    extensions or parts of paths. Globbing characters keep their usual meanings,
-   so .* refers to a literal dot, followed by any sequence of characters; it's
+   so ~.*~ refers to a literal dot, followed by any sequence of characters; it's
    not a regular expression.
 
 #+begin_src bash
@@ -498,22 +498,26 @@ I am
 
    The semantics for this are similar to that of default value substitution, but
    instead of substituting a default value, it errors out with the provided
-   error message. The forms are ${VARNAME?ERRMSG} and ${VARNAME:?ERRMSG}. The
+   error message. The forms are ~${VARNAME?ERRMSG}~ and ~${VARNAME:?ERRMSG}~. The
    form with : will error our if the variable is unset or empty, whereas the
    form without will only error out if the variable is unset. If an error is
-   thrown, the ERRMSG is output and the exit code is set to 1.
+   thrown, the ~ERRMSG~ is output and the exit code is set to 1.
 
 #+begin_src bash
-  #!/bin/bash
-  FOO=
-  # ./script.sh: line 4: FOO: EMPTY
-  echo "FOO is ${FOO:?EMPTY}"
-  # FOO is
-  echo "FOO is ${FOO?UNSET}"
-  # ./script.sh: line 8: BAR: EMPTY
-  echo "BAR is ${BAR:?EMPTY}"
-  # ./script.sh: line 10: BAR: UNSET
-  echo "BAR is ${BAR?UNSET}"
+   #!/bin/bash
+   FOO=
+
+   # ./script.sh: line 4: FOO: EMPTY
+   echo "FOO is ${FOO:?EMPTY}"
+
+   # FOO is
+   echo "FOO is ${FOO?UNSET}"
+
+   # ./script.sh: line 8: BAR: EMPTY
+   echo "BAR is ${BAR:?EMPTY}"
+
+   # ./script.sh: line 10: BAR: UNSET
+   echo "BAR is ${BAR?UNSET}"
 #+end_src
 
    The run the full example above each of the erroring echo statements needs to be commented out to proceed.

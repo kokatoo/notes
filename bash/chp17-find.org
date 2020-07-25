@@ -3,10 +3,10 @@
 
 * Chapter 17: Find
 
-  Find is a command to recursively search a directory for files(or directories)
+  Find is a command to recursively search a directory for files (or directories)
   that match a criteria, and then perform some action on the selected files.
 
-  find search_path selection_criteria action
+  ~find search_path selection_criteria action~
 
 ** Section 17.1: Searching for a file by name or extension
 
@@ -180,7 +180,7 @@
   find . -mtime +2
 #+end_src
 
-   Use -atime and -ctime for access time and status change time respectively.
+   Use ~-atime~ and ~-ctime~ for access time and status change time respectively.
 
    General format:
 
@@ -208,8 +208,8 @@
    General format:
 
    ~-newerXY reference~: Compares the timestamp of the current file with
-   reference. XY could have one of the following values: at (access time), mt
-   (modification time), ct (change time) and more. reference is the name of a file
+   reference. XY could have one of the following values: ~at~ (access time), ~mt~
+   (modification time), ~ct~ (change time) and more. reference is the name of a file
    whe want to compare the timestamp specified (access, modification, change) or a
    string describing an absolute time.
 
