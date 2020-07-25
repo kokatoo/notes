@@ -129,7 +129,7 @@
   echo \!\"\#\$\&\'\(\)\*\;\<\=\>\?\ \ \@\[\\\]\^\`\{\|\}\~
 #+end_src
 
-   All text between single quotes (forward quotes ~'~, also known as apostrophe)
+   All text between single quotes (forward quotes ~‘~, also known as apostrophe)
    is printed literally. Even backslash stands for itself, and it's impossible
    to include a single quote; instead, you can stop the literal string, include
    a literal single quote with a backslash, and start the literal string again.
@@ -164,5 +164,5 @@ echo "!\"#\$&'()*;<=>? @[\]^\`{|}~"
 #+end_src
 
    Interactively, beware that ~!~ triggers history expansion inside double quotes:
-   ~"!oops"~ looks for an older command containing oops; ~“\!oops”~ doesn't do
+   ~“!oops”~ looks for an older command containing oops; ~“\!oops”~ doesn't do
    history expansion but keeps the backslash. This does not happen in scripts.
