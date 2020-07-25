@@ -9,24 +9,25 @@
 
 #+begin_src bash
   calculation='2 * 3'
-  echo "$calculation" # prints 2 * 3
-  echo $calculation # prints 2, the list of files in the current directory, and 3
+  echo "$calculation"      # prints 2 * 3
+  echo $calculation        # prints 2, the list of files in the current directory, and 3
   echo "$(($calculation))" # prints 6
 #+end_src
 
-   Outside of double quotes, $var takes the value of var, splits it into
+   Outside of double quotes, ~$var~ takes the value of ~var~, splits it into
    whitespace-delimited parts, and interprets each part as a glob (wildcard)
-   pattern. Unless you want this behavior, always put $var inside double quotes:
-   ~“$var”~.
+   pattern. Unless you want this behavior, always put ~$var~ inside double
+   quotes: ~“$var”~.
 
    The same applies to command substitutions: ~“$(mycommand)”~ is the output of
    mycommand, ~$(mycommand)~ is the result of split+glob on the output.
 
 #+begin_src bash
-  echo "$var" # good
+  echo "$var"         # good
   echo "$(mycommand)" # good
-  another=$var # also works, assignment is implicitly double-quoted
-  make -D THING=$var # BAD! This is not a bash assignment.
+
+  another=$var         # also works, assignment is implicitly double-quoted
+  make -D THING=$var   # BAD! This is not a bash assignment.
   make -D THING="$var" # good make -D "THING=$var" # also good
 #+end_src
 
@@ -42,20 +43,20 @@
    Variable arguments to a command substitution should be double-quoted inside
    the expansions as well:
 
-#+begin_src bash
   echo "$(mycommand "$arg1" "$arg2")"
+#+begin_src bash
 #+end_src
 
-** Section 21.2: Difference between double quote and single quote
+** Section 21.2: Difference between double quote and single quote
 
-| Double quote                                                      | Single quote                                    |
-|-------------------------------------------------------------------+-------------------------------------------------|
-| Allows variable expansion                                         | Prevents variable expansion                     |
-| Allows history expansion if enabled                               | Prevents history expansion                      |
-| Allows command substitution                                       | Prevents command substitution                   |
-| * and @ can have special meaning                                  | * and @ are always literals                     |
-| Can contain both single quote or double quote                     | Single quote is not allowed inside single quote |
-| $, `, ", \ can be escaped with \ to prevent their special meaning | All of them are literals                        |
+| Double quote                                                        | Single quote                                    |
+|---------------------------------------------------------------------+-------------------------------------------------|
+| Allows variable expansion                                           | Prevents variable expansion                     |
+| Allows history expansion if enabled (~!~ mark)                      | Prevents history expansion                      |
+| Allows command substitution                                         | Prevents command substitution                   |
+| * and @ can have special meaning                                    | * and @ are always literals                     |
+| Can contain both single quote or double quote                       | Single quote is not allowed inside single quote |
+| ~$, `, ", \~ can be escaped with \ to prevent their special meaning | All of them are literals                        |
 
 *** Properties that are common to both:
     * Prevents globbing
@@ -65,12 +66,16 @@
 
 #+begin_src bash
   $ echo "!cat"
-  echo "cat file"
+
+  $ echo "cat file"
   cat file
+
   $ echo '!cat'
   !cat
-  echo "\"'\""
+
+  $ echo "\"'\""
   "'"
+
   $ a='var'
   $ echo '$a'
   $a
@@ -124,39 +129,40 @@
   echo \!\"\#\$\&\'\(\)\*\;\<\=\>\?\ \ \@\[\\\]\^\`\{\|\}\~
 #+end_src
 
-   All text between single quotes (forward quotes ', also known as apostrophe)
+   All text between single quotes (forward quotes ~'~, also known as apostrophe)
    is printed literally. Even backslash stands for itself, and it's impossible
    to include a single quote; instead, you can stop the literal string, include
    a literal single quote with a backslash, and start the literal string again.
-   Thus the 4-character sequence '\'' eﬀectively allow to include a single quote
+   Thus the 4-character sequence ~'\''~ eﬀectively allow to include a single quote
    in a literal string.
 
 #+begin_src bash
   echo '!"#$&'\''()*;<=>? @[\]^`{|}~'
-  # ^^^^
+  #          ^^^^
 #+end_src
 
-   Dollar-single-quote starts a string literal $'…' like many other programming
+   Dollar-single-quote starts a string literal ~$'…'` like many other programming
    languages, where backslash quotes the next character.
 
 #+begin_src bash
 echo $'!"#$&\'()*;<=>? @[\\]^`{|}~'
-# ^^ ^^
+#           ^^           ^^
 #+end_src
 
-   Double quotes " delimit semi-literal strings where only the characters " \ $
-   and ` retain their special meaning. These characters need a backslash before
+   Double quotes ~"~ delimit semi-literal strings where only the characters ~" \ $`
+   and ~`` retain their special meaning. These characters need a backslash before
    them (note that if backslash is followed by some other character, the
    backslash remains). Double quotes are mostly useful when including a variable
    or a command substitution.
 
 #+begin_src bash
+# Call below in script and not interactively
 echo "!\"#\$&'()*;<=>? @[\\]^\`{|}~"
-# ^^ ^^ ^^
+#      ^^                ^^  ^^
 echo "!\"#\$&'()*;<=>? @[\]^\`{|}~"
-# ^^ ^ ^^ \[ prints \[
+#      ^^                ^  ^^     \[ prints \[
 #+end_src
 
-   Interactively, beware that ! triggers history expansion inside double quotes:
-   "!oops" looks for an older command containing oops; "\!oops" doesn't do
+   Interactively, beware that ~!~ triggers history expansion inside double quotes:
+   ~"!oops"~ looks for an older command containing oops; ~"\!oops"` doesn't do
    history expansion but keeps the backslash. This does not happen in scripts.

@@ -7,11 +7,11 @@
 |--------+----------------------------------|
 | ~-u~   | Make each lines of output unique |
 
-sort is a Unix command to order data in file(s) in a sequence.
+   ~sort~ is a Unix command to order data in file(s) in a sequence.
 
 ** Section 18.1: Sort command output
    
-   sort command is used to sort a list of lines.
+   ~sort~ command is used to sort a list of lines.
 
 *** Input from a file
 
@@ -29,7 +29,7 @@ sort is a Unix command to order data in file(s) in a sequence.
 
 ** Section 18.2: Make output unique
 
-   If each lines of the output need to be unique, add -u option.
+   If each lines of the output need to be unique, add ~-u~ option.
 
    To display owner of files in folder
 
@@ -48,6 +48,22 @@ sort is a Unix command to order data in file(s) in a sequence.
   2.Harry
   3.Dumbledore
   1.The sorting hat
+#+end_src
+
+   To sort this file numerically, use sort with ~-n~ option:
+
+#+begin_src bash
+  test>>sort -n file
+#+end_src
+
+   This should sort the ﬁle as below:
+
+#+begin_src bash
+  1.The sorting hat
+  2.Harry
+  3.Dumbledore
+  4.Hogwarts
+  10.Gryffindor  
 #+end_src
 
    Reversing sort order: To reverse the order of the sort use the -r option
@@ -74,11 +90,11 @@ sort is a Unix command to order data in file(s) in a sequence.
 
 #+begin_src bash
   test>>cat Hogwarts
-  Harry      Malfoy     Rowena    Helga
-  Gryffindor Slytherin  Ravenclaw Hufflepuff
-  Hermione   Goyle      Lockhart  Tonks
-  Ron        Snape      Olivander Newt
-  Ron        Goyle      Flitwick  Sprout
+  Harry      Malfoy    Rowena    Helga
+  Gryffindor Slytherin Ravenclaw Hufflepuff
+  Hermione   Goyle     Lockhart  Tonks
+  Ron        Snape     Olivander Newt
+  Ron        Goyle     Flitwick  Sprout
 #+end_src
 
    To sort this file using a column as key use the k option:
@@ -115,15 +131,15 @@ sort is a Unix command to order data in file(s) in a sequence.
   Ron        Snape     Olivander Newt
 #+end_src
 
-   If we need to sort a file with more than 1 key , then for every -k option we
-   need to specify where the sort ends. So - k1,1 means start the sort at the
+   If we need to sort a file with more than 1 key , then for every ~-k` option we
+   need to specify where the sort ends. So ~-k1,1~ means start the sort at the
    first column and end sort at first column.
 
 *** -t option
 
-    In the previous example the file had the default delimeter - tab. In case of
-    sorting a file that has non-default delimeter we need the -t option to
-    specify the delimeter. Suppose we have the file as below:
+    In the previous example the file had the default delimiter - tab. In case of
+    sorting a file that has non-default delimeter we need the ~-t~ option to
+    specify the delimiter. Suppose we have the file as below:
 
 #+begin_src bash
   test>>cat file

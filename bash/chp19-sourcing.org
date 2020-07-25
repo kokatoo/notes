@@ -16,18 +16,19 @@
 
   export A="hello_world"
   alias sayHi="echo Hi"
+
   sayHello() { 
       echo Hello
   }
 #+end_src
 
-   From your session, source the ﬁle
+   From your session, source the file
 
 #+begin_src bash
   $ source sourceme.sh
 #+end_src
 
-   From hencefourth, you have all the resources of the sourced ﬁle available
+   From hencefourth, you have all the resources of the sourced file available
 
 #+begin_src bash
   $ echo $A
@@ -67,3 +68,7 @@
 #+end_src
 
    Activate the environment
+
+#+begin_src bash
+  source my_env/bin/activate
+#+end_src

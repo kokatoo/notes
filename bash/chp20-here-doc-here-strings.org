@@ -6,7 +6,7 @@
 ** Section 20.1: Execute command with here document
 
 #+begin_src bash
-  ssh -p 21 example@example.com <<EOF
+  ssh -p 21 example@example.com << EOF
   echo 'printingpwd'
   echo "\$(pwd)"
   ls -a
@@ -20,19 +20,18 @@
    Another way:
 
 #+begin_src bash
-    ssh -p 21 example@example.com <<'EOF'
-         echo 'printing pwd'
-         echo "$(pwd)"
-         ls -a
-         find '*.txt'
-    EOF
+  ssh -p 21 example@example.com << 'EOF'
+  echo 'printing pwd'
+  echo "$(pwd)"
+  ls -a
+  find '*.txt'
+  EOF
 #+end_src
 
-   Note: The closing EOF should be at the beginning of the line (No whitespaces
+   *Note:* The closing EOF should be at the beginning of the line (No whitespaces
    before). If indentation is required, tabs may be used if you start your
    heredoc with ~<<-~. See the Indenting here documents and Limit Strings examples
    for more information.
-
 
 ** Section 20.2: Indenting here documents
 
@@ -40,17 +39,17 @@
    ~<<-~ redirection operator instead of ~<<~:
 
 #+begin_src bash
-$ cat <<- EOF
-This is some content indented with tabs `\t`.
-You cannot indent with spaces you __have__ to use tabs.
-Bash will remove empty space before these lines.
-__Note__: Be sure to replace spaces with tabs when copying this example.
-EOF
+  $ cat <<- EOF
+    This is some content indented with tabs `\t`.
+    You cannot indent with spaces you __have__ to use tabs.
+    Bash will remove empty space before these lines.
+    __Note__: Be sure to replace spaces with tabs when copying this example.
+  EOF
 
-This is some content indented with tabs _\t_.
-You cannot indent with spaces you __have__ to use tabs.
-Bash will remove empty space before these lines.
-__Note__: Be sure to replace spaces with tabs when copying this example.
+  This is some content indented with tabs _\t_.
+  You cannot indent with spaces you __have__ to use tabs.
+  Bash will remove empty space before these lines.
+  __Note__: Be sure to replace spaces with tabs when copying this example.
 #+end_src
 
    One practical use case of this (as mentioned in man bash) is in shell
@@ -58,7 +57,7 @@ __Note__: Be sure to replace spaces with tabs when copying this example.
 
 #+begin_src bash
   if cond; then
-      cat <<- EOF
+      cat <<-EOF
           hello
           there
       EOF
@@ -72,9 +71,9 @@ __Note__: Be sure to replace spaces with tabs when copying this example.
 #+begin_src bash
   if cond; then
       cat << EOF
-        hello
-        there
-      EOF
+  hello
+  there
+  EOF
   fi
 #+end_src
 
@@ -95,7 +94,7 @@ __Note__: Be sure to replace spaces with tabs when copying this example.
 
    The here-document is the lines between the ~<< EOF~ and ~EOF~. This here
    document becomes the input of the cat command. The cat command simply outputs
-   its input, and using the output redirection operator > we redirect to a ﬁle
+   its input, and using the output redirection operator ~>~ we redirect to a ﬁle
    ~fruits.txt~.
 
    As a result, the fruits.txt ﬁle will contain the lines:
@@ -137,23 +136,23 @@ she
 
 #+begin_src bash
   sudo -s <<EOF
-       a='var'
-       echo 'Running serveral commands with sudo'
-       mktemp -d
-       echo "\$a"
+  a='var'
+  echo 'Running serveral commands with sudo'
+  mktemp -d
+  echo "\$a"
   EOF
 #+end_src
 
-   * $a needs to be escaped to prevent it to be expanded by the current shell
+   * ~$a~ needs to be escaped to prevent it to be expanded by the current shell
 
    Or
 
 #+begin_src bash
   sudo -s <<'EOF'
-       a='var'
-       echo 'Running serveral commands with sudo'
-       mktemp -d
-       echo "$a"
+  a='var'
+  echo 'Running several commands with sudo'
+  mktemp -d
+  echo "$a"
   EOF
 #+end_src
 
@@ -169,10 +168,10 @@ she
    Correct:
 
 #+begin_src bash
-cat <<limitstring
-line 1
-line 2
-limitstring
+  cat <<limitstring
+  line 1
+  line 2
+  limitstring
 #+end_src
 
    This will output:
@@ -185,10 +184,10 @@ line 2
    Incorrect use:
 
 #+begin_src bash
-cat <<limitstring
-line 1
-line 2
-limitstring
+  cat <<limitstring
+  line 1
+  line 2
+       limitstring
 #+end_src
 
    Since limitstring on the last line is not exactly at the start of the line,
@@ -204,7 +203,7 @@ limitstring
 #+begin_src bash
   cat <<-limitstring
       line 1    has a tab each before the words line and has
-         line 2 has two leading tabs
+                line 2 has two leading tabs
       limitstring
 #+end_src
 
