@@ -18,11 +18,11 @@
 #+begin_src bash
   $ v="hello"
 
-  # Just the first character
+  # Just the first character in upcase
   $ printf '%s\n' "${v^}"
   Hello
 
-  # All characters
+  # All characters in upcase
   $ printf '%s\n' "${v^^}"
   HELLO
 
@@ -38,11 +38,11 @@
 #+begin_src bash
   $ v="BYE"
 
-  # Just the first character
+  # Just the first character in lcase
   $ printf '%s\n' "${v,}"
   bYE
 
-  # All characters
+  # All characters in lcase
   $ printf '%s\n' "${v,,}"
   bye
 
@@ -92,7 +92,7 @@ $ set -- 1 2 3 4
 $ echo "${#@}"
 4
 
-# But more commonly (and portably to other shells), one would use
+# But more commonly (and portably to other shells), one would use below for num of params
 $ echo "$#"
 4
 #+end_src
@@ -174,8 +174,8 @@ $ echo "$#"
   a
 #+end_src
 
-   The same expansions apply if the parameter is a positional parameter or the
-   element of a subscripted array:
+   The same expansions apply if the parameter is a *positional parameter* or the
+   *element of a subscripted array*:
 
 #+begin_src bash
   # Set positional parameter $1
@@ -193,7 +193,7 @@ $ echo "$#"
   789
 #+end_src
 
-   Analogous expansions apply to positional parameters, where oﬀsets are
+   Analogous expansions apply to *positional parameters*, where oﬀsets are
    one-based:
 
 #+begin_src bash
