@@ -133,7 +133,7 @@
    is printed literally. Even backslash stands for itself, and it's impossible
    to include a single quote; instead, you can stop the literal string, include
    a literal single quote with a backslash, and start the literal string again.
-   Thus the 4-character sequence ~'\''~ eﬀectively allow to include a single quote
+   Thus the 4-character sequence ~‘\'’~ eﬀectively allow to include a single quote
    in a literal string.
 
 #+begin_src bash
@@ -141,7 +141,7 @@
   #          ^^^^
 #+end_src
 
-   Dollar-single-quote starts a string literal ~$'…'~ like many other programming
+   Dollar-single-quote starts a string literal ~$‘…’~ like many other programming
    languages, where backslash quotes the next character.
 
 #+begin_src bash
@@ -149,7 +149,7 @@ echo $'!"#$&\'()*;<=>? @[\\]^`{|}~'
 #           ^^           ^^
 #+end_src
 
-   Double quotes ~"~ delimit semi-literal strings where only the characters ~" \ $~
+   Double quotes ~“~ delimit semi-literal strings where only the characters ~“ \ $~
    and ~`~ retain their special meaning. These characters need a backslash before
    them (note that if backslash is followed by some other character, the
    backslash remains). Double quotes are mostly useful when including a variable
@@ -164,5 +164,5 @@ echo "!\"#\$&'()*;<=>? @[\]^\`{|}~"
 #+end_src
 
    Interactively, beware that ~!~ triggers history expansion inside double quotes:
-   ~"!oops"~ looks for an older command containing oops; ~"\!oops"~ doesn't do
+   ~"!oops"~ looks for an older command containing oops; ~“\!oops”~ doesn't do
    history expansion but keeps the backslash. This does not happen in scripts.
