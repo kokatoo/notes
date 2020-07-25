@@ -1,9 +1,9 @@
-!#+STARTUP: showeverything
+#+STARTUP: showeverything
 #+title: Bash Notes for Professionals
 
 * Chapter 14: Functions
 
-**  Section 14.1: Functions with arguments
+** Section 14.1: Functions with arguments
 
    In ~helloJohn.sh~:
 
@@ -23,12 +23,13 @@
 #+end_src
 
    1. If you don't modify the argument in any way, there is no need to copy it
-      to a local variable - simply ~echo "Hello, $1"~.
+      to a local variable - simply ~echo “Hello, $1”~.
+
    2. You can use ~$1~, ~$2~, ~$3~ and so on to access the arguments inside the
       function.
       
       Note: for arguments more than 9 ~$10~ won't work (bash will read it as
-      ~$10~), you need to do ~${10}~, ~${11}~ and so on.
+      ~$1~ ~0~), you need to do ~${10}~, ~${11}~ and so on.
 
    3. ~$@~ refers to all arguments of a function:
 
@@ -38,7 +39,7 @@
      echo "$@"
   }
 
-foo 1 2 3 # output => 1 2 3
+  foo 1 2 3 # output => 1 2 3
 #+end_src
 
       Note: You should practically always use double quotes around ~"$@"~, like here.
@@ -61,7 +62,7 @@ foo 1 2 3 # output => 1 2 3
       echo "$val"
   }
 
-  foo # output => 25
+  foo    # output => 25
   foo 30 # output => 30
 #+end_src
 
@@ -117,8 +118,8 @@ foo 1 2 3 # output => 1 2 3
 
 ** Section 14.3: Handling ﬂags and optional parameters
 
-   The getopts builtin can be used inside functions to write functions that
-   accommodate flags and optional parameters. This presents no special diffculty
+   The ~getopts~ builtin can be used inside functions to write functions that
+   accommodate flags and optional parameters. This presents no special difficulty
    but one has to handle appropriately the values touched by ~getopts~. As an
    example, we define a ~failwith~ function that writes a message on stderr and
    exits with code 1 or an arbitrary code supplied as parameter to the ~-x~
@@ -263,7 +264,7 @@ foo 1 2 3 # output => 1 2 3
 
    This fact is very useful in conditional statements.
 
-   For example, if host graucho is up, then connect to it with ssh:
+   For example, if host graucho is up, then connect to it with ~ssh~:
 
 #+begin_src bash
   if is_alive graucho; then
