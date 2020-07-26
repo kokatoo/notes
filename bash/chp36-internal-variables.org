@@ -1,7 +1,8 @@
 #+STARTUP: showeverything
 #+title: Bash Notes for Professionals
 
-* Chapter 36: Internal variables
+* Chapter 36: Internal
+
 
   An overview of Bash's internal variables, where, how, and when to use them.
 
@@ -11,26 +12,26 @@
 |------------------+----------------------------------------------------------------------------------------------------------------|
 |                  | Function/script positional parameters (arguments). Expand as follows:                                          |
 | ~$*~ and ~$@~    | ~$*~ and ~$@~ are the same as ~$1~ ~$2~ ... (note that it generally makes no sense to leave those unquoted)    |
-|                  | ~"$*"~ is the same as ~"$1 $2 ..."~ 1                                                                          |
-|                  | ~"$@"~ is the same as ~"$1"~ ~"$2"~ ...                                                                        |
-|                  | 1. Arguments are separated by the ﬁrst character of $IFS, which does not have to be a space.                   |
+|                  | ~“$*”~ is the same as ~“$1 $2 ...”~ 1                                                                          |
+|                  | ~“$@”~ is the same as ~“$1”~ ~“$2”~ ...                                                                        |
+|                  | 1. Arguments are separated by the first character of ~$IFS~, which does not have to be a space.                 |
 | ~$#~             | Number of positional parameters passed to the script or function                                               |
-| ~$!~             | Process ID of the last (righ-most for pipelines) command in the most recently job put into the                 |
+| ~$!~             | Process ID of the last (right-most for pipelines) command in the most recently job put into the                |
 |                  | background (note that it's not necessarily the same as the job's process group ID when job control is enabled) |
 | ~$$~             | ID of the process that executed bash                                                                           |
 | ~$?~             | Exit status of the last command                                                                                |
 | ~$n~             | Positional parameters, where n=1, 2, 3, ..., 9                                                                 |
 | ~${n}~           | Positional parameters (same as above), but n can be > 9                                                        |
-| ~$0~             | In scripts, path with which the script was invoked; with ~bash -c 'printf "%s\n" "$0"'~ name                   |
-|                  | args': name (the ﬁrst argument after the inline script), otherwise, the argv[0] that bash received.            |
-| ~$_~             | Last ﬁeld of the last command                                                                                  |
-| ~$IFS~           | Internal ﬁeld separator                                                                                        |
+| ~$0~             | In scripts, path with which the script was invoked; with ~bash -c ‘printf "%s\n" "$0"’~ name                   |
+|                  | args': name (the first argument after the inline script), otherwise, the argv[0] that bash received.            |
+| ~$_~             | Last field of the last command                                                                                  |
+| ~$IFS~           | Internal field separator                                                                                        |
 | ~$PATH~          | PATH environment variable used to look-up executables                                                          |
 | ~$OLDPWD~        | Previous working directory                                                                                     |
 | ~$PWD~           | Present working directory                                                                                      |
 | ~$FUNCNAME~      | Array of function names in the execution call stack                                                            |
 | ~$BASH_SOURCE~   | Array containing source paths for elements in FUNCNAME array. Can be used to get the script path.              |
-| ~$BASH_ALIASES~  | Associative array containing all currently deﬁned aliases                                                      |
+| ~$BASH_ALIASES~  | Associative array containing all currently defined aliases                                                      |
 | ~$BASH_REMATCH~  | Array of matches from the last regex match                                                                     |
 | ~$BASH_VERSION~  | Bash version string                                                                                            |
 | ~$BASH_VERSINFO~ | An array of 6 elements with Bash version information                                                           |
@@ -58,15 +59,15 @@
    Consider we are in a script that we invoked with two arguments, like so:
 
 #+begin_src bash
-  $ ./script.sh "␣1␣2␣" "␣3␣␣4␣"
+  $ ./script.sh " 1 2 " " 3   4 "
 #+end_src
 
-   The variables ~$*~ or ~$@~ will expand into ~$1␣$2~, which in turn expand
-   into ~1␣2␣3␣4~ so the loop below:
+   The variables ~$*~ or ~$@~ will expand into ~$1 $2~, which in turn expand
+   into ~1 2 3 4~ so the loop below:
 
 #+begin_src bash
   for var in $*; do # same for var in $@; do
-      echo \\<"$var"\\>
+      echo \<"$var"\>
   done
 #+end_src
 
@@ -79,12 +80,12 @@
 <4>
 #+end_src
 
-   While ~$*~ will be expanded into ~$1␣$2~ which will in turn expand into
+   While ~$*~ will be expanded into ~$1 $2~ which will in turn expand into
    ~␣1␣2␣␣␣3␣␣4␣~ and so the loop:
 
 #+begin_src bash
   for var in "$*"; do
-      echo \\<"$var"\\>
+      echo \<"$var"\>
   done
 #+end_src
 
@@ -94,12 +95,12 @@
   <␣1␣2␣␣␣3␣␣4␣>
 #+end_src
 
-   And ﬁnally ~$@~ will expand into ~$1~ ~$2~, which will expand into ~␣1␣2␣~
+   And finally ~$@~ will expand into ~$1~ ~$2~, which will expand into ~␣1␣2␣~
    ~␣3␣␣4␣~ and so the loop
 
 #+begin_src bash
   for var in "$@"; do
-      echo \\<"$var"\\>
+      echo \<"$var"\>
   done
 #+end_src
 
@@ -130,7 +131,6 @@
   ~> $ ./testscript.sh firstarg secondarg thirdarg
   3
 #+end_src
-
 
 ** Section 36.4: $HISTSIZE
 
@@ -178,6 +178,7 @@
 #+begin_src bash
   IFS=","
   INPUTSTR="a,b,c,d"
+
   for field in ${INPUTSTR}; do
       echo $field
   done
@@ -248,10 +249,12 @@
 #+begin_src bash
   # "set -- " sets positional parameters
   set -- 1 2 3 4 5 6 7 8 nine ten eleven twelve
+ 
   # the following line will output 10 not 1 as the value of $1 the digit 1
   # will be concatenated with the following 0
   echo $10 # outputs 1
   echo ${10} # outputs ten
+  
   # to show this clearly:
   set -- arg{1..12}
   echo $10
@@ -319,7 +322,7 @@
 ** Section 36.15: $RANDOM
 
    Each time this parameter is referenced, a random integer between 0 and 32767
-   is generated. Assigning a value tothis variable seeds the random number
+   is generated. Assigning a value to this variable seeds the random number
    generator ([[https://www.gnu.org/software/bash/manual/bashref.html#Bash-Variables][source]]).
 
 #+begin_src bash
@@ -342,7 +345,7 @@
 
 ** Section 36.17: $BASH_ENV
 
-   An environment variable pointing to the Bash startup ﬁle which is read when a
+   An environment variable pointing to the Bash startup file which is read when a
    script is invoked.
 
 ** Section 36.18: $BASH_VERSINFO
@@ -392,7 +395,7 @@
 
 ** Section 36.22: $HOSTTYPE
 
-   This variable identiﬁes the hardware, it can be useful in determining which
+   This variable identifies the hardware, it can be useful in determining which
    binaries to execute:
 
 #+begin_src bash
@@ -421,13 +424,13 @@
 
 ** Section 36.25: $PATH
 
-   The search path for ﬁnding binaries for commands. Common examples include
-   /usr/bin and /usr/local/bin.
+   The search path for finding binaries for commands. Common examples include
+   ~/usr/bin~ and ~/usr/local/bin~.
 
    When a user or script attempts to run a command, the paths in $PATH are
-   searched in order to ﬁnd a matching ﬁle with execute permission.
+   searched in order to find a matching file with execute permission.
 
-   The directories in $PATH are separated by a : character.
+   The directories in $PATH are separated by a ~:~ character.
 
 #+begin_src bash
   ~> $ echo "$PATH"
@@ -435,8 +438,8 @@
 #+end_src
 
    So, for example, given the above $PATH, if you type lss at the prompt, the
-   shell will look for /usr/kerberos/bin/lss, then /usr/local/bin/lss, then
-   /bin/lss, then /usr/bin/lss, in this order, before concluding that there is
+   shell will look for ~/usr/kerberos/bin/lss~, then ~/usr/local/bin/lss~, then
+   ~/bin/lss~, then ~/usr/bin/lss~, in this order, before concluding that there is
    no such command.
 
 ** Section 36.26: $PPID
@@ -473,7 +476,7 @@
 
 ** Section 36.29: $_
 
-   Outputs the last ﬁeld from the last command executed, useful to get something
+   Outputs the last field from the last command executed, useful to get something
    to pass onwards to another command:
 
 #+begin_src bash
@@ -528,7 +531,7 @@
 
 ** Section 36.32: $SHLVL
 
-   When the bash command is executed a new shell is opened. The $SHLVL
+   When the bash command is executed a new shell is opened. The ~$SHLVL~
    environment variable holds the number of shell levels the current shell is
    running on top of.
 
@@ -542,13 +545,13 @@
    Using Fedora 25, the output is "3". This indicates, that when opening a new
    shell, an initial bash command executes and performs a task. The initial bash
    command executes a child process (another bash command) which, in turn,
-   executes a ﬁnal bash command to open the new shell. When the new shell opens,
+   executes a final bash command to open the new shell. When the new shell opens,
    it is running as a child process of 2 other shell processes, hence the output
    of "3".
 
    In the following example (given the user is running Fedora 25), the output of
-   $SHLVL in a new shell will be set to "3". As each bash command is executed,
-   $SHLVL increments by one.
+   ~$SHLVL~ in a new shell will be set to "3". As each bash command is executed,
+   ~$SHLVL~ increments by one.
 
 #+begin_src bash
   ~> $ echo $SHLVL
@@ -561,7 +564,7 @@
   5
 #+end_src
 
-   One can see that executing the 'bash' command (or executing a bash script)
+   One can see that executing the ~bash~ command (or executing a bash script)
    opens a new shell. In comparison, sourcing a script runs the code in the
    current shell.
 
