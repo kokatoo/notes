@@ -3,20 +3,20 @@
 
 * Chapter 39: Read a file (data stream, variable) line-by-line (and/or field-by- field)?
 
-| Parameter | Details                                                                             |
-|-----------+-------------------------------------------------------------------------------------|
-| IFS       | Internal field separator                                                             |
-| file       | A file name/path                                                                     |
-| -r        | Prevents backslash interpretation when used with read                               |
-| -t        | Removes a trailing newline from each line read by readarray                         |
-| -d DELIM  | Continue until the first character of DELIM is read (with read), rather than newline |
+| Parameter  | Details                                                                                |
+|------------+----------------------------------------------------------------------------------------|
+| ~IFS~      | Internal field separator                                                               |
+| ~file~     | A file name/path                                                                       |
+| ~-r~       | Prevents backslash interpretation when used with read                                  |
+| ~-t~       | Removes a trailing newline from each line read by readarray                            |
+| ~-d DELIM~ | Continue until the first character of ~DELIM~ is read (with read), rather than newline |
 
 ** Section 39.1: Looping through a file line by line
 
 #+begin_src bash
   while IFS= read -r line; do
       echo "$line"
-  done <file
+  done < file
 #+end_src
 
    If file may not include a newline at the end, then:
@@ -24,7 +24,7 @@
 #+begin_src bash
   while IFS= read -r line  || [ -n "$line" ]; do
     echo "$line"
-  done <file
+  done < file
 #+end_src
 
 ** Section 39.2: Looping through the output of a command field by field
@@ -34,13 +34,13 @@
 #+begin_src bash
     while IFS= read -d : -r field || [ -n "$field" ]; do
       echo "**$field**"
-    done < <(ping google.com)
+    done < <(ping localhost)
 #+end_src
 
    Or with a pipe:
 
 #+begin_src bash
-  ping google.com | while IFS= read -d : -r field || [ -n "$field" ]; do
+  ping localhost | while IFS= read -d : -r field || [ -n "$field" ]; do
     echo "**$field**"
   done
 #+end_src
@@ -48,7 +48,7 @@
 ** Section 39.3: Read lines of a file into an array
 
 #+begin_src bash
-  readarray -t arr <file
+  readarray -t arr < file
 #+end_src
 
    Or with a loop:
@@ -57,7 +57,7 @@
   arr=()
   while IFS= read -r line; do
       arr+=("$line")
-  done <file
+  done < file
 #+end_src
 
 ** Section 39.4: Read lines of a string into an array
@@ -122,7 +122,7 @@
 
 #+begin_src bash
   while IFS= read -d : -r field || [ -n "$field" ]; do
-      echo "$field"
+      echo "-*$field*-"
   done <file
 #+end_src
 
@@ -139,13 +139,15 @@
    The output is:
 
 #+begin_src bash
-**first **
-**se
-con
-d**
-**
-    Thi rd** ** Fourth **
-
+  -*first *-
+  -* se
+  con
+  d*-
+  -*
+     Thi rd*-
+  -*
+     Fourth
+  ,*-
 #+end_src
 
 ** Section 39.8: Read a string field by field
@@ -182,7 +184,7 @@ d**
 
   while IFS= read -d : -r field || [ -n "$field" ]; do
       arr+=("$field")
-  done <file
+  done < file
 #+end_src
 
 ** Section 39.10: Read fields of a string into an array
@@ -219,7 +221,7 @@ d**
 #+end_src
 
    In unix password file, user information is stored line by line, each line
-   consisting of information for a user separated by colon (:) character. In
+   consisting of information for a user separated by colon (~:~) character. In
    this example while reading the file line by line, the line is also split into
    fields using colon character as delimiter which is indicated by the value
    given for IFS.
@@ -251,6 +253,7 @@ d**
 #+begin_src bash
   #!/bin/bash
   FILENAME="/etc/passwd"
+
   while IFS= read -r line; do
       echo "$line"
   done < $FILENAME

@@ -12,16 +12,16 @@
   [3]+ Running ./Fritzing &
 #+end_src
 
-   First field shows the job ids. The + and - sign that follows the job id for
+   First field shows the job ids. The ~+~ and ~-~ sign that follows the job id for
    two jobs denote the default job and next candidate default job when the
-   current default job ends respectively. The default job is used when the fg or
-   bg commands are used without any argument.
+   current default job ends respectively. The default job is used when the ~fg~ or
+   ~bg~ commands are used without any argument.
 
    Second field gives the status of the job. Third field is the command used to
    start the process.
 
-   The last field (wd: ~) says that the sleep commands were started from the
-   working directory ~ (Home).
+   The last field ~(wd: ~)~ says that the sleep commands were started from the
+   working directory ~~~ (Home).
 
 ** Section 37.2: Bring a background process to the foreground
 
@@ -30,7 +30,7 @@
   sleep 600
 #+end_src
 
-   %2 specifies job no. 2. If fg is used without any arguments if brings the last
+   ~%2~ specifies job no. 2. If fg is used without any arguments if brings the last
    process put in background to the foreground.
 
 #+begin_src bash
@@ -38,7 +38,7 @@
   sleep 500
 #+end_src
 
-   ?sle refers to the baground process command containing "sle". If multiple
+   ~?sle~ refers to the background process command containing "sle". If multiple
    background commands contain the string, it will produce an error.
 
 ** Section 37.3: Restart stopped background process
