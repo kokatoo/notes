@@ -1,0 +1,69 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 37: Job Control
+
+** Section 37.1: List background processes
+
+#+begin_src bash
+  $ jobs
+  [1] Running sleep 500 & (wd: ~)
+  [2]- Running sleep 600 & (wd: ~)
+  [3]+ Running ./Fritzing &
+#+end_src
+
+   First field shows the job ids. The + and - sign that follows the job id for
+   two jobs denote the default job and next candidate default job when the
+   current default job ends respectively. The default job is used when the fg or
+   bg commands are used without any argument.
+
+   Second field gives the status of the job. Third field is the command used to
+   start the process.
+
+   The last field (wd: ~) says that the sleep commands were started from the
+   working directory ~ (Home).
+
+** Section 37.2: Bring a background process to the foreground
+
+#+begin_src bash
+  $ fg %2
+  sleep 600
+#+end_src
+
+   %2 specifies job no. 2. If fg is used without any arguments if brings the last
+   process put in background to the foreground.
+
+#+begin_src bash
+  $ fg %?sle
+  sleep 500
+#+end_src
+
+   ?sle refers to the baground process command containing "sle". If multiple
+   background commands contain the string, it will produce an error.
+
+** Section 37.3: Restart stopped background process
+
+#+begin_src bash
+  $ bg
+  [8]+ sleep 600 &
+#+end_src
+
+** Section 37.4: Run command in background
+
+#+begin_src bash
+  $ sleep 500 &
+  [1] 7582
+#+end_src
+
+   Puts the sleep command in background. 7582 is the process id of the
+   background process.
+
+** Section 37.5: Stop a foreground process
+
+   Press Ctrl + Z to stop a foreground process and put it in background
+
+#+begin_src bash
+  $ sleep 600
+  ^Z
+  [8]+ Stopped sleep 600
+#+end_src

@@ -1,0 +1,44 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 35: Change shell
+
+** Section 35.1: Find the current shell
+
+   There are a few ways to determine the current shell
+
+#+begin_src bash
+  echo $0
+  ps -p $$
+  echo $SHELL
+#+end_src
+
+** Section 35.2: List available shells
+
+   To list available login shells:
+
+#+begin_src bash
+  cat /etc/shells
+#+end_src
+
+   Example:
+
+#+begin_src bash
+  $ cat /etc/shells
+  # /etc/shells: valid login shells
+  /bin/sh
+  /bin/dash
+  /bin/bash
+  /bin/rbash
+#+end_src
+
+** Section 35.3: Change the shell
+
+   To change the current bash run these commands
+
+#+begin_src bash
+  export SHELL=/bin/bash
+  exec /bin/bash
+#+end_src
+
+   to change the bash that opens on startup edit ~.profile~ and add those lines

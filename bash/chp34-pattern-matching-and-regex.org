@@ -333,7 +333,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  $  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob

@@ -1,0 +1,84 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 38: Case statement
+
+** Section 38.1: Simple case statement
+
+   In its simplest form supported by all versions of bash, case statement
+   executes the case that matches the pattern. ;; operator breaks after the first
+   match, if any.
+
+#+begin_src bash
+  #!/bin/bash
+
+  var=1
+
+  case $var in
+      1) echo "Antartica" ;;
+      2) echo "Brazil" ;;
+      3) echo "Cat" ;;
+  esac
+#+end_src
+
+   Outputs:
+
+#+begin_src bash
+  Antartica
+#+end_src
+
+** Section 38.2: Case statement with fall through
+
+   Since bash 4.0, a new operator ;& was introduced which provides [[https://en.wikipedia.org/wiki/Switch_statement#Fallthrough][fall through]]
+   mechanism.
+
+
+#+begin_src bash
+  #!/bin/bash
+
+  var=1
+
+  case $var in
+      1) echo "Antartica" ;&
+      2) echo "Brazil" ;&
+      3) echo "Cat" ;&
+  esac
+#+end_src
+
+   Outputs:
+
+#+begin_src bash
+  Antartica
+  Brazil
+  Cat
+#+end_src
+
+** Section 38.3: Fall through only if subsequent pattern(s) match
+
+   Since Bash 4.0, another operator ;;& was introduced which also provides fall
+   through only if the patterns in subsequent case statement(s), if any, match.
+
+
+#+begin_src bash
+  #!/bin/bash
+
+  var=abc
+
+  case $var in
+      a*) echo "Antartica" ;;&
+      xyz) echo "Brazil" ;;&
+      ,*b*) echo "Cat" ;;&
+  esac
+#+end_src
+
+   Outputs:
+
+#+begin_src bash
+  Antartica
+  Cat
+#+end_src
+
+   In the below example, the abc matches both first and third case but not the
+   second case. So, second case is not executed.
+
+
