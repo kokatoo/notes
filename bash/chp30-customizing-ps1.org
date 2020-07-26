@@ -78,13 +78,13 @@
     
 *** Notes:
 
-    * Make the changes in ~~/.bashrc~ or ~/etc/bashrc~ or ~~/.bash_profile~ or
+    * Make the changes in ~.bashrc~ or ~/etc/bashrc~ or ~.bash_profile~ or
       ~~./profile file~ (depending on the OS) and save it.
     * For root you might also need to edit the ~/etc/bash.bashrc~ or
       ~/root/.bashrc~ file
-    * Run source ~~/.bashrc~ (distro specific) after saving the file.
-    * Note: if you have saved the changes in ~~/.bashrc~, then remember to add
-      source ~~/.bashrc~ in your ~~/.bash_profile~ so that this change in PS1
+    * Run source ~.bashrc~ (distro specific) after saving the file.
+    * Note: if you have saved the changes in ~.bashrc~, then remember to add
+      source ~.bashrc~ in your ~.bash_profile~ so that this change in PS1
       will be recorded every time the Terminal application starts.
 
 
@@ -109,9 +109,9 @@
 
 *** Notes:
 
-    * Make the changes in ~~/.bashrc~ or ~/etc/bashrc~ or ~~/.bash_profile~ or
-      ~~./profile~ file (depending on the OS) and save it.
-    * Run source ~~/.bashrc~ (distro specific) after saving the file.
+    * Make the changes in ~.bashrc~ or ~/etc/bashrc~ or ~.bash_profile~ or
+      ~./profile~ file (depending on the OS) and save it.
+    * Run source ~.bashrc~ (distro specific) after saving the file.
 
 ** Section 30.3: Show time in terminal prompt
 
@@ -131,9 +131,9 @@
 
 *** Notes:
 
-    * Make the changes in ~~/.bashrc~ or ~/etc/bashrc~ or ~~/.bash_profile~ or
-      ~~./profile~ file (depending on the OS) and save it.
-    * Run source ~~/.bashrc~ (distro specific) after saving the file.
+    * Make the changes in ~.bashrc~ or ~/etc/bashrc~ or ~.bash_profile~ or
+      ~./profile~ file (depending on the OS) and save it.
+    * Run source ~.bashrc~ (distro specific) after saving the file.
 
 ** Section 30.4: Show a git branch using PROMPT_COMMAND
 
@@ -169,7 +169,7 @@
 ** Section 30.5: Change PS1 prompt
 
    To change PS1, you just have to change the value of PS1 shell variable. The
-   value can be set in ~/.bashrc or /etc/bashrc file, depending on the distro.
+   value can be set in ~.bashrc~ or ~/etc/bashrc~ file, depending on the distro.
    PS1 can be changed to any plain text like:
 
 #+begin_src bash
