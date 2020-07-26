@@ -35,6 +35,7 @@
   # the "nuance_tune" command.
   _nuance_tune_opts () {
       local curr_arg prev_arg
+
       curr_arg=${COMP_WORDS[COMP_CWORD]}
       prev_arg=${COMP_WORDS[COMP_CWORD-1]}
 
