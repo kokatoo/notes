@@ -7,8 +7,10 @@
 
 #+begin_src bash
   a='I am a simple string with digits 1234'
+
   pat='(.*) ([0-9]+)'
   [[ "$a" =~ $pat ]]
+
   echo "${BASH_REMATCH[0]}"
   echo "${BASH_REMATCH[1]}"
   echo "${BASH_REMATCH[2]}"
@@ -30,8 +32,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -88,8 +89,10 @@ I am a simple string with digits
 
 #+begin_src bash
   pat='[^0-9]+([0-9]+)'
+
   s='I am a string with some digits 1024'
   [[ $s =~ $pat ]] # $pat must be unquoted
+
   echo "${BASH_REMATCH[0]}"
   echo "${BASH_REMATCH[1]}"
 #+end_src
@@ -101,7 +104,7 @@ I am a simple string with digits
   1024
 #+end_src
 
-   Instead of assigning the regex to a variable ($pat) we could also do:
+   Instead of assigning the regex to a variable (~$pat~) we could also do:
 
 #+begin_src bash
   [[ $s =~ [^0-9]+([0-9]+) ]]
@@ -109,7 +112,7 @@ I am a simple string with digits
 
    *Explanation*
 
-   * The $s =~ $pat construct performs the regex matching
+   * The ~[[~ ~$s~ ~=~~ ~$pat~ ~]]~ construct performs the regex matching
    * The captured groups i.e the match results are available in an array named BASH_REMATCH
    * The 0th index in the BASH_REMATCH array is the total match
    * The i'th index in the BASH_REMATCH array is the i'th captured group, where
@@ -123,8 +126,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -158,8 +160,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -180,7 +181,7 @@ I am a simple string with digits
   folder/subfolder/content/deepfolder/file macy stacy tracy
 #+end_src
 
-   The ** can be thought of a path expansion, no matter how deep the path is.
+   The ~**~ can be thought of a path expansion, no matter how deep the path is.
    This example matches any file or folder that starts with deep, regardless of
    how deep it is nested:
 
@@ -197,8 +198,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -224,8 +224,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -234,18 +233,18 @@ I am a simple string with digits
   $ shopt -u globstar
 #+end_src
 
-   If there is a need to match specific characters then '[]' can be used. Any
-   character inside '[]' will be matched exactly once.
+   If there is a need to match specific characters then ~[]~ can be used. Any
+   character inside ~[]~ will be matched exactly once.
 
 #+begin_src bash
   $ echo [m]acy macy
   $ echo [st][tr]acy stacy tracy
 #+end_src
 
-   The [] glob, however, is more versatile than just that. It also allows for a
+   The ~[]~ glob, however, is more versatile than just that. It also allows for a
    negative match and even matching ranges of characters and character classes.
-   A negative match is achieved by using ! or ^ as the first character following
-   [. We can match stacy by
+   A negative match is achieved by using ~!~ or ~^~ as the first character following
+   ~[~. We can match stacy by
 
 #+begin_src bash
   $ echo [!t][^r]acy
@@ -253,10 +252,10 @@ I am a simple string with digits
 #+end_src
 
    Here we are telling bash the we want to match only files which do not not
-   start with a t and the second letter is not an r and the file ends in acy.
+   start with a ~t~ and the second letter is not an ~r~ and the file ends in ~acy~.
 
-   Ranges can be matched by seperating a pair of characters with a hyphen (-).
-   Any character that falls between those two enclosing characters - inclusive -
+   Ranges can be matched by seperating a pair of characters with a hyphen ~(-)~.
+   Any character that falls between those two enclosing characters ~-~ inclusive ~-~
    will be matched. E.g., ~[r-t]~ is equivalent to ~[rst]~
 
 #+begin_src bash
@@ -264,7 +263,7 @@ I am a simple string with digits
   stacy tracy
 #+end_src
 
-   Character classes can be matched by [:class:], e.g., in order to match files
+   Character classes can be matched by ~[:class:]~, e.g., in order to match files
    that contain a whitespace
 
 #+begin_src bash
@@ -280,8 +279,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -290,7 +288,7 @@ I am a simple string with digits
   $ shopt -u globstar
 #+end_src
 
-   The Bash built-in option dotglob allows to match hidden files and folders,
+   The Bash built-in option ~dotglob~ allows to match hidden files and folders,
    i.e., files and folders that start with a ~.~
 
 #+begin_src bash
@@ -307,8 +305,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $ touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -317,7 +314,7 @@ I am a simple string with digits
   $ shopt -u globstar
 #+end_src
 
-   Setting the option nocaseglob will match the glob in a case insensitive
+   Setting the option ~nocaseglob~ will match the glob in a case insensitive
    manner
 
 #+begin_src bash
@@ -336,8 +333,7 @@ I am a simple string with digits
   $ mkdir globbing
   $ cd globbing
   $ mkdir -p folder/{sub,another}folder/content/deepfolder/
-  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
-  .hiddenfile
+  $  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file .hiddenfile
   $ shopt -u nullglob
   $ shopt -u failglob
   $ shopt -u dotglob
@@ -346,7 +342,7 @@ I am a simple string with digits
   $ shopt -u globstar
 #+end_src
 
-   Bash's built-in extglob option can extend a glob's matching capabilities
+   Bash's built-in ~extglob~ option can extend a glob's matching capabilities
 
 #+begin_src bash
   shopt -s extglob
@@ -354,13 +350,13 @@ I am a simple string with digits
 
    The following sub-patterns comprise valid extended globs:
 
-   * ?(pattern-list) – Matches zero or one occurrence of the given patterns
-   * *(pattern-list) – Matches zero or more occurrences of the given patterns
-   * +(pattern-list) – Matches one or more occurrences of the given patterns
-   * @(pattern-list) – Matches one of the given patterns
-   * !(pattern-list) – Matches anything except one of the given patterns 
+   * ~?(pattern-list)~ – Matches zero or one occurrence of the given patterns
+   * ~*(pattern-list)~ – Matches zero or more occurrences of the given patterns
+   * ~+(pattern-list)~ – Matches one or more occurrences of the given patterns
+   * ~@(pattern-list)~ – Matches one of the given patterns
+   * ~!(pattern-list)~ – Matches anything except one of the given patterns 
 
-   The pattern-list is a list of globs separated by |.
+   The pattern-list is a list of globs separated by ~|~.
 
 #+begin_src bash
   $ echo *([r-t])acy
@@ -384,4 +380,4 @@ I am a simple string with digits
 #+end_src
 
    It matches anything that does not start with zero or more occurrences of the
-   letters r, s and t, which leaves only macy as possible match.
+   letters ~r~, ~s~ and ~t~, which leaves only ~macy~ as possible match.
