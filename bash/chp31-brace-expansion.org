@@ -105,9 +105,9 @@
   mkdir -p toplevel/sublevel_{01..09}/{child1,child2,child3}
 #+end_src
 
-   This will create a top level folder called toplevel, nine folders inside of
-   toplevel named sublevel_01, sublevel_02, etc. Then inside of those sublevels:
-   child1, child2, child3 folders, giving you:
+   This will create a top level folder called ~toplevel~, nine folders inside of
+   ~toplevel~ named ~sublevel_01~, ~sublevel_02~, etc. Then inside of those sublevels:
+   ~child1~, ~child2~, ~child3~ folders, giving you:
 
 #+begin_src bash
   toplevel/sublevel_01/child1

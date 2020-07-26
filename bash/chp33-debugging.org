@@ -1,0 +1,87 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 33: Debugging
+
+** Section 33.1: Checking the syntax of a script with "-n"
+
+   The -n ﬂag enables you to check the syntax of a script without having to
+   execute it:
+
+#+begin_src bash
+  ~> $ bash -n testscript.sh
+  testscript.sh: line 128: unexpected EOF while looking for matching `"'
+  testscript.sh: line 130: syntax error: unexpected end of file
+#+end_src
+
+** Section 33.2: Debugging using bashdb
+
+   Bashdb is a utility that is similar to gdb, in that you can do things like
+   set breakpoints at a line or at a function, print content of variables, you
+   can restart script execution and more.
+
+   You can normally install it via your package manager, for example on Fedora:
+
+#+begin_src bash
+  sudo dnf install bashdb
+#+end_src
+
+   Or get it from the [[http://bashdb.sourceforge.net/][homepage]]. Then you can run it with your script as a
+   paramater:
+
+#+begin_src bash
+  bashdb <YOUR SCRIPT>
+#+end_src
+
+   Here are a few commands to get you started:
+
+#+begin_src bash
+  l - show local lines, press l again to scroll down
+  s - step to next line
+  print $VAR - echo out content of variable
+  restart - reruns bashscript, it re-loads it prior to execution.
+  eval - evaluate some custom command, ex: eval echo hi
+
+  b set breakpoint on some line
+  c - continue till some breakpoint
+  i b - info on break points
+  d - delete breakpoint at line #
+
+  shell - launch a sub-shell in the middle of execution, this is handy for manipulating variables
+#+end_src
+
+   For more information, I recommend consulting the manual:
+   http://www.rodericksmith.plus.com/outlines/manuals/bashdbOutline.html
+
+   See also homepage:
+   http://bashdb.sourceforge.net/
+
+** Section 33.3: Debugging a bash script with "-x"
+
+   Use ~-x~ to enable debug output of executed lines. It can be run on an entire
+   session or script, or enabled programmatically within a script.
+
+   Run a script with debug output enabled:
+
+#+begin_src bash
+  $ bash -x myscript.sh
+#+end_src
+
+   Or
+
+#+begin_src bash
+  $ bash --debug myscript.sh
+#+end_src
+
+   Turn on debugging within a bash script. It may optionally be turned back on,
+   though debug output is automatically reset when the script exits.
+
+#+begin_src bash
+#!/bin/bash
+
+set -x # Enable debugging
+# some code here
+set +x # Disable debugging output.
+#+end_src
+
+

@@ -27,7 +27,7 @@
   # v : The option to get the script version
 
   while getopts ':nti:p:v' opt
-        #putting : in the beginnnig suppresses the errors for invalid options
+        #putting : in the beginning suppresses the errors for invalid options
   do
       case "$opt" in
           'i')ip="${OPTARG}" ;;
