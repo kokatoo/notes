@@ -5,7 +5,7 @@
 
 ** Section 28.1: Compare two files from the web
 
-   The following compares two files with diff using process substitution instead
+   The following compares two files with ~diff~ using process substitution instead
    of creating temporary files.
 
 #+begin_src bash
@@ -28,22 +28,22 @@
    the same command. For instance,
 
 #+begin_src bash
-  $ cat header.txt body.txt >body.txt
+  $ cat header.txt body.txt > body.txt
 #+end_src
 
-   doesn’t do what you want. By the time cat reads body.txt, it has already been
+   doesn’t do what you want. By the time cat reads ~body.txt~, it has already been
    truncated by the redirection and it is empty. The final result will be that
-   body.txt will hold the contents of header.txt only.
+   ~body.txt~ will hold the contents of ~header.txt~ only.
 
    One might think to avoid this with process substitution, that is, that the
    command
 
 #+begin_src bash
-  $ cat header.txt <(cat body.txt) > body.txt
+  $ cat header.txt <(cat body.txt) > body.txt # doesn't work
 #+end_src
 
-   will force the original contents of body.txt to be somehow saved in some
-   buﬀer somewhere before the file is truncated by the redirection. It doesn’t
+   will force the original contents of ~body.txt~ to be somehow saved in some
+   buffer somewhere before the file is truncated by the redirection. It doesn’t
    work. The cat in parentheses begins reading the file only after all file
    descriptors have been set up, just like the outer one. There is no point in
    trying to use process substitution in this case.
@@ -52,7 +52,7 @@
    one:
 
 #+begin_src bash
-  $ cat header.txt body.txt >body.txt.new
+  $ cat header.txt body.txt > body.txt.new
   $ mv body.txt.new body.txt
 #+end_src
 
@@ -83,7 +83,7 @@
 #+begin_src bash
   # Process substitution with paste command is common
   # To compare the contents of two directories
-  paste <( ls /path/to/directory1 ) <( ls /path/to/directory2 )
+  paste <(ls /path/to/directory1) <(ls /path/to/directory2)
 #+end_src
 
 ** Section 28.6: To avoid usage of a sub-shell
@@ -109,9 +109,10 @@
 #+end_src
 
    ~$count~ now does not contain 6, because it was modified in the sub-shell
-   context. Any of the commands shown below are run in a sub-shell context and
-   the scope of the variables used within are lost after the sub-shell
-   terminates.
+   context.
+
+   Any of the commands shown below are run in a sub-shell context and the scope
+   of the variables used within are lost after the sub-shell terminates.
 
 #+begin_src bash
   command &
