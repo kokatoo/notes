@@ -19,8 +19,10 @@ Output: 3
 #+begin_src bash
 # Using variables
 #!/bin/bash
+
 var1=4
 var2=5
+
 ((output=$var1 * $var2))
 printf "%d\n" "$output"
 #+end_src
@@ -48,7 +50,7 @@ Output: 20
   let 'a[1] = 1 + 1' #right
 #+end_src
 
-   * (( ))
+   * ~(( ))~
 
 #+begin_src bash
   ((a=$a+1)) #add 1 to a
@@ -56,13 +58,13 @@ Output: 20
   ((a += 1)) #like above
 #+end_src
 
-   We can use (()) in if. Some Example:
+   We can use ~(())~ in if. Some Example:
 
 #+begin_src bash
   if (( a > 1 )); then echo "a is greater than 1"; fi
 #+end_src
 
-   The output of (()) can be assigned to a variable:
+   The output of ~(())~ can be assigned to a variable:
 
 #+begin_src bash
   result=$((a + 1))

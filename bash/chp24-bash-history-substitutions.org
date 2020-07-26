@@ -40,11 +40,11 @@
 !#
 #+end_src
 
-*** Word designators
+*** [[https://www.thegeekstuff.com/2011/08/bash-history-expansion/][Word designators]]
 
-    These are separated by : from the event designator they refer to. The colon
-    can be omitted if the word designator doesn't start with a number: !^ is the
-    same as !:^.
+    These are separated by ~:~ from the event designator they refer to. The colon
+    can be omitted if the word designator doesn't start with a number: ~!^~ is the
+    same as ~!:^~.
 
 #+begin_src bash
 # Expands to the first argument of the most recent command
@@ -65,7 +65,7 @@
 !*
 #+end_src
 
-*** Modifiers
+***  [[https://www.thegeekstuff.com/2011/08/bash-history-expansion/][Modifiers]]
 
     These modify the preceding event or word designator.
 
@@ -85,8 +85,8 @@
   :r
 #+end_src
 
-   If the Bash variable HISTCONTROL contains either ignorespace or ignoreboth
-   (or, alternatively, HISTIGNORE contains the pattern [ ]*), you can prevent
+   If the Bash variable ~HISTCONTROL~ contains either ignorespace or ignoreboth
+   (or, alternatively, ~HISTIGNORE~ contains the pattern ~[ ]*~), you can prevent
    your commands from being stored in Bash history by prepending them with a
    space:
 
@@ -111,7 +111,7 @@ bar
 
 ** Section 24.3: Search in the command history by pattern
 
-   Press control r and type a pattern.
+   Press ~C-r~ and type a pattern.
 
    For example, if you recently executed man 5 crontab, you can find it quickly
    by starting to type "crontab". The prompt will change like this:
@@ -120,7 +120,7 @@ bar
   (reverse-i-search)`cr': man 5 crontab
 #+end_src
 
-   The `cr' there is the string I typed so far. This is an incremental search,
+   The ~`cr'~ there is the string I typed so far. This is an incremental search,
    so as you continue typing, the search result gets updated to match the most
    recent command that contained the pattern.
 
@@ -128,7 +128,7 @@ bar
    it, or the enter key to run the command.
 
    By default the search finds the most recently executed command matching the
-   pattern. To go further back in the history press control r again. You may
+   pattern. To go further back in the history press ~C-r~ again. You may
    press it repeatedly until you find the desired command.
 
 ** Section 24.4: Switch to newly created directory with !#:N
@@ -139,11 +139,11 @@ bar
 #+end_src
 
    This will substitute the Nth argument of the current command. In the example
-   !#:1 is replaced with the first argument, i.e. backup_download_directory.
+   ~!#:1~ is replaced with the first argument, i.e. backup_download_directory.
 
 ** Section 24.5: Using !$
 
-   You can use the !$ to reduce repetition when using the command line:
+   You can use the ~!$~ to reduce repetition when using the command line:
 
 #+begin_src bash
   $ echo ping
@@ -183,7 +183,7 @@ bar
 
    This command will replace 1 with 2 in the previously executed command. It
    will only replace the first occurrence of the string and is equivalent to
-   !!:s/1/2/.
+   ~!!:s/1/2/~.
 
-   If you want to replace all occurrences, you have to use !!:gs/1/2/ or
-   !!:as/1/2/.
+   If you want to replace all occurrences, you have to use ~!!:gs/1/2/~ or
+   ~!!:as/1/2/~.

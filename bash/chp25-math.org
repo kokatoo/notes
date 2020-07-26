@@ -5,7 +5,7 @@
 
 ** Section 25.1: Math using dc
 
-   dc is one of the oldest programs on Unix.
+   ~dc~ is one of the oldest programs on Unix.
 
    It uses [[https://en.wikipedia.org/wiki/Reverse_Polish_notation][reverse polish notation]], which means that you first stack numbers,
    then operations. For example 1+1 is written as 1 1+.
@@ -45,9 +45,7 @@
   10.4
 #+end_src
 
-   dc is using [[
-https://en.wikipedia.org/wiki/Arbitrary-precision_arithmeticqhttps://en.wikipedia.org/wiki/Arbitrary-precision_arithmeticabitrary
-][arbitrary precision]] which means that the precision is limited only by the
+   dc is using [[https://en.wikipedia.org/wiki/Arbitrary-precision_arithmeticabitrary][arbitrary precision]] which means that the precision is limited only by the
    available memory. By default the precision is set to 0 decimals
 
 #+begin_src bash
@@ -68,12 +66,12 @@ https://en.wikipedia.org/wiki/Arbitrary-precision_arithmeticqhttps://en.wikipedi
    You can also use it over multiple lines
 
 #+begin_src bash
-dc << EOF
-1 1 +
-3 *
-p
-EOF
-6
+  dc << EOF
+  1 1 +
+  3 *
+  p
+  EOF
+  6
 #+end_src
 
    bc is a preprocessor for dc.
@@ -147,20 +145,20 @@ EOF
 
 ** Section 25.4: Math using expr
 
-   expr or Evaluate expressions evaluates an expression and writes the result on
+   ~expr~ or Evaluate expressions evaluates an expression and writes the result on
    standard output
 
    Basic arithmetics
 
 #+begin_src bash
-expr 2 + 3
-5
+  expr 2 + 3
+  5
 #+end_src
 
    When multiplying, you need to escape the * sign
 
 #+begin_src bash
-expr 2 \* 3 6
+  expr 2 \* 3 6
 #+end_src
 
    You can also use variables
@@ -188,14 +186,14 @@ expr 2 \* 3 6
 
    Or find the index of the first char in the search string
 
-   This will throw expr: syntax error on Mac OS X, because it uses BSD expr
-   which does not have the index command, while expr on Linux is generally GNU
-   expr
+   This will throw ~expr~: syntax error on Mac OS X, because it uses BSD ~expr~
+   which does not have the index command, while ~expr~ on Linux is generally GNU
+   ~expr~
 
 #+begin_src bash
-expr index hello l
-3
+  expr index hello l
+  3
 
-expr index 'hello' 'lo'
-3
+  expr index 'hello' 'lo'
+  3
 #+end_src

@@ -5,11 +5,11 @@
 
 ** Section 23.1: Multiple Parameter Parsing
 
-   To parse lots of parameters, the preferred way of doing this is using a while
-   loop, a case statement, and shift.
+   To parse lots of parameters, the preferred way of doing this is using a ~while~
+   loop, a ~case~ statement, and ~shift~.
 
-   shift is used to pop the first parameter in the series, making what used to be
-   $2, now be $1. This is useful for processing arguments one at a time.
+   ~shift~ is used to pop the first parameter in the series, making what used to be
+   ~$2~, now be ~$1~. This is useful for processing arguments one at a time.
 
 #+begin_src bash
   #!/bin/bash
@@ -77,7 +77,9 @@
 
   skip=false
   for op in "$@";do
+
       if $skip;then skip=false;continue;fi
+
       case "$op" in
           -v|--version)
               echo "$ver_info"
@@ -111,8 +113,8 @@
    Wrapper script is a script that wraps another script or command to provide
    extra functionalities or just to make something less tedious.
 
-   For example, the actual egrep in new GNU/Linux system is being replaced by a
-   wrapper script named egrep. This is how it looks:
+   For example, the actual ~egrep~ in new GNU/Linux system is being replaced by a
+   wrapper script named ~egrep~. This is how it looks:
 
 #+begin_src bash
   #!/bin/sh
@@ -135,7 +137,7 @@
 ** Section 23.4: Accessing Parameters
 
    When executing a Bash script, parameters passed into the script are named in
-   accordance to their position: $1 is the name of the first parameter, $2 is the
+   accordance to their position: ~$1~ is the name of the first parameter, ~$2~ is the
    name of the second parameter, and so on.
 
    A missing parameter simply evaluates to an empty string. Checking for the
@@ -149,21 +151,21 @@
 
 *** Getting all the parameters
 
-    $@ and $* are ways of interacting with all the script parameters.
+    ~$@~ and ~$*~ are ways of interacting with all the script parameters.
     Referencing [[http://linux.die.net/man/1/bash][the Bash man page]], we see that:
 
-    * $*: Expands to the positional parameters, starting from one. When the
+    * ~$*~: Expands to the positional parameters, starting from one. When the
       expansion occurs within double quotes, it expands to a single word with
       the value of each parameter separated by the first character of the IFS
       special variable.
 
-    * $@: Expands to the positional parameters, starting from one. When the
+    * ~$@~: Expands to the positional parameters, starting from one. When the
       expansion occurs within double quotes, each parameter expands to a
       separate word.
 
 *** Getting the number of parameters
 
-    $# gets the number of parameters passed into a script. A typical use case
+    ~$#~ gets the number of parameters passed into a script. A typical use case
     would be to check if the appropriate number of arguments are passed:
 
 #+begin_src bash
