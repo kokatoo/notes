@@ -143,6 +143,13 @@
   1
 #+end_src
 
+   It can also be used for converting base number:
+
+#+begin_src bash
+  echo "obase=2; ibase=8; 8" | bc
+  1000
+#+end_src
+
 ** Section 25.4: Math using expr
 
    ~expr~ or Evaluate expressions evaluates an expression and writes the result on
