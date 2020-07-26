@@ -1,0 +1,189 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 24: Bash history substitutions
+
+** Section 24.1: Quick Reference
+
+*** Interaction with the history
+
+#+begin_src bash
+  # List all previous commands
+  history
+
+  # Clear the history, useful if you entered a password by accident
+  history -c
+#+end_src
+
+*** Event designators
+
+#+begin_src bash
+# Expands to line n of bash history
+!n
+
+# Expands to last command
+!!
+
+# Expands to last command starting with "text"
+!text
+
+# Expands to last command containing "text"
+!?text
+
+# Expands to command n lines ago
+!-n
+
+# Expands to last command with first occurrence of "foo" replaced by "bar"
+^foo^bar^
+
+# Expands to the current command
+!#
+#+end_src
+
+*** Word designators
+
+    These are separated by : from the event designator they refer to. The colon
+    can be omitted if the word designator doesn't start with a number: !^ is the
+    same as !:^.
+
+#+begin_src bash
+# Expands to the first argument of the most recent command
+!^
+
+# Expands to the last argument of the most recent command (short for !!:$)
+!$
+
+# Expands to the third argument of the most recent command
+!:3
+
+# Expands to arguments x through y (inclusive) of the last command
+# x and y can be numbers or the anchor characters ^ $
+!:x-y
+
+# Expands to all words of the last command except the 0th
+# Equivalent to :^-$
+!*
+#+end_src
+
+*** Modifiers
+
+    These modify the preceding event or word designator.
+
+#+begin_src bash
+  # Replacement in the expansion using sed syntax
+  # Allows flags before the s and alternate separators
+  :s/foo/bar/ #substitutes bar for first occurrence of foo
+  :gs|foo|bar| #substitutes bar for all foo
+
+  # Remove leading path from last argument ("tail")
+  :t
+
+  # Remove trailing path from last argument ("head")
+  :h
+
+  # Remove file extension from last argument
+  :r
+#+end_src
+
+   If the Bash variable HISTCONTROL contains either ignorespace or ignoreboth
+   (or, alternatively, HISTIGNORE contains the pattern [ ]*), you can prevent
+   your commands from being stored in Bash history by prepending them with a
+   space:
+
+#+begin_src bash
+# This command won't be saved in the history
+foo
+
+# This command will be saved
+bar
+#+end_src
+
+** Section 24.2: Repeat previous command with sudo
+
+#+begin_src bash
+  $ apt-get install r-base
+  E: Could not open lock file /var/lib/dpkg/lock - open (13: Permission denied)
+  E: Unable to lock the administration directory (/var/lib/dpkg/), are you root?
+  $ sudo !!
+  sudo apt-get install r-base
+  [sudo] password for <user>:
+#+end_src
+
+** Section 24.3: Search in the command history by pattern
+
+   Press control r and type a pattern.
+
+   For example, if you recently executed man 5 crontab, you can find it quickly
+   by starting to type "crontab". The prompt will change like this:
+
+#+begin_src bash
+  (reverse-i-search)`cr': man 5 crontab
+#+end_src
+
+   The `cr' there is the string I typed so far. This is an incremental search,
+   so as you continue typing, the search result gets updated to match the most
+   recent command that contained the pattern.
+
+   Press the left or right arrow keys to edit the matched command before running
+   it, or the enter key to run the command.
+
+   By default the search finds the most recently executed command matching the
+   pattern. To go further back in the history press control r again. You may
+   press it repeatedly until you find the desired command.
+
+** Section 24.4: Switch to newly created directory with !#:N
+
+#+begin_src bash
+  $ mkdir backup_download_directory && cd !#:1
+  mkdir backup_download_directory && cd backup_download_directory
+#+end_src
+
+   This will substitute the Nth argument of the current command. In the example
+   !#:1 is replaced with the first argument, i.e. backup_download_directory.
+
+** Section 24.5: Using !$
+
+   You can use the !$ to reduce repetition when using the command line:
+
+#+begin_src bash
+  $ echo ping
+  ping
+  $ echo !$
+  ping
+#+end_src
+
+   You can also build upon the repetition
+
+#+begin_src bash
+  $ echo !$ pong
+  ping pong
+  $ echo !$, a great game
+  pong, a great game
+#+end_src
+
+   Notice that in the last example we did not get ping pong, a great game
+   because the last argument passed to the previous command was pong, we can
+   avoid issue like this by adding quotes. Continuing with the example, our last
+   argument was game:
+
+#+begin_src bash
+  $ echo "it is !$ time"
+  it is game time
+  $ echo "hooray, !$!"
+  hooray, it is game time!
+#+end_src
+
+** Section 24.6: Repeat the previous command with a substitution
+
+#+begin_src bash
+  $ mplayer Lecture_video_part1.mkv
+  $ ^1^2^
+  mplayer Lecture_video_part2.mkv
+#+end_src
+
+   This command will replace 1 with 2 in the previously executed command. It
+   will only replace the first occurrence of the string and is equivalent to
+   !!:s/1/2/.
+
+   If you want to replace all occurrences, you have to use !!:gs/1/2/ or
+   !!:as/1/2/.

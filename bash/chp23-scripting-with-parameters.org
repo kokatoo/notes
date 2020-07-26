@@ -1,0 +1,239 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 23: Scripting with Parameters
+
+** Section 23.1: Multiple Parameter Parsing
+
+   To parse lots of parameters, the preferred way of doing this is using a while
+   loop, a case statement, and shift.
+
+   shift is used to pop the first parameter in the series, making what used to be
+   $2, now be $1. This is useful for processing arguments one at a time.
+
+#+begin_src bash
+  #!/bin/bash
+
+  # Load the user defined parameters
+  while [[ $# > 0 ]]; do
+      case "$1" in
+          -a|--valueA)
+              valA="$2"
+              shift ;;
+          -b|--valueB)
+              valB="$2"
+              shift ;;
+          --help|*)
+              echo "Usage:"
+              echo " --valueA \"value\""
+              echo " --valueB \"value\""
+              echo " --help"
+              exit 1 ;;
+      esac
+      shift
+  done
+
+  echo "A: $valA"
+  echo "B: $valB"
+#+end_src
+
+   Inputs and Outputs
+
+#+begin_src bash
+  $ ./multipleParams.sh --help
+  Usage:
+    --valueA "value"
+    --valueB "value"
+    --help
+
+  $ ./multipleParams.sh
+  A:
+  B:
+
+  $ ./multipleParams.sh --valueB 2
+  A:
+  B: 2
+
+  $ ./multipleParams.sh --valueB 2 --valueA "hello world"
+  A: hello world
+  B: 2
+#+end_src
+
+** Section 23.2: Argument parsing using a for loop
+
+   A simple example which provides the options:
+
+| Opt      | Alt. Opt          | Details                                              |
+|----------+-------------------+------------------------------------------------------|
+| -v       | --version         | Show version info                                    |
+| -dr path | --doc-root path   | An option which takes a secondary parameter (a path) |
+| -i       | --install         | A boolean option (true/false)                        |
+| -*       | -- Invalid option |                                                      |
+
+#+begin_src bash
+  #!/bin/bash
+  dr=''
+  install=false
+
+  skip=false
+  for op in "$@";do
+      if $skip;then skip=false;continue;fi
+      case "$op" in
+          -v|--version)
+              echo "$ver_info"
+              shift
+              exit 0 ;;
+          -h|--help)
+              echo "$help"
+              shift
+              exit 0 ;;
+          -dr|--doc-root)
+              shift
+              if [[ "$1" != "" ]]; then
+                  dr="${1/%\//}"
+                  shift
+                  skip=true
+              else
+                  echo "E: Arg missing for -dr option"
+                  exit 1
+              fi ;;
+          -i|--install)
+              install=true
+              shift ;;
+          -*) echo "E: Invalid option: $1"
+              shift exit 1 ;;
+      esac
+  done
+#+end_src
+
+** Section 23.3: Wrapper script
+
+   Wrapper script is a script that wraps another script or command to provide
+   extra functionalities or just to make something less tedious.
+
+   For example, the actual egrep in new GNU/Linux system is being replaced by a
+   wrapper script named egrep. This is how it looks:
+
+#+begin_src bash
+  #!/bin/sh
+  exec grep -E "$@"
+#+end_src
+
+   So, when you run egrep in such systems, you are actually running grep -E with
+   all the arguments forwarded.
+
+   In general case, if you want to run an example script/command exmp with
+   another script mexmp then the wrapper mexmp script will look like:
+
+#+begin_src bash
+  #!/bin/sh
+  exmp "$@" # Add other options before "$@"
+  # or
+  #full/path/to/exmp "$@"
+#+end_src
+
+** Section 23.4: Accessing Parameters
+
+   When executing a Bash script, parameters passed into the script are named in
+   accordance to their position: $1 is the name of the first parameter, $2 is the
+   name of the second parameter, and so on.
+
+   A missing parameter simply evaluates to an empty string. Checking for the
+   existence of a parameter can be done as follows:
+
+#+begin_src bash
+  if [ -z "$1" ]; then
+      echo "No argument supplied"
+  fi
+#+end_src
+
+*** Getting all the parameters
+
+    $@ and $* are ways of interacting with all the script parameters.
+    Referencing [[http://linux.die.net/man/1/bash][the Bash man page]], we see that:
+
+    * $*: Expands to the positional parameters, starting from one. When the
+      expansion occurs within double quotes, it expands to a single word with
+      the value of each parameter separated by the first character of the IFS
+      special variable.
+
+    * $@: Expands to the positional parameters, starting from one. When the
+      expansion occurs within double quotes, each parameter expands to a
+      separate word.
+
+*** Getting the number of parameters
+
+    $# gets the number of parameters passed into a script. A typical use case
+    would be to check if the appropriate number of arguments are passed:
+
+#+begin_src bash
+if [ $# -eq 0 ]; then
+echo "No arguments supplied"
+fi
+#+end_src
+
+*** Example 1
+
+    Loop through all arguments and check if they are files:
+
+#+begin_src bash
+  for item in "$@"; do
+      if [[ -f $item ]]; then
+          echo "$item is a file"
+      fi
+  done
+#+end_src
+
+*** Example 2
+
+    Loop through all arguments and check if they are files:
+
+#+begin_src bash
+  for (( i = 1; i <= $#; ++ i ));do
+      item=${@:$i:1}
+
+      if [[ -f $item ]]; then
+          echo "$item is a file"
+      fi
+  done
+#+end_src
+
+** Section 23.5: Split string into an array in Bash
+
+   Let's say we have a String parameter and we want to split it by comma
+
+#+begin_src bash
+  my_param="foo,bar,bash"
+#+end_src
+
+   To split this string by comma we can use;
+
+#+begin_src bash
+  IFS=',' read -r -a array <<< "$my_param"
+#+end_src
+
+   Here, IFS is a special variable called [[https://en.wikipedia.org/wiki/Internal_field_separator][Internal field separator]] which defines
+   the character or characters used to separate a pattern into tokens for some
+   operations.
+
+   To access an individual element:
+
+#+begin_src bash
+  echo "${array[0]}"
+#+end_src
+
+   To iterate over the elements:
+
+#+begin_src bash
+  for element in "${array[@]}"; do
+      echo "$element"
+  done
+#+end_src
+
+   To get both the index and the value:
+
+#+begin_src bash
+  for index in "${!array[@]}"; do
+    echo "$index ${array[index]}"
+  done
+#+end_src

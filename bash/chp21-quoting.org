@@ -33,7 +33,7 @@
 
    Command substitutions get their own quoting contexts. Writing arbitrarily
    nested substitutions is easy because the parser will keep track of nesting
-   depth instead of greedily searching for the ﬁrst " character. The
+   depth instead of greedily searching for the first " character. The
    StackOverﬂow syntax highlighter parses this wrong, however. For example:
 
 #+begin_src bash

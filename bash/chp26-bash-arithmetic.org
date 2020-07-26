@@ -1,0 +1,84 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 26: Bash Arithmetic
+
+| Parameter  | Details                |
+|------------+------------------------|
+| EXPRESSION | Expression to evaluate |
+
+** Section 26.1: Simple arithmetic with (( ))
+
+#+begin_src bash
+#!/bin/bash
+echo $(( 1 + 2 ))
+#+end_src
+
+Output: 3
+
+#+begin_src bash
+# Using variables
+#!/bin/bash
+var1=4
+var2=5
+((output=$var1 * $var2))
+printf "%d\n" "$output"
+#+end_src
+
+Output: 20
+
+** Section 26.2: Arithmetic command
+
+   * let
+
+#+begin_src bash
+  let num=1+2
+  let num="1+2"
+  let 'num= 1 + 2'
+  let num=1 num+=2
+#+end_src
+
+   You need quotes if there are spaces or globbing characters. So those will get
+   error:
+
+#+begin_src bash
+  let num = 1 + 2 #wrong
+  let 'num = 1 + 2' #right
+  let a[1] = 1 + 1 #wrong
+  let 'a[1] = 1 + 1' #right
+#+end_src
+
+   * (( ))
+
+#+begin_src bash
+  ((a=$a+1)) #add 1 to a
+  ((a = a + 1)) #like above
+  ((a += 1)) #like above
+#+end_src
+
+   We can use (()) in if. Some Example:
+
+#+begin_src bash
+  if (( a > 1 )); then echo "a is greater than 1"; fi
+#+end_src
+
+   The output of (()) can be assigned to a variable:
+
+#+begin_src bash
+  result=$((a + 1))
+#+end_src
+
+   Or used directly in output:
+
+#+begin_src bash
+  echo "The result of a + 1 is $((a + 1))"
+#+end_src
+
+** Section 26.3: Simple arithmetic with expr
+
+#+begin_src bash
+  #!/bin/bash
+  expr 1 + 2
+#+end_src
+
+   Output: 3
