@@ -5,7 +5,7 @@
 
 ** Section 33.1: Checking the syntax of a script with "-n"
 
-   The -n ﬂag enables you to check the syntax of a script without having to
+   The ~-n~ flag enables you to check the syntax of a script without having to
    execute it:
 
 #+begin_src bash
@@ -16,7 +16,7 @@
 
 ** Section 33.2: Debugging using bashdb
 
-   Bashdb is a utility that is similar to gdb, in that you can do things like
+   ~bashdb~ is a utility that is similar to ~gdb~, in that you can do things like
    set breakpoints at a line or at a function, print content of variables, you
    can restart script execution and more.
 
@@ -35,24 +35,22 @@
 
    Here are a few commands to get you started:
 
-#+begin_src bash
-  l - show local lines, press l again to scroll down
-  s - step to next line
-  print $VAR - echo out content of variable
-  restart - reruns bashscript, it re-loads it prior to execution.
-  eval - evaluate some custom command, ex: eval echo hi
+| l          | show local lines, press l again to scroll down        |
+| s          | step to next line                                     |
+| print $VAR | echo out content of variable                          |
+| restart    | reruns bashscript, it re-loads it prior to execution. |
+| eval       | evaluate some custom command, ex: eval echo hi        |
 
-  b set breakpoint on some line
-  c - continue till some breakpoint
-  i b - info on break points
-  d - delete breakpoint at line #
-
-  shell - launch a sub-shell in the middle of execution, this is handy for manipulating variables
-#+end_src
-
+| b   | set breakpoint on some line   |
+| c   | continue till some breakpoint |
+| i b | info on break points          |
+| d   | delete breakpoint at line #   |
+  
+| shell | launch a sub-shell in the middle of execution, this is handy for manipulating variables |
+  
    For more information, I recommend consulting the manual:
-   http://www.rodericksmith.plus.com/outlines/manuals/bashdbOutline.html
-
+   http://bashdb.sourceforge.net/bashdb-man.html
+      
    See also homepage:
    http://bashdb.sourceforge.net/
 

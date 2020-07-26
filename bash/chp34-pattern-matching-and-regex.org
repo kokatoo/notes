@@ -1,0 +1,387 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 34: Pattern matching and regular expressions
+
+** Section 34.1: Get captured groups from a regex match against a string
+
+#+begin_src bash
+  a='I am a simple string with digits 1234'
+  pat='(.*) ([0-9]+)'
+  [[ "$a" =~ $pat ]]
+  echo "${BASH_REMATCH[0]}"
+  echo "${BASH_REMATCH[1]}"
+  echo "${BASH_REMATCH[2]}"
+#+end_src
+
+   Output:
+
+#+begin_src bash
+I am a simple string with digits 1234
+I am a simple string with digits
+1234
+#+end_src
+
+** Section 34.2: Behaviour when a glob does not match anything
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   In case the glob does not match anything the result is determined by the
+   options ~nullglob~ and ~failglob~. If neither of them are set, Bash will return
+   the glob itself if nothing is matched
+
+#+begin_src bash
+  $ echo no*match
+  no*match
+#+end_src
+
+   If ~nullglob~ is activated then nothing (null) is returned:
+
+#+begin_src bash
+  $ shopt -s nullglob
+  $ echo no*match
+
+  $
+#+end_src
+
+   If ~failglob~ is activated then an error message is returned:
+
+#+begin_src bash
+  $ shopt -s failglob
+  $ echo no*match
+  bash: no match: no*match
+  $
+#+end_src
+
+   Notice, that the ~failglob~ option supersedes the ~nullglob~ option, i.e., if
+   ~nullglob~ and ~failglob~ are both set, then - in case of no match - an error is
+   returned.
+
+** Section 34.3: Check if a string matches a regular expression
+
+   Check if a string consists in exactly 8 digits:
+
+#+begin_src bash
+  $ date=20150624
+  $ [[ $date =~ ^[0-9]{8}$ ]] && echo "yes" || echo "no"
+  yes
+  $ date=hello
+  $ [[ $date =~ ^[0-9]{8}$ ]] && echo "yes" || echo "no"
+  no
+#+end_src
+
+** Section 34.4: Regex matching
+
+#+begin_src bash
+  pat='[^0-9]+([0-9]+)'
+  s='I am a string with some digits 1024'
+  [[ $s =~ $pat ]] # $pat must be unquoted
+  echo "${BASH_REMATCH[0]}"
+  echo "${BASH_REMATCH[1]}"
+#+end_src
+
+   Output:
+
+#+begin_src bash
+  I am a string with some digits 1024
+  1024
+#+end_src
+
+   Instead of assigning the regex to a variable ($pat) we could also do:
+
+#+begin_src bash
+  [[ $s =~ [^0-9]+([0-9]+) ]]
+#+end_src
+
+   *Explanation*
+
+   * The $s =~ $pat construct performs the regex matching
+   * The captured groups i.e the match results are available in an array named BASH_REMATCH
+   * The 0th index in the BASH_REMATCH array is the total match
+   * The i'th index in the BASH_REMATCH array is the i'th captured group, where
+     i = 1, 2, 3 ...
+
+** Section 34.5: The * glob
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   The asterisk * is probably the most commonly used glob. It simply matches any
+   String
+
+#+begin_src bash
+  $ echo *acy
+  macy stacy tracy
+#+end_src
+
+   A single * will not match files and folders that reside in subfolders
+
+#+begin_src bash
+  $ echo *
+  emptyfolder folder macy stacy tracy
+  $ echo folder/*
+  folder/anotherfolder folder/subfolder
+#+end_src
+
+** Section 34.6: The ** glob
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -s globstar
+#+end_src
+
+   Bash is able to interpret two adjacent asterisks as a single glob. With the
+   globstar option activated this can be used to match folders that reside
+   deeper in the directory structure
+
+#+begin_src bash
+  echo **
+  emptyfolder folder folder/anotherfolder folder/anotherfolder/content
+  folder/anotherfolder/content/deepfolder folder/anotherfolder/content/deepfolder/file
+  folder/subfolder folder/subfolder/content folder/subfolder/content/deepfolder
+  folder/subfolder/content/deepfolder/file macy stacy tracy
+#+end_src
+
+   The ** can be thought of a path expansion, no matter how deep the path is.
+   This example matches any file or folder that starts with deep, regardless of
+   how deep it is nested:
+
+#+begin_src bash
+  $ echo **/deep*
+  folder/anotherfolder/content/deepfolder folder/subfolder/content/deepfolder
+#+end_src
+
+** Section 34.7: The ? glob
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   The ? simply matches exactly one character
+
+#+begin_src bash
+  $ echo ?acy
+  macy
+  $ echo ??acy
+  stacy tracy
+#+end_src
+
+** Section 34.8: The [ ] glob
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   If there is a need to match specific characters then '[]' can be used. Any
+   character inside '[]' will be matched exactly once.
+
+#+begin_src bash
+  $ echo [m]acy macy
+  $ echo [st][tr]acy stacy tracy
+#+end_src
+
+   The [] glob, however, is more versatile than just that. It also allows for a
+   negative match and even matching ranges of characters and character classes.
+   A negative match is achieved by using ! or ^ as the first character following
+   [. We can match stacy by
+
+#+begin_src bash
+  $ echo [!t][^r]acy
+  stacy
+#+end_src
+
+   Here we are telling bash the we want to match only files which do not not
+   start with a t and the second letter is not an r and the file ends in acy.
+
+   Ranges can be matched by seperating a pair of characters with a hyphen (-).
+   Any character that falls between those two enclosing characters - inclusive -
+   will be matched. E.g., ~[r-t]~ is equivalent to ~[rst]~
+
+#+begin_src bash
+  $ echo [r-t][r-t]acy
+  stacy tracy
+#+end_src
+
+   Character classes can be matched by [:class:], e.g., in order to match files
+   that contain a whitespace
+
+#+begin_src bash
+  $ echo *[[:blank:]]*
+  file with space
+#+end_src
+
+** Section 34.9: Matching hidden files
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   The Bash built-in option dotglob allows to match hidden files and folders,
+   i.e., files and folders that start with a ~.~
+
+#+begin_src bash
+  $ shopt -s dotglob
+  $ echo *
+  file with space folder .hiddenfile macy stacy tracy
+#+end_src
+
+** Section 34.10: Case insensitive matching
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   Setting the option nocaseglob will match the glob in a case insensitive
+   manner
+
+#+begin_src bash
+  $ echo M*
+  M*
+  $ shopt -s nocaseglob
+  $ echo M*
+  macy
+#+end_src
+
+** Section 34.11: Extended globbing
+
+   *Preparation*
+
+#+begin_src bash
+  $ mkdir globbing
+  $ cd globbing
+  $ mkdir -p folder/{sub,another}folder/content/deepfolder/
+  touch macy stacy tracy "file with space" folder/{sub,another}folder/content/deepfolder/file
+  .hiddenfile
+  $ shopt -u nullglob
+  $ shopt -u failglob
+  $ shopt -u dotglob
+  $ shopt -u nocaseglob
+  $ shopt -u extglob
+  $ shopt -u globstar
+#+end_src
+
+   Bash's built-in extglob option can extend a glob's matching capabilities
+
+#+begin_src bash
+  shopt -s extglob
+#+end_src
+
+   The following sub-patterns comprise valid extended globs:
+
+   * ?(pattern-list) – Matches zero or one occurrence of the given patterns
+   * *(pattern-list) – Matches zero or more occurrences of the given patterns
+   * +(pattern-list) – Matches one or more occurrences of the given patterns
+   * @(pattern-list) – Matches one of the given patterns
+   * !(pattern-list) – Matches anything except one of the given patterns 
+
+   The pattern-list is a list of globs separated by |.
+
+#+begin_src bash
+  $ echo *([r-t])acy
+  stacy tracy
+
+  $ echo *([r-t]|m)acy
+  macy stacy tracy
+
+  $ echo ?([a-z])acy
+  macy
+#+end_src
+
+   The ~pattern-list~ itself can be another, nested extended glob. In the above
+   example we have seen that we can match tracy and stacy with ~*(r-t)~. This
+   extended glob itself can be used inside the negated extended glob
+   ~!(pattern-list)~ in order to match macy
+
+#+begin_src bash
+  $ echo !(*([r-t]))acy
+  macy
+#+end_src
+
+   It matches anything that does not start with zero or more occurrences of the
+   letters r, s and t, which leaves only macy as possible match.
