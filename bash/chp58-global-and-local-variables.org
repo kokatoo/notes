@@ -1,0 +1,72 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 58: global and local variables
+
+  By default, every variable in bash is global to every function, script and
+  even the outside shell if you are declaring your variables inside a script.
+
+  If you want your variable to be local to a function, you can use local to have
+  that variable a new variable that is independent to the global scope and whose
+  value will only be accessible inside that function.
+
+** Section 58.1: Global variables
+
+#+begin_src bash
+  var="hello"
+
+  function foo(){
+      echo $var
+  }
+
+  foo
+#+end_src
+
+   Will obviously output "hello", but this works the other way around too:
+
+#+begin_src bash
+  function foo() {
+      var="hello"
+  }
+
+  foo
+  echo $var
+#+end_src
+
+   Will also output "hello"
+
+** Section 58.2: Local variables
+
+#+begin_src bash
+  function foo() {
+      local var
+      var="hello"
+  }
+
+  foo
+  echo $var
+#+end_src
+
+   Will output nothing, as var is a variable local to the function foo, and its
+   value is not visible from outside of it.
+
+** Section 58.3: Mixing the two together
+
+#+begin_src bash
+  var="hello"
+
+  function foo(){
+      local var="sup?"
+      echo "inside function, var=$var"
+  }
+
+  foo
+  echo "outside function, var=$var"
+#+end_src
+
+   Will output
+
+#+begin_src bash
+  inside function, var=sup?
+  outside function, var=hello
+#+end_src
