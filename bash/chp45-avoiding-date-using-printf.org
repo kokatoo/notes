@@ -1,0 +1,23 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 46: Avoiding date using printf
+
+  In Bash 4.2, a shell built-in time conversion for ~printf~ was introduced: the
+  format speciﬁcation ~%(datefmt)T` makes ~printf~ output the date-time string
+  corresponding to the format string datefmt as understood by ~strftime~.
+
+** Section 46.1: Get the current date
+
+#+begin_src bash
+  $ printf '%(%F)T\n'
+  2016-08-17
+#+end_src
+
+** Section 46.2: Set variable to current time
+
+#+begin_src bash
+  $ printf -v now '%(%T)T'
+  $ echo "$now"
+  12:42:47
+#+end_src
