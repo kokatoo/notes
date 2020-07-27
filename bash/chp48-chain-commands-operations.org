@@ -3,7 +3,7 @@
 
 * Chapter 48: Chain of commands and operations
 
-  There are some means to chain commands together. Simple ones like just a ; or
+  There are some means to chain commands together. Simple ones like just a ~;~ or
   more complex ones like logical chains which run depending on some conditions.
   The third one is piping commands, which eﬀectively hands over the output data
   to the next command in the chain.
@@ -16,8 +16,8 @@
   ls -1 | grep -c ".conf"
 #+end_src
 
-   In this case the output of the ls command is used as the input of the grep
-   command. The result will be the number of files that include ".conf" in their
+   In this case the output of the ~ls~ command is used as the input of the grep
+   command. The result will be the number of files that include ~".conf"~ in their
    name.
 
    This can be used to contruct chains of subsequent commands as long as needed:
@@ -29,8 +29,8 @@
 ** Section 48.2: transfer root cmd output to user file
 
    Often one want to show the result of a command executed by root to other
-   users. The tee command allows easily to write a file with user perms from a
-   command running as root:
+   users. The ~tee~ command allows easily to write a file with user perms from a
+   command running as ~root~:
 
 #+begin_src bash
   su -c ifconfig | tee ~/results-of-ifconfig.txt
@@ -61,7 +61,7 @@
 
 ** Section 48.4: serial chaining of commands with semicolon
 
-   A semicolon separates just two commands.
+   A ~;~ separates just two commands.
 
 #+begin_src bash
   echo "i am first" ; echo "i am second" ; echo " i am third"

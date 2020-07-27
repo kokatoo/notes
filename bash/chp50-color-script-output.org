@@ -1,0 +1,37 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 50: Color script output (cross-platform)
+
+** Section 50.1: color-output.sh
+
+   In the opening section of a bash script, it's possible to define some
+   variables that function as helpers to color or otherwise format the terminal
+   output during the run of the script.
+
+   Different platforms use different character sequences to express color.
+   However, there's a utility called ~tput~ which works on all *nix systems and
+   returns platform-specific terminal coloring strings via a consistent
+   cross-platform API.
+
+   For example, to store the character sequence which turns the terminal text
+   red or green:
+
+#+begin_src bash
+  red=$(tput setaf 1)
+  green=$(tput setaf 2)
+#+end_src
+
+   Or, to store the character sequence which resets the text to default
+   appearance:
+
+#+begin_src bash
+  reset=$(tput sgr0)
+#+end_src
+
+   Then, if the BASH script needed to show different colored outputs, this can
+   be achieved with:
+
+#+begin_src bash
+  cho "${green}Success!${reset}" echo "${red}Failure.${reset}"
+#+end_src

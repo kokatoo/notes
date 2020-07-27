@@ -1,0 +1,29 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 49: Type of Shells
+
+** Section 49.1: Start an interactive shell
+
+#+begin_src bash
+  bash
+#+end_src
+
+** Section 49.2: Detect type of shell
+
+#+begin_src bash
+  shopt -q login_shell && echo 'login' || echo 'not-login'
+#+end_src
+
+** Section 49.3: Introduction to dot ﬁles
+
+   In Unix, ﬁles and directories beginning with a period usually contain
+   settings for a speciﬁc program/a series of programs. Dot ﬁles are usually
+   hidden from the user, so you would need to run ~ls -a~ to see them.
+
+   An example of a dot ﬁle is [[http://unix.stackexchange.com/a/145254][.bash_history]], which contains the latest executed
+   commands, assuming the user is using Bash.
+
+   There are various ﬁles that are [[http://superuser.com/a/46146][sourced]] when you are dropped into the Bash
+   shell. The image below, taken from [[http://www.solipsys.co.uk/new/BashInitialisationFiles.html][this site]], shows the decision process
+   behind choosing which ﬁles to source at startup.
