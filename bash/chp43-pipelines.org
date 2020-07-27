@@ -9,8 +9,8 @@
    second one while | only connects standard output of the first command to the
    second command.
 
-   In this example, the page is downloaded via ~curl~. with ~-v~ option ~curl~ writes
-   some info on stderr including , the downloaded page is written on stdout.
+   In this example, the page is downloaded via ~curl~ with ~-v~ option. ~curl~ writes
+   some info on stderr including, the downloaded page is written on stdout.
    Title of page can be found between <title> and </title>.
 
 #+begin_src bash
@@ -65,7 +65,7 @@
 #+end_src
 
    ~ps -e~ shows all the processes, its output is connected to the input of more
-   via |, ~less~ paginates the results.
+   via ~|~, ~less~ paginates the results.
 
 ** Section 43.3: Modify continuous output of a command
 
@@ -87,7 +87,7 @@
   ...
 #+end_src
 
-   The pipe (~|~) connects the stdout of ~ping~ to the stdin of ~grep~, which
+   The pipe ~|~ connects the stdout of ~ping~ to the stdin of ~grep~, which
    processes it immediately. Some other commands like ~sed~ default to buffering
    their stdin, which means that it has to receive enough data, before it will
    print anything, potentially causing delays in further processing.

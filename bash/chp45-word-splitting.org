@@ -1,0 +1,258 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 45: Word splitting
+
+| Parameter | Details                                                                |
+|-----------+------------------------------------------------------------------------|
+| ~IFS~     | Internal field separator                                                |
+| ~-x~      | Print commands and their arguments as they are executed (Shell option) |
+
+** Section 45.1: What, when and Why?
+
+   When the shell performs parameter expansion, command substitution, variable
+   or arithmetic expansion, it scans for word boundaries in the result. If any
+   word boundary is found, then the result is split into multiple words at that
+   position. The word boundary is defined by a shell variable ~IFS~ (Internal Field
+   Separator). The default value for ~IFS~ are space, tab and newline, i.e. word
+   splitting will occur on these three white space characters if not prevented
+   explicitly.
+
+#+begin_src bash
+  set -x
+  var='I am
+  a
+  multiline string'
+  fun() {
+      echo "-$1-"
+      echo "*$2*"
+      echo ".$3."
+  }
+  fun $var
+#+end_src
+
+   In the above example this is how the fun function is being executed:
+
+#+begin_src bash
+  fun I am a multiline chp20-here-doc-here-strings.org
+#+end_src
+
+   ~$var~ is split into 5 args, only I, am and a will be printed.
+
+** Section 45.2: Bad eects of word splitting
+
+#+begin_src bash
+  $ a='I am a string with spaces'
+  $ [ $a = $a ] || echo "didn't match"
+  bash: [: too many arguments
+  didn't match
+#+end_src
+
+   ~[ $a = $a ]~ was interpreted as ~[ I am a string with spaces = I am a string
+   with spaces ]~. ~[~ is the ~test~ command for which I am a string with spaces
+   is not a single argument, rather it's 6 arguments!!
+
+#+begin_src bash
+  $ [ $a = something ] || echo "didn't match"
+  bash: [: too many arguments
+  didn't match
+#+end_src
+
+   ~[ $a = something ]~ was interpreted as ~[ I am a string with spaces =
+   something ]~
+
+#+begin_src bash
+  $ [ $(grep . file) = 'something' ]
+  bash: [: too many arguments
+#+end_src
+
+    The ~grep~ command returns a multiline string with spaces, so you can just
+    imagine how many arguments are there...:D See what, when and why for the
+    basics.
+
+** Section 45.3: Usefulness of word splitting
+
+   There are some cases where word splitting can be useful:
+
+   Filling up array:
+
+#+begin_src bash
+  arr=($(grep -o '[0-9]\+' file))
+#+end_src
+
+   This will fill up arr with all numeric values found in file
+
+   Looping through space separated words:
+
+#+begin_src bash
+  words='foo bar baz'
+
+  for w in $words; do
+    echo "W: $w"
+  done
+#+end_src
+
+   Output:
+
+#+begin_src bash
+  W: foo
+  W: bar
+  W: baz
+#+end_src
+
+   Passing space separated parameters which don't contain white spaces:
+
+#+begin_src bash
+  packs='apache2 php php-mbstring php-mysql'
+  sudo apt-get install $packs 
+#+end_src
+
+   or
+
+#+begin_src bash
+  packs='
+  apache2
+  php
+  php-mbstring
+  php-mysql
+  '
+
+  sudo apt-get install $packs
+#+end_src
+
+   This will install the packages. If you double quote the $packs then it will
+   throw an error.
+
+   Unquoted ~$packs~ is sending all the space separated package names as
+   arguments to ~apt-get~, while quoting it will send the ~$packs~ string as a
+   single argument and then ~apt-get~ will try to install a package named ~apache2~
+   ~php~ ~php-mbstring~ ~php-mysql~ (for the first one) which obviously doesn't
+   exist
+
+** Section 45.4: Splitting by separator changes
+
+   We can just do simple replacement of separators from space to new line, as
+   following example.
+
+#+begin_src bash
+  echo $sentence | tr " " "\n"
+#+end_src
+
+   It'll split the value of the variable sentence and show it line by line
+   respectively.
+
+** Section 45.5: Splitting with IFS
+
+   To be more clear, let's create a script named ~showarg~:
+
+#+begin_src bash
+  #!/usr/bin/env bash
+  printf "%d args:" $#
+  printf " <%s>" "$@"
+  echo
+#+end_src
+
+   Now let's see the diﬀerences:
+
+#+begin_src bash
+  $ var="This is an example"
+  $ showarg $var
+  4 args: <This> <is> <an> <example>
+#+end_src
+
+   $var is split into 4 args. IFS is white space characters and thus word
+   splitting occurred in spaces
+
+#+begin_src bash
+  $ var="This/is/an/example"
+  $ showarg $var
+  1 args: <This/is/an/example>
+#+end_src
+
+   In above word splitting didn't occur because the IFS characters weren't
+   found.
+
+   Now let's set IFS=/
+
+#+begin_src bash
+  $ IFS=/
+  $ var="This/is/an/example"
+  $ showarg $var
+  4 args: <This> <is> <an> <example>
+#+end_src
+
+   The ~$var~ is splitting into 4 arguments not a single argument.
+
+** Section 45.6: IFS & word splitting
+
+   See what, when and why if you don't know about the aﬃliation of IFS to word
+   splitting
+
+   *let's set the IFS to space character only:*
+
+#+begin_src bash
+  set -x
+  var='I am
+  a multiline string'
+  IFS=' '
+  fun() {
+      echo "-$1-"
+      echo "*$2*"
+      echo ".$3."
+  }
+  fun $var
+#+end_src
+
+   This time word splitting will only work on spaces. The fun function will be
+   executed like this:
+
+#+begin_src bash
+  fun I 'am
+  a
+  multiline' string
+#+end_src
+
+   ~$var~ is split into 3 args. I, ~am\na\nmultiline~ and string will be printed
+
+   *Let's set the IFS to newline only:*
+
+#+begin_src bash
+  IFS=$'\n'
+  ...
+#+end_src
+
+   Now the fun will be executed like:
+
+#+begin_src bash
+  fun 'I am' a 'multiline string'
+#+end_src
+
+   ~$var` is split into 3 args. I am, a, multiline string will be printed
+
+   *Let's see what happens if we set IFS to nullstring:*
+
+#+begin_src bash
+  IFS=
+  ...
+#+end_src
+
+   This time the fun will be executed like this:
+
+#+begin_src bash
+  fun 'I am
+  a
+  multiline string'
+#+end_src
+
+   ~$var` is not split i.e it remained a single arg.
+
+   *You can prevent word splitting by setting the IFS to nullstring*
+
+   *A general way of preventing word splitting is to use double quote:*
+
+#+begin_src bash
+  fun "$var"
+#+end_src
+
+   will prevent word splitting in all the cases discussed above i.e the fun
+   function will be executed with only one argument.

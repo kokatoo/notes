@@ -15,7 +15,7 @@
   split file
 #+end_src
 
-   This will create files named xaa, xab, xac, etc, each containing up to 1000
+   This will create files named ~xaa~, ~xab~, ~xac~, etc, each containing up to 1000
    lines. As you can see, all of them are prefixed with the letter x by default.
    If the initial file was less than 1000 lines, only one such file would be
    created.
@@ -26,14 +26,14 @@
   split file customprefix
 #+end_src
 
-   Now files named customprefixaa, customprefixab, customprefixac etc. will be
+   Now files named ~customprefixaa~, ~customprefixab~, ~customprefixac~ etc. will be
    created
 
-   To specify the number of lines to output per file, use the -l option. The
+   To specify the number of lines to output per file, use the ~-l~ option. The
    following will split a file into a maximum of 5000 lines
 
 #+begin_src bash
-  split -l5000 file
+  split -l 5000 file
 #+end_src
 
    OR
@@ -43,7 +43,7 @@
 #+end_src
 
    Alternatively, you can specify a maximum number of bytes instead of lines.
-   This is done by using the -b or --bytes options. For example, to allow a
+   This is done by using the ~-b~ or ~--bytes~ options. For example, to allow a
    maximum of 1MB
 
 #+begin_src bash

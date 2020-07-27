@@ -17,8 +17,8 @@
 ** Section 42.2: scp transferring multiple files
 
    ~scp~ can also be used to transfer multiple files from one server to another.
-   Below is example of transferring all files from my_folder directory with
-   extension .txt to server2. In Below example all files will be transferred to
+   Below is example of transferring all files from ~my_folder~ directory with
+   extension ~.txt~ to ~server2~. In Below example all files will be transferred to
    user tom home directory.
 
 #+begin_src bash
@@ -27,7 +27,7 @@
 
 ** Section 42.3: Downloading file using scp
 
-   To download a file from remote server to the local machine - type:
+   To download a file from remote server to the local machine:
 
 #+begin_src bash
   scp tom@server2:$HOME/file.txt /local/machine/path/

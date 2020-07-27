@@ -29,10 +29,10 @@
    But this will modify the PATH only in the current shell (and its subshell).
    Once you exit the shell, this modification will be gone.
 
-   To make it permanent, we need to add that bit of code to the ~/.bashrc (or
+   To make it permanent, we need to add that bit of code to the ~.bashrc~ (or
    whatever) file and reload the file.
 
-   If you run the following code (in terminal), it will add ~/bin to the PATH
+   If you run the following code (in terminal), it will add ~~/bin~ to the PATH
    permanently:
 
 #+begin_src bash
