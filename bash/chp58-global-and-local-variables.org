@@ -6,7 +6,7 @@
   By default, every variable in bash is global to every function, script and
   even the outside shell if you are declaring your variables inside a script.
 
-  If you want your variable to be local to a function, you can use local to have
+  If you want your variable to be local to a function, you can use ~local~ to have
   that variable a new variable that is independent to the global scope and whose
   value will only be accessible inside that function.
 
@@ -47,7 +47,7 @@
   echo $var
 #+end_src
 
-   Will output nothing, as var is a variable local to the function foo, and its
+   Will output nothing, as ~var~ is a variable local to the function foo, and its
    value is not visible from outside of it.
 
 ** Section 58.3: Mixing the two together
