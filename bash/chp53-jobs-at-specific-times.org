@@ -5,7 +5,7 @@
 
 ** Section 53.1: Execute job once at specific time
 
-   Note: at is not installed by default on most of modern distributions.
+   Note: ~at~ is not installed by default on most of modern distributions.
 
    To execute a job once at some other time than now, in this example 5pm, you
    can use
@@ -34,7 +34,7 @@
    tomorrow, and if you give a month that already passed this year, it will
    assume next year.
 
-   This also works together with nohup like you would expect.
+   This also works together with ~nohup~ like you would expect.
 
 #+begin_src bash
   echo "nohup somecommand > out.txt 2>err.txt &" | at 5pm
@@ -44,7 +44,7 @@
 
    * ~atq~ lists all timed jobs (atqueue)
    * ~atrm~ removes a timed job (atremove)
-   * batch does basically the same like at, but runs jobs only when system load
+   * ~batch~ does basically the same like at, but runs jobs only when system load
      is lower than 0.8
 
    All commands apply to jobs of the user logged in. If logged in as root,

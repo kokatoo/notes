@@ -3,43 +3,43 @@
 
 * Chapter 54: Handling the system prompt
 
-| Escape     | Details                                                                                                 |
-|------------+---------------------------------------------------------------------------------------------------------|
-| \a         | A bell character.                                                                                       |
-| \d         | The date, in "Weekday Month Date" format (e.g., "Tue May 26").                                          |
-| \D{FORMAT} | The FORMAT is passed to `strftime'(3) and the result is inserted into the prompt string; an empty       |
-|            | FORMAT results in a locale-speciﬁc time representation. The braces are required.                        |
-| \e         | An escape character. \033 works of course too.                                                          |
-| \h         | The hostname, up to the ﬁrst `.'. (i.e. no domain part)                                                 |
-| \H         | The hostname eventually with domain part                                                                |
-| \j         | The number of jobs currently managed by the shell.                                                      |
-| \l         | The basename of the shell's terminal device name.                                                       |
-| \n         | A newline.                                                                                              |
-| \r         | A carriage return.                                                                                      |
-| \s         | The name of the shell, the basename of `$0' (the portion following the ﬁnal slash).                     |
-| \t         | The time, in 24-hour HH:MM:SS format.                                                                   |
-| \T         | The time, in 12-hour HH:MM:SS format. @ The time, in 12-hour am/pm format.                              |
-| \A         | The time, in 24-hour HH:MM format.                                                                      |
-| \u         | The username of the current user.                                                                       |
-| \v         | The version of Bash (e.g., 2.00)                                                                        |
-| \V         | The release of Bash, version + patchlevel (e.g., 2.00.0)                                                |
-| \w         | The current working directory, with $HOME abbreviated with a tilde (uses the $PROMPT_DIRTRIM variable). |
-| \W         | The basename of $PWD, with $HOME abbreviated with a tilde.                                              |
-| !          | The history number of this command.                                                                     |
-| #          | The command number of this command.                                                                     |
-| $          | If the eﬀective uid is 0, ~#~, otherwise ~$~.                                                           |
-| \NNN       | The character whose ASCII code is the octal value NNN.                                                  |
-| \          | A backslash.                                                                                            |
-| \[         | Begin a sequence of non-printing characters. This could be used to embed a terminal control             |
-|            | sequence into the prompt.                                                                               |
-| \]         | End a sequence of non-printing characters.                                                              |
+| Escape       | Details                                                                                                 |
+|--------------+---------------------------------------------------------------------------------------------------------|
+| ~\a~         | A bell character.                                                                                       |
+| ~\d~         | The date, in "Weekday Month Date" format (e.g., "Tue May 26").                                          |
+| ~\D{FORMAT}~ | The FORMAT is passed to `strftime'(3) and the result is inserted into the prompt string; an empty       |
+|              | FORMAT results in a locale-specific time representation. The braces are required.                        |
+| ~\e~         | An escape character. \033 works of course too.                                                          |
+| ~\h~         | The hostname, up to the first `.'. (i.e. no domain part)                                                 |
+| ~\H~         | The hostname eventually with domain part                                                                |
+| ~\j~         | The number of jobs currently managed by the shell.                                                      |
+| ~\l~         | The basename of the shell's terminal device name.                                                       |
+| ~\n~         | A newline.                                                                                              |
+| ~\r~         | A carriage return.                                                                                      |
+| ~\s~         | The name of the shell, the basename of `$0' (the portion following the final slash).                     |
+| ~\t~         | The time, in 24-hour HH:MM:SS format.                                                                   |
+| ~\T~         | The time, in 12-hour HH:MM:SS format. @ The time, in 12-hour am/pm format.                              |
+| ~\A~         | The time, in 24-hour HH:MM format.                                                                      |
+| ~\u~         | The username of the current user.                                                                       |
+| ~\v~         | The version of Bash (e.g., 2.00)                                                                        |
+| ~\V~         | The release of Bash, version + patchlevel (e.g., 2.00.0)                                                |
+| ~\w~         | The current working directory, with $HOME abbreviated with a tilde (uses the $PROMPT_DIRTRIM variable). |
+| ~\W~         | The basename of ~$PWD~, with ~$HOME~ abbreviated with a tilde.                                              |
+| ~!~          | The history number of this command.                                                                     |
+| ~#~          | The command number of this command.                                                                     |
+| ~$~          | If the effective uid is 0, ~#~, otherwise ~$~.                                                          |
+| ~\NNN~       | The character whose ASCII code is the octal value NNN.                                                  |
+| ~\~          | A backslash.                                                                                            |
+| ~\[~         | Begin a sequence of non-printing characters. This could be used to embed a terminal control             |
+|              | sequence into the prompt.                                                                               |
+| ~\]~         | End a sequence of non-printing characters.                                                              |
 
 ** Section 54.1: Using the PROMPT_COMMAND envrionment variable
 
    When the last command in an interactive bash instance is done, the evaluated
-   PS1 variable is displayes. Before actually displaying PS1 bash looks whether
+   ~PS1~ variable is displayed. Before actually displaying ~PS1~ bash looks whether
    the PROMPT_COMMAND is set. This value of this var must be a callable program
-   or script. If this var is set this program/script is called BEFORE the PS1
+   or script. If this var is set this program/script is called BEFORE the ~PS1~
    prompt is displayed.
 
 #+begin_src bash
@@ -63,8 +63,8 @@
 
 ** Section 54.3: Using PS3
 
-   When the select statement is executed, it displays the given items preﬁxed
-   with a number and then displays the PS3 prompt:
+   When the select statement is executed, it displays the given items prefixed
+   with a number and then displays the ~PS3~ prompt:
 
 #+begin_src bash
   export PS3=" To choose your language type the preceding number : "
@@ -80,13 +80,14 @@
 
 #+begin_src bash
   #!/usr/bin/env bash
+
   # switch on debugging
   set -x
 
   # define a stupid_func
   stupid_func(){
-  echo I am line 1 of stupid_func
-  echo I am line 2 of stupid_func
+      echo I am line 1 of stupid_func
+      echo I am line 2 of stupid_func
   }
 
   # setting the PS4 "DEBUG" prompt
@@ -104,12 +105,12 @@
 
 ** Section 54.5: Using PS1
 
-   PS1 is the normal system prompt indicating that bash waits for commands being
+   ~PS1~ is the normal system prompt indicating that bash waits for commands being
    typed in. It understands some escape sequences and can execute functions or
-   progams. As bash has to position the cursor after the displayes prompt, it
-   needs to know how to calculate the eﬀective length of the prompt string. To
-   indicate non printing sequences of chars within the PS1 variable escaped
-   braces are used: \[ a non printing sequence of chars \]. All being said holds
+   progams. As bash has to position the cursor after the displays prompt, it
+   needs to know how to calculate the effective length of the prompt string. To
+   indicate non printing sequences of chars within the ~PS1~ variable escaped
+   braces are used: ~\[~ a non printing sequence of chars ~\]~. All being said holds
    true for all PS* vars.
 
    (The black caret indicates cursor)
