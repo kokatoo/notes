@@ -45,6 +45,7 @@
 
   while read -r line; do
       name="$line"
+
       ## grab lines with puppies in them
       bzcat $line | grep puppies | gzip >> output.gz
   done < "$filenames"
@@ -56,7 +57,7 @@
   parallel -j 3 "bzcat {} | grep puppies" ::: $( cat filelist.txt ) | gzip > output.gz
 #+end_src
 
-   This command is simple, concise and more eﬃcient when number of files and file
+   This command is simple, concise and more efficient when number of files and file
    size is large. The jobs gets initiated by ~parallel~, option ~-j 3~ launches 3
    parallel jobs and input to the parallel jobs is taken in by ~:::~. The output
    is eventually piped to ~gzip > output.gz~
@@ -64,7 +65,7 @@
 ** Section 63.2: Parallelize STDIN
 
    Now, let's imagine we have 1 large file (e.g. 30 GB) that needs to be
-   converted, line by line. Say we have a script, convert.sh, that does this
+   converted, line by line. Say we have a script, ~convert.sh~, that does this
    <task>. We can pipe contents of this file to stdin for parallel to take in and
    work with in chunks such as
 
@@ -74,7 +75,7 @@
 
    where <stdin> can originate from anything such as ~cat <file>~.
 
-   As a reproducible example, our task will be nl -n rz. Take any file, mine will
+   As a reproducible example, our task will be ~nl -n rz~. Take any file, mine will
    be data.bz2, and pass it to <stdin>
 
 #+begin_src bash
@@ -83,7 +84,7 @@
 
    The above example takes <stdin> from ~bzcat data.bz2 | nl~, where I included ~nl~
    just as a proof of concept that the final ~output output.gz~ will be saved in
-   the order it was received. Then, ~parallel` divides the <stdin> into chunks of
+   the order it was received. Then, ~parallel~ divides the <stdin> into chunks of
    size 10 MB, and for each chunk it passes it through ~nl -n rz~ where it just
    appends a numbers rightly justified (see ~nl --help~ for further details). The
    options ~--pipe~ tells parallel to split <stdin> into multiple jobs and --
