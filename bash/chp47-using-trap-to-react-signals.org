@@ -5,8 +5,8 @@
 
 | Parameter | Meaning                                     |
 |-----------+---------------------------------------------|
-| -p        | List currently installed traps              |
-| -l        | List signal names and corresponding numbers |
+| ~-p~       | List currently installed traps              |
+| ~-l~        | List signal names and corresponding numbers |
 
 ** Section 47.1: Introduction: clean up temporary files
 
@@ -17,14 +17,12 @@
    One of the most common uses of ~trap~ is to clean up temporary files on both
    an expected and unexpected exit.
 
-   Unfortunately not enough shell scripts do this :-(
-
 #+begin_src bash
   #!/bin/sh
 
   # Make a cleanup function
   cleanup() {
-  rm --force -- "${tmp}"
+      rm --force -- "${tmp}"
   }
 
   # Trap the special "EXIT" group, which is always run when the shell exits.
@@ -41,8 +39,8 @@
 
 ** Section 47.2: Catching SIGINT or Ctl+C
 
-   The trap is reset for subshells, so the sleep will still act on the SIGINT
-   signal sent by ^C (usually by quitting), but the parent process (i.e. the
+   The trap is reset for subshells, so the ~sleep~ will still act on the SIGINT
+   signal sent by ~^C~ (usually by quitting), but the parent process (i.e. the
    shell script) won't.
 
 #+begin_src bash
@@ -71,9 +69,9 @@
 #+begin_src bash
   last=0
   allow_quit() {
-  [ $(date +%s) -lt $(( $last + 1 )) ] && exit
-  echo "Press ^C twice in a row to quit"
-  last=$(date +%s)
+      [ $(date +%s) -lt $(( $last + 1 )) ] && exit
+      echo "Press ^C twice in a row to quit"
+      last=$(date +%s)
   }
 
   trap allow_quit INT

@@ -1,0 +1,81 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 48: Chain of commands and operations
+
+  There are some means to chain commands together. Simple ones like just a ; or
+  more complex ones like logical chains which run depending on some conditions.
+  The third one is piping commands, which eﬀectively hands over the output data
+  to the next command in the chain.
+
+** Section 48.1: Counting a text pattern ocurrence
+
+   Using a pipe makes the output of a command be the input of the next one.
+
+#+begin_src bash
+  ls -1 | grep -c ".conf"
+#+end_src
+
+   In this case the output of the ls command is used as the input of the grep
+   command. The result will be the number of files that include ".conf" in their
+   name.
+
+   This can be used to contruct chains of subsequent commands as long as needed:
+
+#+begin_src bash
+  ls -1 | grep ".conf" | grep -c .
+#+end_src
+
+** Section 48.2: transfer root cmd output to user file
+
+   Often one want to show the result of a command executed by root to other
+   users. The tee command allows easily to write a file with user perms from a
+   command running as root:
+
+#+begin_src bash
+  su -c ifconfig | tee ~/results-of-ifconfig.txt
+#+end_src
+
+   Only ~ifconfig~ runs as root.
+
+** Section 48.3: logical chaining of commands with && and ||
+
+   ~&&~ chains two commands. The second one runs only if the first one exits with
+   success. || chains two commands. But second one runs only if first one exits
+   with failure.
+
+#+begin_src bash
+  [ a = b ] && echo "yes" || echo "no"
+
+  # if you want to run more commands within a logical chain, use curly braces
+  # which designate a block of commands
+  # They do need a ; before closing bracket so bash can diffentiate from other uses
+  # of curly braces
+  [ a = b ] && { echo "let me see."
+                 echo "hmmm, yes, i think it is true" ; } \
+            || { echo "as i am in the negation i think "
+                 echo "this is false. a is a not b." ; }
+  # mind the use of line continuation sign \
+  # only needed to chain yes block with || ....
+#+end_src
+
+** Section 48.4: serial chaining of commands with semicolon
+
+   A semicolon separates just two commands.
+
+#+begin_src bash
+  echo "i am first" ; echo "i am second" ; echo " i am third"
+#+end_src
+
+** Section 48.5: chaining commands with |
+
+   The ~|~ takes the output of the left command and pipes it as input the right
+   command. Mind, that this is done in a subshell. Hence you cannot set values
+   of vars of the calling process within a pipe.
+
+#+begin_src bash
+  find . -type f -a -iname '*.mp3' | \
+      while read filename; do
+          mute --noise "$filename"
+      done
+#+end_src
