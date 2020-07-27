@@ -7,16 +7,16 @@
 
 | Shortcut | Description                                                                         |
 |----------+-------------------------------------------------------------------------------------|
-| C-a      | move to the beginning of the line                                                   |
-| C-e      | move to the end of the line                                                         |
-| C-k      | Kill the text from the current cursor position to the end of the line.              |
-| C-u      | Kill the text from the current cursor position to the beginning of the line         |
-| C-w      | Kill the word behind the current cursor position                                    |
-| M-b      | move backward one word                                                              |
-| M-f      | move forward one word                                                               |
-| C-M-e    | shell expand line                                                                   |
-| C-y      | Yank the most recently killed text back into the buﬀer at the cursor.               |
-| M-y      | Rotate through killed text. You can only do this if the prior command is C-y or M-y |
+| ~C-a~    | move to the beginning of the line                                                   |
+| ~C-e~    | move to the end of the line                                                         |
+| ~C-k~    | Kill the text from the current cursor position to the end of the line.              |
+| ~C-u~    | Kill the text from the current cursor position to the beginning of the line         |
+| ~C-w~    | Kill the word behind the current cursor position                                    |
+| ~M-b~    | move backward one word                                                              |
+| ~M-f~    | move forward one word                                                               |
+| ~C-M-e~  | shell expand line                                                                   |
+| ~C-y~    | Yank the most recently killed text back into the buﬀer at the cursor.               |
+| ~M-y~    | Rotate through killed text. You can only do this if the prior command is C-y or M-y |
 
    Killing text will delete text, but save it so that the user can reinsert it
    by yanking. Similar to cut and paste except that the text is placed on a kill
@@ -29,21 +29,21 @@
 
 | Shortcut | Description                                                           |
 |----------+-----------------------------------------------------------------------|
-| C-r      | search the history backwards                                          |
-| C-p      | previous command in history                                           |
-| C-n      | next command in history                                               |
-| C-g      | quit history searching mode                                           |
-| M-.      | use the last word of the previous command                             |
+| ~C-r~    | search the history backwards                                          |
+| ~C-p~    | previous command in history                                           |
+| ~C-n~    | next command in history                                               |
+| ~C-g~    | quit history searching mode                                           |
+| ~M-.~    | use the last word of the previous command                             |
 |          | repeat to get the last word of the previous + 1 command               |
-| !!       | execute the last command again (useful when you forgot sudo: sudo !!) |
+| ~!!~     | execute the last command again (useful when you forgot sudo: sudo !!) |
 
 ** Section A.3: Macros
 
-| Shortcut | Description                     |
-|----------+---------------------------------|
-| C-x , (  | start recording a macro         |
-| C-x , )  | stop recording a macro          |
-| C-x , e  | execute the last recorded macro |
+| Shortcut  | Description                     |
+|-----------+---------------------------------|
+| ~C-x , (~ | start recording a macro         |
+| ~C-x , )~ | stop recording a macro          |
+| ~C-x , e~ | execute the last recorded macro |
 
 **  Section A.4: Custome Key Bindings
 
@@ -63,5 +63,5 @@
 
 | Shortcut | Description                                     |
 |----------+-------------------------------------------------|
-| C-c      | Stop the current job                            |
-| C-z      | Suspend the current job (send a SIGTSTP signal) |
+| ~C-c~    | Stop the current job                            |
+| ~C-z~    | Suspend the current job (send a SIGTSTP signal) |
