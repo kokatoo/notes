@@ -1,0 +1,117 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 62: Networking With Bash
+
+  Bash is often commonly used in the management and maintenance of servers and
+  clusters. Information pertaining to typical commands used by network
+  operations, when to use which command for which purpose, and examples/samples
+  of unique and/or interesting applications of it should be included.
+
+** Section 62.1: Networking commands
+
+#+begin_src bash
+  ifconfig
+#+end_src
+
+   The above command will show all active interface of the machine and also give
+   the information of
+
+   1. IP address assign to interface
+   2. MAC address of the interface
+   3. Broadcast address
+   4. Transmit and Receive bytes
+
+   Some example
+
+#+begin_src bash
+  ifconfig -a
+#+end_src
+
+   The above command also show the disable interface
+
+#+begin_src bash
+  ifconfig eth0
+#+end_src
+
+   The above command will only show the eth0 interface
+
+#+begin_src bash
+  ifconfig eth0 192.168.1.100 netmask 255.255.255.0
+#+end_src
+
+   The above command will assign the static IP to eth0 interface
+
+#+begin_src bash
+  ifup eth0
+#+end_src
+
+   The above command will enable the eth0 interface
+
+#+begin_src bash
+  ifdown eth0
+#+end_src
+
+   The below command will disable the eth0 interface
+
+#+begin_src bash
+  ping
+#+end_src
+
+   The above command (Packet Internet Grouper) is to test the connectivity
+   between the two nodes
+
+#+begin_src bash
+   ping -c2 8.8.8.8
+#+end_src
+
+   The above command will ping or test the connectivity with google server for 2
+   seconds.
+
+#+begin_src bash
+   traceroute
+#+end_src
+
+   The above command is to use in troubleshooting to find out the number of hops
+   taken to reach the destination.
+
+#+begin_src bash
+   netstat
+#+end_src
+
+   The above command (Network statistics) give the connection info and their
+   state
+
+#+begin_src bash
+   dig www.google.com
+#+end_src
+
+   The above command (domain information grouper) query the DNS related
+   information
+
+#+begin_src bash
+   nslookup www.google.com
+#+end_src
+
+   The above command query the DNS and find out the IP address of corresponding
+   the website name.
+
+#+begin_src bash
+  route
+#+end_src
+
+   The above command is used to check the Netwrok route information. It
+   basically show you the routing table
+
+#+begin_src bash
+  router add default gw 192.168.1.1 eth0
+#+end_src
+
+   The above command will add the default route of network of eth0 Interface to
+   192.168.1.1 in routing table.
+
+#+begin_src bash
+  route del default
+#+end_src
+
+   The above command will delete the default route from the routing table
