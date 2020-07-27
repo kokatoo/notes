@@ -1,0 +1,51 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 41: Splitting Files
+
+  Sometimes it's useful to split a file into multiple separate files. If you have
+  large files, it might be a good idea to break it into smaller chunks
+
+** Section 41.1: Split a file
+
+   Running the split command without any options will split a file into 1 or more
+   separate files containing up to 1000 lines each.
+
+#+begin_src bash
+  split file
+#+end_src
+
+   This will create files named xaa, xab, xac, etc, each containing up to 1000
+   lines. As you can see, all of them are prefixed with the letter x by default.
+   If the initial file was less than 1000 lines, only one such file would be
+   created.
+
+   To change the prefix, add your desired prefix to the end of the command line
+
+#+begin_src bash
+  split file customprefix
+#+end_src
+
+   Now files named customprefixaa, customprefixab, customprefixac etc. will be
+   created
+
+   To specify the number of lines to output per file, use the -l option. The
+   following will split a file into a maximum of 5000 lines
+
+#+begin_src bash
+  split -l5000 file
+#+end_src
+
+   OR
+
+#+begin_src bash
+  split --lines=5000 file
+#+end_src
+
+   Alternatively, you can specify a maximum number of bytes instead of lines.
+   This is done by using the -b or --bytes options. For example, to allow a
+   maximum of 1MB
+
+#+begin_src bash
+  split --bytes=1MB file
+#+end_src

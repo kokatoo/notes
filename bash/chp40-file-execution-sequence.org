@@ -8,7 +8,7 @@
 
   The main difference is that ~.bashrc~ is called at the opening of a non-login
   but interactive window, and ~.bash_profile~ and the others are called for a
-  login shell. Many people have their ~.bash_profile~ or similar call .bashrc
+  login shell. Many people have their ~.bash_profile~ or similar call ~.bashrc~
   anyway.
 
 ** Section 40.1: .profile vs .bash_profile (and .bash_login)
@@ -24,5 +24,3 @@
 
    ~.bash_login~ is a fallback for ~.bash_profile~, if it isn't found. Generally
    best to use ~.bash_profile~ or ~.profile~ instead.
-
-

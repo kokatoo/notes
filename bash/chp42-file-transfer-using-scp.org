@@ -1,0 +1,37 @@
+#+STARTUP: showeverything
+#+title: Bash Notes for Professionals
+
+* Chapter 42: File Transfer using scp
+
+** Section 42.1: scp transferring file
+
+   To transfer a file securely to another machine - type:
+
+#+begin_src bash
+  scp file1.txt tom@server2:$HOME
+#+end_src
+
+   This example presents transferring ~file1.txt~ from our host to server2's
+   user tom's home directory.
+
+** Section 42.2: scp transferring multiple files
+
+   ~scp~ can also be used to transfer multiple files from one server to another.
+   Below is example of transferring all files from my_folder directory with
+   extension .txt to server2. In Below example all files will be transferred to
+   user tom home directory.
+
+#+begin_src bash
+  scp /my_folder/*.txt tom@server2:$HOME
+#+end_src
+
+** Section 42.3: Downloading file using scp
+
+   To download a file from remote server to the local machine - type:
+
+#+begin_src bash
+  scp tom@server2:$HOME/file.txt /local/machine/path/
+#+end_src
+
+   This example shows how to download the file named ~file.txt~ from user tom's
+   home directory to our local machine's current directory.
