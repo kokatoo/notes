@@ -10,6 +10,8 @@
 
 ** Section 62.1: Networking commands
 
+   [[https://access.redhat.com/sites/default/files/attachments/rh_ip_command_cheatsheet_1214_jcs_print.pdf][iproute]]
+
 #+begin_src bash
   ifconfig
 #+end_src
@@ -26,30 +28,35 @@
 
 #+begin_src bash
   ifconfig -a
+  ip addr show
 #+end_src
 
    The above command also show the disable interface
 
 #+begin_src bash
   ifconfig eth0
+  ip addr show eth0
 #+end_src
 
    The above command will only show the eth0 interface
 
 #+begin_src bash
   ifconfig eth0 192.168.1.100 netmask 255.255.255.0
+  ip addr add 192.168.1.100/24 dev eth0
 #+end_src
 
    The above command will assign the static IP to eth0 interface
 
 #+begin_src bash
   ifup eth0
+  ip link set eth0 up
 #+end_src
 
    The above command will enable the eth0 interface
 
 #+begin_src bash
   ifdown eth0
+  ip link set eth0 down
 #+end_src
 
    The below command will disable the eth0 interface
@@ -76,7 +83,8 @@
    taken to reach the destination.
 
 #+begin_src bash
-   netstat
+  netstat
+  ss
 #+end_src
 
    The above command (Network statistics) give the connection info and their
