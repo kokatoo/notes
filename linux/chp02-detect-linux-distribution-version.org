@@ -29,19 +29,8 @@
   Codename:       trusty
 #+end_src
 
-   On Manjaro:
-
-#+begin_src bash
-  $ lsb_release -a
-  LSB Version:	  n/a
-  Distributor ID:	ManjaroLinux
-  Description:	  Manjaro Linux
-  Release:	      20.0.3
-  Codename:	      Lysia
-#+end_src
-
    In case when you don't have ~lsb_release~ installed you may want to try some
-   guessing, for example, there is a ﬁle ~/etc/issue~ that often contains
+   guessing, for example, there is a file ~/etc/issue~ that often contains
    distribution name. For example, on ubuntu:
 
 #+begin_src bash
@@ -49,7 +38,7 @@
   Ubuntu 12.04.5 LTS \n \l
 #+end_src
 
-   Don't use ﬁle ~/etc/debian_version~ because its contents do not match
+   Don't use file ~/etc/debian_version~ because its contents do not match
    distribution name!
 
    Note that this will also work on non-Debian-family distributions like Fedora,
@@ -60,13 +49,13 @@
    This method will work on modern versions of Arch, CentOS, CoreOS, Debian,
    Fedora, Mageia, openSUSE, Red Hat Enterprise Linux, SUSE Linux Enterprise
    Server, Ubuntu, and others. This wide applicability makes it an ideal as a
-   ﬁrst approach, with fallback to other methods if you need to also identify
+   first approach, with fallback to other methods if you need to also identify
    older systems.
 
-   Look at ~/etc/os-release~. In speciﬁc, look at variables ~NAME~, ~VERSION~,
+   Look at ~/etc/os-release~. In specific, look at variables ~NAME~, ~VERSION~,
    ~ID~, ~VERSION_ID~, and ~PRETTY_NAME~.
 
-   On Fedora, this ﬁle might look like:
+   On Manjaro, this file might look like:
 
 #+begin_src bash
   NAME="Manjaro Linux"
@@ -82,7 +71,7 @@
   LOGO=manjarolinux
 #+end_src
 
-   From the bash shell, one can source the /etc/os-release ﬁle and then use the
+   From the bash shell, one can source the /etc/os-release file and then use the
    various variables directly, like this:
 
 #+begin_src bash
@@ -100,16 +89,16 @@
 
 ** Section 2.4: Uname - Print information about the current system
 
-   Uname is the short name for unix name. Just type uname in console to get
+   ~uname~ is the short name for unix name. Just type ~uname~ in console to get
    information about your operating system.
 
 #+begin_src bash
   uname [OPTION]
 #+end_src
 
-   If no OPTION is speciﬁed, uname assumes the -s option.
+   If no OPTION is specified, uname assumes the ~-s~ option.
 
-#+begin_src bash
+#+begin_src
   -a or --all - Prints all information, omitting -p and -i if the information is unknown.
 #+end_src
 
@@ -145,7 +134,7 @@
 ** Section 2.6: Using GNU coreutils
 
    If you do not know what system you are using you may not be able to directly
-   jump to one of the examples above, hence this may be your ﬁrst port of call.
+   jump to one of the examples above, hence this may be your first port of call.
 
 #+begin_src bash
   $ uname -a
@@ -154,7 +143,7 @@
 ** Section 2.7: Find your linux os (both debian & rpm) name and release number
 
    Most of linux distros stores its version info in the /etc/lsb-release
-   (debian) or /etc/redhat-release (RPM based) ﬁle. Using below generic command
+   (debian) or /etc/redhat-release (RPM based) file. Using below generic command
    should get you past most of the Debian and RPM derivatives as Linux Mint and
    Cent-Os.
 

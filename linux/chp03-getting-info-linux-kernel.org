@@ -5,7 +5,7 @@
 
 **  Section 3.1: Getting details of Linux kernel
 
-   We can use command uname with various options to get complete details of
+   We can use command ~uname~ with various options to get complete details of
    running kernel.
 
 #+begin_src bash
