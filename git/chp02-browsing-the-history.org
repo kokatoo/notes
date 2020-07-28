@@ -110,15 +110,15 @@
 
    The format option allows you to specify your own log output format:
 
-| Parameter      | Details                                            |
-|----------------+----------------------------------------------------|
-| %C(color_name) | option colors the output that comes after it       |
-| %h or %H       | abbreviates commit hash (use %H for complete hash) |
-| %Creset        | resets color to default terminal color             |
-| %d             | ref names                                          |
-| %s             | subject [commit message]                           |
-| %cr            | committer date, relative to current date           |
-| %an            | author name                                        |
+| Parameter        | Details                                            |
+|------------------+----------------------------------------------------|
+| ~%C(color_name)~ | option colors the output that comes after it       |
+| ~%h~ or ~%H~     | abbreviates commit hash (use %H for complete hash) |
+| ~%Creset~        | resets color to default terminal color             |
+| ~%d~             | ref names                                          |
+| ~%s~             | subject [commit message]                           |
+| ~%cr~            | committer date, relative to current date           |
+| ~%an~            | author name                                        |
 
 ** Section 2.4: Oneline log
 
@@ -157,7 +157,7 @@
 ** Section 2.5: Log search
 
 #+begin_src bash
-  git log -S"#define SAMPLES"
+  git log -S "#define SAMPLES"
 #+end_src
 
    Searches for addition or removal of specific string or the string matching
@@ -175,7 +175,7 @@
 #+end_src
 
 #+begin_src bash
-  git log -G"#define SAMPLES"
+  git log -G "#define SAMPLES"
 #+end_src
 
    Searches for changes in lines containing specific string or the string
@@ -185,6 +185,9 @@
   -#define SAMPLES 100000
   +#define SAMPLES 100000000
 #+end_src
+
+   The example above will not show in -S because the number of occurences of
+   ~#define SAMPLES~ did not change.
 
 ** Section 2.6: List all contributions grouped by author name
 
@@ -245,7 +248,7 @@
 
 ** Section 2.7: Searching commit string in git log
 
-   Searching git log using some string in log:
+   Searching ~git log~ using some string in log:
 
 #+begin_src bash
   git log [options] --grep "search_string"
@@ -425,7 +428,7 @@
 ** Section 2.14: One line showing commiter name and time since commit
 
 #+begin_src bash
-  tree = log --oneline --decorate --source --pretty=format:'"%Cblue %h %Cgreen %ar %Cblue %an %C(yellow) %d %Creset %s"' --all --graph
+  git log --oneline --decorate --source --pretty=format:'"%Cblue %h %Cgreen %ar %Cblue %an %C(yellow) %d %Creset %s"' --all --graph
 #+end_src
 
    example
