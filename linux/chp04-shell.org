@@ -5,14 +5,14 @@
 
   The shell executes a program in response to its prompt. When you give a
   command, the shell searches for the program, and then executes it. For
-  example, when you give the command ls, the shell searches for the
-  utility/program named ls, and then runs it in the shell. The arguments and the
+  example, when you give the command ~ls~, the shell searches for the
+  utility/program named ~ls~, and then runs it in the shell. The arguments and the
   options that you provide with the utilities can impact the result that you
   get. The shell is also known as a CLI, or command line interface.
 
 ** Section 4.1: Changing default shell
 
-   Most modern distributions will come with BASH (Bourne Again SHell)
+   Most modern distributions will come with BASH (Bourne Again Shell)
    pre-installed and configured as a default shell.
 
    The command (actually an executable binary, an ELF) that is responsible for
@@ -77,32 +77,30 @@
   /usr/bin/fish
 #+end_src
 
-   chsh options:
+  Sets shell as the login shell.
 
 #+begin_src bash
   -s shell
 #+end_src
 
-   Sets shell as the login shell.
+   Print the list of shells listed in /etc/shells and exit.
 
 #+begin_src bash
    -l, --list-shells
 #+end_src
 
-   Print the list of shells listed in /etc/shells and exit.
+   Print a usage message and exit.
 
 #+begin_src bash
   -h, --help
 #+end_src
 
-   Print a usage message and exit.
+   Print version information and exit.
 
 #+begin_src bash
    -v, --version
 #+end_src
-
-   Print version information and exit.
-
+   
 ** Section 4.2: Basic Shell Utilities
 
 *** Customizing the Shell prompt
@@ -112,10 +110,10 @@
     Using ~PS1~ becomes useful in these cases. A short and customized command
     pretty and elegant. In the table below ~PS1~ has been used with a number of
     arguments to show diﬀerent forms of shell prompts. Default command prompt
-    looks something like this: user~@host ~ $~ in my case it looks like this:
+    looks something like this: ~user~@host ~ $~ in my case it looks like this:
     ~bruce@gotham ~ $~. It can changed as per the table below:
 
-| ~PS1='\w $'~   | ~~ $~ shell prompt as directory name. In this case root directory is Root. |
+| ~PS1='\w $'~   | =~ $ =shell prompt as directory name. In this case root directory is Root.  |
 | ~PS1='\h $'~   | ~gotham $~ shell prompt as hostname                                        |
 | ~PS1='\u $'~   | ~bruce $~ shell prompt as username                                         |
 | ~PS1='\t $'~   | ~22:37:31 $~ shell prompt in 24 hour format                                |
