@@ -416,7 +416,7 @@
 
 *** Details/Rights
 
-   The ~l~ option shows the file permissions, size, and last modified date. So if
+   The ~-l~ option shows the file permissions, size, and last modified date. So if
    the root directory contained a dir called test and a file someFile the
    command:
 

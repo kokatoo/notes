@@ -1,0 +1,168 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Chapter 2: Detecting Linux distribution name and version
+
+** Section 2.1: Detect what debian-based distribution you are working in
+
+   Just execute ~lsb_release -a~.
+
+   On Debian:
+
+#+begin_src bash
+  $ lsb_release -a
+  No LSB modules are available.
+  Distributor ID: Debian
+  Description:    Debian GNU/Linux testing (stretch)
+  Release:        testing
+  Codename:       stretch
+#+end_src
+
+   On Ubuntu:
+
+#+begin_src bash
+  $ lsb_release -a
+  No LSB modules are available.
+  Distributor ID: Ubuntu
+  Description:    Ubuntu 14.04.4
+  LTS Release:    14.04
+  Codename:       trusty
+#+end_src
+
+   On Manjaro:
+
+#+begin_src bash
+  $ lsb_release -a
+  LSB Version:	  n/a
+  Distributor ID:	ManjaroLinux
+  Description:	  Manjaro Linux
+  Release:	      20.0.3
+  Codename:	      Lysia
+#+end_src
+
+   In case when you don't have ~lsb_release~ installed you may want to try some
+   guessing, for example, there is a ﬁle ~/etc/issue~ that often contains
+   distribution name. For example, on ubuntu:
+
+#+begin_src bash
+  $ cat /etc/issue
+  Ubuntu 12.04.5 LTS \n \l
+#+end_src
+
+   Don't use ﬁle ~/etc/debian_version~ because its contents do not match
+   distribution name!
+
+   Note that this will also work on non-Debian-family distributions like Fedora,
+   RHEL, or openSUSE — but that ~lsb_release~ may not be installed.
+
+** Section 2.2: Detect what systemd-based distribution you are using
+
+   This method will work on modern versions of Arch, CentOS, CoreOS, Debian,
+   Fedora, Mageia, openSUSE, Red Hat Enterprise Linux, SUSE Linux Enterprise
+   Server, Ubuntu, and others. This wide applicability makes it an ideal as a
+   ﬁrst approach, with fallback to other methods if you need to also identify
+   older systems.
+
+   Look at ~/etc/os-release~. In speciﬁc, look at variables ~NAME~, ~VERSION~,
+   ~ID~, ~VERSION_ID~, and ~PRETTY_NAME~.
+
+   On Fedora, this ﬁle might look like:
+
+#+begin_src bash
+  NAME="Manjaro Linux"
+  ID=manjaro
+  ID_LIKE=arch
+  BUILD_ID=rolling
+  PRETTY_NAME="Manjaro Linux"
+  ANSI_COLOR="32;2;24;144;200"
+  HOME_URL="https://manjaro.org/"
+  DOCUMENTATION_URL="https://wiki.manjaro.org/"
+  SUPPORT_URL="https://manjaro.org/"
+  BUG_REPORT_URL="https://bugs.manjaro.org/"
+  LOGO=manjarolinux
+#+end_src
+
+   From the bash shell, one can source the /etc/os-release ﬁle and then use the
+   various variables directly, like this:
+
+#+begin_src bash
+  $ ( source /etc/os-release && echo "$PRETTY_NAME" )
+  Manjaro Linux
+#+end_src
+
+** Section 2.3: Detect what RHEL / CentOS / Fedora distribution you are working in
+
+   Look at the contents of /etc/manjaro-release
+
+#+begin_src bash
+  cat /etc/redhat-release
+#+end_src
+
+** Section 2.4: Uname - Print information about the current system
+
+   Uname is the short name for unix name. Just type uname in console to get
+   information about your operating system.
+
+#+begin_src bash
+  uname [OPTION]
+#+end_src
+
+   If no OPTION is speciﬁed, uname assumes the -s option.
+
+#+begin_src bash
+  -a or --all - Prints all information, omitting -p and -i if the information is unknown.
+#+end_src
+
+   Example:
+
+#+begin_src bash
+  > uname -a
+  SunOS hope 5.7 Generic_106541-08 sun4m sparc SUNW,SPARCstation-10
+#+end_src
+
+   All the options:
+
+| ~-n~, ~--nodename~          | Print the network node hostname.           |
+| ~-r~, ~--kernel-release~    | Print the kernel release.                  |
+| ~-m~, ~--machine~           | Print the machine hardware name.           |
+| ~-p~, ~--processor~         | Print the processor type, or "unknown".    |
+| ~-i~, ~--hardware-platform~ | Print the hardware platform, or "unknown". |
+| ~-o~, ~--operating-system~  | Print the operating system.                |
+| ~--help~                    | Display a help message, and exit.          |
+| ~--version~                 | Display version information, and exit.     |
+
+** Section 2.5: Detect basic information about your distro
+
+   just execute ~uname -a~.
+
+   On Arch:
+
+#+begin_src bash
+  $ uname -a
+  Linux nokia 4.6.4-1-ARCH #1 SMP PREEMPT Mon Jul 11 19:12:32 CEST 2016 x86_64 GNU/Linuxenter code here
+#+end_src
+
+** Section 2.6: Using GNU coreutils
+
+   If you do not know what system you are using you may not be able to directly
+   jump to one of the examples above, hence this may be your ﬁrst port of call.
+
+#+begin_src bash
+  $ uname -a
+#+end_src
+
+** Section 2.7: Find your linux os (both debian & rpm) name and release number
+
+   Most of linux distros stores its version info in the /etc/lsb-release
+   (debian) or /etc/redhat-release (RPM based) ﬁle. Using below generic command
+   should get you past most of the Debian and RPM derivatives as Linux Mint and
+   Cent-Os.
+
+#+begin_src bash
+  cat /etc/*release
+
+  DISTRIB_ID=ManjaroLinux
+  DISTRIB_RELEASE=20.0.3
+  DISTRIB_CODENAME=Lysia
+  DISTRIB_DESCRIPTION="Manjaro Linux"
+#+end_src
