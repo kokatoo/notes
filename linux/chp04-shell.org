@@ -113,13 +113,13 @@
     looks something like this: ~user~@host ~ $~ in my case it looks like this:
     ~bruce@gotham ~ $~. It can changed as per the table below:
 
-| ~PS1=‘\w $’~   | ~~ $~ shell prompt as directory name. In this case root directory is Root. |
+| ~PS1=‘\w $’~   | ~ $ shell prompt as directory name. In this case root directory is Root.     |
 | ~PS1=‘\h $’~   | ~gotham $~ shell prompt as hostname                                        |
 | ~PS1=‘\u $’~   | ~bruce $~ shell prompt as username                                         |
 | ~PS1=‘\t $’~   | ~22:37:31 $~ shell prompt in 24 hour format                                |
 | ~PS1=‘@ $’~    | ~10:37 PM~ shell prompt in 12 hour time format                             |
 | ~PS1=‘! $’~    | ~732~ will show the history number of command in place of shell prompt     |
-| ~PS1=‘dude $’~ | ~'dude $~ will show the shell prompt the way you like                      |
+| ~PS1=‘dude $’~ | ~dude $~ will show the shell prompt the way you like                       |
 
 *** Basic shell commands
 
@@ -133,7 +133,7 @@
 | ~C-_~                       | will undo the last thing typed on the command line              |
 | ~C-c~                       | will interrupt/stop the job/process running in the foreground   |
 | ~C-r~                       | reverse search in history                                       |
-| ~~/.bash_history~           | stores last 500 commands/events used on the shell               |
+| ~.bash_history~             | stores last 500 commands/events used on the shell               |
 | ~history~                   | will show the command history                                   |
 | ~history ¦ grep <key-word>~ | will show all the commands in history having keyword <key-word> |
 
@@ -170,7 +170,7 @@
 #+end_src
 
    Sometimes files have strange names for example you might have a file like
-   random7897_mykey_0fidw.pem. Let's say you're looking for this file but you
+   ~random7897_mykey_0fidw.pem~. Let's say you're looking for this file but you
    only remember the mykey and pem parts. You could combine the locate command
    with ~grep~ using a pipe like this:
 
