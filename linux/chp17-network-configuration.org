@@ -120,7 +120,7 @@ $ ip route show # List routing table
   $ ip route add default via 1.2.3.254
 #+end_src
 
-    * Adds a default route (for all addresses) via the local gateway 192.168.1.1
+    * Adds a default route (for all addresses) via the local gateway ~192.168.1.1~
       that can be reached on device eth0
 
 #+begin_src bash
@@ -144,7 +144,7 @@ $ ip route add default via 192.168.1.1 dev eth0
 
    For instance, you could add this line using the ~cat~ Unix tool. Suppose that
    you want to make a ping to a PC in yout local network whose IP address is
-   192.168.1.44 and you want to refer to that IP address just by remote_pc. Then
+   ~192.168.1.44~ and you want to refer to that IP address just by ~remote_pc~. Then
    you must write on your shell:
 
 #+begin_src bash
@@ -169,7 +169,11 @@ $ ifconfig -a
 
     List the details of a specific interface
 
-    Syntax: ~$ ifconfig <interface>~
+    Syntax:
+
+#+begin_src bash
+  $ ifconfig <interface>
+#+end_src
 
     Example:
 
@@ -188,7 +192,11 @@ $ ifconfig -a
 
 *** Ethtool - query the network driver and hardware settings
 
-    Syntax:~ $ ethtool <interface>~
+    Syntax:
+
+#+begin_src bash
+  $ ethtool <interface>
+#+end_src
 
     Example:
 
@@ -248,7 +256,7 @@ $ ifconfig -a
   $ ip addr show
 #+end_src
 
-    Add (or del) ip and mask (255.255.255.0)
+    Add (or del) ip and mask (~255.255.255.0~)
 
 #+begin_src bash
   $ ip addr add 1.2.3.4/24 brd + dev eth0
