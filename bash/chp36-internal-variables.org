@@ -14,7 +14,7 @@
 | ~$*~ and ~$@~    | ~$*~ and ~$@~ are the same as ~$1~ ~$2~ ... (note that it generally makes no sense to leave those unquoted)    |
 |                  | ~“$*”~ is the same as ~“$1 $2 ...”~ 1                                                                          |
 |                  | ~“$@”~ is the same as ~“$1”~ ~“$2”~ ...                                                                        |
-|                  | 1. Arguments are separated by the first character of ~$IFS~, which does not have to be a space.                 |
+|                  | 1. Arguments are separated by the first character of ~$IFS~, which does not have to be a space.                |
 | ~$#~             | Number of positional parameters passed to the script or function                                               |
 | ~$!~             | Process ID of the last (right-most for pipelines) command in the most recently job put into the                |
 |                  | background (note that it's not necessarily the same as the job's process group ID when job control is enabled) |
@@ -23,15 +23,16 @@
 | ~$n~             | Positional parameters, where n=1, 2, 3, ..., 9                                                                 |
 | ~${n}~           | Positional parameters (same as above), but n can be > 9                                                        |
 | ~$0~             | In scripts, path with which the script was invoked; with ~bash -c ‘printf "%s\n" "$0"’~ name                   |
-|                  | args': name (the first argument after the inline script), otherwise, the argv[0] that bash received.            |
-| ~$_~             | Last field of the last command                                                                                  |
-| ~$IFS~           | Internal field separator                                                                                        |
+|                  | args': name (the first argument after the inline script), otherwise, the argv[0] that bash received.           |
+| ~$-~             | Current shell option flags. Contain ~*i*~ if shell is interactive.
+| ~$_~             | Last field of the last command                                                                                 |
+| ~$IFS~           | Internal field separator                                                                                       |
 | ~$PATH~          | PATH environment variable used to look-up executables                                                          |
 | ~$OLDPWD~        | Previous working directory                                                                                     |
 | ~$PWD~           | Present working directory                                                                                      |
 | ~$FUNCNAME~      | Array of function names in the execution call stack                                                            |
 | ~$BASH_SOURCE~   | Array containing source paths for elements in FUNCNAME array. Can be used to get the script path.              |
-| ~$BASH_ALIASES~  | Associative array containing all currently defined aliases                                                      |
+| ~$BASH_ALIASES~  | Associative array containing all currently defined aliases                                                     |
 | ~$BASH_REMATCH~  | Array of matches from the last regex match                                                                     |
 | ~$BASH_VERSION~  | Bash version string                                                                                            |
 | ~$BASH_VERSINFO~ | An array of 6 elements with Bash version information                                                           |

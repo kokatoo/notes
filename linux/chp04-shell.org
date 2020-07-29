@@ -86,7 +86,7 @@
    Print the list of shells listed in /etc/shells and exit.
 
 #+begin_src bash
-   -l, --list-shells
+   -l, --list-shelsl
 #+end_src
 
    Print a usage message and exit.
@@ -100,7 +100,14 @@
 #+begin_src bash
    -v, --version
 #+end_src
-   
+
+   Other options to change shell:
+
+#+begin_src bash
+  passwd -e
+  passwd -l
+  usermod -s /usr/bin/bash
+#+end_src
 ** Section 4.2: Basic Shell Utilities
 
 *** Customizing the Shell prompt

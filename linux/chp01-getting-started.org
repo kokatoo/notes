@@ -185,20 +185,21 @@
 
 *** Getting Help in Linux
 
-| ~man <name>~                   | Read the manual page of ~<name>~.                                                                                                                      |
-| ~man <section> <name>~         | Read the manual page of ~<name>~, related to the given ~<section>~.                                                                                    |
-| ~man -k <keyword>~             | Output all the software (man description) whose man pages contain ~<keyword>~.                                                                         |
-| ~man -K <keyword>~             | Outputs all man pages containing ~<keyword>~ within them.                                                                                              |
-| ~apropos <keyword>~            | Output all the applications whose one line description matches the ~<keyword>~. When not able to recall the name of the application, use this command. |
-| ~help~                         | In Bash shell, this will display the list of all available bash commands.                                                                              |
-| ~help <name>~                  | In Bash shell, this will display the info about the ~<name>~ bash command.                                                                             |
-| ~info <name>~                  | View all the information about ~<name>~.                                                                                                               |
-| ~dpkg -l~                      | Output a list of all installed packages on a Debian-based system.                                                                                      |
-| ~dpkg -L packageName~          | Will list out the files installed and path details for a given package on Debian.                                                                      |
-| ~dpkg -l ¦ grep -i <edit>~     | Return all .deb installed packages with <edit> irrespective of cases.                                                                                  |
-| ~less /var/lib/dpkg/available~ | Return descriptions of all available packages.                                                                                                         |
-| ~whatis vim~                   | List a one-line description of vim.                                                                                                                    |
-| ~<cmd> --help~                 | Display usage information about the <cmmd>. Sometimes ~<cd> -h~ also works, but not for all commands.                                                  |
+| ~man <name>~                   | Read the manual page of ~<name>~.                                                                     |
+| ~man <section> <name>~         | Read the manual page of ~<name>~, related to the given ~<section>~.                                   |
+| ~man -k <keyword>~             | Output all the software (man description) whose man pages contain ~<keyword>~. Same as ~apropos~      |
+| ~man -K <keyword>~             | Outputs all man pages containing ~<keyword>~ within them.                                             |
+| ~apropos <keyword>~            | Output all the applications whose one line description matches the ~<keyword>~.                       |
+|                                | When not able to recall the name of the application, use this command.                                |
+| ~help~                         | In Bash shell, this will display the list of all available bash commands.                             |
+| ~help <name>~                  | In Bash shell, this will display the info about the ~<name>~ bash command.                            |
+| ~info <name>~                  | View all the information about ~<name>~.                                                              |
+| ~dpkg -l~                      | Output a list of all installed packages on a Debian-based system.                                     |
+| ~dpkg -L packageName~          | Will list out the files installed and path details for a given package on Debian.                     |
+| ~dpkg -l ¦ grep -i <edit>~     | Return all .deb installed packages with <edit> irrespective of cases.                                 |
+| ~less /var/lib/dpkg/available~ | Return descriptions of all available packages.                                                        |
+| ~whatis vim~                   | List a one-line description of vim.                                                                   |
+| ~<cmd> --help~                 | Display usage information about the <cmmd>. Sometimes ~<cd> -h~ also works, but not for all commands. |
 
 *** User identification and who is who in Linux world
 
