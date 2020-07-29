@@ -12,7 +12,7 @@
 
 *** CPU
 
-    To get processors related statistics you can use mpstat command but with
+    To get processors related statistics you can use ~mpstat~ command but with
     some options it will provide better visibility:
 
 #+begin_src bash
@@ -193,7 +193,7 @@
 
 *** Static monitoring
 
-    Most widely used command is ps (i.e., process status) command is used to
+    Most widely used command is ~ps~ (i.e., process status) command is used to
     provide information about the currently running processes, including their
     process identification numbers (PIDs).
 
