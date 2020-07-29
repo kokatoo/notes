@@ -1,0 +1,233 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Chapter 12: LAMP Stack
+
+  LAMP (Linux Apache MySQL PHP) consists of the Linux operating system as
+  development environment, the Apache HTTP Server as web server, the MySQL
+  relational database management system (RDBMS) as DB (Data Base) system, and
+  the PHP programming language as Server side (Back End) programming language.
+
+  LAMP is used as a Open Source stack of technologies solution to web
+  development area. Windows version of this stack is called WAMP (Windows Apache
+  MySQL PHP)
+
+** Section 12.1: Installing LAMP on Arch Linux
+
+   With this line we will install all the necessary packages in one step, and
+   the last update:
+
+#+begin_src bash
+  pacman -Syu apache php php-apache mariadb
+#+end_src
+
+   *HTTP*
+
+   Edit
+
+#+begin_src bash
+  /etc/httpd/conf/httpd.conf
+#+end_src
+
+   Change ServerAdmin you@example.com as you need.
+
+   The folder of the WEB Pages by default is ServerRoot ~/etc/httpd~. Directory
+   must be set to the same folder, so change the line
+
+#+begin_src bash
+  <Directory "/etc/httpd">
+#+end_src
+
+   This folder must have read and execution access, so
+
+#+begin_src bash
+   chmod o+x /etc/httpd
+#+end_src
+
+   Change AllowOverride from none (default) to All so ~.htaccess~ will works.
+
+   Now you need the ~~/public_html~ folder for each user. (to get the root page
+   of each user as http://localhost/~yourusername/. Unremark this line:
+
+#+begin_src bash
+   Include conf/extra/httpd-userdir.conf
+#+end_src
+
+   Now as root you need to create the ~~/public_html~ for each user and change
+   the access to (755) of each one.
+
+#+begin_src bash
+  chmod 755 /home
+  chmod 755 /home/username
+  chmod 755 /home/username/public_html
+#+end_src
+
+   You can comment out this line if you want to use SSL:
+
+#+begin_src bash
+  LoadModule ssl_module modules/mod_ssl.so
+#+end_src
+
+   If you need to use virtual domains, uncomment the line:
+
+#+begin_src bash
+  Include conf/extra/httpd-vhosts.conf
+#+end_src
+
+   and in ~/etc/httpd/conf/extra/httpd-vhosts.conf~ you must to add all the
+   virtual domains. (plus into ~/etc/hosts~ if you want to test those virtuals
+   domains)
+
+   Edit ~/etc/httpd/conf/extra/httpd-default.conf~ and change ServerSignature to
+   Off and ServerToken to Prod for hiding critical data
+
+*** PHP
+
+    Edit: ~/etc/httpd/conf/httpd.conf~
+
+    Comment out: ~LoadModule mpm_event_module modules/mod_mpm_event.so~
+
+    Uncomment: ~LoadModule mpm_prefork_module modules/mod_mpm_prefork.so~
+
+    As last item in the LoadModule list, add ~LoadModule php7_module
+    modules/libphp7.so~
+
+    As last item in the include list, add ~Include conf/extra/php7_module.conf~
+
+    Edit ~/etc/php/php.ini~
+
+    Uncomment ~extension=mysqli.so~ and ~extension=pdo_mysql.so~
+
+    Change the timezone as you need, for example:
+
+    ~date.timezone = America/Argentina/Buenos_Aires, date.default_latitude =
+    0.0, date.default_longitude = 0.0~
+
+*** MySQL
+
+    Run as root:
+
+#+begin_src bash
+  mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+#+end_src
+
+   Now you have the root of the MySQL Server.
+
+   Start MySQL daemon:
+
+#+begin_src bash
+  systemctl enable mysqld
+  systemctl start mysqld
+#+end_src
+
+   At last, run:
+
+#+begin_src bash
+  sh /usr/bin/mysql_secure_installation
+#+end_src
+
+   That all to get a web server ready to be customized as you need.
+
+** Section 12.2: Installing LAMP on Ubuntu
+
+   Install apache:
+
+#+begin_src bash
+  sudo apt-get install apache2
+#+end_src
+
+   Install MySql:
+
+#+begin_src bash
+  sudo apt-get install mysql-server
+#+end_src
+
+   Install PHP:
+
+#+begin_src bash
+   sudo apt-get install php5 libapache2-mod-php5
+#+end_src
+
+   Restart system:
+
+#+begin_src bash
+   sudo systemctl restart apache2
+#+end_src
+
+   Check PHP installation:
+
+#+begin_src bash
+  php -r 'echo "\n\nYour PHP installation is working fine.\n\n\n";'
+#+end_src
+
+** Section 12.3: Installing LAMP stack on CentoOS
+
+*** Install Apache Web Server
+
+   First step is to install web server Apache.
+
+#+begin_src bash
+  sudo yum -y install httpd
+#+end_src
+
+   Once it is installed, enable (to run on startup) and start Apache web server
+   service.
+
+#+begin_src bash
+  sudo systemctl enable --now httpd
+#+end_src
+
+   Point your browser to:
+
+   http://localhost
+
+   You will see the default Apache web server page.
+
+*** Install MariaDB Server
+
+    Second step is to install MariaDB:
+
+#+begin_src bash
+  sudo yum -y install mariadb-server
+#+end_src
+
+    Then start and enable (on startup) the MariaDB server:
+
+#+begin_src bash
+  sudo systemctl enable --now mariadb
+#+end_src
+
+    As needed, use mysql_secure_installation to secure your database.
+
+    This script will allow you to do the following:
+
+    * Change the root user's password
+    * Remove test databases
+    * Disable remote access
+
+*** Install PHP
+
+#+begin_src bash
+  sudo yum -y install php php-common
+#+end_src
+
+   Then restart Apache's httpd service.
+
+#+begin_src bash
+  sudo systemctl restart httpd
+#+end_src
+
+   To test PHP, create a file called ~index.php~ in ~/var/www/html~.
+
+   Then add the following line to the file:
+
+   Then point your browser to:
+
+   http://localhost/index.php
+
+   You should see information related to your server. If you do not, ensure that
+   php is for sure installed correctly by running the following command:
+
+#+begin_src bash
+  php --version
+#+end_src

@@ -1,0 +1,92 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Chapter 10: Managing Services
+
+** Section 10.1: Diagnosing a problem with a service
+
+   On systems using systemd, such as Fedora => 15, Ubuntu (Server and Desktop)
+   >= 15.04, and RHEL/CentOS >= 7:
+
+#+begin_src bash
+  systemctl status [servicename]
+#+end_src
+
+   ...where [servicename] is the service in question; for example, ~systemctl
+   status sshd~.
+
+   This will show basic status information and any recent errors logged.
+
+   You can see further errors with ~journalctl~. For example, ~journalctl -xe~
+   will load the last 1000 logged into a pager (like less), jumping to the end.
+   You can also use ~journalctl -f~, which will follow log messages as they come
+   in.
+
+   To see logs for a particular service, use the ~-t~ flag, like this:
+
+#+begin_src bash
+  journalctl -f -t sshd
+#+end_src
+
+   Other handy options include ~-p~ for priority (~-p~ warnings to see only
+   warnings and above), ~-b~ for "since last boot", and ~-S~ for "since" —
+   putting that together, we might do
+
+#+begin_src bash
+  journalctl -p err -S yesterday
+#+end_src
+
+   to see all items logged as errors since yesterday.
+
+   If ~journalctl~ is not available, or if you are following application error
+   logs which do not use the system journal, the ~tail~ command can be used to
+   show the last few lines of a ﬁle. A useful ﬂag for tail is ~-f~ (for
+   "follow"), which causes tail continue showing data as it gets appended to the
+   ﬁle. To see messages from most services on the system:
+
+#+begin_src bash
+  tail -f /var/log/messages
+#+end_src
+
+   Or, if the service is privileged, and may log sensitive data:
+
+#+begin_src bash
+  tail -f /var/log/secure
+#+end_src
+
+   Some services have their own log ﬁles, a good example is ~auditd~, the linux
+   auditing daemon, which has its logs stored in ~/var/log/audit/~. If you do
+   not see output from your service in ~/var/log/messages~ try looking for
+   service speciﬁc logs in ~/var/log/~
+
+** Section 10.2: Starting and Stopping Services
+
+   On systems that use the System-V style init scripts, such as RHEL/CentOS 6:
+
+#+begin_src bash
+  service <service> start
+  service <service> stop
+#+end_src
+
+   On systems using systemd, such as Ubuntu (Server and Desktop) >= 15.04, and
+   RHEL/CentOS >= 7:
+
+#+begin_src bash
+  systemctl <service> dnsmasq
+  systemctl <service> dnsmasq
+#+end_src
+
+** Section 10.3: Getting the status of a service
+
+   On systems that use the System-V style init scripts, such as RHEL/CentOS 6:
+
+#+begin_src bash
+  service <service> status
+#+end_src
+
+   On systems using systemd, such as Ubuntu (Server and Desktop) >= 15.04, and
+   RHEL/CentOS >= 7.0:
+
+#+begin_src bash
+  systemctl status <service>
+#+end_src

@@ -1,0 +1,63 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Chapter 11: Modifying Users
+
+| Parameter | Details                                                                                                                                                                  |
+|-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| username  | The name of the user. Do not use capital letters, do not use dots, do not end it in dash, it must not include colons, no special characters. Cannot start with a number. |
+
+** Section 11.1: Setting your own password
+
+#+begin_src bash
+  passwd
+#+end_src
+
+** Section 11.2: Setting another user's password
+
+   Run the following as root:
+
+#+begin_src bash
+  passwd username
+#+end_src
+
+** Section 11.3: Adding a user
+
+   Run the following as root:
+
+#+begin_src bash
+  useradd username
+#+end_src
+
+** Section 11.4: Removing a user
+
+   Run the following as root:
+
+#+begin_src bash
+  userdel username
+#+end_src
+
+** Section 11.5: Removing a user and its home folder
+
+   Run the following as root:
+
+#+begin_src bash
+  userdel -r username
+#+end_src
+
+** Section 11.6: Listing groups the current user is in
+
+   More detailed information about user and group numerical IDs can be found
+   with the ~id~ command.
+
+#+begin_src bash
+  groups
+#+end_src
+   
+** Section 11.7: Listing groups a user is in
+
+   More detailed information about user and group numerical IDs can be found with id username.
+
+#+begin_src bash
+  groups username
+#+end_src

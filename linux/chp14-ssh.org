@@ -1,0 +1,75 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Chapter 14: Secure Shell (SSH)
+
+  A secure shell is used to remotely access a server from a client over an
+  encrypted connection. OpenSSH is used as an alternative to Telnet connections
+  that achieve remote shell access but are unencrypted. The OpenSSH Client is
+  installed on most GNU/Linux distributions by default and is used to connect to
+  a server. These examples show use how to use the SSH suite to for accept SSH
+  connections and connecting to another host.
+
+** Section 14.1: Connecting to a remote server
+
+   To connect to a server we must use SSH on the client as follows,
+
+#+begin_src bash
+  ssh -p port user@server-address
+#+end_src
+
+   * port - The listening ssh port of the server (default port 22).
+   * user - Must be an existing user on the server with SSH privileges.
+   * server address - The IP/Domain of the server.
+
+   For a real world example lets pretend that you're making a website. The
+   company you chose to host your site tells you that the server is located at
+   web-servers.com on a custom port of 2020 and your account name usr1 has been
+   chosen to create a user on the server with SSH privileges. In this case the
+   SSH command used would be as such
+
+#+begin_src bash
+  ssh -p 2020 usr1@web-servers.com
+#+end_src
+
+   If account name on the remote system is the same as the one one the local
+   client you may leave the user name oﬀ. So if you are usr1 on both systems
+   then you my simply use web-servers.com instead of usr1@web-servers.com.
+
+   When a server you want to connect to is not directly accessible to you, you
+   can try using ProxyJump switch to connect to it through another server which
+   is accessible to you and can connect to the desired server.
+
+#+begin_src bash
+  ssh -J usr1@10.0.0.1:2020 usr2@10.0.0.2 -p 2222
+#+end_src
+
+   This will let you connect to the server 10.0.0.2 (running ssh on port 2222)
+   through server at 10.0.0.1 (running ssh on port 2020). You will need to have
+   accounts on both servers of course. Also note that the -J switch is
+   introduced in OpenSSH version 7.3.
+
+** Section 14.2: Installing OpenSSH suite
+
+   Both connecting to a remove SSH server and accepting SSH connections require
+   installation of openssh
+
+   Debian:
+
+#+begin_src bash
+  apt-get install openssh
+#+end_src
+
+   Arch Linux:
+
+#+begin_src bash
+  pacman -S openssh
+#+end_src
+
+   Yum:
+
+#+begin_src bash
+  yum install openssh
+#+end_src
+
+
