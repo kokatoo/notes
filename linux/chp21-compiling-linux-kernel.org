@@ -67,5 +67,5 @@
        Note that you can use the -jem> ﬂag to compile ﬁles in parallel and take
        advantage of multiple cores.
 
-   The compressed kernel image can be found at arch/[arch]/boot/bzImage, where
-   [arch] is equal to uname -a.
+   The compressed kernel image can be found at ~arch/[arch]/boot/bzImage~, where
+   [arch] is equal to ~uname -a~.

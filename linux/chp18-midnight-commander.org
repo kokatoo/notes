@@ -3,7 +3,7 @@
 
 * Chapter 18: Midnight Commander
 
-  Midnight Commander or mc is a console file manager. This topic includes the
+  Midnight Commander or ~mc~ is a console file manager. This topic includes the
   descripton of it's functionalities and examples and tips of how to use it to
   it's full potential.
 

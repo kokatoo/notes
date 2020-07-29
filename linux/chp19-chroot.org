@@ -3,9 +3,9 @@
 
 * Chapter 19: Change root (chroot)
 
-  Change root (chroot) is an operation that changes the apparent root directory
+  Change root (~chroot~) is an operation that changes the apparent root directory
   for the current running process and their children. A program that is run in
-  such a modiﬁed environment cannot access ﬁles and commands outside that
+  such a modified environment cannot access files and commands outside that
   environmental directory tree.
 
 ** Section 19.1: Requirements
@@ -20,9 +20,9 @@
 
 ** Section 19.2: Manually changing root in a directory
 
-   1. Ensure you met all requirements, as per Requirements
+   1. Ensure you met all requirements, as per requirements
 
-   2. Mount the temporary API ﬁlesystems:
+   2. Mount the temporary API filesystems:
 
 #+begin_src bash
   cd /location/of/new/root
@@ -32,41 +32,41 @@
   mount --rbind /run run/ (optionally)
 #+end_src
 
-    3. If you need to use an internet connection in the chroot environment, copy
+    3. If you need to use an internet connection in the ~chroot~ environment, copy
        over the DNS details:
 
 #+begin_src bash
   cp /etc/resolv.conf etc/resolv.conf
 #+end_src
 
-    4. Change root into /location/of/new/root, specifying the shell (/bin/bash
+    4. Change root into ~/location/of/new/root~, specifying the shell (/bin/bash
        in this example):
 
 #+begin_src bash
   chroot /location/of/new/root /bin/bash
 #+end_src
     
-    5. After chrooting it may be necessary to load the local bash conﬁguration:
+    5. After chrooting it may be necessary to load the local bash configuration:
 
 #+begin_src bash
   source /etc/profile
   source ~/.bashrc
 #+end_src
 
-    6. Optionally, create a unique prompt to be able to diﬀerentiate your chroot
+    6. Optionally, create a unique prompt to be able to differentiate your chroot
        environment:
 
 #+begin_src bash
   export PS1="(chroot) $PS1"
 #+end_src
 
-    7. When ﬁnished with the chroot, you can exit it via:
+    7. When finished with the ~chroot~, you can exit it via:
 
 #+begin_src bash
   exit
 #+end_src
 
-    8. Unmount the temporary ﬁle systems:
+    8. Unmount the temporary file systems:
 
 #+begin_src bash
   cd / umount --recursive /location/of/new/root
