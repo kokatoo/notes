@@ -1,0 +1,78 @@
+#+STARTUP: showeverything
+#+title: Linux Notes for Professionals
+
+* Credits
+
+  Thank you greatly to all the people from Stack Overﬂow Documentation who
+  helped provide this content, more changes can be sent to web@petercv.com for
+  new content to be published or updated
+
+| 7heo.tk                | Chapter 1                 |
+| Aaron Skomra           | Chapter 16                |
+| Ajay Sangale           | Chapters 1 and 9          |
+| Anagh Hegde            | Chapters 4 and 14         |
+| Ani Menon              | Chapters 2 and 4          |
+| Arden Shackelford      | Chapter 12                |
+| Armali                 | Chapter 1                 |
+| Baard Kopperud         | Chapter 8                 |
+| BrightOne              | Chapters 9, 13, 14 and 19 |
+| C.W.Holeman II         | Chapter 14                |
+| caped114               | Chapters 1 and 4          |
+| colelemonz             | Chapter 1                 |
+| ctafur                 | Chapter 17                |
+| DaveM                  | Chapter 2                 |
+| depperm                | Chapter 1                 |
+| e.dan                  | Chapter 1                 |
+| embedded               | Chapter 8                 |
+| Emmanuel Mathi         | Chapter 4                 |
+| EsmaeelE               | Chapter 1                 |
+| fdeslaur               | Chapter 3                 |
+| Federico Ponzi         | Chapter 9                 |
+| Filipe                 | Chapter 14                |
+| Flamewires             | Chapter 10                |
+| FOP                    | Chapter 12                |
+| foxtrot9               | Chapter 7                 |
+| geek1011               | Chapter 11                |
+| Jarryd                 | Chapter 1                 |
+| Jensd                  | Chapters 1 and 4          |
+| KerDam                 | Chapter 1                 |
+| Kiran Vemuri           | Chapters 6 and 17         |
+| kuldeep mishra         | Chapter 13                |
+| Léo Léopold Hertz 준영 | Chapter 21                |
+| lardenn                | Chapters 2 and 4          |
+| leeor                  | Chapter 9                 |
+| likewhoa               | Chapter 1                 |
+| manav m                | Chapter 15                |
+| Manuel                 | Chapter 14                |
+| Marsso                 | Chapter 8                 |
+| Mateusz Piotrowski     | Chapter 1                 |
+| mattdm                 | Chapters 2, 10 and 11     |
+| mertyildiran           | Chapter 5                 |
+| Mike P                 | Chapter 1                 |
+| Mohammad               | Chapter 1                 |
+| Nathan Osman           | Chapter 21                |
+| Naveen Chakravarthy    | Chapter 1                 |
+| Nikhil Raj             | Chapter 2                 |
+| Not22                  | Chapter 8                 |
+| oznek                  | Chapter 4                 |
+| Paradox                | Chapters 16 and 20        |
+| parkydr                | Chapter 7                 |
+| Philip Kirkbride       | Chapters 4, 7, 12 and 20  |
+| Quaker                 | Chapter 4                 |
+| Rajesh Rengaraj        | Chapter 14                |
+| Riley Guerin           | Chapter 15                |
+| Rubio                  | Chapters 1, 4 and 20      |
+| S.Rohit                | Chapters 3, 6 and 12      |
+| Sava                   | Chapters 1, 4, 14 and 18  |
+| Sergey Stolyarov       | Chapter 2                 |
+| Sudip Bhandari         | Chapter 1                 |
+| Teddy                  | Chapter 2                 |
+| Tejus Prasad           | Chapter 1                 |
+| TiansHUo               | Chapter 1                 |
+| Todd                   | Chapters 1 and 14         |
+| vishram0709            | Chapter 1                 |
+| Whoami                 | Chapter 1                 |
+| Y4Rv1K                 | Chapters 6 and 17         |
+| Zumo de Vidrio         | Chapter 1                 |
+| zyio                   | Chapter 5                 |
+
