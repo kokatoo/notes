@@ -19,10 +19,9 @@
 
    Some services are managed by Upstart. You can check the status of all Upstart
    services with sudo initctl list. Any service managed by Upstart will also
-   show in the list provided by service --status-all but will be marked with a
+   show in the list provided by service ~--status-all~ but will be marked with a
    ?.
 
-   ref:
    https://askubuntu.com/questions/407075/how-to-read-service-status-all-results
 
 ** Section 9.2: Systemd service management

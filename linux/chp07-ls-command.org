@@ -73,12 +73,12 @@
   -rw-r----- 1 user group 6586816 Dec 24 12:07 big.zip
 #+end_src
 
-   In this example, the total size of the contents is 6460KB.
+   In this example, the total size of the contents is 6,460KB.
 
    Then there is an entry for each file/directory in alphabetical order with
    upper case before lower case.
 
-   The first character is the type (e.g. d - directory, l - link).
+   The first character is the type (e.g. ~d~ - directory, ~l~ - link).
 
    The next 9 characters show the permissions for the user, group and other.
 

@@ -79,7 +79,7 @@
 *** Notes:
 
     * Make the changes in ~.bashrc~ or ~/etc/bashrc~ or ~.bash_profile~ or
-      ~~./profile file~ (depending on the OS) and save it.
+      ~profile~ file (depending on the OS) and save it.
     * For root you might also need to edit the ~/etc/bash.bashrc~ or
       ~/root/.bashrc~ file
     * Run source ~.bashrc~ (distro specific) after saving the file.
@@ -138,7 +138,7 @@
 ** Section 30.4: Show a git branch using PROMPT_COMMAND
 
    If you are inside a folder of a git repository it might be nice to show the
-   current branch you are on. In ~~/.bashrc~ or ~/etc/bashrc~ add the following (git
+   current branch you are on. In ~.bashrc~ or ~/etc/bashrc~ add the following (git
    is required for this to work):
 
 #+begin_src bash

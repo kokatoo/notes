@@ -46,14 +46,14 @@
 
    Change AllowOverride from none (default) to All so ~.htaccess~ will works.
 
-   Now you need the ~~/public_html~ folder for each user. (to get the root page
-   of each user as http://localhost/~yourusername/. Unremark this line:
+   Now you need the ~/home/usr/public_html~ folder for each user. (to get the root page
+   of each user as ~http://localhost/~yourusername/~. Unremark this line:
 
 #+begin_src bash
    Include conf/extra/httpd-userdir.conf
 #+end_src
 
-   Now as root you need to create the ~~/public_html~ for each user and change
+   Now as root you need to create the ~/home/usr/public_html~ for each user and change
    the access to (755) of each one.
 
 #+begin_src bash
@@ -179,7 +179,7 @@
 
    Point your browser to:
 
-   http://localhost
+   ~http://localhost~
 
    You will see the default Apache web server page.
 
@@ -223,7 +223,7 @@
 
    Then point your browser to:
 
-   http://localhost/index.php
+   ~http://localhost/index.php~
 
    You should see information related to your server. If you do not, ensure that
    php is for sure installed correctly by running the following command:

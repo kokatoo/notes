@@ -24,7 +24,7 @@
 
    For a real world example lets pretend that you're making a website. The
    company you chose to host your site tells you that the server is located at
-   web-servers.com on a custom port of 2020 and your account name usr1 has been
+   ~web-servers.com~ on a custom port of ~2020~ and your account name ~usr1~ has been
    chosen to create a user on the server with SSH privileges. In this case the
    SSH command used would be as such
 
@@ -44,15 +44,15 @@
   ssh -J usr1@10.0.0.1:2020 usr2@10.0.0.2 -p 2222
 #+end_src
 
-   This will let you connect to the server 10.0.0.2 (running ssh on port 2222)
-   through server at 10.0.0.1 (running ssh on port 2020). You will need to have
-   accounts on both servers of course. Also note that the -J switch is
+   This will let you connect to the server ~10.0.0.2~ (running ssh on port ~2222~)
+   through server at ~10.0.0.1~ (running ssh on port ~2020~). You will need to have
+   accounts on both servers of course. Also note that the ~-J~ switch is
    introduced in OpenSSH version 7.3.
 
 ** Section 14.2: Installing OpenSSH suite
 
    Both connecting to a remove SSH server and accepting SSH connections require
-   installation of openssh
+   installation of ~openssh~
 
    Debian:
 

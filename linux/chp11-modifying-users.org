@@ -3,9 +3,9 @@
 
 * Chapter 11: Modifying Users
 
-| Parameter | Details                                                                                                                                                                  |
-|-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| username  | The name of the user. Do not use capital letters, do not use dots, do not end it in dash, it must not include colons, no special characters. Cannot start with a number. |
+| Parameter  | Details                                                                                                                                                                  |
+|------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~username~ | The name of the user. Do not use capital letters, do not use dots, do not end it in dash, it must not include colons, no special characters. Cannot start with a number. |
 
 ** Section 11.1: Setting your own password
 
