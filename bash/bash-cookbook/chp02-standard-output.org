@@ -1,0 +1,150 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp02: Standard Output
+
+  In Unix, everything looks like a file. All your program need to know how to
+  write to a file.
+
+#+begin_src bash
+  cmd < inputfile > outputfile
+#+end_src
+
+  ~inputfile~ defaults to keyboard if omitted and outputfile defaults to the
+  terminal window.
+
+** 2.3 Writing Output with More Formatting Control
+
+   ~-~ justify left and justify right otherwise. ~4.2f~ means field width of 4
+   and 2 digits to the right of decimal point. ~10.10s~ means a max field width
+   of 10 and min of 10.
+ 
+#+begin_src bash
+  printf "%-10.10s = %4.2f\n" "Gigahertz" 1.9273
+#+end_src
+
+** 2.4 Writing Output Without the Newlines
+
+#+begin_src bash
+  printf "%s %s" Hello world!
+  echo -n Hello world!
+#+end_src
+
+** 2.9 Sending Output and Error Messages to the Different Files
+
+#+begin_src bash
+  cmd 1> msg.out 2> msg.err
+  cmd > msg.out 2> msg.err
+#+end_src
+
+** 2.9 Sending Output and Error Messages to the Same File
+
+#+begin_src bash
+  cmd >& outfile
+  cmd &> outfile
+  cmd > outfile 2>&1
+#+end_src
+
+** 2.10 Appending Rather than Clobbering Output
+
+#+begin_src bash
+  ls &>> ls.out
+  ls >> ls.out 2>&1
+#+end_src
+
+** 2.12 Skipping a Header in a File
+
+   Skipping the first line of a file:
+
+#+begin_src bash
+$ tail -n +2 lines
+Line 2
+Line 3
+Line 4
+Line 5
+#+end_src
+
+   ~tail -n +1 file~ gives you the entire file
+
+** 2.13 Throwing Output Away
+
+#+begin_src bash
+  find / -name filename -print 2> /dev/null
+#+end_src
+
+** 2.14 Saving or Grouping Output from Several Commands
+
+   Whitespace beside the braces are required as braces are reserved words.
+   Trailing ~;~ are also required. These are not needed for parenthesis. However
+   the command is run in another subshell. ~cd~ will not persist.
+
+   https://uvesway.wordpress.com/2013/03/11/some-whitespace-pitfalls-in-bash-programming/
+
+#+begin_src bash
+  { pwd; ls; } > /tmp/all.out
+  (pwd;ls) > /tmp/all.out
+#+end_src
+
+** 2.15 Connecting Two Programs by Using Output as Input
+
+   Using ~|~ means we don't have to use a temporary file as intermediary. 
+
+   Such programs that take both files or STDIN are called filters and are used
+   in pipes. Programs that are connected by pipes are run in separate processes
+
+#+begin_src bash
+  sort /tmp/out # same as sort < /tmp/out
+#+end_src
+
+** 2.16 Saving a Copy of Output Even While Using It as Input
+
+   Save the output between ~uniq~ and ~awk~ by splitting the output between
+   STDOUT and file:
+
+#+begin_src bash
+  cat my* | tr 'a-z' 'A-Z' | uniq | tee /tmp/tmp.out | awk -f transform.awk | wc
+  cat my* | tr 'a-z' 'A-Z' | uniq | awk -f transform.awk | wc
+
+  # saving the output from a long running process
+  find / -name '*.c' -print | tee /tmp/all.out
+  # including STDERR
+  find / -name '*.c' -print 2>&1 | tee /tmp/all.out
+#+end_src
+
+** 2.17 Connecting Two Programs by Using Output as Arguments
+
+   ~rm~ doesn't act like a filter and read from STDIN. But we can use command
+   substitution. ~$()~ runs in a subshell. ~``~ can also be used.
+
+#+begin_src bash
+  rm $(find . -name '*.class')
+#+end_src
+
+
+** 2.18 Using Multiple Redirects on One Line
+
+   Use redirection with file numbers to open all the various files
+
+#+begin_src bash
+  cmd 3> file.3 4> file.4 > file.5
+
+  # you can redirect specific file in the script
+  echo option >&5
+#+end_src
+
+** 2.21 Keeping Files Safe from Accidental Overwriting
+
+#+begin_src bash
+  # don't overwrite existing files during redirect
+  set -o noclobber
+  # turning option off
+  set +o noclobber
+#+end_src
+
+** 2.22 Clobbering a File on Purpose
+
+#+begin_src bash
+# overwrite even with noclobber ste
+echo more >| myfile
+#+end_src
+

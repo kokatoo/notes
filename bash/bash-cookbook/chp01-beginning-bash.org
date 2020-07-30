@@ -1,4 +1,7 @@
-* Beginning bash
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp01: Beginning bash
 
   Bash is a language for executing commands. It started as a POSIX
   standardization for shells and based on 1988 version of ksh.
@@ -15,6 +18,7 @@
 
 ** 1.4 Showing Where You Are
 
+
 #+begin_src bash
   # physical path
   pwd -P
@@ -23,7 +27,7 @@
   pwd -L
 #+end_src
 
-** Recipe 1.5 Finding and Running Commands
+** 1.5 Finding and Running Commands
 
     ~type -a~ prints all matches
 
@@ -43,7 +47,7 @@
    ~slocate~ list programs that user has permission to while ~locate~ list all
    programs matching search term.
 
-** Recipe 1.6   
+** 1.6 Getting Information About Files
 
    You can get the similar kind of output of ~ls -l~ from ~stat~ and ~find~ commands.
 
@@ -52,15 +56,50 @@
   find /tmp/ -name <file> -printf '%m %n %u %g %t %p'
 #+end_src
 
-** Recipe 1.7 Showing All Hidden (Dot) Files in the Current Directory
+** 1.7 Showing All Hidden (Dot) Files in the Current Directory
 
     *Globbing:*
 
-    | ~*~      | Matches any string including null string        |
-    | ~?~      | Matches any single character                    |
-    | ~[...]~  | Range of characters to match                    |
-    | ~!~      | Same as ~^~ but ~!~ is POSIX                    |
-    | ~.[!.]*~ | ~echo .[!.]*~ to see it does not match . and .. |
+    | ~*~      | Matches any string including null string |
+    | ~?~      | Matches any single character             |
+    | ~[...]~  | Range of characters to match             |
+    | ~!~      | Same as ~^~ but ~!~ is POSIX             |
+    | ~.[!.]*~ | Does not match ~.~ and ~..~              |
+     
+    ~ls -d~ works like ~echo~. You can use it to test wildcards.
+
+#+begin_src bash
+  echo .[!.]*
+  ls -d .[!.]*
+#+end_src
 
 
+** 1.8 Using Shell Quoting
 
+   Unquoted text is subject to variable expansion and double quoted text is
+   subject to command substitution as well. Use single quote for no substitutions.
+
+
+** 1.9 Using or Replacing Builtins and External Commands
+
+   A builtin command is built into the shell while external command is an
+   external file launched by the shell. Use ~help <cmd>~ for builtin commands
+   and ~man~ for external commands.
+
+** 1.10 Determining if You Are Running Interactively
+
+   ~$-~ is a listing of current shell option flags. Contain ~i~ if shell is interactive.
+
+#+begin_src bash
+  case "$-" in
+      *i*) ;; # Code for interactive shell here
+      *)   ;; # Code for noninteractive shell here
+  esac
+#+end_src
+
+** 1.11 Setting bash as Your Default Shell
+
+#+begin_src bash
+  chsh -s /bin/bash
+  usermod -s /usr/bin/bash
+#+end_src
