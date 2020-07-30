@@ -6,8 +6,6 @@
 ** Section 4.1: Staging All Changes to Files
 
 #+begin_src bash
-  git add -A
-  Version ≥ 2.0
   git add .
 #+end_src
 
@@ -27,7 +25,7 @@
 ** Section 4.3: Add changes by hunk
 
    You can see what "hunks" of work would be staged for commit using the patch
-   ﬂag:
+   flag:
 
 #+begin_src bash
   git add -p
@@ -46,19 +44,19 @@
   Stage this hunk [y,n,q,a,d,/,s,e,?]?
 #+end_src
 
-| y | stage this hunk for the next commit                                 |
-| n | do not stage this hunk for the next commit                          |
-| q | quit; do not stage this hunk or any of the remaining hunks          |
-| a | stage this hunk and all later hunks in the file                      |
-| d | do not stage this hunk or any of the later hunks in the file         |
-| g | select a hunk to go to / search for a hunk matching the given regex |
-| j | leave this hunk undecided, see next undecided hunk                  |
-| J | leave this hunk undecided, see next hunk                            |
-| k | leave this hunk undecided, see previous undecided hunk              |
-| K | leave this hunk undecided, see previous hunk                        |
-| s | split the current hunk into smaller hunks                           |
-| e | manually edit the current hunk                                      |
-| ? | print hunk help                                                     |
+| ~y~ | stage this hunk for the next commit                                 |
+| ~n~ | do not stage this hunk for the next commit                          |
+| ~q~ | quit; do not stage this hunk or any of the remaining hunks          |
+| ~a~ | stage this hunk and all later hunks in the file                      |
+| ~d~ | do not stage this hunk or any of the later hunks in the file         |
+| ~g~ | select a hunk to go to / search for a hunk matching the given regex |
+| ~j~ | leave this hunk undecided, see next undecided hunk                  |
+| ~J~ | leave this hunk undecided, see next hunk                            |
+| ~k~ | leave this hunk undecided, see previous undecided hunk              |
+| ~K~ | leave this hunk undecided, see previous hunk                        |
+| ~s~ | split the current hunk into smaller hunks                           |
+| ~e~ | manually edit the current hunk                                      |
+| ~?~ | print hunk help                                                     |
 
    This makes it easy to catch changes which you do not want to commit.
 
@@ -71,7 +69,7 @@
    commit. You can add and remove changes to whole files, add untracked files and
    remove files from being tracked, but also select subsection of changes to put
    in the index, by selecting chunks of changes to be added, splitting those
-   chunks, or even editing the diﬀ. Many graphical commit tools for Git (like
+   chunks, or even editing the diff. Many graphical commit tools for Git (like
    e.g. git gui) include such feature; this might be easier to use than the
    command line version.
 
@@ -105,7 +103,7 @@
       line under the unstaged column.
 
    The bottom half shows what you can do. Either enter a number (1-8) or a
-   letter (s, u, r, a, p, d, q, h).
+   letter ~(s, u, r, a, p, d, q, h)~.
 
    ~status~ shows output identical to the top part of the output above.
 

@@ -15,9 +15,8 @@
 
 ** 2.3 Writing Output with More Formatting Control
 
-   ~-~ justify left and justify right otherwise. ~4.2f~ means field width of 4
-   and 2 digits to the right of decimal point. ~10.10s~ means a max field width
-   of 10 and min of 10.
+   ~-~ justify left. ~4.2f~ means field width of 4 and 2 digits to the right of
+   decimal point. ~10.10s~ means a max field width of 10 and min of 10.
  
 #+begin_src bash
   printf "%-10.10s = %4.2f\n" "Gigahertz" 1.9273
@@ -144,7 +143,6 @@ Line 5
 ** 2.22 Clobbering a File on Purpose
 
 #+begin_src bash
-# overwrite even with noclobber ste
-echo more >| myfile
+  # overwrite even with noclobber set
+  echo more >| myfile
 #+end_src
-
