@@ -1,0 +1,277 @@
+#+STARTUP: showeverything
+#+title: Git Notes for Professionals
+
+* Chapter 3: Working with Remotes
+
+** Section 3.1: Deleting a Remote Branch
+
+   To delete a remote branch in Git:
+
+#+begin_src bash
+  git push [remote-name] --delete [branch-name]
+#+end_src
+
+  or
+
+#+begin_src bash
+  git push [remote-name] :[branch-name]
+#+end_src
+
+** Section 3.2: Changing Git Remote URL
+
+   Check existing remote
+
+#+begin_src bash
+  git remote -v
+  # origin https://github.com/username/repo.git (fetch)
+  # origin https://github.com/usernam/repo.git (push)
+#+end_src
+
+   Changing repository URL
+
+#+begin_src bash
+  git remote set-url origin https://github.com/username/repo2.git
+  # Change the 'origin' remote's URL
+#+end_src
+
+   Verify new remote URL
+
+#+begin_src bash
+  git remote -v
+  # origin https://github.com/username/repo2.git (fetch)
+  # origin https://github.com/username/repo2.git (push)
+#+end_src
+
+** Section 3.3: List Existing Remotes
+
+   List all the existing remotes associated with this repository:
+
+#+begin_src bash
+  git remote
+#+end_src
+
+   List all the existing remotes associated with this repository in detail
+   including the fetch and push URLs:
+
+#+begin_src bash
+  git remote --verbose
+#+end_src
+
+   or simply
+
+#+begin_src bash
+  git remote -v
+#+end_src
+
+** Section 3.4: Removing Local Copies of Deleted Remote Branches
+
+   If a remote branch has been deleted, your local repository has to be told to
+   prune the reference to it.
+
+   To prune deleted branches from a specific remote:
+
+#+begin_src bash
+  git fetch [remote-name] --prune
+#+end_src
+
+   To prune deleted branches from all remotes:
+
+#+begin_src bash
+  git fetch --all --prune
+#+end_src
+
+** Section 3.5: Updating from Upstream Repository
+
+   Assuming you set the upstream (as in the "setting an upstream repository")
+
+#+begin_src bash
+  git fetch remote-name
+  git merge remote-name/branch-name
+#+end_src
+
+   The pull command combines a fetch and a merge.
+
+#+begin_src bash
+  git pull
+#+end_src
+
+   The pull with ~--rebase~ flag command combines a fetch and a rebase instead of merge.
+
+#+begin_src bash
+  git pull --rebase remote-name branch-name
+#+end_src
+
+** Section 3.6: ls-remote
+
+   ~git ls-remote~ is one unique command allowing you to query a remote repo without having to clone/fetch it first.
+
+   It will list refs/heads and refs/tags of said remote repo.
+
+   You will see sometimes ~refs/tags/v0.1.6~ and ~refs/tags/v0.1.6^{}~: the
+   ~^{}~ to list the dereferenced annotated tag (ie the commit that tag is
+   pointing to)
+
+   Since git 2.8 (March 2016), you can avoid that double entry for a tag, and
+   list directly those dereferenced tags with:
+
+#+begin_src bash
+  git ls-remote --ref
+#+end_src
+
+   It can also help resolve the actual url used by a remote repo when you have
+   "url.<base>.insteadOf" config setting. If ~git remote --get-url <aremotename>~
+   returns https://server.com/user/repo, and you have set ~git config
+   url.ssh://git@server.com:.insteadOf~ https://server.com/:
+
+#+begin_src bash
+  git ls-remote --get-url <aremotename>
+  ssh://git@server.com:user/repo
+#+end_src
+
+** Section 3.7: Adding a New Remote Repository
+
+#+begin_src bash
+  git remote add upstream git-repository-url
+#+end_src
+
+   Adds remote git repository represented by ~git-repository-url~ as new remote
+   named ~upstream~ to the git repository
+
+** Section 3.8: Set Upstream on a New Branch
+
+   You can create a new branch and switch to it using
+
+#+begin_src bash
+  git checkout -b AP-57
+#+end_src
+
+   After you use git checkout to create a new branch, you will need to set that
+   upstream origin to push to using
+
+#+begin_src bash
+  git push --set-upstream origin AP-57
+#+end_src
+
+   After that, you can use git push while you are on that branch.
+
+** Section 3.9: Getting Started
+
+   Syntax for pushing to a remote branch
+
+#+begin_src bash
+  git push <remote_name> <branch_name>
+#+end_src
+
+   Example
+
+#+begin_src bash
+  git push origin master
+#+end_src
+
+** Section 3.10: Renaming a Remote
+
+   To rename remote, use command ~git remote rename~
+
+   The git remote rename command takes two arguments:
+
+   * An existing remote name, for example : origin
+   * A new name for the remote, for example : destination
+
+   Get existing remote name
+
+#+begin_src bash
+  git remote
+  # origin
+#+end_src
+
+   Check existing remote with URL
+
+#+begin_src bash
+  git remote -v
+  # origin https://github.com/username/repo.git (fetch)
+  # origin https://github.com/usernam/repo.git (push)
+#+end_src
+
+   Rename remote
+
+#+begin_src bash
+  git remote rename origin destination
+  # Change remote name from 'origin' to 'destination'
+#+end_src
+
+   Verify new name
+
+#+begin_src bash
+  git remote -v
+  # destination https://github.com/username/repo.git (fetch)
+  # destination https://github.com/usernam/repo.git (push)
+#+end_src
+
+   *=== Posible Errors ===*
+
+   1. Could not rename config section ~remote.[old name]~ to ~remote.[new name]~
+
+      This error means that the remote you tried the old remote name (origin)
+      doesn't exist.
+
+   2. ~Remote [new name]~ already exists.
+
+      Error message is self explanatory.
+
+** Section 3.11: Show information about a Specific Remote
+
+   Output some information about a known remote: origin
+
+#+begin_src bash
+  git remote show origin
+#+end_src
+
+   Print just the remote's URL:
+
+#+begin_src bash
+  git config --get remote.origin.url
+#+end_src
+
+   With 2.7+, it is also possible to do, which is arguably better than the above
+   one that uses the config command.
+
+#+begin_src bash
+  git remote get-url origin
+#+end_src
+
+** Section 3.12: Set the URL for a Specific Remote
+
+   You can change the url of an existing remote by the command
+
+#+begin_src bash
+  git remote set-url remote-name url
+#+end_src
+
+** Section 3.13: Get the URL for a Specific Remote
+
+   You can obtain the url for an existing remote by using the command
+
+#+begin_src bash
+  git remote get-url <name>
+#+end_src
+
+   By default, this will be
+
+#+begin_src bash
+  git remote get-url origin
+#+end_src
+
+** Section 3.14: Changing a Remote Repository
+
+   To change the URL of the repository you want your remote to point to, you can
+   use the set-url option, like so:
+
+#+begin_src bash
+  git remote set-url <remote_name> <remote_repository_url>
+#+end_src
+
+   Example:
+
+#+begin_src bash
+  git remote set-url heroku https://git.heroku.com/fictional-remote-repository.git
+#+end_src
