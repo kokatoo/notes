@@ -1,3 +1,4 @@
+
 #+STARTUP: showeverything
 #+title: Linux Notes for Professionals
 
@@ -534,3 +535,16 @@
   ./test:
   anotherFile
 #+end_src
+
+** Bash Cookbook
+   
+*** Recipe 1.5 Finding and Running Commands
+
+    ~type -a~ prints all matches
+
+#+begin_src bash
+  $ type -a ls
+  ls is aliased to 'ls -F -h'
+  ls is /bin/ls
+#+end_src
+
