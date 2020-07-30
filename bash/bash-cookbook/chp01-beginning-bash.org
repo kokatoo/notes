@@ -1,0 +1,66 @@
+* Beginning bash
+
+  Bash is a language for executing commands. It started as a POSIX
+  standardization for shells and based on 1988 version of ksh.
+
+** 1.3 Decoding the Prompt
+
+   Trailing ~$~ in the prompt means user is logged in as a general user while
+   trailing ~#~ means root.
+
+#+begin_src bash
+  user@hostname:~$
+  user@hostname:~#
+#+end_src
+
+** 1.4 Showing Where You Are
+
+#+begin_src bash
+  # physical path
+  pwd -P
+
+  # logical path/symbolic link
+  pwd -L
+#+end_src
+
+** Recipe 1.5 Finding and Running Commands
+
+    ~type -a~ prints all matches
+
+#+begin_src bash
+  $ type -a ls
+  ls is aliased to 'ls -F -h'
+  ls is /bin/ls
+#+end_src
+
+   ~man -k~ is equivalent to ~apropos~
+
+#+begin_src bash
+  $ apropos grep
+  $ man -k grep
+#+end_src
+
+   ~slocate~ list programs that user has permission to while ~locate~ list all
+   programs matching search term.
+
+** Recipe 1.6   
+
+   You can get the similar kind of output of ~ls -l~ from ~stat~ and ~find~ commands.
+
+#+begin_src bash
+  stat -c'%A %h %U %G %s %y %n' /tmp/<file>
+  find /tmp/ -name <file> -printf '%m %n %u %g %t %p'
+#+end_src
+
+** Recipe 1.7 Showing All Hidden (Dot) Files in the Current Directory
+
+    *Globbing:*
+
+    | ~*~      | Matches any string including null string        |
+    | ~?~      | Matches any single character                    |
+    | ~[...]~  | Range of characters to match                    |
+    | ~!~      | Same as ~^~ but ~!~ is POSIX                    |
+    | ~.[!.]*~ | ~echo .[!.]*~ to see it does not match . and .. |
+
+
+

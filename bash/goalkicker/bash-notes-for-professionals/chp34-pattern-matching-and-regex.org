@@ -381,18 +381,3 @@ I am a simple string with digits
 
    It matches anything that does not start with zero or more occurrences of the
    letters ~r~, ~s~ and ~t~, which leaves only ~macy~ as possible match.
-
-** Bash Cookbook
-
-*** Recipe 1.7 Showing All Hidden (Dot) Files in the Current Directory
-
-    *Globbing:*
-
-    | ~*~      | Matches any string including null string        |
-    | ~?~      | Matches any single character                    |
-    | ~[...]~  | Range of characters to match                    |
-    | ~!~      | Same as ~^~ but ~!~ is POSIX                    |
-    | ~.[!.]*~ | ~echo .[!.]*~ to see it does not match . and .. |
-    
-    
-

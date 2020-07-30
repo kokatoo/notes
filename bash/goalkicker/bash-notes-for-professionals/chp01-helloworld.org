@@ -340,15 +340,3 @@ To see a list of all built-ins with a short description, use
   # chmod +x script.sh
   # ./script.sh --deploy true --uglify false
 #+end_src
-
-** Bash Cookbook
-
-*** Recipe 1.9 Using or Replacing Builtins and External Commands
-
-    Shell builtin is built into the shell while external command is an external
-    file launched by the shell. Use the help command for builtin.
-
-    Use the keyword ~builtin~ in function when redefining builtin command and
-    use ~command ls~ to use the native ~ls~ if redefined.
-
-

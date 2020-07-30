@@ -91,17 +91,3 @@
    There then follows a timestamp (usually the modification time).
 
    The final field is the name. Note: links also show the target of the link.
-
-** Bash Cookbook
-
-*** Recipe 1.6   
-
-   You can get the similar kind of output from ~stat~ and ~find~ commands.
-
-#+begin_src bash
-stat -c'%A %h %U %G %s %y %n' /tmp/<file>
-find /tmp/ -name <file> -printf '%m %n %u %g %t %p'
-#+end_src
-
-
-
