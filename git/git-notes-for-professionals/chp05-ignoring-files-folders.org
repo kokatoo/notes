@@ -4,8 +4,8 @@
 * Chapter 5: Ignoring Files and Folders
 
   This topic illustrates how to avoid adding unwanted files (or file changes) in a
-  Git repo. There are several ways (global or local .gitignore, .git/exclude,
-  git update-index --assume-unchanged, and git update-index -- skip-tree), but
+  Git repo. There are several ways (global or local ~.gitignore~, ~.git/exclude~,
+  ~git update-index --assume-unchanged~, and ~git update-index -- skip-tree~), but
   keep in mind Git is managing content, which means: ignoring actually ignores a
   folder content (i.e. files). An empty folder would be ignored by default, since
   it cannot be added anyway.
@@ -13,12 +13,12 @@
 * Section 5.1: Ignoring files and directories with a .gitignore file
 
   You can make Git ignore certain files and directories — that is, exclude them
-  from being tracked by Git — by creating one or more .gitignore files in your
+  from being tracked by Git — by creating one or more ~.gitignore~ files in your
   repository.
 
-  In software projects, .gitignore typically contains a listing of files and/or
+  In software projects, ~.gitignore~ typically contains a listing of files and/or
   directories that are generated during the build process or at runtime. Entries
-  in the .gitignore file may include names or paths pointing to:
+  in the ~.gitignore~ file may include names or paths pointing to:
 
   1. temporary resources e.g. caches, log files, compiled code, etc.
   2. local configuration files that should not be shared with other developers
@@ -42,7 +42,7 @@
 
   Examples
 
-  Here are some generic examples of rules in a .gitignore file, based on [[https://en.wikipedia.org/wiki/Glob_(programming)][glob
+  Here are some generic examples of rules in a ~.gitignore~ file, based on [[https://en.wikipedia.org/wiki/Glob_(programming)][glob
   file patterns]]:
 
 #+begin_src bash
@@ -67,7 +67,10 @@
   gen/
 
   # Glob pattern can also be used here to ignore paths with certain characters.
-  # For example, the below rule will match both build/ and Build/ [bB]uild/
+  # For example, the below rule will match both build/ and Build/
+
+  [bB]uild/
+
   # Without the trailing slash, the rule will match a file and/or
   # a directory, so the following would ignore both a file named `gen`
   # and a directory named `gen`, as well as any contents of that directory
@@ -116,16 +119,16 @@
   !.gitignore
 
   # Use the backslash as escape character to ignore files with a hash (#) 
-   (supported since 1.6.2.1)
+  # (supported since 1.6.2.1)
   \#*#
 #+end_src
 
-  Most .gitignore files are standard across various languages, so to get started,
+  Most ~.gitignore~ files are standard across various languages, so to get started,
   here is set of [[https://github.com/github/gitignore][sample]] ~.gitignore~ files listed by language from which to clone
   or copy/modify into your project. Alternatively, for a fresh project you may
   consider auto-generating a starter file using an [[https://www.gitignore.io/][online tool]].
 
-   Other forms of ~.gitignore~
+   *Other forms of ~.gitignore~*
 
    ~.gitignore~ files are intended to be committed as part of the repository. If
    you want to ignore certain files without committing the ignore rules, here are
@@ -134,7 +137,7 @@
    * Edit the ~.git/info/exclude~ file (using the same syntax as ~.gitignore~). The
      rules will be global in the scope of the repository;
 
-   * Set up a global gitignore file that will apply ignore rules to all your
+   * Set up a global ~.gitignore~ file that will apply ignore rules to all your
      local repositories:
 
    Furthermore, you can ignore local changes to tracked files without changing
@@ -172,9 +175,9 @@
 
 #+begin_src bash
   $ cat .gitignore
-  ,*.o
-  $ git check-ignore
-  example.o Readme.md example.o
+  *.o
+  $ git check-ignore example.o Readme.md
+  example.o
 #+end_src
    
    Here, only *.o files are defined in .gitignore, so Readme.md is not listed in
@@ -195,15 +198,15 @@
 ** Section 5.3: Exceptions in a .gitignore file
 
    If you ignore files by using a pattern but have exceptions, prefix an
-   exclamation mark(!) to the exception. For example:
+   exclamation mark(~!~) to the exception. For example:
 
 #+begin_src bash
-  ,*.txt
+  *.txt
   !important.txt
 #+end_src
 
-   The above example instructs Git to ignore all files with the .txt extension
-   except for files named important.txt.
+   The above example instructs Git to ignore all files with the ~.txt~ extension
+   except for files named ~important.txt~.
 
    If the file is in an ignored folder, you can NOT re-include it so easily:
 
@@ -225,7 +228,7 @@
 #+end_src
 
    Note: For file names beginning with an exclamation mark, add two exclamation
-   marks or escape with the \ character:
+   marks or escape with the ~\~ character:
 
 #+begin_src bash
   !!includethis
@@ -245,7 +248,7 @@
    Git will now use this in addition to each repository's own ~.gitignore~ [[https://git-scm.com/docs/gitignore][file]].
    Rules for this are:
 
-   * If the local .gitignore file explicitly includes a file while the global
+   * If the local ~.gitignore~ file explicitly includes a file while the global
      ~.gitignore~ ignores it, the local ~.gitignore~ takes priority (the file
      will be included)
      * If the repository is cloned on multiple machines, then the global
@@ -256,10 +259,10 @@
        on by a team
 
    This file is a good place to keep platform, machine or user specific ignores,
-   e.g. OSX .DS_Store, Windows Thumbs.db or Vim *.ext~ and *.ext.swp ignores if you
+   e.g. OSX ~.DS_Store~, Windows ~Thumbs.db~ or Vim ~*.ext~ and ~*.ext.swp~ ignores if you
    don't want to keep those in the repository. So one team member working on OS X
-   can add all .DS_STORE and _MACOSX (which is actually useless), while another
-   team member on Windows can ignore all thumbs.bd
+   can add all ~.DS_STORE~ and ~_MACOSX~ (which is actually useless), while another
+   team member on Windows can ignore all ~thumbs.bd~
 
 ** Section 5.5: Ignore files that have already been committed to a Git repository
 
@@ -384,7 +387,7 @@
 #+end_src
 
    If you want to ignore the file only in part of the tree, you can specify the
-   subdirectories of a specific directory with ** pattern:
+   subdirectories of a specific directory with ~**~ pattern:
 
 #+begin_src bash
   bar/**/foo.txt # matches all files 'foo.txt' in 'bar' and all subdirectories
@@ -399,9 +402,9 @@
 
 ** Section 5.9: Prefilled .gitignore Templates
 
-   If you are unsure which rules to list in your .gitignore file, or you just
+   If you are unsure which rules to list in your ~.gitignore~ file, or you just
    want to add generally accepted exceptions to your project, you can choose or
-   generate a .gitignore file:
+   generate a ~.gitignore~ file:
 
    * https://www.gitignore.io/
    * https://github.com/github/gitignore
@@ -434,7 +437,7 @@
   src/output.log
 #+end_src
 
-   Alternatively, you can create a .gitignore file in the src/ directory and
+   Alternatively, you can create a .gitignore file in the ~src/~ directory and
    ignore the file that is relative to this ~.gitignore~:
 
 #+begin_src bash
@@ -451,7 +454,7 @@
    Method one: ~.gitkeep~
 
    One hack to get around this is to use a ~.gitkeep~ file to register the folder
-   for Git. To do this, just create the required directory and add a .gitkeep
+   for Git. To do this, just create the required directory and add a ~.gitkeep~
    file to the folder. This file is blank and doesn't serve any purpose other than
    to just register the folder. To do this in Windows (which has awkward file
    naming conventions) just open git bash in the directory and run the command:
@@ -465,10 +468,10 @@
    Method two: ~dummy.txt~
 
    Another hack for this is very similar to the above and the same steps can be
-   followed, but instead of a .gitkeep, just use a dummy.txt instead. This has
+   followed, but instead of a ~.gitkeep~, just use a ~dummy.txt~ instead. This has
    the added bonus of being able to easily create it in Windows using the
    context menu. And you get to leave funny messages in them too.You can also
-   use .gitkeep file to track the empty directory. .gitkeep normally is an empty
+   use ~.gitkeep~ file to track the empty directory. ~.gitkeep~ normally is an empty
    file that is added to track the empty directory.
 
 ** Section 5.12: Finding files ignored by .gitignore
@@ -489,13 +492,13 @@
   ./example_2
 #+end_src
 
-   ...and .gitignore file containing:
+   and .gitignore file containing:
 
 #+begin_src bash
   example_2
 #+end_src
 
-   ...than result of the command will be:
+   than result of the command will be:
 
 #+begin_src bash
   $ git status --ignored
@@ -581,7 +584,7 @@
   file1.c filter=nocommit
 #+end_src
 
-   And your NOCOMMIT lines are hidden from Git.
+   And your ~NOCOMMIT~ lines are hidden from Git.
 
    Caveats:
 
@@ -615,7 +618,7 @@
     hidden = "!git ls-files -v | grep ^[hsS] | cut -c 3-"
 #+end_src
 
-   You can also use the option --assume-unchanged with the update-index function
+   You can also use the option ~--assume-unchanged~ with the ~update-index~ function
 
 #+begin_src bash
   git update-index --assume-unchanged <file>
@@ -629,19 +632,23 @@
 
    When ~--assume-unchanged~ flag is specified, the user promises not to change
    the file and allows Git to assume that the working tree file matches what is
-   recorded in the index.Git will fail in case it needs to modify this file in
+   recorded in the index. Git will fail in case it needs to modify this file in
    the index e.g. when merging in a commit; thus, in case the assumed-untracked
    file is changed upstream, you will need to handle the situation manually.The
    focus lies on performance in this case.
 
-   While ~--skip-worktree~ flag is useful when you instruct git not to touch a specific file ever because the file is going to be changed locally and you don't want to accidentally commit the changes (i.e configuration/properties file configured for a particular environment). Skip-worktree takes precedence over assume-unchanged when both are set.
+   While ~--skip-worktree~ flag is useful when you instruct git not to touch a
+   specific file ever because the file is going to be changed locally and you
+   don't want to accidentally commit the changes (i.e configuration/properties
+   file configured for a particular environment). ~--skip-worktree~ takes
+   precedence over assume-unchanged when both are set.
 
 ** Section 5.15: Clear already committed files, but included in .gitignore
 
    Sometimes it happens that a file was being tracked by git, but in a later
-   point in time was added to .gitignore, in order to stop tracking it. It's a
+   point in time was added to ~.gitignore~, in order to stop tracking it. It's a
    very common scenario to forget to clean up such files before its addition to
-   .gitignore. In this case, the old file will still be hanging around in the
+   ~.gitignore~. In this case, the old file will still be hanging around in the
    repository.
 
    To fix this problem, one could perform a "dry-run" removal of everything in
