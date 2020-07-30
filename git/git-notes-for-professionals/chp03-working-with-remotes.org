@@ -9,12 +9,14 @@
 
 #+begin_src bash
   git push [remote-name] --delete [branch-name]
+  git push origin --delete test
 #+end_src
 
   or
 
 #+begin_src bash
   git push [remote-name] :[branch-name]
+  git push origin :test
 #+end_src
 
 ** Section 3.2: Changing Git Remote URL
@@ -105,7 +107,7 @@
 
    ~git ls-remote~ is one unique command allowing you to query a remote repo without having to clone/fetch it first.
 
-   It will list refs/heads and refs/tags of said remote repo.
+   It will list ~refs/heads~ and ~refs/tags~ of said remote repo.
 
    You will see sometimes ~refs/tags/v0.1.6~ and ~refs/tags/v0.1.6^{}~: the
    ~^{}~ to list the dereferenced annotated tag (ie the commit that tag is
@@ -119,7 +121,7 @@
 #+end_src
 
    It can also help resolve the actual url used by a remote repo when you have
-   "url.<base>.insteadOf" config setting. If ~git remote --get-url <aremotename>~
+   ~url.<base>.insteadOf ~config setting. If ~git remote --get-url <aremotename>~
    returns https://server.com/user/repo, and you have set ~git config
    url.ssh://git@server.com:.insteadOf~ https://server.com/:
 
@@ -174,8 +176,8 @@
 
    The git remote rename command takes two arguments:
 
-   * An existing remote name, for example : origin
-   * A new name for the remote, for example : destination
+   * An existing remote name, for example: ~origin~
+   * A new name for the remote, for example: ~destination~
 
    Get existing remote name
 
@@ -214,7 +216,7 @@
       This error means that the remote you tried the old remote name (origin)
       doesn't exist.
 
-   2. ~Remote [new name]~ already exists.
+   2. ~remote.[new name]~ already exists.
 
       Error message is self explanatory.
 
@@ -253,18 +255,13 @@
 
 #+begin_src bash
   git remote get-url <name>
-#+end_src
-
-   By default, this will be
-
-#+begin_src bash
   git remote get-url origin
 #+end_src
 
 ** Section 3.14: Changing a Remote Repository
 
    To change the URL of the repository you want your remote to point to, you can
-   use the set-url option, like so:
+   use the ~set-url~ option, like so:
 
 #+begin_src bash
   git remote set-url <remote_name> <remote_repository_url>
