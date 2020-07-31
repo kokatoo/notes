@@ -1,0 +1,85 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp03: Standard Input
+
+** 3.2 Keeping Your Data with Your Script
+
+   When here-document is put into the script, the script file will then contain
+   the data along with the script.
+
+#+begin_src bash
+  $ cat ext
+  #
+  # here is a "here" document
+  #
+  grep -i $1 <<EOF
+  mike x.123
+  joe x.234
+  sue x.555
+  pete x.818
+  sara x.822
+  bill
+  x.919
+  EOF
+  $
+
+  $ ext bill
+  bill x.919
+#+end_src
+
+** 3.3 Preventing Weird Behavior in a Here-Document
+
+   Turn off shell scripting inside a here-document by quoting the marker to
+   prevent expansion of ~$~
+
+#+begin_src bash
+  $ cat donors
+  #
+  # simple lookup of our generous donors
+  #
+  grep $1 <<EOF
+  # name amt
+  pete $100
+  joe $200
+  sam $ 25
+  bill $ 9
+  EOF
+  $
+#+end_src
+
+** 3.4 Indenting Here-Documents
+
+   Use ~<<-~ to allow tab indentation. Only use tab and if not ~EOD~ will be not
+   be recognized as ending marker.
+
+#+begin_src bash
+$ cat donors
+  #
+  # simple lookup of our generous donors
+  #
+  grep $1 <<-EOF
+    # name amt
+    pete $100
+    joe $200
+    sam $ 25
+    bill $ 9
+    EOF
+  $
+#+end_src
+
+** Getting User Input
+
+   ~read~ with no arguments will be placed in ~$REPLY~. ~$?~ will be > 128 if
+   read timed out.
+
+#+begin_src bash
+read
+
+# Print a prompt string
+read -p "answer me this " answer
+
+# Print prompt with timeout of 3 secs
+read -t 3 -p "answer me this " answer
+#+end_src
+

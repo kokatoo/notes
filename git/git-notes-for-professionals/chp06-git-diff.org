@@ -1,0 +1,313 @@
+#+STARTUP: showeverything
+#+title: Git Notes for Professionals
+
+* Chapter 6: Git Diff
+
+| Parameter             | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~-p~, ~-u~, ~--patch~ | Generate patch                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ~-s~, ~--no-patch~    | Suppress diff output. Useful for commands like ~git show~ that show the patch by default, or to cancel the effect of ~--patch~                                                                                                                                                                                                                                                                                                                                                |
+| ~--raw~               | Generate the diff in raw format                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ~--diff-algorithm=~   | Choose a diff algorithm. The variants are as follows: ~myers~, ~minimal~, ~patience~, ~histogram~                                                                                                                                                                                                                                                                                                                                                                           |
+| ~--summary~           | Output a condensed summary of extended header information such as creations, renames and mode changes                                                                                                                                                                                                                                                                                                                                                                       |
+| ~--name-only~         | Show only names of changed files                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ~--name-status~       | Show names and statuses of changed files The most common statuses are M (Modified), A (Added), and D (Deleted)                                                                                                                                                                                                                                                                                                                                                                |
+| ~--check~             | Warn if changes introduce conﬂict markers or whitespace errors. What are considered whitespace errors is controlled by core.whitespace configuration. By default, trailing whitespaces (including lines that solely consist of whitespaces) and a space character that is immediately followed by a tab character inside the initial indent of the line are considered whitespace errors. Exits with non- zero status if problems are found. Not compatible with --exit-code |
+| ~--full-index~        | Instead of the first handful of characters, show the full pre- and post-image blob object names on --full-index the "index" line when generating patch format output                                                                                                                                                                                                                                                                                                         |
+| ~--binary~            | In addition to ~--full-index~, output a binary diﬀ that can be applied with ~git apply~                                                                                                                                                                                                                                                                                                                                                                                     |
+| ~-a~, ~--text~        | Treat all files as text.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ~--color~             | Set the color mode; i.e. use ~--color=always~ if you would like to pipe a diff to less and keep git's coloring                                                                                                                                                                                                                                                                                                                                                                |
+
+** Section 6.1: Show dierences in working branch
+
+#+begin_src bash
+  git diff
+#+end_src
+
+   This will show the unstaged changes on the current branch from the commit
+   before it. It will only show changes relative to the index, meaning it shows
+   what you could add to the next commit, but haven't. To add (stage) these
+   changes, you can use ~git add~.
+
+   If a file is staged, but was modified after it was staged, ~git diff~ will show
+   the diﬀerences between the current file and the staged version.
+
+** Section 6.2: Show changes between two commits
+
+#+begin_src bash
+  git diff 1234abc..6789def # old new
+#+end_src
+
+   E.g.: Show the changes made in the last 3 commits:
+
+#+begin_src bash
+  git diff @~3..@ # HEAD -3 HEAD
+#+end_src
+
+   Note: the two dots (..) is optional, but adds clarity.
+
+   This will show the textual diﬀerence between the commits, regardless of where
+   they are in the tree.
+
+** Section 6.3: Show dierences for staged files
+
+#+begin_src bash
+  git diff --staged
+#+end_src
+
+   This will show the changes between the previous commit and the currently
+   staged files.
+
+   *NOTE:* You can also use the following commands to accomplish the same thing:
+
+#+begin_src bash
+  git diff --cached
+#+end_src
+
+   Which is just a synonym for ~--staged~ or
+
+#+begin_src bash
+  git status -v
+#+end_src
+
+   Which will trigger the verbose settings of the status command.
+
+** Section 6.4: Comparing branches
+
+   Show the changes between the tip of new and the tip of original:
+
+#+begin_src bash
+  git diff original new # equivalent to original..new
+#+end_src
+
+   Show all changes on new since it branched from original:
+
+#+begin_src bash
+  git diff original...new # equivalent to $(git merge-base original new)..new
+#+end_src
+
+   Using only one parameter such as
+
+#+begin_src bash
+  git diff original
+#+end_src
+
+   is equivalent to
+
+#+begin_src bash
+  git diff original..HEAD
+#+end_src
+
+** Section 6.5: Show both staged and unstaged changes
+
+   To show all staged and unstaged changes, use:
+
+#+begin_src bash
+  git diff HEAD
+#+end_src
+
+   *NOTE:* You can also use the following command:
+
+#+begin_src bash
+  git status -vv
+#+end_src
+
+   The difference being that the output of the latter will actually tell you
+   which changes are staged for commit and which are not.
+
+** Section 6.6: Show dierences for a specific file or directory
+
+#+begin_src bash
+  git diff myfile.txt
+#+end_src
+
+   Shows the changes between the previous commit of the specified file
+   (myfile.txt) and the locally-modified version that has not yet been staged.
+
+   This also works for directories:
+
+#+begin_src bash
+  git diff documentation
+#+end_src
+
+   The above shows the changes between the previous commit of all files in the
+   specified directory (documentation/) and the locally-modified versions of these
+   files, that have not yet been staged.
+
+   To show the diﬀerence between some version of a file in a given commit and the
+   local HEAD version you can specify the commit you want to compare against:
+
+#+begin_src bash
+  git diff 27fa75e myfile.txt
+#+end_src
+
+   Or if you want to see the version between two separate commits:
+
+#+begin_src bash
+  git diff 27fa75e ada9b57 myfile.txt
+#+end_src
+
+   To show the diﬀerence between the version specified by the hash ada9b57 and
+   the latest commit on the branch ~my_branchname~ for only the relative
+   directory called ~my_changed_directory/~ you can do this:
+
+#+begin_src bash
+  git diff ada9b57 my_branchname my_changed_directory/
+#+end_src
+
+   Or if you want to see the version between two separate commits:
+
+#+begin_src bash
+  git diff 27fa75e ada9b57 myfile.txt
+#+end_src
+
+   To show the diﬀerence between the version specified by the hash ada9b57 and
+   the latest commit on the branch ~my_branchname~ for only the relative
+   directory called ~my_changed_directory/~ you can do this:
+
+#+begin_src bash
+  git diff ada9b57 my_branchname my_changed_directory/
+#+end_src
+
+** Section 6.7: Viewing a word-di for long lines
+
+#+begin_src bash
+  git diff [HEAD|--staged...] --word-diff
+#+end_src
+
+   Rather than displaying lines changed, this will display diﬀerences within
+   lines. For example, rather than:
+
+#+begin_src bash
+  -Hello world
+  +Hello world!
+#+end_src
+
+   Where the whole line is marked as changed, ~word-diff~ alters the output to:
+
+#+begin_src bash
+  Hello [-world-]{+world!+}
+#+end_src
+
+   You can omit the markers ~[-, -]~, ~{+, +}~ by specifying ~--word-diff=color~
+   or ~--color-words~. This will only use color coding to mark the difference:
+
+** Section 6.8: Show dierences between current version and last version
+
+#+begin_src bash
+  git diff HEAD^ HEAD
+#+end_src
+
+   This will show the changes between the previous commit and the current
+   commit.
+
+** Section 6.9: Produce a patch-compatible diff
+
+   Sometimes you just need a diff to apply using patch. The regular ~git --diff~
+   does not work. Try this instead:
+
+#+begin_src bash
+  git diff --no-prefix > some_file.patch
+#+end_src
+
+   Then somewhere else you can reverse it:
+
+#+begin_src bash
+  patch -p0 < some_file.patch
+#+end_src
+
+** Section 6.10: dierence between two commit or branch
+
+   To view difference between two branch
+
+#+begin_src bash
+  git diff <branch1>..<branch2>
+#+end_src
+
+   To view difference between two branch
+
+#+begin_src bash
+  git diff <commitId1>..<commitId2>
+#+end_src
+
+   To view diff with current branch
+
+#+begin_src bash
+  git diff <branch/commitId>
+#+end_src
+
+   To view summary of changes
+
+#+begin_src bash
+  git diff --stat <branch/commitId>
+#+end_src
+
+   To view files that changed after a certain commit
+
+#+begin_src bash
+  git diff --name-only <commitId>
+#+end_src
+
+   To view files that are different than a branch
+
+#+begin_src bash
+  git diff --name-only <branchName>
+#+end_src
+
+   To view files that changed in a folder after a certain commit
+
+#+begin_src bash
+  git diff --name-only <commitId> <folder_path>
+#+end_src
+
+** Section 6.11: Using meld to see all modifications in the working directory
+
+#+begin_src bash
+  git difftool -t meld --dir-diff
+#+end_src
+
+   will show the working directory changes. Alternatively,
+
+#+begin_src bash
+  git difftool -t meld --dir-diff [COMMIT_A] [COMMIT_B]
+#+end_src
+
+   will show the differences between 2 specific commits.
+
+** Section 6.12: Di UTF-16 encoded text and binary plist files
+
+   You can diﬀ UTF-16 encoded files (localization strings file os iOS and macOS
+   are examples) by specifying how git should diff these files.
+
+   Add the following to your ~.gitconfig~ file.
+
+#+begin_src bash
+  [diff "utf16"]
+  textconv = "iconv -f utf-16 -t utf-8"
+#+end_src
+
+   iconv is a program to convert different [[http://linux.die.net/man/1/iconv][encodings]].
+
+   Then edit or create a ~.gitattributes~ file in the root of the repository
+   where you want to use it. Or just edit ~.gitattributes~.
+
+#+begin_src bash
+  ,*.strings diff=utf16
+#+end_src
+
+   This will convert all files ending in ~.strings~ before git diffs.
+
+   You can do similar things for other files, that can be converted to text.
+
+   For binary plist files you edit ~.gitconfig~
+
+#+begin_src bash
+  [diff "plist"]
+  textconv = plutil -convert xml1 -o -
+#+end_src
+
+   and ~.gitattributes~
+
+#+begin_src bash
+  ,*.plist diff=plist
+#+end_src

@@ -669,4 +669,3 @@
   # Update the remote
   $ git push origin master
 #+end_src
-
