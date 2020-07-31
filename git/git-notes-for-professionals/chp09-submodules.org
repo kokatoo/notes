@@ -14,7 +14,7 @@
 
    This will clone the referenced submodules and place them in the appropriate
    folders (including submodules within submodules). This is equivalent to
-   running git submodule update --init --recursive immediately after the clone
+   running ~git submodule update --init --recursive~ immediately after the clone
    is finished.
 
 ** Section 9.2: Updating a Submodule
@@ -52,7 +52,7 @@
 #+end_src
 
    There might be some changes you have that can have merge conﬂict if you use
-   git pull so you can use ~git pull --rebase~ to rewind your changes to top, most
+   ~git pull~ so you can use ~git pull --rebase~ to rewind your changes to top, most
    of the time it decreases the chances of conﬂict. Also it pulls all the
    branches to local.
 
@@ -75,7 +75,7 @@
   $ git submodule add https://github.com/jquery/jquery.git
 #+end_src
 
-   You should add and commit the new .gitmodules file; this tells Git what
+   You should add and commit the new ~.gitmodules~ file; this tells Git what
    submodules should be cloned when ~git submodule~ update is run.
 
 ** Section 9.4: Setting a submodule to follow a branch
@@ -124,10 +124,10 @@
   $ git mv /path/to/module new/path/to/module
 #+end_src
 
-   1. Edit .gitmodules and change the path of the submodule appropriately, and put it in the index with ~git add .gitmodules~.
+   1. Edit ~.gitmodules~ and change the path of the submodule appropriately, and put it in the index with ~git add .gitmodules~.
    2. If needed, create the parent directory of the new location of the submodule (~mkdir -p /path/to~).
    3. Move all content from the old to the new directory (~mv -vi /path/to/module new/path/to/submodule~).
-   4. Make sure Git tracks this directory (git add /path/to).
+   4. Make sure Git tracks this directory (~git add /path/to~).
    5. Remove the old directory with ~git rm --cached /path/to/module~.
    6. Move the directory ~.git/modules//path/to/module~ with all its content to ~.git/modules//path/to/module~.
    7. Edit the ~.git/modules//path/to/config~ file, make sure that worktree item
@@ -135,7 +135,7 @@
       ~../../../../..//path/to/module~. Typically there should be two more ~..~
       then directories in the direct path in that place. . Edit the file
       ~/path/to/module/.git~, make sure that the path in it points to the
-      correct new location inside the main project .git folder, so in this
+      correct new location inside the main project ~.git~ folder, so in this
       example gitdir: ~../../../.git/modules//path/to/module~.
 
       ~git status~ output looks like this afterwards:
@@ -159,14 +159,14 @@
   $ git rm the_submodule
 #+end_src
 
-   * ~git submodule deinit the_submodule~ deletes the_submodules' entry from
-     ~.git/config~. This excludes the_submodule from ~git submodule update~, ~git
+   * ~git submodule deinit the_submodule~ deletes ~the_submodule~ entry from
+     ~.git/config~. This excludes ~the_submodule~ from ~git submodule update~, ~git
      submodule sync~ and ~git submodule~ foreach calls and deletes its local
      content (source). Also, this will not be shown as change in your parent
      repository. ~git submodule init~ and ~git submodule update~ will restore the
      submodule, again without commitable changes in your parent repository.
    * ~git rm the_submodule~ will remove the submodule from the work tree. The files
-     will be gone as well as the submodules' entry in the .gitmodules file
+     will be gone as well as the submodules' entry in the ~.gitmodules~ file
      (source). If only ~git rm the_submodule~ (without prior ~git submodule
      deinit the_submodule~ is run, however, the submodules' entry in your ~.git/config~ file
      will remain.

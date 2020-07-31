@@ -1,0 +1,208 @@
+#+STARTUP: showeverything
+#+title: Git Notes for Professionals
+
+* Chapter 10: Committing
+
+| Parameter               | Details                                                                                                                                                     |
+|-------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~--message~, ~-m~       | Message to include in the commit. Specifying this parameter bypasses Git's normal behavior of opening an editor.                                            |
+| ~--amend~               | Specify that the changes currently staged should be added (amended) to the previous commit. Be careful, this can rewrite history!                           |
+| ~--no-edit~             | Use the selected commit message without launching an editor. For example, git --no-edit commit --amend amends a commit without changing its commit message. |
+| ~--all~, ~-a~           | Commit all changes, including changes that aren't yet staged.                                                                                               |
+| ~--date~                | Manually set the date that will be associated with the commit.                                                                                              |
+| ~--only~                | Commit only the paths speciﬁed. This will not commit what you currently have staged unless told to do so.                                                   |
+| ~--patch~, ~-p~         | Use the interactive patch selection interface to chose which changes to commit.                                                                             |
+| ~--help~                | Displays the man page for ~git commit~                                                                                                                      |
+| ~-S[keyid]~             | Sign commit, GPG-sign commit, countermand ~commit.gpgSign~ conﬁguration variable                                                                            |
+| ~-S --gpg-sign[=keyid]~ |                                                                                                                                                             |
+| ~-S --no-gpg-sign~      |                                                                                                                                                             |
+| ~-n~, ~--no-verify~     | This option bypasses the pre-commit and commit-msg hooks. See also Hooks                                                                                    |
+
+    Commits with Git provide accountability by attributing authors with changes
+    to code. Git oﬀers multiple features for the speciﬁcity and security of
+    commits. This topic explains and demonstrates proper practices and
+    procedures in committing with Git.
+
+** Section 10.1: Stage and commit changes
+
+   *The basics*
+
+   After making changes to your source code, you should stage those changes with
+   Git before you can commit them.
+
+   For example, if you change ~README.md~ and ~program.py~:
+
+#+begin_src bash
+  git add README.md program.py
+#+end_src
+
+   This tells git that you want to add the ﬁles to the next commit you do.
+
+   Then, commit your changes with
+
+#+begin_src bash
+  git commit
+#+end_src
+
+   Note that this will open a text editor, which is often vim. If you are not
+   familiar with vim, you might want to know that you can press i to go into
+   insert mode, write your commit message, then press Esc and ~:wq~ to save and
+   quit. To avoid opening the text editor, simply include the ~-m~ flag with
+   your message
+
+#+begin_src bash
+  git commit -m "Commit message here"
+#+end_src
+
+   Commit messages often follow some speciﬁc formatting rules, see Good commit
+   messages for more information.
+
+   *Shortcuts*
+
+   If you have changed a lot of ﬁles in the directory, rather than listing each
+   one of them, you could use:
+
+#+begin_src bash
+  git add --all # equivalent to "git add -a"
+#+end_src
+
+   Or to add all changes, not including ﬁles that have been deleted, from the
+   top-level directory and subdirectories:
+
+#+begin_src bash
+  git add .
+#+end_src
+
+   Or to only add ﬁles which are currently tracked ("update"):
+
+#+begin_src bash
+  git add -u
+#+end_src
+
+   If desired, review the staged changes:
+
+#+begin_src bash
+  git status # display a list of changed files
+  git diff --cached # shows staged changes inside staged files
+#+end_src
+
+   Finally, commit the changes:
+
+#+begin_src bash
+  git commit -m "Commit message here"
+#+end_src
+
+   Alternately, if you have only modiﬁed existing ﬁles or deleted ﬁles, and have
+   not created any new ones, you can combine the actions of ~git add~ and ~git
+   commit~ in a single command:
+
+#+begin_src bash
+  git commit -am "Commit message here"
+#+end_src
+
+   Note that this will stage all modiﬁed ﬁles in the same way as ~git add
+   --all~.
+
+   *Sensitive data*
+
+   You should never commit any sensitive data, such as passwords or even private
+   keys. If this case happens and the changes are already pushed to a central
+   server, consider any sensitive data as compromised. Otherwise, it is possible
+   to remove such data afterwards. A fast and easy solution is the usage of the
+   "BFG Repo-Cleaner": https://rtyley.github.io/bfg-repo-cleaner/.
+
+   The command bfg --replace-text passwords.txt my-repo.git reads passwords out
+   of the passwords.txt ﬁle and replaces these with ***REMOVED***. This
+   operation considers all previous commits of the entire repository.
+
+** Section 10.2: Good commit messages
+
+   It is important for someone traversing through the ~git log~ to easily
+   understand what each commit was all about. Good commit messages usually
+   include a number of a task or an issue in a tracker and a concise description
+   of what has been done and why, and sometimes also how it has been done.
+
+   Better messages may look like:
+
+#+begin_src bash
+  TASK-123: Implement login through OAuth
+  TASK-124: Add auto minification of JS/CSS files
+  TASK-125: Fix minifier error when name > 200 chars
+#+end_src
+
+   Whereas the following messages would not be quite as useful:
+
+#+begin_src bash
+  fix // What has been fixed?
+  just a bit of a change // What has changed?
+  TASK-371 // No description at all, reader will need to look at the tracker themselves for an explanation
+  Implemented IFoo in IBar // Why it was needed?
+#+end_src
+
+   A way to test if a commit message is written in the correct mood is to
+   replace the blank with the message and see if it makes sense:
+
+   *If I add this commit, I will ___ to my repository.*
+
+   *The seven rules of a great git commit message*
+
+   1. Separate the subject line from body with a blank line
+   2. Limit the subject line to 50 characters
+   3. Capitalize the subject line
+   4. Do not end the subject line with a period
+   5. Use the imperative mood in the subject line
+   6. Manually wrap each line of the body at 72 characters
+   7. Use the body to explain what and why instead of how
+
+   [[http://chris.beams.io/posts/git-commit/#seven-rules][7 rules from Chris Beam's blog]].
+
+** Section 10.3: Amending a commit
+
+   If your latest commit is not published yet (not pushed to an upstream
+   repository) then you can amend your commit.
+
+#+begin_src bash
+  git commit --amend
+#+end_src
+
+   This will put the currently staged changes onto the previous commit.
+
+   *Note:* This can also be used to edit an incorrect commit message. It will
+   bring up the default editor (usually vi / vim / emacs) and allow you to
+   change the prior message.
+
+   To specify the commit message inline:
+
+#+begin_src bash
+  git commit --amend -m "New commit message"
+#+end_src
+
+   Or to use the previous commit message without changing it:
+
+#+begin_src bash
+  git commit --amend --no-edit
+#+end_src
+
+   Amending updates the commit date but leaves the author date untouched. You
+   can tell git to refresh the information.
+
+#+begin_src bash
+  git commit --amend --reset-author
+#+end_src
+   
+   You can also change the author of the commit with:
+
+#+begin_src bash
+  git commit --amend --author "New Author <email@address.com>"
+#+end_src
+
+   *Note:* Be aware that amending the most recent commit replaces it entirely
+   and the previous commit is removed from the branch's history. This should be
+   kept in mind when working with public repositories and on branches with other
+   collaborators.
+
+   This means that if the earlier commit had already been pushed, after amending
+   it you will have to push ~--force~.
+
+** 
+

@@ -1,0 +1,71 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp04: Executing Commands
+
+** 4.2 Running Several Commands in Sequence
+
+   ~;~ separates command and ~&&~ only run when the preceding program is a
+   success. ~&~ runs them in the background.
+
+#+begin_src bash
+  long ; medium ; short
+  long && medium && short
+  long & medium & short
+#+end_src
+
+** 4.3 Running Several Commands All at Once
+
+   ~C-z~ to pause the program and put it in the background. ~bg~ to unpause the
+   job and continue running in the background. This is essentially the same as
+   adding a trailing  ~&~.
+
+** 4.4 Telling Whether a Command Succeeded or Note
+
+   ~$?~ is set with a nonzero value if the command fails. Use a number between 0
+   to 127 as the shell uses 128+N to denote killed by signal N.
+
+#+begin_src bash
+  $ bash -c "exit 3" ; echo $?
+#+end_src
+
+** 4.5 Running a Command Only if Another Command Succeeded
+
+   Use the exit status ~$?~ to test whether the command is successful.
+
+   ~exit()~ would return a value of 0 and ~exit(3)~ would return a value of
+   three.
+
+#+begin_src bash
+  cd /tmp
+  if (( $? == 0 )); then rm * ; fi
+#+end_src
+
+** 4.6 Using Fewer if Statements
+
+#+begin_src bash
+  cd /tmp && rm *
+#+end_src
+
+   You can have bash exit anytime if it encounter a failure by ~set -e~
+
+#+begin_src bash
+  set -e
+  cd /tmp
+  rm *
+#+end_src
+
+** 4.7 Running Long Jobs Unattended
+
+   Running a background job but exiting the shell will terminate the job. You
+   nned to ~nohup~ (no hangup) the job. It will redirect STDOUT to ~nohup.out~
+
+#+begin_src bash
+  nohup long &
+#+end_src
+
+** 4.8 Displaying Error Messages When Failures Occur
+
+#+begin_src bash
+  cmd || { printf "%b" "FAILED.\n" ; exit 1 ; }
+#+end_src
