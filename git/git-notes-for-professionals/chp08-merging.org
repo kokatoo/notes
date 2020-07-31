@@ -20,7 +20,7 @@
    When the commits on two branches don't conﬂict, Git can automatically merge them:
 
 #+begin_src bash
-git merge another_branch
+$ git merge another_branch
 Auto-merging file_a
 Merge made by the 'recursive' strategy.
   file_a | 2 +-
@@ -40,7 +40,8 @@ Merge made by the 'recursive' strategy.
       [ $(git diff master...${branch} | wc -l) -eq 0 ] && \
       echo -e `git show --pretty=format:"%ci %cr" $branch | head -n 1`\\t$branch
   done | sort -r
-#+end_src
+#+end_
+src
 
 ** Section 8.3: Aborting a merge
 
