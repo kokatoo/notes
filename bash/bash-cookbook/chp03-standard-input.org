@@ -68,7 +68,7 @@ $ cat donors
   $
 #+end_src
 
-** Getting User Input
+** 3.5 Getting User Input
 
    ~read~ with no arguments will be placed in ~$REPLY~. ~$?~ will be > 128 if
    read timed out.
@@ -83,3 +83,103 @@ read -p "answer me this " answer
 read -t 3 -p "answer me this " answer
 #+end_src
 
+** 3.6 Getting Yes or No Input
+
+#+begin_src bash
+  # Let the user make a choice about something and execute code based on the answer
+  # Called like: choose <default (y or n)> <prompt> <yes action> <no action>
+  # Returns: nothing
+  function choose {
+
+      local default="$1"
+      local prompt="$2"
+      local choice_yes="$3"
+      local choice_no="$4"
+      local answer
+
+      read -p "$prompt" answer
+      [ -z "$answer" ] && answer="$default"
+
+      case "$answer" in
+          [yY1] ) eval "$choice_yes" # error check
+                  ;;
+          [nN0] ) eval "$choice_no" # error check
+                  ;;
+          ,*) printf "%b" "Unexpected answer '$answer'!" >&2 ;;
+      esac } # end of function choose
+
+  choose "y" \
+         "Do you want to play a game?" \
+         /usr/games/GlobalThermonuclearWar \
+         'printf "%b" "See you later Professor Falkin.\n"' >&2
+
+#+end_src
+
+#+begin_src bash
+  # Let the user make a choice about something and return a standardized
+  # answer. How the default is handled and what happens next is up to
+  # the if/then after the choice in main.
+  # Called like: choice <prompt>
+  # Returns: global variable CHOICE
+  function choice {
+
+      CHOICE=''
+      local prompt="$*"
+      local answer
+
+      read -p "$prompt" answer
+
+      case "$answer" in
+          [yY1]) CHOICE='y';;
+          [nN0]) CHOICE='n';;
+          ,*) CHOICE="$answer";;
+      esac } # end of function choice
+
+  choice "Do you want to play a game?"
+#+end_src
+
+#+begin_src bash
+  
+  CHOICE=''
+  until [ "$CHOICE" = "y" ]; do
+
+      printf "%b" "This package's date is $THISPACKAGE\n" >&2
+
+      choice "Is that correct? [Y/,<New date>]: "
+
+      if [ -z "$CHOICE" ]; then
+          CHOICE='y'
+      elif [ "$CHOICE" != "y" ]; then
+          printf "%b" "Overriding $THISPACKAGE with $CHOICE\n"
+          THISPACKAGE=$CHOICE
+      fi
+  done
+
+  # Build the package here
+
+#+end_src
+
+   More examples:
+
+#+begin_src bash
+  # If the user types anything except a case-insensitive 'n', they will
+  # see the error log
+  choice "Do you want to look at the error logfile? [Y/n]: "
+  if [ "$CHOICE" != "n" ]; then
+      less error.log
+  fi
+
+  # If the user types anything except a case-insensitive 'y', they will
+  # not see the message log
+  choice "Do you want to look at the message logfile? [y/N]: "
+  if [ "$CHOICE" = "y" ]; then
+      less message.log
+  fi
+
+  choice "Enter your favorite color, if you have one: "
+  if [ -n "$CHOICE" ]; then #-n: non-empty string
+      printf "%b" "You chose: $CHOICE\n"
+  else
+      printf "%b" "You do not have a favorite color.\n"
+  fi
+#+end_src
