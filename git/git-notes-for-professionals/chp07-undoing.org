@@ -5,7 +5,7 @@
 
 * Section 7.1: Return to a previous commit
 
-  To jump back to a previous commit, first find the commit's hash using git log.
+  To jump back to a previous commit, first find the commit's hash using ~git log~.
 
   To temporarily jump back to that commit, detach your head with:
 
@@ -57,7 +57,7 @@
    all changes in the working copy.
 
 #+begin_src bash
-  git checkout -- .#chp07-undoing.org
+  git checkout -- .
 #+end_src
 
    To only undo parts of the changes use ~--patch~. You will be asked, for each
@@ -161,7 +161,7 @@
   git merge feature/add-gremlins
   ...
   #Resolve any merge conflicts
-   git commit #commit the merge
+  git commit #commit the merge
   ...
   git push
   ...
@@ -278,7 +278,5 @@
    to gently modify each commit as it's replayed. ~rebase -i~ will open in your
    default text editor, with a list of commits being applied, like this:
 
-   To drop a commit, just delete that line in your editor. If you no longer want
-   the bad commits in your project, you can delete lines 1 and 3-4 above.If you
-   want to combine two commits together, you can use the ~squash~ or ~fixup~
-   commands
+   To drop a commit, just delete that line in your editor. If you want to
+   combine two commits together, you can use the ~squash~ or ~fixup~ commands

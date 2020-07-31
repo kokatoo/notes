@@ -183,3 +183,8 @@ read -t 3 -p "answer me this " answer
       printf "%b" "You do not have a favorite color.\n"
   fi
 #+end_src
+
+** 3.7 Selecting from a List of Options
+
+
+
