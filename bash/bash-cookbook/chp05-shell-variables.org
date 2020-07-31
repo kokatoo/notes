@@ -143,10 +143,11 @@ echo ${HOME=/tmp}
    ~{:?}~ to print error msgs for unset parameters.
 
 #+begin_src bash
-  USAGE="usage: myscript scratchdir sourcefile conversion"
-  FILEDIR=${1:?"Error. You must supply a scratch directory."}
-  FILESRC=${2:?"Error. You must supply a source file."}
-  CVTTYPE=${3:?"Error. ${USAGE}"}
+  usage="usage: myscript scratchdir sourcefile conversion"
+
+  filedir=${1:?"Error. You must supply a scratch directory."}
+  filesrc=${2:?"Error. You must supply a source file."}
+  cvttype=${3:?"Error. ${usage}"}
 #+end_src
 
 ** 5.18 Changing Pieces of a String
@@ -160,14 +161,14 @@ echo ${HOME=/tmp}
 
 | Inside ~${ … }~      | Action taken                                                     |
 |----------------------+------------------------------------------------------------------|
-| name:num1:num2       | Return a substring of name starting at num1 with length num2     |
-| #name                | Return length of string                                          |
-| name#pattern         | Remove (shortest) front-anchored pattern                         |
-| name##pattern        | Remove (longest) front-anchored pattern                          |
-| name%pattern         | Remove (shortest) rear-anchored pattern                          |
-| name%%pattern        | Remove (longest) rear-anchored pattern                           |
-| name/pattern/string  | Replace first occurrence                                         |
-| name//pattern/string | Replace all occurrences                                          |
+| ~name:num1:num2~      | Return a substring of name starting at num1 with length num2     |
+| ~#name~               | Return length of string                                          |
+| ~name#pattern~        | Remove (shortest) front-anchored pattern                         |
+| ~name##pattern~        | Remove (longest) front-anchored pattern                          |
+| ~name%pattern~         | Remove (shortest) rear-anchored pattern                          |
+| ~name%%pattern~        | Remove (longest) rear-anchored pattern                           |
+| ~name/pattern/string~  | Replace first occurrence                                         |
+| ~name//pattern/string~ | Replace all occurrences                                          |
 
 ** 5.20 Using bash (string substitution) for basename
 
@@ -198,9 +199,9 @@ echo ${HOME=/tmp}
 
 ** 5.24 Converting Between Upper- and Lowercase
 
-| convert to lcase  | ${filename,,}   |
-| convert to upcase | ${filename^^}   |
-| toggle case       | ${filename~~}   |
+| convert to lcase  | =${filename,,}= |
+| convert to upcase | =${filename^^}= |
+| toggle case       | =${filename~~}= |
 
 #+begin_src bash
   for filename in *.JPG; do
@@ -210,7 +211,7 @@ echo ${HOME=/tmp}
 
 ** 5.25 Converting to Camel Case
 
-| convert to camelcase | ${filename[@]^} |
+| convert to camelcase | ~${filename[@]^}~ |
 
 #+begin_src bash
   while read txt; do
