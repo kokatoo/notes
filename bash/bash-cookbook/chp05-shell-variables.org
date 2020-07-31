@@ -1,0 +1,220 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp05: Shell Variables
+
+  By convention, environment variables (PAGER, EDITOR, ...) and internal shell
+  variables (SHELL, BASH_VERSION, ...) are capitalized. All other variable names
+  should be lower case.
+
+** 5.4 Separating Variable Names from Surrounding Text
+
+#+begin_src bash
+  somescript /tmp/rep${FN}port.txt
+#+end_src
+
+** 5.6 Seeing All Variable Values
+
+   To see environment variables:
+
+#+begin_src bash
+env | grep TERM
+export -p | grep TERM
+#+end_src
+
+   To see variables declared in current shell:
+
+#+begin_src bash
+  declare -p | grep myvar
+#+end_src
+
+** 5.8 Looping Over Arguments Passed to a Script
+
+   ~$*~ refers to all arguments passed to function.
+
+#+begin_src bash
+  function actall() {
+      # change permissions on a bunch of files
+      for fn in $*; do
+          echo changing ${fn}
+          chmod 0750 ${fn}
+      done
+  }
+
+  $ actall *.txt
+#+end_src
+
+** 5.9 Handling Parameters with Spaces
+
+   You'll need to quote any shell parameters that might contain space.
+
+#+begin_src bash
+  $ cat quoted.sh
+  # note the quotes
+  ls -l "${1}"
+  $
+  $ ./quoted.sh "Oh the Waste"
+#+end_src
+
+** 5.10 Handling Lists of Parameters with Spaces
+
+   When ~"$@"~ is quoted, the resulting list has quotes around each argument.
+   When ~"$*"~ is quoted, the resulting list has quote for the whole list:
+
+#+begin_src bash
+  file*
+  "file1 file2 file3"
+#+end_src
+
+   Use this in place of ~$*~ if parameters have space.
+
+#+begin_src bash
+  $ cat myscript 
+  for fn in "$@"; do
+      chmod 0750 "$fn"
+  done
+
+  $ myscript *.mp3
+#+end_src
+
+** 5.11 Counting Arguments
+
+   Use ~$#~ to get the number of arguments.
+
+** 5.12 Consuming Arguments
+
+   Use ~shift~ to remove an argument after you've handled it.
+
+#+begin_src bash
+  VERBOSE=0
+  if [[ $1 = -v ]]; then
+      VERBOSE=1
+      shift
+  fi
+
+  for fn in "$@"; do
+      if (( VERBOSE == 1 )); then
+          echo changing $fn
+      fi
+      chmod 0750 "$fn"
+  done
+#+end_src
+
+** 5.13 Getting Default Values
+
+   Use ~{:-}~ to supply default value.
+
+#+begin_src bash
+  filedir=${1:-/tmp}
+#+end_src
+
+** 5.14 Setting Default Values
+
+   ~{:=}~ does assignment while ~{:-}~ does not.
+
+#+begin_src bash
+  cd ${HOME:=/tmp}
+  echo ${HOME:=/tmp}
+#+end_src
+
+** 5.15 Using null as a Valid Default Value
+
+   ~{:=}~ has two cases where the new value will be set. When the variable has
+   not been previously set and the value has been set but is null/empty. Use
+   ~{=}~ if you only want to set variable that is not set.
+
+#+begin_src bash
+echo ${HOME=/tmp}
+#+end_src
+
+** 5.16 Using More than Just a Constant String for Default
+
+#+begin_src bash
+  cd ${BASE:="$(pwd)"}
+#+end_src
+
+| parameter expansion | use other shell variables in the expression ~${BASE:=${HOME}}~ |
+| tilde expansion     | home folder for user ~uid20~. ~${BASE:=~uid20}~                |
+| command substituion | ~$(cmds)~                                                      |
+| arthmetic expansion | integer arithmetic $(())                                       |
+
+** 5.17 Giving an Error Message for Unset Parameters
+
+   ~{:?}~ to print error msgs for unset parameters.
+
+#+begin_src bash
+  USAGE="usage: myscript scratchdir sourcefile conversion"
+  FILEDIR=${1:?"Error. You must supply a scratch directory."}
+  FILESRC=${2:?"Error. You must supply a source file."}
+  CVTTYPE=${3:?"Error. ${USAGE}"}
+#+end_src
+
+** 5.18 Changing Pieces of a String
+
+#+begin_src bash
+  # rename files that end in .bad to be .bash
+  for filename in *.bad; do
+      mv "${filename}" "${filename%bad}bash"
+  done
+#+end_src
+
+| Inside ~${ … }~      | Action taken                                                     |
+|----------------------+------------------------------------------------------------------|
+| name:num1:num2       | Return a substring of name starting at num1 with length num2     |
+| #name                | Return length of string                                          |
+| name#pattern         | Remove (shortest) front-anchored pattern                         |
+| name##pattern        | Remove (longest) front-anchored pattern                          |
+| name%pattern         | Remove (shortest) rear-anchored pattern                          |
+| name%%pattern        | Remove (longest) rear-anchored pattern                           |
+| name/pattern/string  | Replace first occurrence                                         |
+| name//pattern/string | Replace all occurrences                                          |
+
+** 5.20 Using bash (string substitution) for basename
+
+#+begin_src bash
+  file=$(basename $fullpathtofile)
+  file=${fullpathtofile##*/}
+
+  file=$(basename $myimagefile .jpg)
+  # would be:
+  file=${myimagefile%/} # remove a trailing slash
+  file=${file##*/} # remove all chars up to last /
+  file=${file%.jpg} # remove .jpg suffix if present
+#+end_src
+
+** 5.21 Using bash (string substitution) for dirname
+
+#+begin_src bash
+  dir=$(dirname $fullpathtofile)
+  dirnx=${fullpathtofile/*}
+#+end_src
+
+** 5.23 Using Array Variables
+
+#+begin_src bash
+  myarray=(first second third home)
+  echo runners on ${myarray[0]} and ${myarray[2]}
+#+end_src
+
+** 5.24 Converting Between Upper- and Lowercase
+
+| convert to lcase  | ${filename,,}   |
+| convert to upcase | ${filename^^}   |
+| toggle case       | ${filename~~}   |
+
+#+begin_src bash
+  for filename in *.JPG; do
+      mv "$filename" "${filename,,}"
+  done
+#+end_src
+
+** 5.25 Converting to Camel Case
+
+| convert to camelcase | ${filename[@]^} |
+
+#+begin_src bash
+  while read txt; do
+      ra=($txt) # must be ($ not $(
+      echo ${ra[@]^}
+  done
+#+end_src

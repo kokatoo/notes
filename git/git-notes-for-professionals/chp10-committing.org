@@ -10,16 +10,16 @@
 | ~--no-edit~             | Use the selected commit message without launching an editor. For example, git --no-edit commit --amend amends a commit without changing its commit message. |
 | ~--all~, ~-a~           | Commit all changes, including changes that aren't yet staged.                                                                                               |
 | ~--date~                | Manually set the date that will be associated with the commit.                                                                                              |
-| ~--only~                | Commit only the paths speciﬁed. This will not commit what you currently have staged unless told to do so.                                                   |
+| ~--only~                | Commit only the paths specified. This will not commit what you currently have staged unless told to do so.                                                   |
 | ~--patch~, ~-p~         | Use the interactive patch selection interface to chose which changes to commit.                                                                             |
 | ~--help~                | Displays the man page for ~git commit~                                                                                                                      |
-| ~-S[keyid]~             | Sign commit, GPG-sign commit, countermand ~commit.gpgSign~ conﬁguration variable                                                                            |
+| ~-S[keyid]~             | Sign commit, GPG-sign commit, countermand ~commit.gpgSign~ configuration variable                                                                            |
 | ~-S --gpg-sign[=keyid]~ |                                                                                                                                                             |
 | ~-S --no-gpg-sign~      |                                                                                                                                                             |
 | ~-n~, ~--no-verify~     | This option bypasses the pre-commit and commit-msg hooks. See also Hooks                                                                                    |
 
     Commits with Git provide accountability by attributing authors with changes
-    to code. Git oﬀers multiple features for the speciﬁcity and security of
+    to code. Git oﬀers multiple features for the specificity and security of
     commits. This topic explains and demonstrates proper practices and
     procedures in committing with Git.
 
@@ -36,7 +36,7 @@
   git add README.md program.py
 #+end_src
 
-   This tells git that you want to add the ﬁles to the next commit you do.
+   This tells git that you want to add the files to the next commit you do.
 
    Then, commit your changes with
 
@@ -54,26 +54,26 @@
   git commit -m "Commit message here"
 #+end_src
 
-   Commit messages often follow some speciﬁc formatting rules, see Good commit
+   Commit messages often follow some specific formatting rules, see Good commit
    messages for more information.
 
    *Shortcuts*
 
-   If you have changed a lot of ﬁles in the directory, rather than listing each
+   If you have changed a lot of files in the directory, rather than listing each
    one of them, you could use:
 
 #+begin_src bash
   git add --all # equivalent to "git add -a"
 #+end_src
 
-   Or to add all changes, not including ﬁles that have been deleted, from the
+   Or to add all changes, not including files that have been deleted, from the
    top-level directory and subdirectories:
 
 #+begin_src bash
   git add .
 #+end_src
 
-   Or to only add ﬁles which are currently tracked ("update"):
+   Or to only add files which are currently tracked ("update"):
 
 #+begin_src bash
   git add -u
@@ -92,7 +92,7 @@
   git commit -m "Commit message here"
 #+end_src
 
-   Alternately, if you have only modiﬁed existing ﬁles or deleted ﬁles, and have
+   Alternately, if you have only modified existing files or deleted files, and have
    not created any new ones, you can combine the actions of ~git add~ and ~git
    commit~ in a single command:
 
@@ -100,7 +100,7 @@
   git commit -am "Commit message here"
 #+end_src
 
-   Note that this will stage all modiﬁed ﬁles in the same way as ~git add
+   Note that this will stage all modified files in the same way as ~git add
    --all~.
 
    *Sensitive data*
@@ -112,7 +112,7 @@
    "BFG Repo-Cleaner": https://rtyley.github.io/bfg-repo-cleaner/.
 
    The command bfg --replace-text passwords.txt my-repo.git reads passwords out
-   of the passwords.txt ﬁle and replaces these with ***REMOVED***. This
+   of the passwords.txt file and replaces these with ***REMOVED***. This
    operation considers all previous commits of the entire repository.
 
 ** Section 10.2: Good commit messages
@@ -204,5 +204,258 @@
    This means that if the earlier commit had already been pushed, after amending
    it you will have to push ~--force~.
 
-** 
+** Section 10.4: Committing without opening an editor
 
+   Git will usually open an editor (like vim or emacs) when you run ~git
+   commit~. Pass the ~-m~ option to specify a message from the command line:
+
+#+begin_src bash
+  git commit -m "Commit message here"
+#+end_src
+
+   Your commit message can go over multiple lines:
+
+#+begin_src bash
+  git commit -m "Commit 'subject line' message here
+
+  More detailed description follows here (after a blank line)."
+#+end_src
+
+   Alternatively, you can pass in multiple ~-m~ arguments:
+
+#+begin_src bash
+  git commit -m "Commit summary" -m "More detailed description follows here"
+#+end_src
+
+   See How to [[http://chris.beams.io/posts/git-commit/#seven-rules][Write]] a Git Commit Message.
+
+   [[https://udacity.github.io/git-styleguide/][Udacity]] Git Commit Message Style Guide
+
+** Section 10.5: Committing changes directly
+
+   Usually, you have to use ~git add~ or ~git rm~ to add changes to the index
+   before you can ~git commit~ them. Pass the ~-a~ or ~--all~ option to
+   automatically add every change (to tracked files) to the index, including
+   removals:
+
+#+begin_src bash
+  git commit -a
+#+end_src
+
+   If you would like to also add a commit message you would do:
+
+#+begin_src bash
+  git commit -a -m "your commit message goes here"
+#+end_src
+
+   Also, you can join two flags:
+
+#+begin_src bash
+  git commit -am "your commit message goes here"
+#+end_src
+
+   You don't necessarily need to commit all files at once. Omit the ~-a~ or
+   ~--all~ flag and specify which file you want to commit directly:
+
+#+begin_src bash
+  git commit path/to/a/file -m "your commit message goes here"
+#+end_src
+
+   For directly committing more than one specific file, you can specify one or
+   multiple files, directories and patterns as well:
+
+#+begin_src bash
+  git commit path/to/a/file path/to/a/folder/* path/to/b/file -m "your commit message goes here"
+#+end_src
+
+** Section 10.6: Selecting which lines should be staged for committing
+
+   Suppose you have many changes in one or more files but from each file you only
+   want to commit some of the changes, you can select the desired changes using:
+
+#+begin_src bash
+  git add -p
+#+end_src
+
+   or
+
+#+begin_src bash
+  git add -p [file]
+#+end_src
+
+   Each of your changes will be displayed individually, and for each change you
+   will be prompted to choose one of he following options:
+
+#+begin_src bash
+  y - Yes, add this hunk
+
+  n - No, don’t add this hunk
+
+  d - No, don’t add this hunk, or any other remaining hunks for this file.
+  Useful if you’ve already added what you want to, and want to skip over the rest.
+
+  s - Split the hunk into smaller hunks, if possible
+
+  e - Manually edit the hunk. This is probably the most powerful option.
+  It will open the hunk in a text editor and you can edit it as needed.
+#+end_src
+
+   This will stage the parts of the files you choose. Then you can commit all the
+   staged changes like this:
+
+#+begin_src bash
+  git commit -m 'Commit Message'
+#+end_src
+
+   The changes that were not staged or committed will still appear in your
+   working files, and can be committed later if required. Or if the remaining
+   changes are unwanted, they can be discarded with:
+
+#+begin_src bash
+  git reset --hard
+#+end_src
+
+   Apart from breaking up a big change into smaller commits, this approach is
+   also useful for reviewing what you are about to commit. By individually
+   confirming each change, you have an opportunity to check what you wrote, and
+   can avoid accidentally staging unwanted code such as println/logging
+   statements
+
+** Section 10.7: Creating an empty commit
+
+   Generally speaking, empty commits (or commits with state that is identical to
+   the parent) is an error.
+
+   However, when testing build hooks, CI systems, and other systems that trigger
+   off a commit, it's handy to be able to easily create commits without having
+   to edit/touch a dummy file.
+
+   The ~--allow-empty~ commit will bypass the check.
+
+#+begin_src bash
+  git commit -m "This is a blank commit" --allow-empty
+#+end_src
+
+** Section 10.8: Committing on behalf of someone else
+
+   If someone else wrote the code you are committing, you can give them credit
+   with the ~--author~ option:
+
+#+begin_src bash
+  git commit -m "msg" --author "John Smith <johnsmith@example.com>"
+#+end_src
+
+   You can also provide a pattern, which Git will use to search for previous
+   authors:
+
+#+begin_src bash
+  git commit -m "msg" --author "John"
+#+end_src
+
+   In this case, the author information from the most recent commit with an
+   author containing "John" will be used.
+
+   On GitHub, commits made in either of the above ways will show a large
+   author's thumbnail, with the committer's smaller and in front.
+
+** Section 10.9: GPG signing commits
+
+   1. Determine your key ID
+
+#+begin_src bash
+  gpg --list-secret-keys --keyid-format LONG
+
+  /Users/davidcondrey/.gnupg/secring.gpg
+  --------------------------------------
+  sec 2048R/YOUR-16-DIGIT-KEY-ID YYYY-MM-DD [expires: YYYY-MM-DD]
+#+end_src
+
+   Your ID is a alphanumeric 16-digit code following the first forward-slash.
+
+   2. Define your key ID in your ~git config~
+
+#+begin_src bash
+  git config --global user.signingkey YOUR-16-DIGIT-KEY-ID
+#+end_src
+
+   3. As of version 1.7.9, git commit accepts the -S option to attach a
+      signature to your commits. Using this option will prompt for your GPG
+      passphrase and will add your signature to the commit log.
+
+#+begin_src bash
+  git commit -S -m "Your commit message"
+#+end_src
+
+
+** Section 10.10: Commiting changes in specific files
+
+   You can commit changes made to specific files and skip staging them using ~git
+   add~:
+
+#+begin_src bash
+  git commit file1.c file2.h
+#+end_src
+
+   Or you can first stage the files:
+
+#+begin_src bash
+  git add file1.c file2.h
+#+end_src
+
+   and commit them later:
+
+#+begin_src bash
+  git commit
+#+end_src
+
+** Section 10.11: Committing at a specific date
+
+#+begin_src bash
+  git commit -m 'Fix UI bug' --date 2016-07-01
+#+end_src
+
+   The ~--date~ parameter sets the author date. This date will appear in the
+   standard output of ~git log~, for example.
+
+   To force the commit date too:
+
+#+begin_src bash
+  GIT_COMMITTER_DATE=2016-07-01 git commit -m 'Fix UI bug' --date 2016-07-01
+#+end_src
+
+   The date parameter accepts the ﬂexible formats as supported by GNU date, for
+   example:
+
+#+begin_src bash
+  git commit -m 'Fix UI bug' --date yesterday
+  git commit -m 'Fix UI bug' --date '3 days ago'
+  git commit -m 'Fix UI bug' --date '3 hours ago'
+#+end_src
+
+   When the date doesn't specify time, the current time will be used and only
+   the date will be overridden.
+
+** Section 10.12: Amending the time of a commit
+
+   You can amend the time of a commit using
+
+#+begin_src bash
+  git commit --amend --date="Thu Jul 28 11:30 2016 -0400"
+#+end_src
+
+   or even
+
+#+begin_src bash
+  git commit --amend --date="now"
+#+end_src
+
+** Section 10.13: Amending the author of a commit
+
+   If you make a commit as the wrong author, you can change it, and then amend
+
+#+begin_src bash
+  git config user.name "Full Name"
+  git config user.email "email@example.com"
+
+  git commit --amend --reset-author
+#+end_src
