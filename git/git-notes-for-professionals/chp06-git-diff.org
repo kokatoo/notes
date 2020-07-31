@@ -6,19 +6,19 @@
 | Parameter             | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ~-p~, ~-u~, ~--patch~ | Generate patch                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ~-s~, ~--no-patch~    | Suppress diff output. Useful for commands like ~git show~ that show the patch by default, or to cancel the effect of ~--patch~                                                                                                                                                                                                                                                                                                                                                |
+| ~-s~, ~--no-patch~    | Suppress ~diff~ output. Useful for commands like ~git show~ that show the patch by default, or to cancel the effect of ~--patch~                                                                                                                                                                                                                                                                                                                                              |
 | ~--raw~               | Generate the diff in raw format                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ~--diff-algorithm=~   | Choose a diff algorithm. The variants are as follows: ~myers~, ~minimal~, ~patience~, ~histogram~                                                                                                                                                                                                                                                                                                                                                                           |
 | ~--summary~           | Output a condensed summary of extended header information such as creations, renames and mode changes                                                                                                                                                                                                                                                                                                                                                                       |
 | ~--name-only~         | Show only names of changed files                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ~--name-status~       | Show names and statuses of changed files The most common statuses are M (Modified), A (Added), and D (Deleted)                                                                                                                                                                                                                                                                                                                                                                |
-| ~--check~             | Warn if changes introduce conﬂict markers or whitespace errors. What are considered whitespace errors is controlled by core.whitespace configuration. By default, trailing whitespaces (including lines that solely consist of whitespaces) and a space character that is immediately followed by a tab character inside the initial indent of the line are considered whitespace errors. Exits with non- zero status if problems are found. Not compatible with --exit-code |
-| ~--full-index~        | Instead of the first handful of characters, show the full pre- and post-image blob object names on --full-index the "index" line when generating patch format output                                                                                                                                                                                                                                                                                                         |
+| ~--check~             | Warn if changes introduce conflict markers or whitespace errors. What are considered whitespace errors is controlled by core.whitespace configuration. By default, trailing whitespaces (including lines that solely consist of whitespaces) and a space character that is immediately followed by a tab character inside the initial indent of the line are considered whitespace errors. Exits with non- zero status if problems are found. Not compatible with ~--exit-code~ |
+| ~--full-index~        | Instead of the first handful of characters, show the full pre- and post-image blob object names on ~--full-index~ the "index" line when generating patch format output                                                                                                                                                                                                                                                                                                       |
 | ~--binary~            | In addition to ~--full-index~, output a binary diﬀ that can be applied with ~git apply~                                                                                                                                                                                                                                                                                                                                                                                     |
 | ~-a~, ~--text~        | Treat all files as text.                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ~--color~             | Set the color mode; i.e. use ~--color=always~ if you would like to pipe a diff to less and keep git's coloring                                                                                                                                                                                                                                                                                                                                                                |
 
-** Section 6.1: Show dierences in working branch
+** Section 6.1: Show differences in working branch
 
 #+begin_src bash
   git diff
@@ -115,14 +115,14 @@
    The difference being that the output of the latter will actually tell you
    which changes are staged for commit and which are not.
 
-** Section 6.6: Show dierences for a specific file or directory
+** Section 6.6: Show differences for a specific file or directory
 
 #+begin_src bash
   git diff myfile.txt
 #+end_src
 
    Shows the changes between the previous commit of the specified file
-   (myfile.txt) and the locally-modified version that has not yet been staged.
+   (~myfile.txt~) and the locally-modified version that has not yet been staged.
 
    This also works for directories:
 
@@ -131,10 +131,10 @@
 #+end_src
 
    The above shows the changes between the previous commit of all files in the
-   specified directory (documentation/) and the locally-modified versions of these
+   specified directory (~documentation/~) and the locally-modified versions of these
    files, that have not yet been staged.
 
-   To show the diﬀerence between some version of a file in a given commit and the
+   To show the difference between some version of a file in a given commit and the
    local HEAD version you can specify the commit you want to compare against:
 
 #+begin_src bash
@@ -147,7 +147,7 @@
   git diff 27fa75e ada9b57 myfile.txt
 #+end_src
 
-   To show the diﬀerence between the version specified by the hash ada9b57 and
+   To show the diﬀerence between the version specified by the hash ~ada9b57~ and
    the latest commit on the branch ~my_branchname~ for only the relative
    directory called ~my_changed_directory/~ you can do this:
 
@@ -169,7 +169,7 @@
   git diff ada9b57 my_branchname my_changed_directory/
 #+end_src
 
-** Section 6.7: Viewing a word-di for long lines
+** Section 6.7: Viewing a word-diff for long lines
 
 #+begin_src bash
   git diff [HEAD|--staged...] --word-diff
@@ -192,7 +192,7 @@
    You can omit the markers ~[-, -]~, ~{+, +}~ by specifying ~--word-diff=color~
    or ~--color-words~. This will only use color coding to mark the difference:
 
-** Section 6.8: Show dierences between current version and last version
+** Section 6.8: Show differences between current version and last version
 
 #+begin_src bash
   git diff HEAD^ HEAD
@@ -216,7 +216,7 @@
   patch -p0 < some_file.patch
 #+end_src
 
-** Section 6.10: dierence between two commit or branch
+** Section 6.10: difference between two commit or branch
 
    To view difference between two branch
 
@@ -274,9 +274,9 @@
 
    will show the differences between 2 specific commits.
 
-** Section 6.12: Di UTF-16 encoded text and binary plist files
+** Section 6.12: Diff UTF-16 encoded text and binary plist files
 
-   You can diﬀ UTF-16 encoded files (localization strings file os iOS and macOS
+   You can diff UTF-16 encoded files (localization strings file os iOS and macOS
    are examples) by specifying how git should diff these files.
 
    Add the following to your ~.gitconfig~ file.
@@ -286,7 +286,7 @@
   textconv = "iconv -f utf-16 -t utf-8"
 #+end_src
 
-   iconv is a program to convert different [[http://linux.die.net/man/1/iconv][encodings]].
+   ~iconv~ is a program to convert different [[http://linux.die.net/man/1/iconv][encodings]].
 
    Then edit or create a ~.gitattributes~ file in the root of the repository
    where you want to use it. Or just edit ~.gitattributes~.
@@ -295,7 +295,7 @@
   ,*.strings diff=utf16
 #+end_src
 
-   This will convert all files ending in ~.strings~ before git diffs.
+   This will convert all files ending in ~.strings~ before ~git diff~.
 
    You can do similar things for other files, that can be converted to text.
 
