@@ -7,13 +7,13 @@
 |-------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ~--message~, ~-m~       | Message to include in the commit. Specifying this parameter bypasses Git's normal behavior of opening an editor.                                            |
 | ~--amend~               | Specify that the changes currently staged should be added (amended) to the previous commit. Be careful, this can rewrite history!                           |
-| ~--no-edit~             | Use the selected commit message without launching an editor. For example, git --no-edit commit --amend amends a commit without changing its commit message. |
+| ~--no-edit~             | Use the selected commit message without launching an editor. For example, ~git --no-edit commit --amend~ amends a commit without changing its commit message. |
 | ~--all~, ~-a~           | Commit all changes, including changes that aren't yet staged.                                                                                               |
 | ~--date~                | Manually set the date that will be associated with the commit.                                                                                              |
 | ~--only~                | Commit only the paths specified. This will not commit what you currently have staged unless told to do so.                                                   |
 | ~--patch~, ~-p~         | Use the interactive patch selection interface to chose which changes to commit.                                                                             |
 | ~--help~                | Displays the man page for ~git commit~                                                                                                                      |
-| ~-S[keyid]~             | Sign commit, GPG-sign commit, countermand ~commit.gpgSign~ configuration variable                                                                            |
+| ~-S[keyid]~             | Sign commit, GPG-sign commit, ~countermand commit.gpgSign~ configuration variable                                                                            |
 | ~-S --gpg-sign[=keyid]~ |                                                                                                                                                             |
 | ~-S --no-gpg-sign~      |                                                                                                                                                             |
 | ~-n~, ~--no-verify~     | This option bypasses the pre-commit and commit-msg hooks. See also Hooks                                                                                    |
@@ -111,7 +111,7 @@
    to remove such data afterwards. A fast and easy solution is the usage of the
    "BFG Repo-Cleaner": https://rtyley.github.io/bfg-repo-cleaner/.
 
-   The command bfg --replace-text passwords.txt my-repo.git reads passwords out
+   The command ~bfg --replace-text passwords.txt my-repo.git~ reads passwords out
    of the passwords.txt file and replaces these with ***REMOVED***. This
    operation considers all previous commits of the entire repository.
 
@@ -286,7 +286,7 @@
    Each of your changes will be displayed individually, and for each change you
    will be prompted to choose one of he following options:
 
-#+begin_src bash
+#+begin_src
   y - Yes, add this hunk
 
   n - No, don’t add this hunk

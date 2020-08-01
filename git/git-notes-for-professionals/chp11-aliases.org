@@ -1,0 +1,41 @@
+#+STARTUP: showeverything
+#+title: Git Notes for Professionals
+
+* Chapter 11: Aliases
+
+** Section 11.1: Simple aliases
+
+   There are two ways of creating aliases in Git:
+
+   * with the ~.gitconfig~ ﬁle:
+
+#+begin_src bash
+  [alias]
+    ci = commit
+    st = status
+    co = checkout
+#+end_src
+
+   * with the command line:
+
+#+begin_src bash
+  git config --global alias.ci "commit"
+  git config --global alias.st "status"
+  git config --global alias.co "checkout"
+#+end_src
+
+   After the alias is created - type:
+   
+   * ~git ci~ instead of ~git commit~
+   * ~git st~ instead of ~git status~
+   * ~git co~ instead of ~git checkout~
+
+   As with regular git commands, aliases can be used beside arguments. For example:
+
+#+begin_src bash
+  git ci -m "Commit message..."
+  git co -b feature-42
+#+end_src
+
+** 
+

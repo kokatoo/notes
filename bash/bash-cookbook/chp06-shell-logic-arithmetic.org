@@ -1,0 +1,259 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp06: Shell Logic and Arithmetic
+
+** 6.1 Doing Arithmetic in Your Shell Script
+
+#+begin_src bash
+  max=$((2**8))
+  count=$((count + 5 + MAX * 2))
+  let count+='5+max*2'
+#+end_src
+
+** 6.2 Branching on Conditions
+
+#+begin_src bash
+  if [ $# -lt 3 ]; then # if test $# -lt 3
+      printf "%b" "Error. Not enough arguments.\n"
+      printf "%b" "usage: myscript file1 op file2\n"
+      exit 1
+  fi
+
+  if (( $# < 3 )); then
+      printf "%b" "Error. Not enough arguments.\n"
+      printf "%b" "usage: myscript file1 op file2\n"
+      exit 1
+  fi
+
+  if (( $# < 3 )); then
+      printf "%b" "Error. Not enough arguments.\n"
+      printf "%b" "usage: myscript file1 op file2\n"
+      exit 1
+  elif (( $# > 3 )); then
+      printf "%b" "Error. Too many arguments.\n"
+      printf "%b" "usage: myscript file1 op file2\n"
+      exit 2
+  else
+      printf "%b" "Argument count correct. Proceeding...\n"
+  fi
+#+end_src
+
+** 6.3 Testing for File Characteristics
+
+#+begin_src bash
+  DIRPLACE=/tmp
+  INFILE=/home/yucca/amazing.data
+  OUTFILE=/home/yucca/more.results
+
+  if [ -d "$DIRPLACE" ]; then
+
+      cd $DIRPLACE
+
+      if [ -e "$INFILE" ]; then
+          if [ -w "$OUTFILE" ]; then
+              doscience < "$INFILE" >> "$OUTFILE"
+          else
+              echo "cannot write to $OUTFILE"
+          fi
+      else
+          echo "cannot read from $INFILE"
+      fi
+  else
+      echo "cannot cd into $DIRPLACE"
+  fi
+#+end_src
+
+| -b file            | if file exists and is a block device file                                                 |
+| -c file            | if file exists and is a character device file                                             |
+| -d file            | if file exists and is a directory                                                         |
+| -e file            | if file exists; same as -a                                                                |
+| -f file            | if file exists and is a regular file                                                      |
+| -G file            | if file exists and is owned by the effective group ID                                     |
+| -h file            | if file exists and is a symbolic link; same as -L                                         |
+| -k file            | if file exists and has its sticky bit set                                                 |
+| -L file            | if file exists and is a symbolic link; same as -h                                         |
+| -N file            | if file was modified since it was last read                                               |
+| -O file            | if file exists and is owned by the effective user ID                                      |
+| -p file            | if file exists and is a pipe or named pipe (FIFO file)                                    |
+| -r file            | if file exists and is readable                                                            |
+| -S file            | if file exists and is a socket                                                            |
+| -w file            | if file exists and is writable                                                            |
+| -x file            | if file exists and is executable, or file is a directory that can be searched             |
+| -z string          | True if the length of string is zero                                                      |
+| file1 -ef file2    | if file1 and file2 refer to the same device and inode numbers                             |
+| file1 -nt file2    | if file1’s modification date is newer than file2’s, or if file1 exists and file2 does not |
+| file1 -ot file2    | if file1’s modification date is older than file2’s, or if file2 exists and file1 does not |
+| string1 = string2  | if string1 equals string2 (POSIX version)                                                 |
+| string1 == string2 | if string1 equals string2                                                                 |
+| string1 != string2 | if the strings are not equal                                                              |
+| string1 < string2  | if string1 sorts before string2 lexicographically                                         |
+| string1 > string2  | if string1 sorts after string2 lexicographically                                          |
+| string1 =~ regexp  | if string1 matches the extended regular expression regexpa exprA                          |
+| -eq exprB          | if arithmetic expressions exprA and exprB are equal exprA                                 |
+| -ne exprB          | if arithmetic expressions exprA and exprB are not equal exprA                             |
+| -lt exprB          | if exprA is less than exprB exprA                                                         |
+| -le exprB          | if exprA is less than or equal to exprB exprA                                             |
+| -gt exprB          | if exprA is greater than exprB exprA                                                      |
+| -ge exprB          | if exprA is greater than or equal to exprB exprA                                          |
+| -a exprB           | if exprA is true and exprB is true exprA                                                  |
+| -o exprB           | if exprA is true or exprB is true                                                         |
+
+** 6.4 Testing for More than One Thing
+
+#+begin_src bash
+  # Testing whether file is both readable and writable:
+  [ -r $FILE -a -w $FILE ]
+
+  [ -r "$FN" -a \( -f "$FN" -o -p "$FN" \) ]
+
+  [ -z "$V1" -o -z "${V2:=YIKES}" ]
+#+end_src
+
+** 6.6 Testing for Equality
+
+   Use ~-eq~ for numeric comparisons and ~=~ (follows POSIX) or ~==~ for string
+   comparisions.
+
+   Better to use the numerical tests with ~(( ))~ and string comparisions with
+   ~[  ]~.
+
+#+begin_src bash
+  VAR1=" 05 "
+  VAR2="5"
+
+  printf "%s" "do they -eq as equal? "
+  if (( "$VAR1" -eq "$VAR2" )); then # YES
+      echo YES
+  else
+      echo NO
+  fi
+
+  printf "%s" "do they = as equal? "
+  if [ "$VAR1" = "$VAR2" ]; then    # NO
+      echo YES
+  else
+      echo NO
+  fi
+#+end_src
+
+** 6.7 Testing with Pattern Matches
+
+   In the ~[[~ double-bracket syntax, the equal sign is a more powerful string
+   comparator. The ~shopt -s~ command is the way to turn on shell options. The
+   ~extglob~ option eals with extended globbing.
+
+#+begin_src bash
+  shopt -s extglob
+  if [[ "$FN" == *.@(jpg|jpeg) ]]; then
+      ...
+#+end_src
+
+| Grouping | Comment                     |
+|----------+-----------------------------|
+| ~@( … )~ | Only one occurrence         |
+| ~*( … )~ | Zero or more occurrences    |
+| ~+( … )~ | One or more occurrences     |
+| ~?( … )~ | Zero or one occurrence      |
+| ~!( … )~ | Not this, but anything else |
+
+** 6.8 Testing with Regular Expressions
+
+   Use the regex operator ~=~~. The various part of the pattern matching will be
+   availabe in ~$BASH_REMATCH~.
+
+#+begin_src bash
+  # Ludwig Van Beethoven - 01 - Allegro.ogg
+  for CDTRACK in *; do
+      if [[ "$CDTRACK" =~ "([[:alpha:][:blank:]]*)- ([[:digit:]]*) - (.*)$" ]]; then
+          echo Track ${BASH_REMATCH[2]} is ${BASH_REMATCH[3]}
+          mv "$CDTRACK" "Track${BASH_REMATCH[2]}"
+      fi
+  done
+#+end_src
+
+** 6.10 Looping for a While
+
+#+begin_src bash
+    while (( COUNT < MAX )); do
+        some stuff
+        let COUNT++
+    done
+
+    while [ -z "$LOCKFILE" ]; do
+        some things
+    done
+
+    while read lineoftext; do
+        process $lineoftext
+    done < file.input
+
+    cat file.input |
+        while read lineoftext; do
+            process that line
+        done
+#+end_src
+
+** 6.12 Looping with a Count
+
+#+begin_src bash
+  for (( i=0 ; i < 10 ; i++ )) ; do echo $i ; done
+
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+      echo $i
+  done
+#+end_src
+
+** 6.13 Looping with Floating-Point Values
+
+#+begin_src bash
+  for fp in $(seq 1.0 .01 1.1); do
+      echo $fp
+  done
+
+  # preferred if very long sequence due to piping
+  seq 1.0 .01 1.1 | 
+      while read fp; do
+          echo $fp
+      done
+#+end_src
+
+** 6.14 Branching Many Ways
+
+#+begin_src bash
+  case $FN in
+      *.gif)
+          gif2png $FN ;;
+      *.png)
+          pngOK $FN ;;
+      *.jpg)
+          jpg2gif $FN ;;
+      *.tif | *.TIFF)
+          tif2jpg $FN ;;
+      *)
+          printf "File not supported: %s" $FN ;;
+  esac
+
+  # equivalent to
+  if [[ $FN == *.gif ]]; then
+      gif2png $FN
+  elif [[ $FN == *.png ]]; then
+      pngOK $FN
+  elif [[ $FN == *.jpg ]]; then
+      jpg2gif $FN
+  elif [[ $FN == *.tif || $FN == *.TIFF ]]; then
+      tif2jpg $FN
+  else
+      printf "File not supported: %s" $FN
+  fi
+#+end_src
+
+** 6.16 Creating Simple Menus
+
+#+begin_src bash
+  DBLIST=$(sh ./listdb | tail -n +2)
+  select DB in $DBLIST; do
+      echo Initializing database: $DB
+      mysql -u user -p $DB <myinit.sql
+  done
+#+end_src

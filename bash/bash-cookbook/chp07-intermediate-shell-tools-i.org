@@ -1,0 +1,134 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp07: Intermediate Shell Tools I
+
+** 7.1 Sifting Through Files for a String
+
+#+begin_src bash
+  grep printf *.c
+  grep printf ../lib/*.c ../server/*.c ../cmd/*.c */*.c
+#+end_src
+
+   If you don't want to see the filenames:
+
+#+begin_src bash
+  grep -h printf *.c
+#+end_src
+
+   To count the number of matches:
+
+#+begin_src bash
+  grep -c printf *.c
+#+end_src
+
+** 7.2 Getting Just the Filename from a Search
+
+#+begin_src bash
+  grep -l printf *.c
+
+  rm -i $(grep -l 'This file is obsolete' * )
+#+end_src
+
+** 7.3 Getting a Simple True/False from a Search
+
+   Use the quiet mode ~-q~. it will stop searching after the first found. Or use
+   ~/dev/null~ for portability.
+
+#+begin_src bash
+  if grep -q findme bigdata.file ; then echo yes ; else echo nope ; fi
+
+  if grep findme bigdata.file > /dev/null ; then echo yes ; else echo nope ; fi
+#+end_src
+
+** 7.4 Searching for Text While Ignoring Case
+
+#+begin_src bash
+  grep -i error logfile.msgs
+
+#+end_src
+
+** 7.6 Paring Down What the Search Finds
+
+   Pipe the search result to ~grep -v~ for results you don't want to see.
+
+#+begin_src bash
+  grep -i dec logfile | grep -vi decimal | grep -vi decimate
+#+end_src
+
+** 7.9 Grepping Compressed Files
+
+   ~zgrep~ and ~zcat~ are able to understand compressed and uncompressed files.
+
+#+begin_src bash
+  zgrep 'search term' /var/log/messages*
+  zcat /var/log/messages.1.gz
+#+end_src
+
+** 7.10 Keeping Some Output, Discarding the Rest
+
+   Prints the first word of every line:
+
+#+begin_src bash
+  awk '{print $1}' myinput.file
+#+end_src
+
+   The ~awk~ program can be used in several different ways. Its easiest, simplest
+   use is just to print one or more selected fields from its input. Fields are
+   delineated by whitespace (or specified with the ~-F~ option) and are numbered
+   starting at 1. The field ~$0~ represents the entire line of input.
+
+** 7.11 Keeping Only a Portion of a Line of Output
+
+   ~NF~ refers to the number of fields. Note that ~awk~ doesn't require ~$~ to
+   read the variable. The ~$~ is there for the ~print~ function.
+
+#+begin_src bash
+  ls -l | awk '{print $1, $NF}'
+#+end_src
+
+** 7.12 Reversing the Words on Each Line
+
+#+begin_src bash
+  awk '{
+      for (i=NF; i>0; i--) {
+          printf "%s ", $i;
+          }
+      printf "\n"
+      }' <filename>
+#+end_src
+
+** 7.13 Summing a List of Numbers
+
+   Summing up the 5th field of ~ls~:
+
+#+begin_src bash
+  ls -l | awk '{sum += $5}; END {print sum}'
+#+end_src
+
+   ~END~ block is only run once before terminating. There is a ~BEGIN~ block
+   that is useful for initializing variables.
+
+   Excluding the first "total" line of ~ls~:
+
+#+begin_src bash
+  ls -l | awk '/^total/{next} {sum += $5}; END {print sum}'
+#+end_src
+
+** 7.14 Counting String Values with awk
+
+   Using associative arrays in ~awk~:
+
+#+begin_src awk
+  NF > 7 {
+      user[$3]++
+  }
+
+  END {
+      for (i in user) {
+          printf "%s owns %d files\n", i, user[i]
+      }
+  }
+
+  $ ls -lR /usr/local | awk -f file.awk
+#+end_src
