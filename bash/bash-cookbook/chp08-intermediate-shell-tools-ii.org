@@ -1,0 +1,131 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp08: Intermediate Shell Tools II
+
+** 8.1 Sorting Your Output
+
+#+begin_src bash
+  sort file1.txt file2.txt myotherfile.xyz
+
+  somecommands | sort
+#+end_src
+
+#+begin_src bash
+  # reverse sort
+  sort -r
+
+  # ignore case
+  sort -f
+  sort --ignore-case
+#+end_src
+
+** 8.2 Sorting Numbers
+
+#+begin_src bash
+  sort -n somedata
+#+end_src
+
+#+begin_src bash
+  # cut, count and sort:
+  cut -d':' -f7 /etc/passwd | sort | uniq -c | sort -rn
+
+  # sort unique
+  cut -d':' -f7 /etc/passwd | sort -u
+#+end_src
+
+** 8.4 Cutting Out Parts of Your Output
+
+#+begin_src bash
+  # to take particular columns
+  $ ps -l | cut -c12-20
+  PID
+  5391
+  7285
+  7286
+#+end_src
+
+** 8.5 Removing Duplicate Lines
+
+#+begin_src bash
+  somesequence | sort -u
+#+end_src
+
+** 8.6 Compressing Files
+
+#+begin_src bash
+  tar cf tarball_name.tar directory_of_files
+  gzip tarball_name.tar.gz
+#+end_src
+
+#+begin_src bash
+  tar czf tarball_name.tgz directory_of_files
+
+  tar cjf tarball_name.tar.bz2 directory_of_files
+
+  zip -r zipfile_name directory_of_files
+#+end_src
+
+** 8.7 Uncompressing Files
+
+   Option ~t~ is for the table of contents.
+
+| File extension | List    | Extract                                 |
+|----------------+---------+-----------------------------------------|
+| .tar           | tar tf  | tar xf                                  |
+| .gz, .tgz      | tar tzf | tar xzf, gunzip file && tar xf file     |
+| .tar.bz2       | tar tjf | tar xjf, gunzip2 file && tar xf file    |
+| .tar.Z         | tar tZf | tar xZf, uncompress file && tar xf file |
+| .zip           |         | unzip                                   |
+
+** 8.8 Checking a tar Archive for Unique Directories
+
+   You want to check which unique directoies ~tar~ would write to before
+   extracting.
+
+#+begin_src bash
+  tar tf some.tar | awk -F / '{print $1}' | sort -u
+#+end_src
+
+
+** 8.9 Translating Characters
+
+   Use ~sed~ for regex and more complicated translation.
+
+#+begin_src bash
+  tr ';' ',' < inputfile > outputfile
+
+  cat file | tr ';' ','
+#+end_src
+
+** 8.10 Converting Uppercase to Lowercase
+
+#+begin_src bash
+tr 'A-Z' 'a-z' < inputfile > outputfile
+
+tr '[:upper:]' '[:lower:]' < inputfile > outputfile
+#+end_src
+
+** 8.11 Converting DOS Files to Linux Format
+
+#+begin_src bash
+  tr -d '\r' <file.dos >file.txt
+#+end_src
+
+** 8.13 Counting Lines, Words, or Characters in a File
+
+#+begin_src bash
+  wc <file>
+
+  # line only
+  wc -l <file>
+
+  # words only
+  wc -w <file>
+
+  # chars only (same as bytes)
+  wc -c <file>
+
+  # to assign num lines to variable
+  num_lines=$(wc -l < <file>)
+#+end_src
