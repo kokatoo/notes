@@ -1,0 +1,94 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp10: Additional Features for Scripting
+
+** 10.1 “Daemon-izing” Your Script
+
+   We are closing out STDIN by ~0<&-~ or ~<&-~ since STDIN is 0 by default.
+
+#+begin_src bash
+  nohup mydaemonscript 0<&- 1> /dev/null 2>&1 &
+  nohup mydaemonscript <&- > /dev/null 2>&1 &
+#+end_src
+
+** 10.2 Reusing Code with Includes and Sourcing
+
+   Use ~.~ to source the contents of the configuration file. The lines of the
+   file will be processed as if encountered in the current script.
+
+#+begin_src bash
+  $ cat myprefs.cfg
+  SCRATCH_DIR=/var/tmp
+  IMG_FMT=png
+  SND_FMT=ogg
+
+  source $HOME/myprefs.cfg
+  cd ${SCRATCH_DIR:-/tmp}
+  echo You prefer $IMG_FMT image files
+  echo You prefer $SND_FMT sound files
+#+end_src
+
+** 10.5 Using Functions: Parameters and Return Values
+
+   Put any parameters for a bash function right after the function's name
+   separated by whitespace. Don't forget to quote them if necessary.
+
+   There are 2 ways to return values. Assign to global variables inside the
+   function or use ~echo~ or ~printf~ to send to STDOUT and read in from command
+   substitution ~$()~
+
+#+begin_src bash
+  function max () {
+      if [ $1 -gt $2 ]; then
+        echo $1
+      else
+          echo $2
+      fi
+  }
+
+  BIGR=$(max 128 $SIM)
+  echo $BIGR
+#+end_src
+
+** 10.6 Trapping Interrupts
+
+   Use ~trap -l~ or ~kill -l~ to list signals you may trap. The exit status of
+   your script should be 128+signal number if you want it to be terminated by
+   that signal number.
+
+#+begin_src bash
+  $ cat hard_to_kill
+  #!/bin/bash
+  trap ' echo "You got me! $?" ' ABRT EXIT HUP INT QUIT TERM
+  trap ' echo "Later... $?"; exit ' USR1
+  sleep 120
+#+end_src
+
+   Usage for trap:
+
+#+begin_src bash
+  trap [-lp] [arg] [signal [signal]]
+#+end_src
+
+** 10.8 Avoiding Aliases and Functions
+
+   Use ~command~ command to ignore shell functions and
+   aliases.
+
+** 10.9 Counting Elapsed Time
+
+   Use ~time~ command or ~$SECONDS~ in your script.
+
+#+begin_src bash
+  $ time sleep 3
+
+  $ cat seconds
+  started="$SECONDS"
+  sleep 4
+  echo "Run-time = $(($SECONDS - $started)) seconds..."
+#+end_src
+
+** 10.10 Writing Wrappers
+
+https://signalvnoise.com/posts/3264-automating-with-convention-introducing-sub

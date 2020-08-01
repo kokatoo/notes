@@ -159,16 +159,16 @@ echo ${HOME=/tmp}
   done
 #+end_src
 
-| Inside ~${ … }~      | Action taken                                                     |
-|----------------------+------------------------------------------------------------------|
-| ~name:num1:num2~      | Return a substring of name starting at num1 with length num2     |
-| ~#name~               | Return length of string                                          |
-| ~name#pattern~        | Remove (shortest) front-anchored pattern                         |
-| ~name##pattern~        | Remove (longest) front-anchored pattern                          |
-| ~name%pattern~         | Remove (shortest) rear-anchored pattern                          |
-| ~name%%pattern~        | Remove (longest) rear-anchored pattern                           |
-| ~name/pattern/string~  | Replace first occurrence                                         |
-| ~name//pattern/string~ | Replace all occurrences                                          |
+| Inside ~${ … }~        | Action taken                                                 |
+|------------------------+--------------------------------------------------------------|
+| ~name:num1:num2~       | Return a substring of name starting at num1 with length num2 |
+| ~#name~                | Return length of string                                      |
+| ~name#pattern~         | Remove (shortest) front-anchored pattern                     |
+| ~name##pattern~        | Remove (longest) front-anchored pattern                      |
+| ~name%pattern~         | Remove (shortest) rear-anchored pattern                      |
+| ~name%%pattern~        | Remove (longest) rear-anchored pattern                       |
+| ~name/pattern/string~  | Replace first occurrence                                     |
+| ~name//pattern/string~ | Replace all occurrences                                      |
 
 ** 5.20 Using bash (string substitution) for basename
 

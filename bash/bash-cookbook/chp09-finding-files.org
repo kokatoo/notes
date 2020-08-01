@@ -1,0 +1,102 @@
+#+STARTUP: showeverything
+#+title: bash Cookbook
+
+* Chp09: Finding Files: find, locate, slocate
+
+** 9.1 Finding All Your MP3 Files
+
+#+begin_src bash
+  find . -name '*.mp3' -print -exec mv '{}' ~/songs \;
+#+end_src
+
+** 9.2 Handling Filenames Containing Odd Characters
+
+   ~-print0~ tells ~find~ to use the null char (~\0~) instead of whitespace to
+   be the delimiter. ~-0~ tells ~xargs~ to use ~\0~ as the delimiter.
+
+   ~-i~ defaults to ~{}~ and this is used to place ~{}~ before the end of the
+   command.
+
+#+begin_src bash
+  find . -name '*.mp3' -print0 | xargs -i -0 mv '{}' ~/songs
+#+end_src
+
+** 9.4 Finding Files Across Symbolic Links
+
+   Use the follow predicate ~-L~.
+
+#+begin_src bash
+  find -L . -name '*.mp3' -print0 | xargs -i -0 mv '{}' ~/songs
+#+end_src
+
+** 9.5 Finding Files Irrespective of Case
+
+#+begin_src bash
+  find . -L -iname '*.mp3' -print0 | xargs -i -0 mv '{}' ~/songs
+#+end_src
+
+** 9.6 Finding Files by Date
+
+   Check last modification time
+
+#+begin_src bash
+  # more than 90 days ago
+  find . -name '*.jpg' -mtime +90 -print
+
+  # less than 90 days ago
+  find . -name '*.jpg' -mtime -90 -print
+
+  find . -mtime +7 -a -mtime -14 -print
+
+  find . -mtime +14 -name '*.text' -o \( -mtime -14 -name '*.txt' \) -print
+#+end_src
+
+** 9.7 Finding Files by Type
+
+   Search only directories:
+
+#+begin_src bash
+  find . -type d -name '*java*' -print
+#+end_src
+
+| Key | Meaning                |
+| b   | Block special file     |
+| c   | Character special file |
+| d   | Directory              |
+| p   | Pipe (or “fifo”)       |
+| f   | Plain ol’ file         |
+| l   | Symbolic link          |
+| s   | Socket                 |
+
+** 9.8 Finding Files by Size
+
+ #+begin_src bash
+   find . -size +3000k -print
+
+   find . -size +10000k -print0 | xargs -0 ls -lrSh
+ #+end_src
+
+** 9.9 Finding Files by Content
+
+   ~-H~ option will print the name of the file if ~grep~ finds something.
+
+#+begin_src bash
+  grep -i portend *.txt
+  find . -name '*.txt' -exec grep -Hi portend '{}' \;
+#+end_src
+
+** 9.10 Finding Existing Files and Content Fast
+
+#+begin_src bash
+  $ locate apropos
+#+end_src
+
+** 9.11 Finding a File Using a List of Possible Locations
+
+   Search ~$PATH~ and sub delimiter from space to ~:~.
+
+#+begin_src bash
+  for path in ${PATH//:/ } /opt/foo/bin /opt/bar/bin; do
+      [ -x "$path/ls" ] && $path/ls
+  done
+#+end_src
