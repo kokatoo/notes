@@ -1,0 +1,43 @@
+#+STARTUP: showeverything
+#+title: R Cookbook
+
+* Chp16: R Markdown and Publish
+
+** 16.1 Creating a New Document
+
+   Choose File > New File > R Markdown > HTML
+
+** 16.2 Adding a Title, Author, or Date
+
+   At the top block contains important metadata about your document in YAML:
+
+#+begin_src YAML
+---
+title: "R Cookbook"
+author: "Jason"
+date: "8/02/2020"
+output: html_document
+---
+#+end_src
+
+   When you knit your R Markdown, R will create Markdown for each chunk's output
+   and pass the full Markdown to Pandoc.
+
+** 16.3 Formatting Document Text
+
+#+begin_src
+| Markdown          |
+|-------------------|
+| plain text        |
+| *italics*         |
+| **bold**          |
+| `code`            |
+| sub~script~       |
+| super^script^     |
+| ~~strikethrough~~ |
+| endash: --        |
+| emdash: ---       |
+#+end_src
+
+** 16.4 Inserting Document Headings
+
