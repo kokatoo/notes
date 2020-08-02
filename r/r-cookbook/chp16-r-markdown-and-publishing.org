@@ -180,8 +180,6 @@ kable(myTable, digits = 2, caption = 'My Table') %>%
 $\beta = (X^{T}X)^{-1}X^{T}{\bf{y}}$
 #+end_src
 
-   \beta = (X^{T}X)^{-1}X^{T}{\bf{y}}
-
    For large formula blocks, embed between ~$$ $$~:
 
 #+begin_src LaTeX
@@ -193,9 +191,3 @@ $$
     \label{eq:1}
 $$
 #+end_src
-
-\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} 
-      \mathrm S^{2} \frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
-    + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
-    \mathrm r \mathrm C 
-    \label{eq:1}
