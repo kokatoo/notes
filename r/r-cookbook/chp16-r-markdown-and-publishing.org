@@ -98,10 +98,10 @@ The square root of pi is `r sqrt(pi)`.
 
 | Chunk option      | Executes code | Shows code | Shows output text | Shows figures |
 |-------------------+---------------+------------+-------------------+---------------|
-| ~results='hide'~  | X             | X          |                   | X             |
+| ~results=‘hide’~  | X             | X          |                   | X             |
 | ~include=FALSE~   | X             |            |                   |               |
 | ~echo=FALSE~      | X             |            | X                 | X             |
-| ~fig.show='hide'~ | X             | X          | X                 |               |
+| ~fig.show=‘hide’~ | X             | X          | X                 |               |
 | ~eval=FALSE~      |               | X          |                   |               |
 
    We often use ~include=FALSE~ for the first code chunk of an R Markdown
@@ -174,22 +174,15 @@ kable(myTable, digits = 2, caption = 'My Table') %>%
 
 ** 16.11 Inserting Math Equations
 
-   For short formulas, put your LaTeX equation between ~$ $~: $\beta = (X^{T}X)^{-1}X^{T}{\bf{y}}$
+   For short formulas, put your LaTeX equation between ~$ $~:
+
 #+begin_src LaTeX
 $\beta = (X^{T}X)^{-1}X^{T}{\bf{y}}$
 #+end_src
 
-   For large formula blocks, embed between ~$$ $$~:
+   \beta = (X^{T}X)^{-1}X^{T}{\bf{y}}
 
-#+begin_src
-$$
-\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} 
-      \mathrm S^{2} \frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
-    + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
-    \mathrm r \mathrm C 
-    \label{eq:1}
-$$
-#+end_src
+   For large formula blocks, embed between ~$$ $$~:
 
 #+begin_src LaTeX
 $$
@@ -201,5 +194,8 @@ $$
 $$
 #+end_src
 
-
-
+\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} 
+      \mathrm S^{2} \frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
+    + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
+    \mathrm r \mathrm C 
+    \label{eq:1}
