@@ -1,0 +1,20 @@
+---
+title: "R Cookbook"
+author: "Jason"
+date: "8/02/2020"
+output: html_document
+___
+
+# Chp16: R Markdown and Publish
+
+## 16.3 Formatting Dcoument Text 
+
+| Markdown         | Output     |
+|------------------|------------|
+| ```plain text``` | plain text |
+| `*italics*`      | *italics*  |
+| `**bold**`       | **bold**   |
+
+
+
+```

@@ -38,6 +38,8 @@
   Program starting at: 2006-05-08 14:36:51 CDT
 #+end_src
 
+#+RESULTS:
+
 ** 11.2 Supplying a Default Date
 
 #+begin_src bash
