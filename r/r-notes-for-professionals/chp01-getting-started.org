@@ -1,7 +1,7 @@
 #+STARTUP: showeverything
 #+title: R Notes for Professionals
 
-* Chapter 01: Getting started with R Language
+* Chapter 1: Getting started with R Language
 
 ** Section 1.2: Hello World!
 
@@ -41,24 +41,21 @@
    *Using R as a calculator*
 
    Start R by typing R at the command prompt of your operating system or by
-   executing RGui on Windows. Below you can see a screenshot of an interactive R
-   session on Linux:
-
-   After the > sign, expressions can be typed in. Once an expression is typed,
-   the result is shown by R. In the screenshot above, R is used as a calculator:
+   executing RGui on Windows.
+   
    Type
-
+   
 #+begin_src R
   1+1
 #+end_src
 
-   to immediately see the result, 2. The leading [1] indicates that R returns a
+   to immediately see the result. The leading [1] indicates that R returns a
    vector. In this case, the vector contains only one number (2).
 
    *The first plot*
 
    R can be used to generate plots. The following example uses the data set
-   PlantGrowth, which comes as an example data set along with R
+   ~PlantGrowth~, which comes as an example data set along with R.
 
    Type in the following all lines into the R prompt which do not start with
    ~##~. Lines starting with ~##~ are meant to document the result which R will
@@ -71,7 +68,7 @@
   ## $ weight: num 4.17 5.58 5.18 6.11 4.5 4.61 5.17 4.53 5.33 5.14 ...
   ## $ group : Factor w/ 3 levels "ctrl","trt1",..: 1 1 1 1 1 1 1 1 1 1 ...
 
-  anova(lm(weight ~ group, data = PlantGrowth))
+  anova(lm(weight ~ group, data=PlantGrowth))
   ## Analysis of Variance Table
   ##
   ## Response: weight
@@ -81,7 +78,7 @@
   ## ---
   ## Signif. codes: 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-  boxplot(weight ~ group, data = PlantGrowth, ylab = "Dry weight")
+  boxplot(weight ~ group, data=PlantGrowth, ylab="Dry weight")
 #+end_src
 
 #+RESULTS:
@@ -93,7 +90,7 @@
    ~data(PlantGrowth)~ loads the example data set ~PlantGrowth~, which is
    records of dry masses of plants which were subject to two different treatment
    conditions or no treatment at all (control group). The data set is made
-   available under the name ~PlantGrowth~. Such a name is also called a Variable.
+   available under the name ~PlantGrowth~. Such a name is also called a variable.
 
    To load your own data, the following two documentation pages might be
    helpful:
@@ -105,7 +102,7 @@
    output indicates that ~PlantGrowth~ is a ~data.frame~, which is R's name for
    a table. The ~data.frame~ contains of two columns and 30 rows. In this case,
    each row corresponds to one plant. Details of the two columns are shown in
-   the lines starting with $: The first column is called weight and contains
+   the lines starting with ~$~: The first column is called weight and contains
    numbers (num, the dry weight of the respective plant). The second column,
    group, contains the treatment that the plant was subjected to. This is
    categorial data, which is called factor in R. Read more information about
@@ -114,18 +111,18 @@
    To compare the dry masses of the three diﬀerent groups, a one-way ANOVA is
    performed using ~anova(lm( ... ))~. ~weight ~ group~ means "Compare the
    values of the column weight, grouping by the values of the column group".
-   This is called a Formula in R. data = ... specifies the name of the table
+   This is called a formula in R. ~data=...~ specifies the name of the table
    where the data can be found.
 
    The result shows, among others, that there exists a significant difference
-   ~(Column Pr(>F)), p = 0.01591)~ between some of the three groups. Post-hoc
+   ~(Column Pr(>F)), p=0.01591)~ between some of the three groups. Post-hoc
    tests, like Tukey's Test, must be performed to determine which groups' means
    differ significantly.
 
    ~boxplot(...)~ creates a box plot of the data. where the values to be plotted
    come from. ~weight ~ group~ means: "Plot the values of the column weight
-   versus the values of the column group. ~ylab = ...~ specifies the label of the
-   y axis. More information: Base plotting
+   versus the values of the column group. ~ylab=...~ specifies the label of the
+   y axis.
 
    Type ~q()~ or ~C-d~ to exit from the R session.
 
@@ -135,16 +132,16 @@
    calculation in a file. For that eﬀect, you can create R scripts. An R script
    is a simple text file, containing R commands.
 
-   Create a text file with the name plants.R, and fill it with the following text,
+   Create a text file with the name ~plants.R~, and fill it with the following text,
    where some commands are familiar from the code block above:
 
 #+begin_src R
   data(PlantGrowth)
 
-  anova(lm(weight ~ group, data = PlantGrowth))
+  anova(lm(weight ~ group, data=PlantGrowth))
 
-  png("plant_boxplot.png", width = 400, height = 300)
-  boxplot(weight ~ group, data = PlantGrowth, ylab = "Dry weight")
+  png("plant_boxplot.png", width=400, height=300)
+  boxplot(weight ~ group, data=PlantGrowth, ylab="Dry weight")
   dev.off()
 #+end_src
 
@@ -155,13 +152,13 @@
   R --no-save <plant.R >plant_result.txt
 #+end_src
 
-   The file plant_result.txt contains the results of your calculation, as if you
+   The file ~plant_result.txt~ contains the results of your calculation, as if you
    had typed them into the interactive R prompt. Thereby, your calculations are
    documented.
 
    The new commands ~png~ and ~dev.off~ are used for saving the boxplot to disk.
    The two commands must enclose the plotting command, as shown in the example
-   above. ~png("FILENAME", width = ..., height = ...)~ opens a new PNG file with
+   above. ~png("FILENAME", width=..., height=...)~ opens a new PNG file with
    the specified file name, width and height in pixels. ~dev.off()~ will finish
    plotting and saves the plot to disk. No output is saved until ~dev.off()~ is
    called.
