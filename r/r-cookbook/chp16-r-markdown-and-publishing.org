@@ -25,19 +25,17 @@ output: html_document
 
 ** 16.3 Formatting Document Text
 
-#+begin_src md
-| Markdown          |
-|-------------------|
-| plain text        |
-| *italics*         |
-| **bold**          |
-| `code`            |
-| sub~script~       |
-| super^script^     |
-| ~~strikethrough~~ |
-| endash: --        |
-| emdash: ---       |
-#+end_src
+| Markdown            |
+|---------------------|
+| =plain text=        |
+| =*italics*=         |
+| =**bold**=          |
+| =`code`=            |
+| =sub~script~=       |
+| =super^script^=     |
+| =~~strikethrough~~= |
+| =endash: --=        |
+| =emdash: ---=       |
 
 ** 16.4 Inserting Document Headings
 
