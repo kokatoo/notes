@@ -8,17 +8,17 @@
    In R, data objects are manipulated using named data structures. The names of
    the objects might be called "variables" although that term does not have a
    specific meaning in the oﬃcial R documentation. R names are case sensitive and
-   may contain alphanumeric characters(a-z,A-z,0-9), the dot/period(.) and
-   underscore(_). To create names for the data structures, we have to follow the
+   may contain alphanumeric characters (~a-z,A-z,0-9~), the dot/period(~.~) and
+   underscore(~_~). To create names for the data structures, we have to follow the
    following rules:
 
-   * Names that start with a digit or an underscore (e.g. 1a), or names that are
-     valid numerical expressions (e.g. .11), or names with dashes ('-') or
-     spaces can only be used when they are quoted: `1a` and `.11`. The names
+   * Names that start with a digit or an underscore (e.g. ~1a~), or names that are
+     valid numerical expressions (e.g. ~.11~), or names with dashes (~-~) or
+     spaces can only be used when they are quoted: ~`1a`~ and ~`.11`~. The names
      will be printed with backticks:
 
 #+begin_src R
-  list( '.11' ="a")
+  list('.11' = "a")
   #$`.11`
   #[1] "a"
 #+end_src
@@ -35,8 +35,8 @@
    Some examples of valid object names are: ~foobar~, ~foo.bar~, ~foo_bar~,
    ~.foobar~
 
-   In R, variables are assigned values using the infix-assignment operator <-.
-   The operator = can also be used for assigning values to variables, however
+   In R, variables are assigned values using the infix-assignment operator ~<-~.
+   The operator ~=~ can also be used for assigning values to variables, however
    its proper use is for associating values with parameter names in function
    calls. Note that omitting spaces around operators may create confusion for
    users. The expression ~a<-1~ is parsed as assignment ~(a <- 1)~ rather than
@@ -47,7 +47,7 @@
   fooEquals = 43
 #+end_src
 
-   So foo is assigned the value of 42. Typing foo within the console will output
+   So ~foo~ is assigned the value of 42. Typing ~foo~ within the console will output
    42, while typing ~fooEquals~ will output 43.
 
 #+begin_src R
@@ -57,14 +57,17 @@
   [1] 43
 #+end_src
 
-   The following command assigns a value to the variable named x and prints the
+   The following command assigns a value to the variable named ~x~ and prints the
    value simultaneously:
 
 #+begin_src R
-  > (x <- 5)
-  [1] 5
   # actually two function calls: first one to `<-`; second one to the `()`-function
-  > is.function(`(`) [1] TRUE # Often used in R help page examples for its side-effect of printing.
+  > (x <- 5)
+    [1] 5
+  1
+  # Often used in R help page examples for its side-effect of printing.
+  > is.function(`(`)
+  [1] TRUE
 #+end_src
 
    It is also possible to make assignments to variables using ~->~.
@@ -86,7 +89,7 @@
    * Matrices: A matrix of numbers, logical or characters. 
 
 #+begin_src R
-  a <- matrix(data = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow = 4, ncol = 3, byrow = F)
+  a <- matrix(data=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow=4, ncol=3, byrow=F)
 #+end_src
 
      Like vectors, matrix must be made of same-class elements. To extract
@@ -95,12 +98,13 @@
 
    * Lists: concatenation of different elements
 #+begin_src R
-mylist <- list (course = 'stat', date = '04/07/2009', num_isc = 7, num_cons = 6, num_mat = as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674))
-results = c(30, 19, 29, NA, 25, 26 ,27)
+  mylist <- list(course='stat', date='04/07/2009', num_isc=7, num_cons=6,
+                 num_mat=as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674)),
+                 results=c(30, 19, 29, NA, 25, 26 ,27))
 #+end_src
      
      Extracting elements from a list can be done by name (if the list is named)
-     or by index. In the given example mylist$results and ~mylist[[6]]~ obtains the
+     or by index. In the given example ~mylist$results~ and ~mylist[[6]]~ obtains the
      same element. Warning: if you try ~mylist[6]~, R won't give you an error,
      but it extract the result as a list. While ~mylist[[6]][2]~ is permitted
      (it gives you 19), ~mylist[6][2]~ gives you an error.
@@ -108,34 +112,36 @@ results = c(30, 19, 29, NA, 25, 26 ,27)
    * data.frame: object with columns that are vectors of equal length, but
      (possibly) different types. They are not matrices.
 #+begin_src R
-  exam <- data.frame(matr = as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674))
-  res_S =c(30, 19, 29, NA, 25, 26, 27)
-  res_O = c(3, 3, 1, NA, 3, 2, NA)
-  res_TOT = c(30,22,30,NA,28,28,27))
+  exam <- data.frame(matr=as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674)),
+                     res_S = c(30, 19, 29, NA, 25, 26, 27),
+                     res_O = c(3, 3, 1, NA, 3, 2, NA),
+                     res_TOT = c(30,22,30,NA,28,28,27))
 #+end_src
      
-     Columns can be read by name exam$matr, ~exam[,'matr']~ or by index
-     ~exam[1]~, ~exam[,1]~. Rows can also be read by name ~exam['rowname', ]~ or
-     index ~exam[1,]~. Dataframes are actually just lists with a particular
-     structure (rownames-attribute and equal length components)
+     Columns can be read by name ~exam$matr~, ~exam[,'matr']~ or by index
+     ~exam[1]~, ~exam[,1]~.
+     
+     Rows can also be read by name ~exam['rowname', ]~ or index ~exam[1,]~.
+     Dataframes are actually just lists with a particular structure
+     (rownames-attribute and equal length components)
 
    *Common operations and some cautionary advice*
 
-   Default operations are done element by element. See ?Syntax for the rules of
-   operator precedence. Most operators (and may other functions in base R) have
+   Default operations are done element by element. See ~?Syntax~ for the rules of
+   operator precedence. Most operators (and many other functions in base R) have
    recycling rules that allow arguments of unequal length. Given these objects:
 
    *Example objects*
 
 #+begin_src R
-  > a <- 1
-  > b <- 2
-  > c <- c(2,3,4)
-  > d <- c(10,10,10)
-  > e <- c(1,2,3,4)
-  > f <- 1:6
-  > W <- cbind(1:4,5:8,9:12)
-  > Z <- rbind(rep(0,3),1:3,rep(10,3),c(4,7,1))
+  a <- 1
+  b <- 2
+  c <- c(2,3,4)
+  d <- c(10,10,10)
+  e <- c(1,2,3,4)
+  f <- 1:6
+  W <- cbind(1:4,5:8,9:12)
+  Z <- rbind(rep(0,3),1:3,rep(10,3),c(4,7,1))
 #+end_src
 
    *Some vector operations*
@@ -168,16 +174,16 @@ results = c(30, 19, 29, NA, 25, 26 ,27)
 
    R sums what it can and then reuses the shorter vector to fill in the blanks...
    The warning was given only because the two vectors have lengths that are not
-   exactly multiples. c+f # no warning whatsoever.
+   exactly multiples. ~c+f~ gives no warning whatsoever.
 
    *Some Matrix operations Warning!*
 
 #+begin_src R
   > Z+W # matrix + matrix #(componentwise)
-  > Z*W # matrix* matrix#(Standard product is always componentwise)
+  > Z*W # matrix* matrix  #(Standard product is always componentwise)
 #+end_src
 
-   To use a matrix multiply: V %*% W
+   To use a matrix multiply: ~V %*% W~
 
 #+begin_src R
   > W + a # matrix+ scalar is still componentwise
@@ -195,7 +201,7 @@ results = c(30, 19, 29, NA, 25, 26 ,27)
   [4,]   6   11   16
 #+end_src
 
-   *"Private" variables*
+   *“Private” variables*
 
    A leading dot in a name of a variable or function in R is commonly used to
    denote that the variable or function is meant to be hidden.
@@ -215,10 +221,10 @@ results = c(30, 19, 29, NA, 25, 26 ,27)
   [1] "foo"
 #+end_src
 
-   However, passing ~all.names = TRUE~ to the function will show the 'private'
+   However, passing ~all.names=TRUE~ to the function will show the 'private'
    variable
 
 #+begin_src R
-  > ls(all.names = TRUE)
+  > ls(all.names=TRUE)
   [1] ".foo" "foo"
 #+end_src
