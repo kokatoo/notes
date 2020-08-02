@@ -39,3 +39,167 @@ output: html_document
 
 ** 16.4 Inserting Document Headings
 
+#+begin_src md
+# Level 1 Heading
+## Level 2 Heading
+### Level 3 Heading
+#### Level 4 Heading
+##### Level 5 Heading
+###### Level 6 Heading
+#+end_src
+
+** 16.5 Inserting a List
+
+   * There must be a blank line before the list.
+   * There must be a blank line after the list.
+   * There must be a space character after the leading asterisk.
+   * The sublists must be indented by two, three, or four spaces relative to the
+     level above
+
+#+begin_src
+ * first item
+   * first subitem
+ * second item
+ * third item
+
+ 1. first item
+ 1. second item
+ 1. third item
+#+end_src
+
+** 16.6 Showing Output from R Code
+
+#+begin_src md
+The square root of pi is `r sqrt(pi)`.
+#+end_src
+
+   The small ~{r}~ after the tic marks is important because R Markdown allows code
+   blocks from other languages, too, such as Python or SQL.
+
+#+begin_src md
+```{r}
+# code block goes here
+```
+#+end_src
+
+** 16.7 Controlling Which Code and Results Are Shown
+
+#+begin_src md
+```{r echo=FALSE}
+# ... code here will not appear in output ...
+```
+#+end_src
+
+   * You want the code’s output to appear, but not the code itself: ~echo=FALSE~
+   * You want the code to appear, but not be executed: ~eval=FALSE~
+   * You want to execute the code for its side effects (e.g., loading packages
+     or loading data), but neither the code nor any incidental output should
+     appear: ~include=FALSE~
+
+| Chunk option      | Executes code | Shows code | Shows output text | Shows figures |
+|-------------------+---------------+------------+-------------------+---------------|
+| ~results='hide'~  | X             | X          |                   | X             |
+| ~include=FALSE~   | X             |            |                   |               |
+| ~echo=FALSE~      | X             |            | X                 | X             |
+| ~fig.show='hide'~ | X             | X          | X                 |               |
+| ~eval=FALSE~      |               | X          |                   |               |
+
+   We often use ~include=FALSE~ for the first code chunk of an R Markdown
+   document, where we are calling library, initializing variables, and doing
+   other housekeeping tasks whose incidental output is just an annoyance.
+
+** 16.8 Inserting a Plot
+
+
+#+begin_src md
+```{r}
+library(ggplot2)
+gg <- ggplot(airquality, aes(Wind, Temp)) + geom_point()
+print(gg)
+```
+#+end_src
+
+   You can shrink the output:
+
+#+begin_src md
+```{r out.width='30%'}
+print(gg)
+```
+#+end_src
+
+   * ~out.width~ and ~out.height~: Size of the output figure as a percentage of
+     the page size.
+   * ~dev~: The R graphical device used to create the figure. The default is
+     ~png~ for HTML output and ~pdf~ for LaTeX output. You can also use ~jpg~ or
+     ~svg~, for example.
+   * ~fig.cap~: Figure caption.
+   * ~fig.align~: Alignment of plot: ~left~, ~center~, or ~right~.
+
+#+begin_src md
+```{r out.width='50%', out.height='20%', fig.cap='Temperature versus wind speed', fig.align='left'}
+print(gg)
+```
+#+end_src
+
+** 16.9 Inserting a Table
+
+   You must place a blank line before and after the table.
+
+#+begin_src md
+|Left   |Right | Center  | Default |
+|:------|-----:|:-------:|---------|
+| 12345 |12345 | 12345   | 12345   |
+| text  | text | text    | text    |
+| 12    | 12   | 12      | 12      |
+#+end_src
+
+** 16.10 Inserting a Table of Data
+
+#+begin_src r
+  library(knitr)
+
+  kable(df, caption = 'My DataFrame')
+#+end_src
+
+#+begin_src r
+library(knitr)
+library(kableExtra)
+
+kable(myTable, digits = 2, caption = 'My Table') %>%
+   kable_styling(full_width = FALSE, 
+                 latex_options = c('hold_position', 'striped'),
+                 position = "center",
+                 font_size = 12)
+#+end_src
+
+** 16.11 Inserting Math Equations
+
+   For short formulas, put your LaTeX equation between ~$ $~: $\beta = (X^{T}X)^{-1}X^{T}{\bf{y}}$
+#+begin_src LaTeX
+$\beta = (X^{T}X)^{-1}X^{T}{\bf{y}}$
+#+end_src
+
+   For large formula blocks, embed between ~$$ $$~:
+
+#+begin_src
+$$
+\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} 
+      \mathrm S^{2} \frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
+    + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
+    \mathrm r \mathrm C 
+    \label{eq:1}
+$$
+#+end_src
+
+#+begin_src LaTeX
+$$
+\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} 
+      \mathrm S^{2} \frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
+    + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
+    \mathrm r \mathrm C 
+    \label{eq:1}
+$$
+#+end_src
+
+
+
