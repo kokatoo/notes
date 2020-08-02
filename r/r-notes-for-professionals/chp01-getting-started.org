@@ -84,6 +84,8 @@ anova(lm(weight ~ group, data = PlantGrowth))
 boxplot(weight ~ group, data = PlantGrowth, ylab = "Dry weight")
 #+end_src
 
+#+RESULTS:
+
     The following plot is created:
 
 [[./chp01-boxplot.png]]
