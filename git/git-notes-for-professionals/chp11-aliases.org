@@ -7,7 +7,7 @@
 
    There are two ways of creating aliases in Git:
 
-   * with the ~.gitconfig~ ﬁle:
+   * with the ~.gitconfig~ file:
 
 #+begin_src bash
   [alias]
@@ -37,5 +37,192 @@
   git co -b feature-42
 #+end_src
 
-** 
+** Section 11.2: List / search existing aliases
 
+   You can [[http://stackoverflow.com/q/7066325/23649][list]] existing git aliases using ~--get-regexp~:
+
+#+begin_src bash
+  $ git config --get-regexp '^alias\.'
+#+end_src
+
+   *Searching aliases*
+
+   To [[http://stackoverflow.com/questions/39466417/how-do-i-search-my-git-aliases/39466418#39466418][search]] aliases, add the following to your .gitconfig under ~[alias]~:
+
+#+begin_src bash
+  aliases = !git config --list | grep ^alias\\. | cut -c 7- | grep -Ei --color \"$1\" "#"
+#+end_src
+
+   Then you can:
+
+#+begin_src bash
+  git aliases - show ALL aliases
+  git aliases commit - only aliases containing "commit"
+#+end_src
+
+** Section 11.3: Advanced Aliases
+
+   Git lets you use non-git commands and full [[https://en.wikipedia.org/wiki/Bourne_shell][sh]] shell syntax in your aliases if you prefix them with ~!~.
+
+   In your ~.gitconfig~ file:
+
+#+begin_src bash
+  [alias]
+     temp = !git add -A && git commit -m "Temp"
+#+end_src
+
+   The fact that full shell syntax is available in these prefixed aliases also
+   means you can use shell functions to construct more complex aliases, such as
+   ones which utilize command line arguments:
+
+#+begin_src bash
+  [alias]
+    ignore = "!f() { echo $1 >> .gitignore; }; f"
+#+end_src
+
+   The above ~alias~ defines the f function, then runs it with any arguments you
+   pass to the alias. So running ~git ignore .tmp/~ would add ~.tmp/~ to your
+   ~.gitignore~ file.
+
+   In fact, this pattern is so useful that Git defines ~$1~, ~$2~, etc. variables
+   for you, so you don't even have to define a special function for it. (But keep
+   in mind that Git will also append the arguments anyway, even if you access it
+   via these variables, so you may want to add a dummy command at the end.)
+
+   Note that aliases prefixed with ! in this way are run from the root directory
+   of your git checkout, even if your current directory is deeper in the tree.
+   This can be a useful way to run a command from the root without having to cd
+   there explicitly.
+
+#+begin_src bash
+  [alias]
+    ignore = "! echo $1 >> .gitignore"
+#+end_src
+
+** Section 11.4: Temporarily ignore tracked files
+
+   To temporarily mark a file as ignored (pass file as parameter to alias) - type:
+
+#+begin_src bash
+  unwatch = update-index --assume-unchanged
+#+end_src
+
+   To start tracking file again - type:
+
+#+begin_src bash
+  watch = update-index --no-assume-unchanged
+#+end_src
+
+   To list all files that has been temporarily ignored - type:
+
+#+begin_src bash
+  unwatched = "!git ls-files -v | grep '^[[:lower:]]'"
+#+end_src
+
+   To clear the unwatched list - type:
+
+#+begin_src bash
+  watchall = "!git unwatched | xargs -L 1 -I % sh -c 'git watch `echo % | cut -c 2-`'"
+#+end_src
+
+   Example of using the aliases:
+
+#+begin_src bash
+  git unwatch my_file.txt
+  git watch my_file.txt
+  git unwatched
+  git watchall
+#+end_src
+
+** Section 11.5: Show pretty log with branch graph
+
+#+begin_src bash
+  [alias]
+    logp=log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+
+    lg = log --graph --date-order --first-parent \
+      --pretty=format:'%C(auto)%h%Creset %C(auto)%d%Creset %s %C(green)(%ad) %C(bold cyan)<%an>%Creset'
+
+    lgb = log --graph --date-order --branches --first-parent \
+      --pretty=format:'%C(auto)%h%Creset %C(auto)%d%Creset %s %C(green)(%ad) %C(bold cyan)<%an>%Creset'
+
+    lga = log --graph --date-order --all \
+      --pretty=format:'%C(auto)%h%Creset %C(auto)%d%Creset %s %C(green)(%ad) %C(bold cyan)<%an>%Creset'
+#+end_src
+
+  Here an explanation of the options and placeholder used in the --pretty format
+  (exhaustive list are available with ~git help log~ )
+
+| ~--graph~       | draw the commit tree                                               |
+| ~--date-order~  | use commit timestamp order when possible                           |
+| ~--first-parent~ | follow only the first parent on merge node.                         |
+| ~--branches~    | show all local branches (by default, only current branch is shown) |
+| ~--all~         | show all local and remotes branches                                |
+| ~%h~            | hash value for commit (abbreviated)                                |
+| ~%an~           | Date stamp (author)                                                |
+| ~%ad~           | Author username                                                    |
+| ~%an~           | Commit username                                                    |
+| ~%C(auto)~      | to use colors defined in [color] section                            |
+| ~%Creset~       | to reset color                                                     |
+| ~%d~            | ~--decorate~ (branch & tag names)                                  |
+| ~%s~            | commit message                                                     |
+| ~%ad~           | author date (will follow ~--date directive~) (and not commiter date) |
+| ~%an~           | author name (can be ~%cn~ for commiter name)                       |
+
+** Section 11.6: See which files are being ignored by your .gitignore configuration
+
+#+begin_src bash
+  [ alias ]
+    ignored = ! git ls-files --others --ignored --exclude-standard --directory \
+        && git ls-files --others -i --exclude-standard
+#+end_src
+
+   Shows one line per file, so you can grep (only directories):
+
+#+begin_src bash
+  $ git ignored | grep '/$'
+  .yardoc/
+  doc/
+#+end_src
+
+   Or count:
+
+#+begin_src bash
+  ~$ git ignored | wc -l
+  199811 # oops, my home directory is getting crowded
+#+end_src
+
+** Section 11.7: Updating code while keeping a linear history
+
+   Sometimes you need to keep a linear (non-branching) history of your code
+   commits. If you are working on a branch for a while, this can be tricky if
+   you have to do a regular ~git pull~ since that will record a merge with
+   upstream.
+
+#+begin_src bash
+  [alias]
+    up = pull --rebase
+#+end_src
+
+   This will update with your upstream source, then reapply any work you have
+   not pushed on top of whatever you pulled down.
+
+   To use:
+
+#+begin_src bash
+  git up
+#+end_src
+
+** Section 11.8: Unstage staged files
+
+   Normally, to remove files that are staged to be committed using the ~git reset
+   ~commit, ~reset~ has a lot of functions depending on the arguments provided
+   to it. To completely unstage all files staged, we can make use of git aliases
+   to create a new alias that uses reset but now we do not need to remember to
+   provide the correct arguments to ~reset~.
+
+#+begin_src bash
+  git config --global alias.unstage "reset --"
+#+end_src
+
+   Now, any time you want to unstage stages files, type ~git unstage~ and you are good to go.

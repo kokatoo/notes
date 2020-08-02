@@ -248,12 +248,6 @@
   git commit -a -m "your commit message goes here"
 #+end_src
 
-   Also, you can join two flags:
-
-#+begin_src bash
-  git commit -am "your commit message goes here"
-#+end_src
-
    You don't necessarily need to commit all files at once. Omit the ~-a~ or
    ~--all~ flag and specify which file you want to commit directly:
 
