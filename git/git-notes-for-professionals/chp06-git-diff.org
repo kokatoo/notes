@@ -274,7 +274,7 @@
 
    will show the differences between 2 specific commits.
 
-** Section 6.12: Diff UTF-16 encoded text and binary plist files
+** Section 6.12: Diff UTF-16 encoded text and binary plist files
 
    You can diff UTF-16 encoded files (localization strings file os iOS and macOS
    are examples) by specifying how git should diff these files.
