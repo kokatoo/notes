@@ -6,21 +6,21 @@
 ** Section 5.1: The basics of formula
 
    Statistical functions in R make heavy use of the so-called Wilkinson-Rogers
-   formula notation1.
+   formula notation.
 
    When running model functions like ~lm~ for the Linear Regressions, they need
    a ~formula~. This ~formula~ specifies which regression coeffcients shall be
    estimated.
 
 #+begin_src R
-  my_formula1 <- formula(mpg ~ wt)
-  class(my_formula1)
-  # gives "formula"
+  myformula1 <- formula(mpg ~ wt)
+  class(myformula1)
+  # "formula"
 
-  mod1 <- lm(my_formula1, data=mtcars)
+  mod1 <- lm(myformula1, data=mtcars)
   coef(mod1)
-  # gives (Intercept)        wt
-  #         37.285126 -5.344472
+  # (Intercept)        wt
+  #   37.285126 -5.344472
 #+end_src
 
    On the left side of the =~= (LHS) the dependent variable is specified, while
@@ -34,7 +34,7 @@
   #[1] "formula"
 #+end_src
 
-   The advantage of the ~formula~ function over ~ is that it also allows an
+   The advantage of the ~formula~ function over =~= is that it also allows an
    environment for evaluation to be specified:
 
 #+begin_src R
@@ -47,10 +47,10 @@
 
 #+begin_src R
   coef(lm(mpg ~ 0 + wt, data=mtcars))
-  coef(lm(mpg ~ wt -1, data=mtcars))
+  coef(lm(mpg ~ wt - 1, data=mtcars))
 #+end_src
 
-   Interactions between variables a and b can added by included ~a:b~ to the
+   Interactions between variables ~a~ and ~b~ can added by included ~a:b~ to the
    ~formula~:
 
 #+begin_src R
@@ -75,12 +75,12 @@
   coef(lm(mpg ~ wt*vs*hp, data=mtcars))
 #+end_src
 
-   will give, in addition to the intercept, 7 regression coefficients. One for the
-   three-way interaction, three for the two- way interactions and three for the
+   will give, in addition to the intercept, 7 regression coefficients. 1 for the
+   three-way interaction, 3 for the two- way interactions and 3 for the
    main effects.
 
    If one wants, for example, to exclude the three-way interaction, but retain
-   all two-way interactions there are two shorthands. First, using - we can
+   all two-way interactions there are two shorthands. First, using ~-~ we can
    subtract any particular term:
 
 #+begin_src R
@@ -107,5 +107,5 @@
    gives coefficients for the intercept and 10 independent variables. This
    notation is frequently used in machine learning packages, where one would
    like to use all variables for prediction or classification. Note that the
-   meaning of . depends on context (see e.g. ~?update.formula~ for a different
+   meaning of ~.~ depends on context (see e.g. ~?update.formula~ for a different
    meaning).

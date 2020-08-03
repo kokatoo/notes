@@ -1,0 +1,115 @@
+#+STARTUP: showeverything
+#+title: R Notes for Professionals
+
+* Chapter 7: String manipulation with stringi package
+
+** Section 7.1: Count pattern inside string
+
+   With ﬁxed pattern
+
+#+begin_src R
+  stri_count_fixed("babab", "b")
+  # [1] 3
+  stri_count_fixed("babab", "ba")
+  # [1] 2
+  stri_count_fixed("babab", "bab")
+  # [1] 1
+#+end_src
+
+   Natively:
+
+#+begin_src R
+  length(gregexpr("b","babab")[[1]])
+  # [1] 3
+  length(gregexpr("ba","babab")[[1]])
+  # [1] 2
+  length(gregexpr("bab","babab")[[1]])
+  # [1] 1
+#+end_src
+
+   function is vectorized over string and pattern:
+
+#+begin_src R
+  stri_count_fixed("babab", c("b","ba"))
+  # [1] 3 2
+  stri_count_fixed(c("babab","bbb","bca","abc"), c("b","ba"))
+  # [1] 3 0 1 0
+#+end_src
+
+   A base R solution:
+
+#+begin_src R
+  sapply(c("b","ba"), function(x) length(gregexpr(x,"babab")[[1]]))
+  # b ba
+  # 3  2
+#+end_src
+
+   With regex
+
+   First example - ﬁnd a and any character after
+
+   Second example - ﬁnd a and any digit after
+
+#+begin_src R
+  stri_count_regex("a1 b2 a3 b4 aa", "a.")
+  # [1] 3
+  stri_count_regex("a1 b2 a3 b4 aa", "a\\d")
+  # [1] 2
+#+end_src
+
+** Section 7.2: Duplicating strings
+
+#+begin_src R
+  stri_dup("abc",3)
+  # [1] "abcabcabc"
+#+end_src
+
+   A base R solution that does the same would look like this:
+
+#+begin_src R
+  paste0(rep("abc", 3), collapse = "")
+  # [1] "abcabcabc"
+#+end_src
+
+** Section 7.3: Paste vectors
+
+#+begin_src R
+  stri_paste(LETTERS, "-", 1:13)
+  # [1] "A-1" "B-2" "C-3" "D-4" "E-5" "F-6" "G-7" "H-8" "I-9" "J-10" "K-11" "L-12" "M-13"
+  # [14] "N-1" "O-2" "P-3" "Q-4" "R-5" "S-6" "T-7" "U-8" "V-9" "W-10" "X-11" "Y-12" "Z-13"
+#+end_src
+
+   Natively, we could do this in R via:
+
+#+begin_src R
+  > paste(LETTERS, 1:13, sep="-")
+  #[1] "A-1" "B-2" "C-3" "D-4" "E-5" "F-6" "G-7" "H-8" "I-9" "J-10" "K-11" "L-12" "M-13"
+  #[14] "N-1" "O-2" "P-3" "Q-4" "R-5" "S-6" "T-7" "U-8" "V-9" "W-10" "X-11" "Y-12" "Z-13"
+#+end_src
+
+** Section 7.4: Splitting text by some ﬁxed pattern
+
+   Split vector of texts using one pattern:
+
+#+begin_src R
+  stri_split_fixed(c("To be or not to be.", "This is very short sentence.")," ")
+  # [[1]]
+  # [1] "To" "be" "or" "not" "to" "be."
+  #
+  # [[2]]
+  # [1] "This" "is" "very" "short" "sentence."
+#+end_src
+
+   Split one text using many patterns:
+
+#+begin_src R
+  stri_split_fixed("Apples, oranges and pineapples.", c(" ", ",", "s"))
+  # [[1]]
+  # [1] "Apples," "oranges" "and" "pineaplles."
+  #
+  # [[2]]
+  # [1] "Apples" " oranges and pineaplles."
+  #
+  # [[3]]
+  # [1] "Apple" ", orange" " and pineapple" "."
+#+end_src

@@ -1,0 +1,139 @@
+#+STARTUP: showeverything
+#+title: R Notes for Professionals
+
+* Chapter 12: Date and Time
+
+  R comes with classes for dates, date-times and time differences; see ~?Dates~,
+  ~?DateTimeClasses~, ~?difftime~ and follow the "See Also" section of those
+  docs for further documentation. Related Docs: Dates and Date-Time Classes.
+
+** Section 12.1: Current Date and Time
+
+   R is able to access the current date, time and time zone:
+
+#+begin_src R
+  Sys.Date() # Returns date as a Date object
+  ## [1] "2016-07-21"
+
+  Sys.time() # Returns date & time at current locale as a POSIXct object
+  ## [1] "2016-07-21 10:04:39 CDT"
+
+  as.numeric(Sys.time()) # Seconds from UNIX Epoch (1970-01-01 00:00:00 UTC)
+  ## [1] 1469113479
+
+  Sys.timezone() # Time zone at current location
+  ## [1] "Australia/Melbourne"
+#+end_src
+
+   Use ~OlsonNames()~ to view the time zone names in Olson/IANA database on the
+   current system:
+
+#+begin_src R
+  str(OlsonNames())
+  ## chr [1:589] "Africa/Abidjan" "Africa/Accra" "Africa/Addis_Ababa" "Africa/Algiers" "Africa/Asmara" "Africa/Asmera" "Africa/Bamako" ...
+#+end_src
+
+** Section 12.2: Go to the End of the Month
+
+   Let's say we want to go to the last day of the month, this function will help
+   on it:
+
+#+begin_src R
+  eom <- function(x, p=as.POSIXlt(x)) as.Date(modifyList(p, list(mon=p$mon + 1, mday=0)))
+#+end_src
+
+   Test:
+
+#+begin_src R
+  x <- seq(as.POSIXct("2000-12-10"),as.POSIXct("2001-05-10"),by="months")
+  > data.frame(before=x,after=eom(x))
+        before      after
+  1 2000-12-10 2000-12-31
+  2 2001-01-10 2001-01-31
+  3 2001-02-10 2001-02-28
+  4 2001-03-10 2001-03-31
+  5 2001-04-10 2001-04-30
+  6 2001-05-10 2001-05-31
+  >
+#+end_src
+
+   Using a date in a string format:
+
+#+begin_src R
+  > eom('2000-01-01')
+  [1] "2000-01-31"
+#+end_src
+
+** Section 12.3: Go to First Day of the Month
+
+   Let's say we want to go to the first day of a given month:
+
+#+begin_src R
+  date <- as.Date("2017-01-20")
+
+  > as.POSIXlt(cut(date, "month"))
+  [1] "2017-01-01 EST"
+#+end_src
+
+** Section 12.4: Move a date a number of months consistently by months
+
+   Let's say we want to move a given date a numof months. We can define the
+   following function, that uses the ~mondate~ package:
+
+#+begin_src R
+  moveNumOfMonths <- function(date, num) {
+    as.Date(mondate(date) + num)
+  }
+#+end_src
+
+   It moves consistently the month part of the date and adjusting the day, in
+   case the date refers to the last day of the month.
+
+   For example:
+
+   Back one month:
+
+#+begin_src R
+  > moveNumOfMonths("2017-10-30",-1)
+  [1] "2017-09-30"
+#+end_src
+
+   Back two months:
+
+#+begin_src R
+  > moveNumOfMonths("2017-10-30",-2)
+  [1] "2017-08-30"
+#+end_src
+
+   Forward two months:
+
+#+begin_src R
+  > moveNumOfMonths("2017-02-28", 2)
+  [1] "2017-04-30"
+#+end_src
+
+   It moves two months from the last day of February, therefore the last day of
+   April.
+
+   Let's se how it works for backward and forward operations when it is the last
+   day of the month:
+
+#+begin_src R
+  > moveNumOfMonths("2016-11-30", 2)
+  [1] "2017-01-31"
+  > moveNumOfMonths("2017-01-31", -2)
+  [1] "2016-11-30"
+#+end_src
+
+   Because November has 30 days, we get the same date in the backward operation,
+   but:
+
+#+begin_src R
+  > moveNumOfMonths("2017-01-30", -2)
+  [1] "2016-11-30"
+  > moveNumOfMonths("2016-11-30", 2)
+  [1] "2017-01-31"
+#+end_src
+
+   Because January has 31 days, then moving two months from last day of November
+   will get the last day of January.
