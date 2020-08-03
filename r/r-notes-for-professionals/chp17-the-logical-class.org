@@ -8,8 +8,8 @@
 ** Section 17.1: Logical operators
 
    There are two sorts of logical operators: those that accept and return
-   vectors of any length (elementwise operators: !, |, &, xor()) and those that
-   only evaluate the first element in each argument (&&, ||). The second sort is
+   vectors of any length (elementwise operators: ~!~, ~|~, ~&~, ~xor()~) and those that
+   only evaluate the first element in each argument (~&&~, ~||~). The second sort is
    primarily used as the cond argument to the ~if~ function.
 
 | Logical Operator | Meaning                                | Syntax     |
@@ -52,8 +52,8 @@
   [1] TRUE
 #+end_src
 
-   When applying ~as.numeric()~ to a logical, a double will be returned. NA is a
-   logical value and a logical operator with an NA will return NA if the outcome
+   When applying ~as.numeric()~ to a logical, a double will be returned. ~NA~ is a
+   logical value and a logical operator with an ~NA~ will return ~NA~ if the outcome
    is ambiguous.
 
 ** Section 17.3: Interpretation of NAs
@@ -63,10 +63,13 @@
 #+begin_src R
   > TRUE & NA
   [1] NA
+
   > FALSE & NA
   [1] FALSE
+
   > TRUE || NA
   [1] TRUE
+
   > FALSE || NA
   [1] NA
 #+end_src

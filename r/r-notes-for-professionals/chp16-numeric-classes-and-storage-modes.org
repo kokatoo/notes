@@ -83,10 +83,10 @@
       10.0 + i
     })
 
-   Unit: milliseconds
+  Unit: milliseconds
 
-   expr                                       min lq mean median uq max neval
-   for (i in 1:1e+05) { 2L * i 10L + i } 40.74775 42.34747 50.70543 42.99120 65.46864 94.11804 100
-   for (i in 1:1e+05) { 2 * i 10 + i }   41.07807 42.38358 53.52588 44.26364 65.84971 83.00456 100
+  expr                                       min       lq     mean   median       uq      max neval
+  for (i in 1:1e+05) { 2L * i 10L + i } 40.74775 42.34747 50.70543 42.99120 65.46864 94.11804   100
+  for (i in 1:1e+05) { 2 * i 10 + i }   41.07807 42.38358 53.52588 44.26364 65.84971 83.00456   100
 
 #+end_src
