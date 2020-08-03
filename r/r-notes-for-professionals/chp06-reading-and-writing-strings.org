@@ -12,13 +12,14 @@
 #+begin_src R
   print("Hello World")
   #[1] "Hello World"
+
   cat("Hello World\n")
   #Hello World
 #+end_src
 
    Note the difference in both input and output for the two functions. (Note:
-   there are no quote-characters in the value of ~x~ created with ~x <- "Hello
-   World"~. They are added by ~print~ at the output stage.)
+   there are no quote-characters in the value of ~x~ created with =x <- "Hello
+   World"=. They are added by ~print~ at the output stage.)
 
    ~cat~ takes one or more character vectors as arguments and prints them to the
    console. If the character vector has a length greater than 1, arguments are
@@ -29,7 +30,7 @@
   #hello world
 #+end_src
 
-   Without the new-line character (\n) the output would be:
+   Without the new-line character (~\n~) the output would be:
 
 #+begin_src R
   cat("Hello World")
@@ -42,7 +43,7 @@
 
    ~print~ is an example of a "generic" function, which means the class of the
    first argument passed is detected and a class-specific method is used to
-   output. For a character vector like ~"Hello World"~, the result is similar to
+   output. For a character vector like ="Hello World"=, the result is similar to
    the output of ~cat~. However, the character string is quoted and a number
    ~[1]~ is output to indicate the first element of a character vector (In this
    case, the first and only element):
@@ -53,7 +54,7 @@
 #+end_src
 
    This default print method is also what we see when we simply ask R to print a
-   variable. Note how the output of typing s is the same as calling ~print(s)~
+   variable. Note how the output of typing ~s~ is the same as calling ~print(s)~
    or ~print("Hello World")~:
 
 #+begin_src R
