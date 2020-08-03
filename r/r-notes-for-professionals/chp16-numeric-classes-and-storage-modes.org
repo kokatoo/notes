@@ -1,0 +1,4 @@
+#+STARTUP: showeverything
+#+title: R Notes for Professionals
+
+* 

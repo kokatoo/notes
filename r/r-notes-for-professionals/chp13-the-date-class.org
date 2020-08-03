@@ -97,9 +97,7 @@
    Suppose we have a date string ~9-6-1962~ in the format ~%d-%m-%Y~.
 
 #+begin_src R
-  #
   # It tries to interprets the string as YYYY-m-d
-  #
   > as.Date("9-6-1962")
   [1] "0009-06-19" #interprets as "%Y-%m-%d"
   
@@ -107,7 +105,6 @@
   [1] "0009-06-19" #again interprets as "%Y-%m-%d"
   
   # It has no problem in understanding, if the date is in form YYYY-m-d or YYYY/m/d
-  #
   > as.Date("1962-6-9")
   [1] "1962-06-09" # no problem
   
