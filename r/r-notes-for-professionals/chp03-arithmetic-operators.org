@@ -9,7 +9,7 @@
    loop for example):
 
 #+begin_src R
-  3+1:5
+  3 + 1:5
 #+end_src
 
    Gives:
@@ -18,18 +18,18 @@
   [1] 4 5 6 7 8
 #+end_src
 
-   This is because the range operator : has higher precedence than addition
+   This is because the range operator ~:~ has higher precedence than addition
    operator ~+~.
 
    What happens during evaluation is as follows:
 
-   * ~3+1:5~
-   * ~3+c(1, 2, 3, 4, 5)~ expansion of the range operator to make a vector of
+   * ~3 + 1:5~
+   * ~3 + c(1, 2, 3, 4, 5)~ expansion of the range operator to make a vector of
      integers.
    * ~c(4, 5, 6, 7, 8)~ Addition of 3 to each member of the vector.
 
    To avoid this behavior you have to tell the R interpreter how you want it to
-   order the operations with ( ) like this:
+   order the operations with ~( )~ like this:
 
 #+begin_src R
   (3+1):5
@@ -75,7 +75,7 @@
     same operations:
 
 #+begin_src R
-  > a <- 3; B <- 4.5; cc <- 2; Dd <- 3.8 ;na<-NA;nan<-NaN
+  > a <- 3; B <- 4.5; cc <- 2; Dd <- 3.8; na<-NA; nan<-NaN
   > a + B
   # [1] 7.5
   > a + B + cc
@@ -108,7 +108,7 @@
   # [1] 5.0 6.5 4.0 -1.8
   > 8 - A # number less vector
   # [1] 5.0 3.5 6.0 11.8
-  > n <- length(A) #number of elements of vector A
+  > n <- length(A) # number of elements of vector A
   > n
   # [1] 4
   > A[-n] + A[n] # Add the last element to the same vector without the last element
@@ -119,7 +119,7 @@
   # [1] 1.0 8.3
 #+end_src
 
-   We can also use the function sum to add all elements of a vector:
+   We can also use the function ~sum~ to add all elements of a vector:
 
 #+begin_src R
   > sum(A)
@@ -134,7 +134,7 @@
    behavior that happens when doing math operations where the length of vectors
    is different. Shorter vectors in the expression are recycled as often as need
    be (perhaps fractionally) until they match the length of the longest vector.
-   In particular a constant is simply repeated. In this case a Warning is show.
+   In particular a constant is simply repeated. In this case a warning is shown.
 
 #+begin_src R
   > B <- c(3, 5, -3, 2.7, 1.8)
