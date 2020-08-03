@@ -76,7 +76,7 @@
 #+end_src
 
    In order to understand the data that was defined in the list, we can use the
-   str function.
+   ~str~ function.
 
 #+begin_src R
   str(exampleList1)
@@ -149,10 +149,13 @@
 #+begin_src R
   ## Numeric vector
   exampleVector1 <- c(12, 13, 14)
+
   ## Character vector
   exampleVector2 <- c("a", "b", "c", "d", "e", "f")
+
   ## Matrix
   exampleMatrix1 <- matrix(rnorm(4), ncol=2, nrow=2)
+
   ## List
   exampleList3 <- list('a', 1, 2)
 
@@ -188,7 +191,7 @@
 
    There exist cases in which it is necessary to put data of diﬀerent types
    together. In Azure ML for example, it is necessary to pass information from a
-   R script module to another one exclusively throught dataframes. Suppose we
+   R script module to another one exclusively through dataframes. Suppose we
    have a dataframe and a number:
 
 #+begin_src R
@@ -213,13 +216,13 @@
    We can access to this information:
 
 #+begin_src R
-  > paste(df$name[4],"is a",df3$team[4], "supporter." )
+  > paste(df$name[4], "is a", df3$team[4], "supporter.")
   [1] "Gioele is a Lazio supporter."
-  > paste("The answer to THE question is", number )
+  > paste("The answer to THE question is", number)
   [1] "The answer to THE question is 42"
 #+end_src
 
-   In order to put diﬀerent types of data in a dataframe we have to use the list
+   In order to put different types of data in a dataframe we have to use the list
    object and the serialization. In particular we have to put the data in a
    generic list and then put the list in a particular dataframe:
 

@@ -5,7 +5,7 @@
 
 ** Section 7.1: Count pattern inside string
 
-   With ﬁxed pattern
+   Count the number of fixed pattern
 
 #+begin_src R
   stri_count_fixed("babab", "b")
@@ -46,9 +46,9 @@
 
    With regex
 
-   First example - ﬁnd a and any character after
+   First example - find ~a~ and any character after
 
-   Second example - ﬁnd a and any digit after
+   Second example - find ~a~ and any digit after
 
 #+begin_src R
   stri_count_regex("a1 b2 a3 b4 aa", "a.")
@@ -56,6 +56,8 @@
   stri_count_regex("a1 b2 a3 b4 aa", "a\\d")
   # [1] 2
 #+end_src
+
+#+RESULTS:
 
 ** Section 7.2: Duplicating strings
 
@@ -87,12 +89,12 @@
   #[14] "N-1" "O-2" "P-3" "Q-4" "R-5" "S-6" "T-7" "U-8" "V-9" "W-10" "X-11" "Y-12" "Z-13"
 #+end_src
 
-** Section 7.4: Splitting text by some ﬁxed pattern
+** Section 7.4: Splitting text by some fixed pattern
 
    Split vector of texts using one pattern:
 
 #+begin_src R
-  stri_split_fixed(c("To be or not to be.", "This is very short sentence.")," ")
+  stri_split_fixed(c("To be or not to be.", "This is very short sentence."), " ")
   # [[1]]
   # [1] "To" "be" "or" "not" "to" "be."
   #
@@ -105,10 +107,10 @@
 #+begin_src R
   stri_split_fixed("Apples, oranges and pineapples.", c(" ", ",", "s"))
   # [[1]]
-  # [1] "Apples," "oranges" "and" "pineaplles."
+  # [1] "Apples," "oranges" "and" "pineapples."
   #
   # [[2]]
-  # [1] "Apples" " oranges and pineaplles."
+  # [1] "Apples" " oranges and pineapples."
   #
   # [[3]]
   # [1] "Apple" ", orange" " and pineapple" "."

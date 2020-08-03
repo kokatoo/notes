@@ -6,7 +6,7 @@
 ** Section 13.1: Formatting Dates
 
    To format Dates we use the ~format(date, format="%Y-%m-%d")~ function with
-   either the ~POSIXct~ (given from ~as.POSIXct()~) or ~POSIXlt~ (given from
+   either the POSIXct (given from ~as.POSIXct()~) or POSIXlt (given from
    ~as.POSIXlt()~)
 
 #+begin_src R
@@ -46,7 +46,7 @@
 
    R contains a Date class, which is created with ~as.Date()~, which takes a
    string or vector of strings, and if the date is not in ISO 8601 date format
-   YYYY-MM-DD, a formatting string of strptime-style tokens.
+   ~YYYY-MM-DD~, a formatting string of strptime-style tokens.
 
 #+begin_src R
   as.Date('2016-08-01') # in ISO format, so does not require formatting string
@@ -87,14 +87,14 @@
 
    The format string can be placed either within a pair of single quotes or
    double quotes. Dates are usually expressed in a variety of forms such as:
-   ~"d-m-yy"~ or ~"d-m-YYYY"~ or ~"m-d-yy"~ or ~"m-d-YYYY"~ or ~"YYYY-m-d"~ or ~"YYYY-d-m"~.
-   These formats can also be expressed by replacing "-" by "/". Furher, dates
+   ~d-m-yy~ or ~d-m-YYYY~ or ~m-d-yy~ or ~m-d-YYYY~ or ~YYYY-m-d~ or ~YYYY-d-m~.
+   These formats can also be expressed by replacing ~-~ by ~/~. Furher, dates
    are also expressed in the forms, say, "Nov 6, 1986" or "November 6, 1986" or
    "6 Nov, 1986" or "6 November, 1986" and so on. The ~as.Date()~ function accepts
    all such character strings and when we mention the appropriate format of the
-   string, it always outputs the date in the form ~"YYYY-m-d"~.
+   string, it always outputs the date in the form ~YYYY-m-d~.
 
-   Suppose we have a date string ~"9-6-1962"~ in the format ~"%d-%m-%Y"~.
+   Suppose we have a date string ~9-6-1962~ in the format ~%d-%m-%Y~.
 
 #+begin_src R
   #
@@ -102,17 +102,18 @@
   #
   > as.Date("9-6-1962")
   [1] "0009-06-19" #interprets as "%Y-%m-%d"
-  >
+  
   as.Date("9/6/1962")
   [1] "0009-06-19" #again interprets as "%Y-%m-%d"
-  >
+  
   # It has no problem in understanding, if the date is in form YYYY-m-d or YYYY/m/d
   #
   > as.Date("1962-6-9")
   [1] "1962-06-09" # no problem
+  
   > as.Date("1962/6/9")
   [1] "1962-06-09" # no problem
-  >
+  
 #+end_src
 
    By specifying the correct format of the input string, we can get the desired
@@ -133,7 +134,6 @@
 #+begin_src R
   > as.Date("9-6-1962",format="%d-%m-%Y")
   [1] "1962-06-09"
-  >
 #+end_src
 
    The parameter name ~format~ can be omitted.
@@ -141,7 +141,6 @@
 #+begin_src R
   > as.Date("9-6-1962", "%d-%m-%Y")
   [1] "1962-06-09"
-  >
 #+end_src
 
    Some times, names of the months abbreviated to the first three characters are
@@ -150,17 +149,15 @@
 #+begin_src R
   > as.Date("6Nov1962","%d%b%Y")
   [1] "1962-11-06"
-  >
 #+end_src
 
-   Note that, there are no either '-' or '/' or white spaces between the members
+   Note that, there are no either ~-~ or ~/~ or white spaces between the members
    in the date string. The format string should exactly match that input string.
    Consider the following example:
 
 #+begin_src R
   > as.Date("6 Nov, 1962","%d %b, %Y")
   [1] "1962-11-06"
-  >
 #+end_src
 
    Note that, there is a comma in the date string and hence a comma in the
@@ -178,4 +175,4 @@
 #+end_src
 
    ~%y~ format is system specific and hence, should be used with caution. Other
-   parameters used with this function are ~origin~ and ~tz~( time zone).
+   parameters used with this function are ~origin~ and ~tz~ (time zone).

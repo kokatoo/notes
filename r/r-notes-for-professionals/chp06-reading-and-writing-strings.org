@@ -18,8 +18,8 @@
 #+end_src
 
    Note the difference in both input and output for the two functions. (Note:
-   there are no quote-characters in the value of ~x~ created with =x <- "Hello
-   World"=. They are added by ~print~ at the output stage.)
+   there are no quote-characters in the value of ~x~ created with ~x <- “Hello
+   World”~. They are added by ~print~ at the output stage.)
 
    ~cat~ takes one or more character vectors as arguments and prints them to the
    console. If the character vector has a length greater than 1, arguments are
@@ -43,7 +43,7 @@
 
    ~print~ is an example of a "generic" function, which means the class of the
    first argument passed is detected and a class-specific method is used to
-   output. For a character vector like ="Hello World"=, the result is similar to
+   output. For a character vector like ~“Hello World”~, the result is similar to
    the output of ~cat~. However, the character string is quoted and a number
    ~[1]~ is output to indicate the first element of a character vector (In this
    case, the first and only element):
@@ -135,8 +135,8 @@
    additional parameter to capture the output of the system command.
 
 #+begin_src R
-  system("top -a -b -n 1", intern=TRUE)
-  system2("top", "-a -b -n 1", stdout=TRUE)
+  system("top -b -n 1", intern=TRUE)
+  system2("top", "-b -n 1", stdout=TRUE)
 #+end_src
 
    Both return a character vector.
@@ -154,24 +154,26 @@
   [10] " 4949 user2 20 0 1917m 214m 1888 S 0.0 1.8 11:16.73 R "
 #+end_src
 
-   For illustration, the UNIX command top ~-a -b -n 1~ is used. This is OS
+   For illustration, the UNIX command top ~-b -n 1~ is used. This is OS
    specific and may need to be amended to run the examples on your computer.   
 
    Package devtools has a function to run a system command and capture the
    output without an additional parameter. It also returns a character vector.
 
 #+begin_src R
-  devtools::system_output("top", "-a -b -n 1")
+  devtools::system_output("top", "-b -n 1")
 #+end_src
+
+#+RESULTS:
 
    *Functions which return a data frame*
 
-   The ~fread~ function in package data.table allows to execute a shell command
+   The ~fread~ function in package ~data.table~ allows to execute a shell command
    and to read the output like ~read.table~. It returns a ~data.table~ or a
    ~data.frame~.
 
 #+begin_src bash
-  fread("top -a -b -n 1", check.names=TRUE)
+  fread("top -b -n 1", check.names=TRUE)
        PID  USER PR NI  VIRT  RES  SHR S X.CPU X.MEM     TIME. COMMAND
   1: 11300  root 20  0 1278m 375m 3696 S     0   3.2 124:40.92   trala
   2:  6093 user1 20  0 1817m 269m 1888 S     0   2.3  12:18.56       R
@@ -179,7 +181,7 @@
   4:  7922 user3 20  0 3094m 131m 1892 S     0   1.1  21:04.95       R
 #+end_src
 
-   Note, that fread automatically has skipped the top 6 header lines.
+   Note, that ~fread~ automatically has skipped the top 6 header lines.
 
    Here the parameter ~check.names=TRUE~ was added to convert ~%CPU, %MEN, and
    TIME+~ to syntactically valid column names.
@@ -192,12 +194,12 @@
    local system and with advent of cloud and big data, this is becoming
    increasingly common. One of the way to do this is in logical sequence.
 
-   Establish a file connection to read with ~file()~ command ("r" is for read
+   Establish a file connection to read with ~file()~ command ("~r~" is for read
    mode):
 
 #+begin_src R
-  conn <- file("/path/example.data", "r") #when file is in local system
-  conn1 <- file("stdin", "r") #when just standard input/output for files are available
+  conn <- file("/path/example.data", "r") # when file is in local system
+  conn1 <- file("stdin", "r")             # when just standard input/output for files are available
 #+end_src
 
    As this will establish just file connection, one can read the data from these
@@ -207,7 +209,7 @@
   line <- readLines(conn, n=1, warn=FALSE)
 #+end_src
 
-   Here we are reading the data from file connection conn line by line as ~n=1~.
+   Here we are reading the data from file connection ~conn~ line by line as ~n=1~.
    one can change value of ~n~ (say 10, 20 etc.) for reading data blocks for
    faster reading (10 or 20 lines block read in one go). To read complete file in
    one go set ~n=-1~.
@@ -219,12 +221,12 @@
    done using ~file()~ command as:
 
 #+begin_src R
-  conn2 <- file("/path/result.data", "w") #when file is in local system
-  conn3 <- file("stdout", "w") #when just standard input/output for files are available
+  conn2 <- file("/path/result.data", "w") # when file is in local system
+  conn3 <- file("stdout", "w")            # when just standard input/output for files are available
 #+end_src
 
    Then write the data as follows:
 
 #+begin_src R
-  writeLines("text",conn2, sep="\n")
+  writeLines("text", conn2,  sep="\n")
 #+end_src

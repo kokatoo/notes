@@ -151,6 +151,7 @@
   H2[["c"]] <- head(mtcars, 3)
   H2[["d"]] <- Sys.Date()
   H2[["e"]] <- Sys.time()
+
   H2[["f"]] <- (function() {
     H3 <- new.env()
     for (i in seq_along(names(H2))) {
@@ -258,7 +259,7 @@
 
 ** Section 10.2: package:hash
 
-   The hash [[https://cran.r-project.org/package=hash][package]] offers a hash structure in R. However, it [[https://rpubs.com/rpierce/hashBenchmarks][terms of timing]]
+   The [[https://cran.r-project.org/package=hash][hash package]] offers a hash structure in R. However, it [[https://rpubs.com/rpierce/hashBenchmarks][terms of timing]]
    for both inserts and reads it compares unfavorably to using environments as a
    hash. This documentation simply acknowledges its existence and provides
    sample timing code below for the above stated reasons. There is no identified
@@ -268,35 +269,46 @@
 
 #+begin_src R
   # Generic unique string generator
-  unique_strings <- function(n){
+  unique_strings <- function(n) {
+
     string_i <- 1
     string_len <- 1
     ans <- character(n)
     chars <- c(letters,LETTERS)
-    new_strings <- function(len,pfx){
+
+    new_strings <- function(len,pfx) {
+
       for(i in 1:length(chars)){
+
         if (len == 1){
-          ans[string_i] <<- paste(pfx,chars[i],sep='')
+          ans[string_i] <<- paste(pfx, chars[i], sep='')
           string_i <<- string_i + 1
         } else {
-          new_strings(len-1,pfx=paste(pfx,chars[i],sep=''))
+          new_strings(len-1,pfx=paste(pfx, chars[i], sep=''))
         }
+
         if (string_i > n) return ()
       }
     }
+
     while(string_i <= n){
-      new_strings(string_len,'')
+      new_strings(string_len, '')
       string_len <- string_len + 1
     }
-    sample(ans
+
+    sample(ans)
   }
 
-  # Generate timings using an enviornment
-  timingsEnv <- plyr::adply(2^(10:15),.mar=1,.fun=function(i){
+  # Generate timings using an environment
+  timingsEnv <- plyr::adply(2^(10:15),.mar=1,.fun=function(i) {
+
     strings <- unique_strings(i)
+
     ht1 <- new.env(hash=TRUE)
-    lapply(strings, function(s){
-      ht1[[s]] <<- 0L})
+
+    lapply(strings, function(s) {
+      ht1[[s]] <<- 0L })
+
     data.frame(
       size=c(i,i),
       seconds=c(
@@ -305,13 +317,16 @@
     )
   })
 
-  timingsHash <- plyr::adply(2^(10:15),.mar=1,.fun=function(i){
+  timingsHash <- plyr::adply(2^(10:15),.mar=1,.fun=function(i) {
+
     strings <- unique_strings(i)
+
     ht <- hash::hash()
+
     lapply(strings, function(s) ht[[s]] <<- 0L)
+
     data.frame( size=c(i,i),
-               seconds=c(
-                 system.time(for (j in 1:i) ht[[strings[j]]]==0L)[3]),
+               seconds=c(system.time(for (j in 1:i) ht[[strings[j]]]==0L)[3]),
                type=c('3_stringHash')
                )
   })
@@ -323,19 +338,20 @@
    its performance relative to environments for hash-like purposes is poor on
    [[https://rpubs.com/rpierce/hashBenchmarks][hash retrieval]]. However, if the indexes are numeric, it can be quite fast on
    retrieval. However, they have other advantages, e.g. compatibility with
-   package:future. Covering this package for that purpose goes beyond the scope
+   ~package:future~. Covering this package for that purpose goes beyond the scope
    of the current topic. However, the timing code provided here can be used in
-   conjunction with the example for package:hash for write timings.
+   conjunction with the example for ~package:hash~ for write timings.
 
 #+begin_src R
-  timingsListEnv <- plyr::adply(2^(10:15),.mar=1,.fun=function(i){
+  timingsListEnv <- plyr::adply(2^(10:15), .mar=1, .fun=function(i) {
+
     strings <- unique_strings(i)
     le <- listenv::listenv()
     lapply(strings, function(s) le[[s]] <<- 0L)
+
     data.frame(
       size=c(i,i),
-      seconds=c(
-        system.time(for (k in 1:i) le[[k]]==0L)[3]),
+      seconds=c(system.time(for (k in 1:i) le[[k]]==0L)[3]),
       type=c('2_numericListEnv')
     )
   })

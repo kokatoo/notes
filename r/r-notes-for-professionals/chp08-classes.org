@@ -7,7 +7,7 @@
   contents. The class-attribute is a character vector, and objects can have
   zero, one or more classes. If there is no class-attribute, there will still be
   an implicit class determined by an object's mode. The class can be inspected
-  with the function class and it can be set or modified by the class<- function.
+  with the function ~class~ and it can be set or modified by the ~class <-~ function.
   The S3 class system was established early in S's history. The more complex S4
   class system was established later
 
@@ -71,7 +71,7 @@
    another list, hence the R term for lists: "recursive vectors":
 
 #+begin_src R
-  mylist <- list( A=c(5,6,7,8), B=letters[1:10], CC=list( 5, "Z") )
+  mylist <- list(A=c(5,6,7,8), B=letters[1:10], CC=list( 5, "Z"))
 #+end_src
 
    Lists have two very important uses:
@@ -133,4 +133,4 @@
 #+end_src
 
    A more elaborate treatment of how to create vectors can be found in the
-   "Creating vectors" topic
+   "Creating vectors" topic.

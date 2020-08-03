@@ -30,7 +30,7 @@
 
 #+begin_src R
   str(OlsonNames())
-  ## chr [1:589] "Africa/Abidjan" "Africa/Accra" "Africa/Addis_Ababa" "Africa/Algiers" "Africa/Asmara" "Africa/Asmera" "Africa/Bamako" ...
+  ## chr [1:589] "Africa/Abidjan" "Africa/Accra" "Africa/Addis_Ababa" ...
 #+end_src
 
 ** Section 12.2: Go to the End of the Month
@@ -45,8 +45,8 @@
    Test:
 
 #+begin_src R
-  x <- seq(as.POSIXct("2000-12-10"),as.POSIXct("2001-05-10"),by="months")
-  > data.frame(before=x,after=eom(x))
+  x <- seq(as.POSIXct("2000-12-10"), as.POSIXct("2001-05-10"), by="months")
+  > data.frame(before=x, after=eom(x))
         before      after
   1 2000-12-10 2000-12-31
   2 2001-01-10 2001-01-31
@@ -77,7 +77,7 @@
 
 ** Section 12.4: Move a date a number of months consistently by months
 
-   Let's say we want to move a given date a numof months. We can define the
+   Let's say we want to move a given date a num of months. We can define the
    following function, that uses the ~mondate~ package:
 
 #+begin_src R
@@ -115,12 +115,13 @@
    It moves two months from the last day of February, therefore the last day of
    April.
 
-   Let's se how it works for backward and forward operations when it is the last
+   Let's see how it works for backward and forward operations when it is the last
    day of the month:
 
 #+begin_src R
   > moveNumOfMonths("2016-11-30", 2)
   [1] "2017-01-31"
+
   > moveNumOfMonths("2017-01-31", -2)
   [1] "2016-11-30"
 #+end_src
@@ -131,6 +132,7 @@
 #+begin_src R
   > moveNumOfMonths("2017-01-30", -2)
   [1] "2016-11-30"
+
   > moveNumOfMonths("2016-11-30", 2)
   [1] "2017-01-31"
 #+end_src
