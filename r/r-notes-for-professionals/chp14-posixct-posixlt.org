@@ -3,14 +3,14 @@
 
 * Chapter 14: Date-time classes (POSIXct and POSIXlt)
 
-  R includes two date-time classes ~POSIXct~ and ~POSIXlt~ -- see
+  R includes two date-time classes POSIXct and POSIXlt -- see
   ~?DateTimeClasses~.
 
 ** Section 14.1: Formatting and printing date-time objects
 
 #+begin_src R
-  # test date-time object
   options(digits.secs=3)
+
   d = as.POSIXct("2016-08-30 14:18:30.58", tz="UTC")
 
   format(d,"%S") # 00-61 Second as integer
@@ -60,9 +60,9 @@
 
 #+begin_src R
   as.POSIXct("2016-01-01") +
-  as.difftime(3, units="hours") +
-  as.difftime(14, units="mins") +
-  as.difftime(15, units="secs")
+    as.difftime(3, units="hours") +
+    as.difftime(14, units="mins") +
+    as.difftime(15, units="secs")
   # [1] "2016-01-01 03:14:15 AEDT"
 #+end_src
 
@@ -120,12 +120,12 @@
    
    * If a date element is not supplied, then that from the current date is used.
    * If a time element is not supplied, then that from midnight is used, i.e. 0s.
-   * If no timezone is supplied in either the string or the tz parameter, the
+   * If no timezone is supplied in either the string or the ~tz~ parameter, the
      local timezone is used.
 
    *Time zones*
 
-   * The accepted values of tz depend on the location.
+   * The accepted values of ~tz~ depend on the location.
      
      * CST is given with "CST6CDT" or "America/Chicago"
 
@@ -137,6 +137,6 @@
 
    * These locations are given by Internet Assigned Numbers Authority ([[http://www.iana.org/time-zones][IANA]])
 
-     * List of tz database time zones ([[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones][Wikipedia]])
+     * List of ~tz~ database time zones ([[https://en.wikipedia.org/wiki/List_of_tz_database_time_zones][Wikipedia]])
 
      * [[http://www.iana.org/time-zones/repository/releases/tzdata2016e.tar.gz][IANA TZ Data (2016e)]]

@@ -11,11 +11,12 @@
    coerce a variable to a character use the ~as.character()~ function.
 
 #+begin_src R
-  x <- "The quick brown fox jumps over the lazy dog"
-  class(x)
-  [1] "character"
-  is.character(x)
-  [1] TRUE
+   x <- "The quick brown fox jumps over the lazy dog"
+
+   class(x)
+   [1] "character"
+   is.character(x)
+   [1] TRUE
 #+end_src
 
    Note that numerics can be coerced to characters, but attempting to coerce a
