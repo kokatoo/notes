@@ -43,7 +43,7 @@
    This has returned a list of data frames, one for each cylinder count. As
    indicated by the output, we could obtain the relevant data frames with
    ~spl$`4`~, ~spl$`6`~, and ~spl$`8`~ (some might find it more visually appealing to
-   use ~spl$"4"~ or ~spl[["4"]]~ instead).
+   use ~spl$“4”~ or ~spl[["4"]]~ instead).
 
    Now, we can use ~lapply~ to loop through this list, applying our function that
    extracts the cars with the best 2 mpg values from each of the list elements:
@@ -96,12 +96,13 @@
 
 #+begin_src R
   by(mtcars, mtcars$cyl, function(x) tail(x[order(x$mpg),], 2))
+
   do.call(rbind, by(mtcars, mtcars$cyl, function(x) tail(x[order(x$mpg),], 2)))
 #+end_src
 
 ** Section 19.2: Basic usage of split
 
-   ~split~ allows to divide a vector or a data.frame into buckets with regards
+   ~split~ allows to divide a vector or a ~data.frame~ into buckets with regards
    to a factor/group variables. This ventilation into buckets takes the form of
    a list, that can then be used to apply group-wise computation (for loops or
    lapply/sapply).
@@ -114,7 +115,7 @@
   testdata <- c("e", "o", "r", "g", "a", "y", "w", "q", "i", "s", "b", "v", "x", "h", "u")
 #+end_src
 
-   Objective is to separate those letters into voyels and consonants, ie split
+   Objective is to separate those letters into vowels and consonants, ie split
    it accordingly to letter type.
 
    Let's first create a grouping vector:
@@ -124,7 +125,7 @@
   letter_type <- ifelse(testdata %in% vowels, "vowels", "consonants")
 #+end_src
 
-   Note that letter_type has the same length that our vector testdata. Now we
+   Note that letter_type has the same length as our vector testdata. Now we
    can ~split~ this test data in the two groups, vowels and consonants:
 
 #+begin_src R
@@ -137,7 +138,7 @@
 #+end_src
 
    Hence, the result is a list which names are coming from our grouping
-   vector/factor letter_type.
+   vector/factor ~letter_type~.
 
    ~split~ has also a method to deal with ~data.frames~.
 
@@ -152,8 +153,10 @@
 
 #+begin_src R
   > liris <- split(iris, iris$Species)
+
   > names(liris)
   [1] "setosa" "versicolor" "virginica"
+
   > head(liris$setosa)
     Sepal.Length Sepal.Width Petal.Length Petal.Width Species
   1          5.1         3.5          1.4         0.2  setosa
@@ -164,31 +167,31 @@
   6          5.4         3.9          1.7         0.4  setosa
 #+end_src
 
-   (contains only data for setosa group).
+   (contains only data for ~setosa~ group).
 
-   One example operation would be to compute correlation matrix per iris specie;
+   One example operation would be to compute correlation matrix per iris species;
    one would then use ~lapply~:
 
 #+begin_src R
-> (lcor <- lapply(liris, FUN=function(df) cor(df[,1:4])))
-$setosa
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length    1.0000000   0.7425467    0.2671758    0.2780984
-Sepal.Width     0.7425467   1.0000000    0.1777000    0.2327520
-Petal.Length    0.2671758   0.1777000    1.0000000    0.3316300
-Petal.Width     0.2780984   0.2327520    0.3316300    1.0000000
+  > (lcor <- lapply(liris, FUN=function(df) cor(df[,1:4])))
+  $setosa
+               Sepal.Length Sepal.Width Petal.Length Petal.Width
+  Sepal.Length    1.0000000   0.7425467    0.2671758    0.2780984
+  Sepal.Width     0.7425467   1.0000000    0.1777000    0.2327520
+  Petal.Length    0.2671758   0.1777000    1.0000000    0.3316300
+  Petal.Width     0.2780984   0.2327520    0.3316300    1.0000000
 
-$versicolor  Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length    1.0000000   0.5259107    0.7540490   0.5464611
-Sepal.Width     0.5259107   1.0000000    0.5605221   0.6639987
-Petal.Length    0.7540490   0.5605221    1.0000000   0.7866681
-Petal.Width     0.5464611   0.6639987    0.7866681   1.0000000
+  $versicolor  Sepal.Length Sepal.Width Petal.Length Petal.Width
+  Sepal.Length    1.0000000   0.5259107    0.7540490   0.5464611
+  Sepal.Width     0.5259107   1.0000000    0.5605221   0.6639987
+  Petal.Length    0.7540490   0.5605221    1.0000000   0.7866681
+  Petal.Width     0.5464611   0.6639987    0.7866681   1.0000000
 
-$virginica   Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length    1.0000000   0.4572278    0.8642247   0.2811077
-Sepal.Width     0.4572278   1.0000000    0.4010446   0.5377280
-Petal.Length    0.8642247   0.4010446    1.0000000   0.3221082
-Petal.Width     0.2811077   0.5377280    0.3221082   1.0000000
+  $virginica   Sepal.Length Sepal.Width Petal.Length Petal.Width
+  Sepal.Length    1.0000000   0.4572278    0.8642247   0.2811077
+  Sepal.Width     0.4572278   1.0000000    0.4010446   0.5377280
+  Petal.Length    0.8642247   0.4010446    1.0000000   0.3221082
+  Petal.Width     0.2811077   0.5377280    0.3221082   1.0000000
 #+end_src
 
    Then we can retrieve per group the best pair of correlated variables:
@@ -197,10 +200,11 @@ Petal.Width     0.2811077   0.5377280    0.3221082   1.0000000
 
 #+begin_src R
   > library(reshape)
-  > (topcor <- lapply(lcor, FUN=function(cormat){
-      correlations <- melt(cormat,variable_name="correlatio);
+  > (topcor <- lapply(lcor, FUN=function(corrmatrix) {
+      correlations <- melt(corrmatrix);
+    
       filtered <- correlations[correlations$X1 != correlations$X2,];
-      filtered[which.max(filtered$correlation),]
+      filtered[which.max(filtered$value),]
   }))
 
   $setosa

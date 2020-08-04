@@ -19,7 +19,7 @@
 *** Importing using base R
 
     Comma separated value files (CSVs) can be imported using ~read.csv~, which
-    wraps ~read.table~, but uses ~sep=","~ to set the delimiter to a comma.
+    wraps ~read.table~, but uses ~sep=“,”~ to set the delimiter to a comma.
 
 #+begin_src R
   # get the file path of a CSV included in R's utils package
@@ -54,7 +54,7 @@
    * All these functions will convert strings to ~factor~ class by default
      unless either ~as.is=TRUE~ or ~stringsAsFactors=FALSE~.
 
-   * The read.csv2 variant defaults to ~sep=";"~ and ~dec=","~ for use on data
+   * The ~read.csv2~ variant defaults to ~sep=“;”~ and ~dec=“,”~ for use on data
      from countries where the comma is used as a decimal point and the semicolon
      as a field separator.
 
@@ -78,7 +78,7 @@
   ## 4 -7.00     A
 #+end_src
 
-** Section 20.2: Importing with data.table
+** Section 20.2: Importing with ~data.table~
 
    The ~data.table~ package introduces the function ~fread~. While it is similar
    to ~read.table~, ~fread~ is usually faster and more ﬂexible, guessing the
@@ -111,8 +111,8 @@
    * the input itself (e.g. "input1, input2 \n A, B \n C, D").
 
    ~fread~ returns an object of class ~data.table~ that inherits from class
-   ~data.frame~, suitable for use with the data.table's usage of []. To return
-   an ordinary data.frame, set the data.table parameter to FALSE:
+   ~data.frame~, suitable for use with the data.table's usage of ~[]~. To return
+   an ordinary ~data.frame~, set the ~data.table~ parameter to ~FALSE~:
 
 #+begin_src R
   df <- fread(csv_path, data.table=FALSE)
@@ -148,7 +148,7 @@
   write.csv(mtcars, "mtcars.csv")
 #+end_src
 
-    Commonly-specified parameters include ~row.names=FALSE~ and ~na=""~.
+    Commonly-specified parameters include ~row.names=FALSE~ and ~na=“”~.
 
 *** Exporting using packages
 
@@ -178,16 +178,16 @@
 ** Section 20.5: Importing fixed-width files
 
    Fixed-width files are text files in which columns are not separated by any
-   character delimiter, like ~,~ or ~;~, but rather have a fixed character length
+   character delimiter, like , or ;, but rather have a fixed character length
    (width). Data is usually padded with white spaces.
 
    An example:
 
 #+begin_src R
   Column1 Column2           Column3 Column4 Column5
-  1647         pi       'important' 3.14159 6.28318
-  1731      euler 'quite important' 2.71828 5.43656
-  1979     answer     'The Answer.' 42      42
+  1647         pi       'important' 3.141596.28318
+  1731      euler 'quite important' 2.718285.43656
+  1979     answer     'The Answer.' 42     42
 #+end_src
 
    Let's assume this data table exists in the local file constants.txt in the
@@ -211,22 +211,22 @@
 
     * The widths parameter defines the width of each column
 
-    * Non-separated headers are not readable with read.fwf()
+    * Non-separated headers are not readable with ~read.fwf()~
 
 *** Importing with readr
 
 #+begin_src R
-library(readr)
+  library(readr)
 
-df <- read_fwf('constants.txt', fwf_cols(Year=8, Name=10, Importance=18, Value=7, Doubled=8), skip=1)
+  df <- read_fwf('constants.txt', fwf_cols(Year=8, Name=10, Importance=18, Value=7, Doubled=8), skip=1)
 
-df
-#> # A tibble: 3 x 5
-#> Year Name Importance Value Doubled
-#> <int> <chr> <chr> <dbl> <dbl>
-#> 1 1647 pi 'important' 3.14159 6.28318
-#> 2 1731 euler 'quite important' 2.71828 5.43656
-#> 3 1979 answer 'The Answer.' 42.00000 42.00000
+  df
+  #> # A tibble: 3 x 5
+  #> Year Name Importance Value Doubled
+  #> <int> <chr> <chr> <dbl> <dbl>
+  #> 1 1647 pi 'important' 3.14159 6.28318
+  #> 2 1731 euler 'quite important' 2.71828 5.43656
+  #> 3 1979 answer 'The Answer.' 42.00000 42.00000
 #+end_src
 
     *Note:*
