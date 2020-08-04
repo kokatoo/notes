@@ -19,7 +19,7 @@
 
    The pipe operator, ~%>%~, is used to insert an argument into a function. It
    is not a base feature of the language and can only be used after attaching a
-   package that provides it, such as magrittr. The pipe operator takes the
+   package that provides it, such as ~magrittr~. The pipe operator takes the
    left-hand side (LHS) of the pipe and uses it as the first argument of the
    function on the right-hand side (RHS) of the pipe. For example:
 
@@ -243,7 +243,7 @@
   # 6 C
 #+end_src
 
-   Warning: Piping an unnamed object to ~save()~ will produce an object named .
+   Warning: Piping an unnamed object to ~save()~ will produce an object named ~.~
    when loaded into the workspace with ~load()~. However, a workaround using a
    helper function is possible (which can also be written inline as an anonymous
    function).
