@@ -1,7 +1,7 @@
 #+STARTUP: showeverything
 #+title: R Notes for Professionals
 
-* Chapter 21: Pipe operators (%>% and others)
+* Chapter 21: Pipe operators (~%>%~ and others)
 
 | lhs                                  | rhs                                          |
 |--------------------------------------+----------------------------------------------|
@@ -50,9 +50,9 @@
   years %>% as.character %>% as.numeric
 #+end_src
 
-   If we don't want the LHS (Left Hand Side) used as the first argument on the
-   RHS (Right Hand Side), there are workarounds, such as naming the arguments or
-   using . to indicate where the piped input goes.
+   If we don't want the LHS used as the first argument on the
+   RHS, there are workarounds, such as naming the arguments or
+   using ~.~ to indicate where the piped input goes.
 
 #+begin_src R
   # example with grepl
@@ -92,6 +92,7 @@
 #+begin_src R
   library(magrittr) # needed to include the pipe operators
   library(lubridate)
+
   read_year <- . %>% as.character %>% as.Date %>% year
 
   # Creating a dataset
@@ -142,7 +143,7 @@
    Generally, this approach may be useful when clarity is more important than
    speed.
 
-** Section 21.3: Assignment with %<>%
+** Section 21.3: Assignment with ~%<>%~
 
    The ~magrittr~ package contains a compound assignment infix-operator, ~%<>%~,
    that updates a value by first piping it into one or more rhs expressions and
@@ -180,12 +181,12 @@
    The exposition pipe operator, ~%$%~, exposes the column names as R symbols
    within the left-hand side object to the right-hand side expression. This
    operator is handy when piping into functions that do not have a ~data~
-   argument (unlike, say, ~lm~) and that don't take a data.frame and column
+   argument (unlike, say, ~lm~) and that don't take a ~data.frame~ and column
    names as arguments (most of the main dplyr functions).
 
    The exposition pipe operator ~%$%~ allows a user to avoid breaking a pipeline
    when needing to refer to column names. For instance, say you want to filter a
-   data.frame and then run a correlation test on two columns with ~cor.test~:
+   ~data.frame~ and then run a correlation test on two columns with ~cor.test~:
 
 #+begin_src R
   library(magrittr)
@@ -213,13 +214,13 @@
    pipe works like a pipe-able version of the base R ~with()~ functions, and the
    same left-hand side objects are accepted as inputs.
 
-** Section 21.5: Creating side eects with %T>%
+** Section 21.5: Creating side effects with ~%T>%~
 
    Some functions in R produce a side effect (i.e. saving, printing, plotting,
    etc) and do not always return a meaningful or desired value.
 
    ~%T>%~ (tee operator) allows you to forward a value into a
-   side-effect-producing function while keeping the original lhs value intact. In
+   side-effect-producing function while keeping the original LHS value intact. In
    other words: the tee operator works like ~%>%~, except the return values is
    lhs itself, and not the result of the rhs function/expression.
 
