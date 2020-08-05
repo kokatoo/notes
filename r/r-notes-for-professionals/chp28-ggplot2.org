@@ -188,3 +188,94 @@
 #+end_src
 
 [[./images/chp28.3_plots4.png]]
+
+** Section 28.4: Scatter Plots
+
+   We plot a simple scatter plot using the builtin ~iris~ data set as follows:
+
+#+begin_src R
+  library(ggplot2)
+
+  ggplot(iris, aes(x=Petal.Width, y=Petal.Length, color=Species)) +
+    geom_point()
+#+end_src
+
+   This gives:
+
+[[./images/chp28.4_plots.png]]
+
+** Section 28.5: Produce basic plots with qplot
+
+   ~qplot~ is intended to be similar to base r ~plot()~ function, trying to
+   always plot out your data without requiring too much speciﬁcations.
+
+*** basic qplot
+
+#+begin_src R
+  qplot(x=disp, y=mpg, data=mtcars)
+#+end_src
+
+[[./images/chp28.5_plots.png]]
+
+*** adding colors
+
+#+begin_src R
+  qplot(x=disp, y=mpg, colour=cyl, data=mtcars)
+#+end_src
+
+[[./images/chp28.5_plots2.png]]
+
+*** adding a smoother
+
+#+begin_src R
+  qplot(x=disp, y=mpg, geom=c("point", "smooth"), data=mtcars)
+#+end_src
+
+[[./images/chp28.5_plots3.png]]
+
+** Section 28.6: Vertical and Horizontal Bar Chart
+
+#+begin_src R
+  ggplot(data = diamonds, aes(x=cut, fill=color)) +
+    geom_bar(stat="count", position="dodge")
+#+end_src
+
+[[./images/chp28.5_plots4.]]
+
+   it is possible to obtain an horizontal bar chart simply adding coord_flip()
+   aesthetic to the ggplot object:
+
+#+begin_src R
+  ggplot(data = diamonds, aes(x=cut, fill=color)) + 
+    geom_bar(stat="count", position="dodge")+
+    coord_flip()
+#+end_src
+
+[[./images/chp28.5_plots5.png]]
+
+** Section 28.7: Violin plot
+
+   Violin plots are kernel density estimates mirrored in the vertical plane.
+   They can be used to visualize several distributions side-by-side, with the
+   mirroring helping to highlight any differences.
+
+#+begin_src R
+  ggplot(diamonds, aes(cut, price)) + geom_violin()
+#+end_src
+
+[[./images/chp28.5_plots6.png]]
+
+   Violin plots are named for their resemblance to the musical instrument, this
+   is particularly visible when they are coupled with an overlaid boxplot. This
+   visualisation then describes the underlying distributions both in terms of
+   Tukey's 5 number summary (as boxplots) and full continuous density estimates
+   (violins).
+
+#+begin_src R
+  ggplot(diamonds, aes(cut, price)) + 
+    geom_violin() + 
+    geom_boxplot(width=.1, fill="black", outlier.shape=NA) + 
+    stat_summary(fun.y="median", geom="point", col="white")
+#+end_src
+
+[[./images/chp28.5_plots7.png]]
