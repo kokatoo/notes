@@ -86,7 +86,9 @@
    The sizes of the factor-level names on the x-axis can be increased using ~cex.names~ parameter.
 
 #+begin_src R
-> barplot(prop.table(table(Marks)),names.arg=grades,col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"), main="Mid-Marks in Algorithms",cex.names=2)
+  > barplot(prop.table(table(Marks)), names.arg=grades,
+            col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+            main="Mid-Marks in Algorithms",cex.names=2)
 #+end_src
 
    The ~heights~ parameter of the ~barplot()~ could be a matrix. For example it
@@ -110,6 +112,7 @@
   > gradTab = matrix(c(13, 10, 4, 8, 5, 10, 7, 2, 19, 2, 7, 2, 14, 12, 5), nrow=5,
                      dimnames=list(c("A-", "A+", "B", "B+", "C"),
                                    c("Algorithms", "Operating Systems", "Discrete Math"))
+
   > barplot(gradTab, col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
             legend.text=grades,
             main="Mid-Marks in Algorithms")
@@ -129,9 +132,9 @@
    A horizontal bar chart can be obtained using ~horiz=T~ parameter:
 
 #+begin_src R
-  > barplot(gradTab, beside=T, horiz=T, col=c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
-            legend.text = grades,
-            cex.names=.75,
+  > barplot(gradTab, beside=T, horiz=T,
+            col=c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
+            legend.text = grades, cex.names=.75,
             main="Mid-Marks in Algorithms")
 #+end_src
 
