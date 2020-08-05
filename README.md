@@ -6,9 +6,16 @@ Compile brief notes from various sources in orgmode.
 
   * Bash Notes for Professionals
   * Git Notes for Professionals
+  * R Notes for Professionals
   
 ## [R in Action (2nd Edition)](https://www.manning.com/books/r-in-action-second-edition)
 
+  * Rob Kabacoff (May 2015)
+
 ## [R Cookbook (2nd Edition)](https://rc2e.com/)
 
+  * J.D. Long & Paul Teetor (Sep 2019)
+
 ## [bash Cookbook (2nd Edition)](https://www.amazon.com/bash-Cookbook-Solutions-Examples-Cookbooks/dp/0596526784)
+
+  * Carl Albing (Oct 2007)
