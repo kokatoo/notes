@@ -240,7 +240,7 @@
     geom_bar(stat="count", position="dodge")
 #+end_src
 
-[[./images/chp28.5_plots4.]]
+[[./images/chp28.5_plots4.png]]
 
    it is possible to obtain an horizontal bar chart simply adding coord_flip()
    aesthetic to the ggplot object:
