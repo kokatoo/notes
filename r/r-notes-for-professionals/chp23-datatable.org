@@ -3,16 +3,16 @@
 
 * Chapter 23: data.table
 
-  Data.table is a package that extends the functionality of data frames from
+  ~data.table~ is a package that extends the functionality of data frames from
   base R, particularly improving on their performance and syntax. See the
-  package's Docs area at Getting started with data.table for details.
+  package's Docs area at "Getting started with data.table" for details.
 
 ** Section 23.1: Creating a data.table
 
-   A data.table is an enhanced version of the data.frame class from base R. As
-   such, its class() attribute is the vector "~data.table~" "~data.frame~" and
+   A ~data.table~ is an enhanced version of the ~data.frame~ class from base R. As
+   such, its class() attribute is the vector "~data.table~", "~data.frame~" and
    functions that work on a ~data.frame~ will also work with a ~data.table~. There
-   are many ways to create, load or coerce to a data.table.
+   are many ways to create, load or coerce to a ~data.table~.
 
 *** Build
 
@@ -38,7 +38,7 @@
   # 5: e 5 TRUE
 #+end_src
 
-   Unlike ~data.frame~, data.table will not coerce strings to factors:
+   Unlike ~data.frame~, ~data.table~ will not coerce strings to factors:
 
 #+begin_src R
   sapply(DT, class)
@@ -64,18 +64,18 @@
 
 #+begin_src R
   # example data.frame
-  DF <- data.frame(x = letters[1:5], y = 1:5, z = (1:5) > 3)
+  DF <- data.frame(x=letters[1:5], y=1:5, z=(1:5) > 3)
   # modification
   setDT(DF)
 #+end_src
 
-    Note that we do not <- assign the result, since the object DF has been
+    Note that we do not ~<-~ assign the result, since the object DF has been
     modified in-place. The class attributes of the ~data.frame~ will be retained:
 
 #+begin_src R
   sapply(DF, class)
   #        x         y         z
-  # "factor" "integer" "logical"
+  # "character" "integer" "logical"
 #+end_src
 
 *** Coerce object to ~data.table~
@@ -89,7 +89,7 @@
     ~as.data.table~ to coerce it to a ~data.table~.
 
 #+begin_src R
-  mat <- matrix(0, ncol = 10, nrow = 10)
+  mat <- matrix(0, ncol=10, nrow=10)
 
   DT <- as.data.table(mat)
   # or
@@ -100,7 +100,7 @@
 
 *** ~.SD~
 
-    ~.SD~ refers to the subset of the data.table for each group, excluding all
+    ~.SD~ refers to the subset of the ~data.table~ for each group, excluding all
     columns used in ~by~.
 
     ~.SD~ along with ~lapply~ can be used to apply any function to multiple
@@ -109,51 +109,51 @@
     We will continue using the same built-in dataset, ~mtcars~:
 
 #+begin_src R
-  mtcars = data.table(mtcars) # Let's not include rownames to keep things simpler
+  mtcars = data.table(mtcars) # Let's not include rownames to keep things simpler (keep.rownames=FALSE)
 #+end_src
 
     Mean of all columns in the dataset by number of cylinders, cyl:
 
 #+begin_src R
-  mtcars[ , lapply(.SD, mean), by = cyl]
+  mtcars[ , lapply(.SD, mean), by=cyl]
 
-  # cyl mpg disp hp drat wt qsec vs am gear carb
-  #1: 6 19.74286 183.3143 122.28571 3.585714 3.117143 17.97714 0.5714286 0.4285714 3.857143 3.428571
-  #2: 4 26.66364 105.1364 82.63636 4.070909 2.285727 19.13727 0.9090909 0.7272727 4.090909 1.545455
-  #3: 8 15.10000 353.1000 209.21429 3.229286 3.999214 16.77214 0.0000000 0.1428571 3.285714 3.500000
+  #   cyl      mpg     disp        hp     drat       wt     qsec        vs        am     gear     carb
+  #1:   6 19.74286 183.3143 122.28571 3.585714 3.117143 17.97714 0.5714286 0.4285714 3.857143 3.428571
+  #2:   4 26.66364 105.1364  82.63636 4.070909 2.285727 19.13727 0.9090909 0.7272727 4.090909 1.545455
+  #3:   8 15.10000 353.1000 209.21429 3.229286 3.999214 16.77214 0.0000000 0.1428571 3.285714 3.500000
 #+end_src
 
     Apart from ~cyl~, there are other categorical columns in the dataset such as
-    vs, am, gear and carb. It doesn't really make sense to take the mean of
+    ~vs~, ~am~, ~gear~ and ~carb~. It doesn't really make sense to take the mean of
     these columns. So let's exclude these columns. This is where ~.SDcols~ comes
     into the picture.
 
 *** ~.SDcols~
 
-    ~.SDcols~ specifies the columns of the data.table that are included in ~.SD~.
+    ~.SDcols~ specifies the columns of the ~data.table~ that are included in ~.SD~.
 
     Mean of all columns (continuous columns) in the dataset by number of gears
-    gear, and number of cylinders, cyl, arranged by gear and cyl:
+    ~gear~, and number of cylinders, ~cyl~, arranged by ~gear~ and ~cyl~:
 
 #+begin_src R
-# All the continuous variables in the dataset
-cols_chosen <- c("mpg", "disp", "hp", "drat", "wt", "qsec")
+  # All the continuous variables in the dataset
+  cols_chosen <- c("mpg", "disp", "hp", "drat", "wt", "qsec")
 
-mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_chosen]
+  mtcars[order(gear, cyl), lapply(.SD, mean), by=.(gear, cyl), .SDcols=cols_chosen]
 
-#   gear cyl    mpg     disp       hp     drat       wt    qsec
-#1:    3   4 21.500 120.1000  97.0000 3.700000 2.465000 20.0100
-#2:    3   6 19.750 241.5000 107.5000 2.920000 3.337500 19.8300
-#3:    3   8 15.050 357.6167 194.1667 3.120833 4.104083 17.1425
-#4:    4   4 26.925 102.6250  76.0000 4.110000 2.378125 19.6125
-#5:    4   6 19.750 163.8000 116.5000 3.910000 3.093750 17.6700
-#6:    5   4 28.200 107.7000 102.0000 4.100000 1.826500 16.8000
-#7:    5   6 19.700 145.0000 175.0000 3.620000 2.770000 15.5000
-#8:    5   8 15.400 326.0000 299.5000 3.880000 3.370000 14.5500
+  #   gear cyl    mpg     disp       hp     drat       wt    qsec
+  #1:    3   4 21.500 120.1000  97.0000 3.700000 2.465000 20.0100
+  #2:    3   6 19.750 241.5000 107.5000 2.920000 3.337500 19.8300
+  #3:    3   8 15.050 357.6167 194.1667 3.120833 4.104083 17.1425
+  #4:    4   4 26.925 102.6250  76.0000 4.110000 2.378125 19.6125
+  #5:    4   6 19.750 163.8000 116.5000 3.910000 3.093750 17.6700
+  #6:    5   4 28.200 107.7000 102.0000 4.100000 1.826500 16.8000
+  #7:    5   6 19.700 145.0000 175.0000 3.620000 2.770000 15.5000
+  #8:    5   8 15.400 326.0000 299.5000 3.880000 3.370000 14.5500
 #+end_src
 
     Maybe we don't want to calculate the ~mean~ by groups. To calculate the mean
-    for all the cars in the dataset, we don't specify the by variable.
+    for all the cars in the dataset, we don't specify the ~by~ variable.
 
 #+begin_src R
   mtcars[ , lapply(.SD, mean), .SDcols = cols_chosen]
@@ -164,7 +164,7 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 
     Note:
 
-    * It is not necessary to define cols_chosen beforehand. ~.SDcols~ can
+    * It is not necessary to define ~cols_chosen~ beforehand. ~.SDcols~ can
       directly take column names
 
     * ~.SDcols~ can also directly take a vector of columnnumbers. In the above
@@ -188,15 +188,15 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
    ~DT[where, select|update|do, by]~ syntax is used to work with columns of a
    ~data.table~.
 
-   * The "where" part is the ~i~ argument
-   * The "select|update|do" part is the ~j~ argument
+   * The ~where~ part is the ~i~ argument
+   * The ~select|update|do~ part is the ~j~ argument
 
    These two arguments are usually passed by position instead of by name.
 
    Our example data below is
 
 #+begin_src R
-  mtcars = data.table(mtcars, keep.rownames = TRUE)
+  mtcars = data.table(mtcars, keep.rownames=TRUE)
 #+end_src
 
 *** Editing entire columns
@@ -204,7 +204,7 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
     Use the ~:=~ operator inside ~j~ to assign new columns:
 
 #+begin_src R
-  mtcars[, mpg_sq := mpg^2]
+  mtcars[, mpg_sq:=mpg^2]
 #+end_src
 
     Remove columns by setting to NULL:
@@ -218,13 +218,13 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 #+begin_src R
   mtcars[, `:=`(mpg_sq = mpg^2, wt_sqrt = sqrt(wt))]
   # or
-  mtcars[, c("mpg_sq", "wt_sqrt") := .(mpg^2, sqrt(wt))]
+  mtcars[, c("mpg_sq", "wt_sqrt"):=.(mpg^2, sqrt(wt))]
 #+end_src
 
     If the columns are dependent and must be defined in sequence, one way is:
 
 #+begin_src R
-  mtcars[, c("mpg_sq", "mpg2_hp") := .(temp1 <- mpg^2, temp1/hp)]
+  mtcars[, c("mpg_sq", "mpg2_hp"):=.(temp1 <- mpg^2, temp1/hp)]
 #+end_src
 
    The ~.()~ syntax is used when the right-hand side of ~LHS := RHS~ is a list
@@ -234,13 +234,13 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 
 #+begin_src R
   vn = "mpg_sq"
-  mtcars[, (vn) := mpg^2]
+  mtcars[, (vn):=mpg^2]
 #+end_src
 
    Columns can also be modified with set, though this is rarely necessary:
 
 #+begin_src R
-  set(mtcars, j = "hp_over_wt", v = mtcars$hp/mtcars$wt)
+  set(mtcars, j="hp_over_wt", v=mtcars$hp/mtcars$wt)
 #+end_src
 
 *** Editing subsets of columns
@@ -250,11 +250,11 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 #+begin_src R
   mtcars[1:3, newvar := "Hello"]
   # or
-  set(mtcars, j = "newvar", i = 1:3, v = "Hello")
+  set(mtcars, j="newvar", i=1:3, v="Hello")
 #+end_src
 
-    As in a data.frame, we can subset using row numbers or logical tests. It is
-    also possible to use a "join" in i, but that more complicated task is
+    As in a ~data.frame~, we can subset using row numbers or logical tests. It is
+    also possible to use a "join" in ~i~, but that more complicated task is
     covered in another example.
 
 *** Editing column attributes
@@ -264,16 +264,16 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
     data.table, the entire object is copied and replaced.
 
     To modify an object without copies, use setnames to change the column names
-    of a data.table or data.frame and setattr to change an attribute for any
+    of a ~data.table~ or ~data.frame~ and ~setattr~ to change an attribute for any
     object.
 
 #+begin_src R
   # Print a message to the console whenever the data.table is copied
   tracemem(mtcars)
-  mtcars[, cyl2 := factor(cyl)]
+  mtcars[, cyl2:=factor(cyl)]
 
   # Neither of these statements copy the data.table
-  setnames(mtcars, old = "cyl2", new = "cyl_fac")
+  setnames(mtcars, old="cyl2", new="cyl_fac")
   setattr(mtcars$cyl_fac, "levels", c("four", "six", "eight"))
 
   # Each of these statements copies the data.table
@@ -290,7 +290,7 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
   edit_levels(mtcars$cyl_factor)
 #+end_src
 
-** Section 23.4: Writing code compatible with both data.frame and data.table
+** Section 23.4: Writing code compatible with both ~data.frame~ and ~data.table~
 
 *** Differences in subsetting syntax
 
@@ -336,7 +336,7 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
   dt[, c("Y", "Z")] # /
 #+end_src
 
-    However, they diﬀer for unquoted variable names
+    However, they differ for unquoted variable names
 
 #+begin_src R
   mycols <- 2:3
@@ -351,9 +351,9 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 
     Note: For versions of the ~data.table~ package prior to 1.9.8, this behavior
     was slightly different. Anything in the column index would have been
-    evaluated using dt as an environment. So both ~dt[, 2:3]~ and ~dt[, mycols]~
+    evaluated using ~dt~ as an environment. So both ~dt[, 2:3]~ and ~dt[, mycols]~
     would return the vector ~2:3~. No error would be raised for the second
-    case, because the variable mycols does exist in the parent environment.
+    case, because the variable ~mycols~ does exist in the parent environment.
 
 *** Strategies for maintaining compatibility with ~data.frame~ and ~data.table~
 
@@ -364,10 +364,10 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 
     1. Use syntax that behaves the same for both classes.
     2. Use a common function that does the same thing as the shortest syntax.
-    3. Force data.table to behave as data.frame (ex.: call the specific method print.data.frame).
+    3. Force ~data.table~ to behave as ~data.frame~ (ex.: call the specific method ~print.data.frame~).
     4. Treat them as list, which they ultimately are.
-    5. Convert the table to a data.frame before doing anything (bad idea if it is a huge table).
-    6. Convert the table to data.table, if dependencies are not a concern.
+    5. Convert the table to a ~data.frame~ before doing anything (bad idea if it is a huge table).
+    6. Convert the table to ~data.table~, if dependencies are not a concern.
 
 *** Subset rows.
     
@@ -429,14 +429,15 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
 
    Yes, you need to SETKEY pre 1.9.6
 
-   In the past (pre 1.9.6), your data.table was sped up by setting columns as
+   In the past (pre 1.9.6), your ~data.table~ was sped up by setting columns as
    keys to the table, particularly for large tables. [See [[http://stackoverflow.com/questions/20039335/what-is-the-purpose-of-setting-a-key-in-data-table][intro vignette page 5]]
    of September 2015 version, where speed of search was 544 times better.] You
-   may find older code making use of this setting keys with 'setkey' or setting a
-   'key=' column when setting up the table.
+   may find older code making use of this setting keys with ~setkey~ or setting a
+   ~key=~ column when setting up the table.
 
 #+begin_src R
   library(data.table)
+
   DT <- data.table(
     x = letters[1:5],
     y = 5:1,
@@ -452,7 +453,7 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
   #5: e 1 TRUE
 #+end_src
 
-   Set your key with the setkey command. You can have a key with multiple
+   Set your key with the ~setkey~ command. You can have a key with multiple
    columns.
 
 #+begin_src R
@@ -485,31 +486,31 @@ mtcars[order(gear, cyl), lapply(.SD, mean), by = .(gear, cyl), .SDcols = cols_ch
    Now it is unnecessary
 
    Prior to v1.9.6 you had to have set a key for certain operations especially
-   joining tables. The developers of data.table have sped up and introduced a
-   "on=" feature that can replace the dependency on keys. See [[http://stackoverflow.com/questions/20039335/what-is-the-purpose-of-setting-a-key-in-data-table][SO]] answer here for
+   joining tables. The developers of ~data.table~ have sped up and introduced a
+   ~on=~ feature that can replace the dependency on keys. See [[http://stackoverflow.com/questions/20039335/what-is-the-purpose-of-setting-a-key-in-data-table][SO]] answer here for
    a detailed discussion.
 
    In Jan 2017, the developers have written a [[https://cran.r-project.org/web/packages/data.table/vignettes/datatable-secondary-indices-and-auto-indexing.html][vignette]] around secondary indices
-   which explains the "on" syntax and allows for other columns to be identified
+   which explains the ~on~ syntax and allows for other columns to be identified
    for fast indexing.
 
    Creating secondary indices?
 
-   In a manner similar to key, you can setindex(DT, key.col) or setindexv(DT,
-   "key.col.string"), where DT is your data.table. Remove all indices with
-   setindex(DT, NULL).
+   In a manner similar to key, you can ~setindex(DT, key.col)~ or ~setindexv(DT,
+   "key.col.string")~, where DT is your data.table. Remove all indices with
+   ~setindex(DT, NULL)~.
 
-   See your secondary indices with indices(DT).
+   See your secondary indices with ~indices(DT)~.
 
    Why secondary indices?
 
    This does not sort the table (unlike key), but does allow for quick indexing
-   using the "on" syntax. Note there can be only one key, but you can use
+   using the ~on~ syntax. Note there can be only one key, but you can use
    multiple secondary indices, which saves having to rekey and resort the table.
    This will speed up your subsetting when changing the columns you want to
    subset on.
 
-   Recall, in example above y was the key for table DT:
+   Recall, in example above ~y~ was the key for table DT:
 
 #+begin_src R
   DT

@@ -3,20 +3,20 @@
 
 * Chapter 24: Pivot and unpivot with data.table
 
-| Parameter     | Details                                                                                                                  |
-|---------------+--------------------------------------------------------------------------------------------------------------------------|
-| id.vars       | tell melt which columns to retain                                                                                        |
-| variable.name | tell melt what to call the column with category labels                                                                   |
-| value.name    | tell melt what to call the column that has values associated with category labels                                        |
-| value.var     | tell dcast where to find the values to cast in columns                                                                    |
-| formula       | tell dcast which columns to retain to form a unique record identifier (LHS) and which one holds the category labels (RHS) |
-| fun.aggregate | specify the function to use when the casting operation generates a list of values in each cell                           |
+| Parameter       | Details                                                                                                                   |
+|-----------------+---------------------------------------------------------------------------------------------------------------------------|
+| ~id.vars~       | tell ~melt~ which columns to retain                                                                                         |
+| ~variable.name~ | tell ~melt~ what to call the column with category labels                                                                    |
+| ~value.name~    | tell ~melt~ what to call the column that has values associated with category labels                                         |
+| ~value.var~     | tell ~dcast~ where to find the values to cast in columns                                                                    |
+| ~formula~       | tell ~dcast~ which columns to retain to form a unique record identifier (LHS) and which one holds the category labels (RHS) |
+| ~fun.aggregate~ | specify the function to use when the casting operation generates a list of values in each cell                            |
 
 ** Section 24.1: Pivot and unpivot tabular data with ~data.table~ I
 
    Convert from wide form to long form
 
-   Load ~data USArrests~ from datasets.
+   Load data ~USArrests~ from datasets.
 
 #+begin_src R
   data("USArrests")
@@ -31,7 +31,7 @@
   Colorado      7.9     204       78 38.7
 #+end_src
 
-   Use ~?USArrests~ to find out more. First, convert to data.table. The names of
+   Use ~?USArrests~ to find out more. First, convert to ~data.table~. The names of
    states are row names in the original ~data.frame~.
 
 #+begin_src R
@@ -43,7 +43,7 @@
    This is data in the wide form. It has a column for each variable. The data
    can also be stored in long form without loss of information. The long form
    has one column that stores the variable names. Then, it has another column
-   for the variable values. The long form of USArrests looks like so.
+   for the variable values. The long form of ~USArrests~ looks like so.
 
 #+begin_src R
              State Crime  Rate
@@ -68,29 +68,29 @@
 #+end_src
 
    By default, ~melt~ treats all columns with numeric data as variables with
-   values. In ~USArrests~, the variable UrbanPop represents the percentage urban
-   population of a state. It is diﬀerent from the other variables, Murder,
-   Assault and Rape, which are violent crimes reported per 100,000 people.
-   Suppose we want to retain UrbanPop column. We achieve this by setting
+   values. In ~USArrests~, the variable ~UrbanPop~ represents the percentage urban
+   population of a state. It is different from the other variables, ~Murder~,
+   ~Assault~ and ~Rape~, which are violent crimes reported per 100,000 people.
+   Suppose we want to retain ~UrbanPop~ column. We achieve this by setting
    ~id.vars~ as follows.
 
 #+begin_src R
   DTmu <- melt(DT, id.vars=c("rn", "UrbanPop" ),
-               variable.name='Crime', value.name = "Rate")
+               variable.name='Crime', value.name="Rate")
   names(DTmu)[1] <- "State"
 #+end_src
 
    Note that we have specified the names of the column containing category names
-   (Murder, Assault, etc.) with ~variable.name~ and the column containing the
+   (~Murder~, ~Assault~, etc.) with ~variable.name~ and the column containing the
    values with ~value.name~. Our data looks like so.
 
 #+begin_src R
-         State UrbanPop  Crime Rate
-  1:    Alabama  58     Murder 13.2
-  2:     Alaska  48     Murder 10.0
-  3:    Arizona  80     Murder  8.1
-  4:   Arkansas  50     Murder  8.8
-  5: California  91     Murder  9.0
+          State UrbanPop  Crime  Rate
+  1:    Alabama       58  Murder 13.2
+  2:     Alaska       48  Murder 10.0
+  3:    Arizona       80  Murder  8.1
+  4:   Arkansas       50  Murder  8.8
+  5: California       91  Murder  9.0
 #+end_src
 
    Generating summaries with with split-apply-combine style approach is a
@@ -116,7 +116,7 @@
 
    Convert from long form to wide form
 
-   To recover data from the previous example, use dcast like so.
+   To recover data from the previous example, use ~dcast~ like so.
 
 #+begin_src R
   DTc <- dcast(DTmu, State + UrbanPop ~ Crime)
@@ -136,32 +136,18 @@
    Here, the formula notation is used to specify the columns that form a unique
    record identifier (LHS) and the column containing category labels for new
    column names (RHS). Which column to use for the numeric values? By default,
-   dcast uses the first column with numerical values left over when from the
-   formula specification. To make explicit, use the parameter value.var with
+   ~dcast~ uses the first column with numerical values left over when from the
+   formula specification. To make explicit, use the parameter ~value.var~ with
    column name.
 
-   When the operation produces a list of values in each cell, dcast provides a
-   fun.aggregate method to handle the situation. Say I am interested in states
+   When the operation produces a list of values in each cell, ~dcast~ provides a
+   ~fun.aggregate~ method to handle the situation. Say I am interested in states
    with similar urban population when investigating crime rates. I add a column
-   Decile with computed information.
+   ~Decile~ with computed information.
 
 #+begin_src R
-  DTmu[, Decile := cut(UrbanPop, quantile(UrbanPop, probs = seq(0, 1, by=0.1)))]
+  DTmu[, Decile:=cut(UrbanPop, quantile(UrbanPop, probs=seq(0, 1, by=0.1)))]
   levels(DTmu$Decile) <- paste0(1:10, "D")
-#+end_src
-
-   Now, casting Decile ~ Crime produces multiple values per cell. I can use
-   fun.aggregate to determine how these are handled. Both text and numerical
-   values can be handle this way.
-
-#+begin_src R
-  dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=sum)
-#+end_src
-
-   This gives:
-
-#+begin_src R
-  dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=mean)
 #+end_src
 
    This gives:
@@ -175,8 +161,17 @@
   5: California       91 Murder  9.0    10D
 #+end_src
 
+
+   Now, casting ~Decile ~ Crime~ produces multiple values per cell. I can use
+   ~fun.aggregate~ to determine how these are handled. Both text and numerical
+   values can be handle this way.
+
+#+begin_src R
+  dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=mean)
+#+end_src
+
    There are multiple states in each decile of the urban population. Use
-   fun.aggregate to specify how these should be handled.
+   ~fun.aggregate~ to specify how these should be handled.
 
 #+begin_src R
   dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=sum)
