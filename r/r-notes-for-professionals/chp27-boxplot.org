@@ -18,80 +18,95 @@
    This example use the default ~boxplot()~ function and the ~irisdata~ frame.
 
 #+begin_src R
-> head(iris)
-  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-1          5.1         3.5          1.4         0.2  setosa
-2          4.9         3.0          1.4         0.2  setosa
-3          4.7         3.2          1.3         0.2  setosa
-4          4.6         3.1          1.5         0.2  setosa
-5          5.0         3.6          1.4         0.2  setosa
-6          5.4         3.9          1.7         0.4  setosa
+  > head(iris)
+    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+  1          5.1         3.5          1.4         0.2  setosa
+  2          4.9         3.0          1.4         0.2  setosa
+  3          4.7         3.2          1.3         0.2  setosa
+  4          4.6         3.1          1.5         0.2  setosa
+  5          5.0         3.6          1.4         0.2  setosa
+  6          5.4         3.9          1.7         0.4  setosa
 #+end_src
 
-   *Simple boxplot (Sepal.Length)*
+*** Simple boxplot (Sepal.Length)
 
-   Create a box-and-whisker graph of a numerical variable
+    Create a box-and-whisker graph of a numerical variable
 
 #+begin_src R
-  boxplot(iris[,1],xlab="Sepal.Length",ylab="Length(in centemeters)", main="Summary Charateristics of Sepal.Length(Iris Data)")
+  boxplot(iris[,1], xlab="Sepal.Length", ylab="Length(in centemeters)",
+        main="Summary Charateristics of Sepal.Length (Iris Data)")
 #+end_src
 
-   *Boxplot of sepal length grouped by species*
+[[./images/chp27.1_plots.png]]
 
-   Create a boxplot of a numerical variable grouped by a categorical variable
+*** Boxplot of sepal length grouped by species
+
+    Create a boxplot of a numerical variable grouped by a categorical variable
 
 #+begin_src R
-  boxplot(Sepal.Length~Species,data = iris)
+  boxplot(Sepal.Length ~ Species, data=iris)
 #+end_src
 
-   *Bring order*
+[[./images/chp27.1_plots2.png]]
 
-   To change order of the box in the plot you have to change the order of the
-   categorical variable's levels.
+*** Bring order
 
-   For example if we want to have the order ~virginica - versicolor - setosa~
+    To change order of the box in the plot you have to change the order of the
+    categorical variable's levels.
+
+    For example if we want to have the order ~virginica - versicolor - setosa~
 
 #+begin_src R
-  newSpeciesOrder <- factor(iris$Species, levels=c("virginica","versicolor","setosa"))
-  boxplot(Sepal.Length~newSpeciesOrder,data = iris)
+  newSpeciesOrder <- factor(iris$Species,
+                            levels=c("virginica","versicolor","setosa"))
+
+  boxplot(Sepal.Length~newSpeciesOrder, data=iris)
 #+end_src
 
-   *Change groups names*
+[[./images/chp27.1_plots3.png]]
+
+*** Change groups names
 
     If you want to specify a better name to your groups you can use the Names
     parameter. It take a vector of the size of the levels of categorical
     variable
 
 #+begin_src R
-  boxplot(Sepal.Length~newSpeciesOrder,data = iris,names= c("name1","name2","name3"))
+  boxplot(Sepal.Length ~ newSpeciesOrder, data=iris,
+          names=c("name1","name2","name3"))
 #+end_src
 
-   *Small improvements*
+*** Small improvements
 
-   *Color*
+    *Color*
 
     ~col~: add a vector of the size of the levels of categorical variable
 
 #+begin_src R
-  boxplot(Sepal.Length~Species,data = iris,col=c("green","yellow","orange"))
+    boxplot(Sepal.Length ~ Species, data=iris, 
+            col=c("green","yellow","orange"))
 #+end_src
 
-   *Proximity of the box*
+[[./images/chp27.1_plots4.png]]
 
-   ~boxwex~: set the margin between boxes.
+    *Proximity of the box*
 
-   Left ~boxplot~(~Sepal.Length~Species,data = iris,boxwex = 0.1~)
+    ~boxwex~: set the margin between boxes.
 
-   Right ~boxplot~(~Sepal.Length~Species,data = iris,boxwex = 1~)
+    Left ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=0.1)~
+    
+    Right ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=1)~
+   
+[[./images/chp27.1_plots5.png]]
 
-   *See the summaries which the boxplots are based ~plot=FALSE~*
+    *See the summaries which the boxplots are based ~plot=FALSE~*
 
-   To see a summary you have to put the paramater ~plot~ to FALSE.
+    To see a summary you have to put the paramater ~plot~ to FALSE.
 
-   Various results are given
+    Various results are given
 
 #+begin_src R
-  > boxplot(Sepal.Length~newSpeciesOrder,data = iris,plot=FALSE)
+  > boxplot(Sepal.Length ~ newSpeciesOrder, data=iris, plot=FALSE)
   $stats #summary of the numerical variable for the 3 groups
        [,1] [,2] [,3]
   [1,]  5.6  4.9  4.3 # extreme value
@@ -122,10 +137,10 @@
 
 *** Box
     
-    * ~boxlty~ - box line type
-    * ~boxlwd~ - box line width
-    * ~boxcol~ - box line color
-    * ~boxﬁll~ - box ﬁll colors
+    * ~boxlty~  - box line type
+    * ~boxlwd~  - box line width
+    * ~boxcol~  - box line color
+    * ~boxfill~ - box fill colors
 
 *** Median
 
@@ -134,7 +149,7 @@
     * ~medcol~ - median line color
     * ~medpch~ - median point (NA for no symbol)
     * ~medcex~ - median point size
-    * ~medbg~ - median point background color
+    * ~medbg~  - median point background color
 
 *** Whisker
 
@@ -155,11 +170,11 @@
     * ~outcol~ - outlier line color
     * ~outpch~ - outlier point type (NA for no symbol)
     * ~outcex~ - outlier point size
-    * ~outbg~ - outlier point background color
+    * ~outbg~  - outlier point background color
 
 *** Example
 
-    Default and heavily modiﬁed plots side by side
+    Default and heavily modified plots side by side
 
 #+begin_src R
     par(mfrow=c(1,2))
@@ -175,4 +190,4 @@
             outlty=3, outlwd=3, outcol="grey", outpch=NA)
 #+end_src
 
-
+[[./images/chp27.1_plots6.png]]
