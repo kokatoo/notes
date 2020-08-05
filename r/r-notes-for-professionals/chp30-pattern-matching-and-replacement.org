@@ -4,7 +4,7 @@
 * Chapter 30: Pattern Matching and Replacement
 
   This topic covers matching string patterns, as well as extracting or replacing
-  them. For details on deﬁning complicated patterns see Regular Expressions.
+  them. For details on defining complicated patterns see "Regular Expressions".
 
 ** Section 30.1: Finding Matches
 
@@ -46,6 +46,7 @@
   # each of the following lines does the job:
   test_sentences[grep("fox", test_sentences)]
   test_sentences[grepl("fox", test_sentences)]
+
   grep("fox", test_sentences, value = TRUE)
   # [1] "The quick brown fox"
 #+end_src
@@ -54,15 +55,15 @@
 
     Since the "fox" pattern is just a word, rather than a regular
     expression, we could improve performance (with either grep or grepl) by
-    specifying fixed = TRUE.
+    specifying ~fixed=TRUE~.
 
 #+begin_src R
-  grep("fox", test_sentences, fixed = TRUE)
+  grep("fox", test_sentences, fixed=TRUE)
   #[1] 1
 #+end_src
 
-   To select sentences that don't match a pattern, one can use grep with ~invert
-   = TRUE~; or follow subsetting rules with ~-grep(...)~ or ~!grepl(...)~.
+   To select sentences that don't match a pattern, one can use grep with
+   ~invert=TRUE~; or follow subsetting rules with ~-grep(...)~ or ~!grepl(...)~.
 
    In both ~grepl(pattern, x)~ and ~grep(pattern, x)~, the ~x~ parameter is
    vectorized, the pattern parameter is not. As a result, you cannot use these
@@ -71,9 +72,9 @@
 
 *** Summary of matches
 
-    After performing the e.g. the ~grepl~ command, maybe you want to get an
-    overview about how many matches where TRUE or FALSE. This is useful e.g. in
-    case of big data sets. In order to do so run the ~summary~ command:
+    After performing the ~grepl~ command, you might want to get an
+    overview about how many matches were TRUE or FALSE. This is useful
+    especially for big data sets. In order to do so run the ~summary~ command:
 
 #+begin_src R
   # example data
@@ -88,28 +89,28 @@
 
 ** Section 30.2: Single and Global match
 
-   When working with regular expressions one modiﬁer for PCRE is g for global
-   match.
+   When working with regular expressions one modifier for PCRE (Perl Compatible
+   Regex) is ~g~ for global match.
 
-   In R matching and replacement functions have two version: ﬁrst match and
+   In R matching and replacement functions have two version: first match and
    global match:
 
-   * sub(pattern,replacement,text) will replace the ﬁrst occurrence of pattern
+   * ~sub(pattern, replacement, text)~ will replace the first occurrence of pattern
      by replacement in text
 
-   * gsub(pattern,replacement,text) will do the same as sub but for each
+   * ~gsub(pattern, replacement, text)~ will do the same as sub but for each
      occurrence of pattern
 
-   * regexpr(pattern,text) will return the position of match for the ﬁrst
+   * ~regexpr(pattern, text)~ will return the position of match for the first
      instance of pattern
 
-   * gregexpr(pattern,text) will return all matches.
+   * ~gregexpr(pattern, text)~ will return all matches.
 
    Some random data:
 
 #+begin_src R
   set.seed(123)
-  teststring <- paste0(sample(letters,20),collapse="")
+  teststring <- paste0(sample(letters, 20), collapse="")
 
   # teststring
   #[1] "htjuwakqxzpgrsbncvyo"
@@ -118,21 +119,22 @@
    Let's see how this works if we want to replace vowels by something else:
 
 #+begin_src R
-sub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
-#[1] "htj ** HERE WAS A VOWEL** wakqxzpgrsbncvyo"
+  sub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
+  #[1] "htj ** HERE WAS A VOWEL** wakqxzpgrsbncvyo"
 
-gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
-#[1] "htj ** HERE WAS A VOWEL** w ** HERE WAS A VOWEL** kqxzpgrsbncv ** HERE WAS A VOWEL** ** HERE WAS A VOWEL** "
+  gsub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
+  #[1] "htj ** HERE WAS A VOWEL** w ** HERE WAS A VOWEL** kqxzpgrsbncv ** HERE WAS A VOWEL** ** HERE WAS A VOWEL** "
 #+end_src
 
-   Now let's see how we can ﬁnd a consonant immediately followed by one or more
+   Now let's see how we can find a consonant immediately followed by one or more
    vowel:
 
 #+begin_src R
-  regexpr("[^aeiou][aeiou]+",teststring)
+  regexpr("[^aeiou][aeiou]+", teststring)
   #[1] 3
   #attr(,"match.length")
-  #[1] 2 #attr(,"useBytes")
+  #[1] 2
+  #attr(,"useBytes")
   #[1] TRUE
 #+end_src
 
@@ -141,7 +143,7 @@ gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
    Now if we want to get all matches:
 
 #+begin_src R
-  gregexpr("[^aeiou][aeiou]+",teststring)
+  gregexpr("[^aeiou][aeiou]+", teststring)
   #[[1]]
   #[1] 3 5 19
   #attr(,"match.length")
@@ -151,7 +153,7 @@ gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
 #+end_src
 
    All this is really great, but this only give use positions of match and
-   that's not so easy to get what is matched, and here comes regmatches it's
+   that's not so easy to get what is matched, and here comes regmatches. It's
    sole purpose is to extract the string matched from regexpr, but it has a
    different syntax.
 
@@ -160,26 +162,27 @@ gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
 
 #+begin_src R
   matches <- gregexpr("[^aeiou][aeiou]+",teststring)
-  regmatches(teststring,matches)
+
+  regmatches(teststring, matches)
   #[[1]]
   #[1] "ju" "wa" "yo"
 #+end_src
 
    This may sound strange to not have a shortcut, but this allow extraction from
-   another string by the matches of our ﬁrst one (think comparing two long
-   vector where you know there's is a common pattern for the ﬁrst but not for
+   another string by the matches of our first one (think comparing two long
+   vector where you know there's is a common pattern for the first but not for
    the second, this allow an easy comparison):
 
 #+begin_src R
   teststring2 <- "this is another string to match against"
-  regmatches(teststring2,matches)
+  regmatches(teststring2, matches)
   #[[1]]
   #[1] "is" " i" "ri"
 #+end_src
 
    Attention note: by default the pattern is not Perl Compatible Regular
    Expression, some things like lookarounds are not supported, but each function
-   presented here allow for perl=TRUE argument to enable them.
+   presented here allow for ~perl=TRUE~ argument to enable them.
 
 ** Section 30.3: Making substitutions
 
@@ -202,7 +205,7 @@ gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
   #[1] "The fast red fox quickly" "jumps over the lazy dog"
 #+end_src
 
-   ~sub~ only makes the ﬁrst available replacement, we need gsub for global
+   ~sub~ only makes the first available replacement, we need ~gsub~ for global
    replacement:
 
 #+begin_src R
@@ -210,31 +213,31 @@ gsub("[aeiouy]"," ** HERE WAS A VOWEL** ",teststring)
   #[1] "The fast red fox fastly" "jumps over the lazy dog"
 #+end_src
 
-   See Modifying strings by substitution for more examples.
+   See "Modifying strings by substitution" for more examples.
 
 ** Section 30.4: Find matches in big data sets
 
-   In case of big data sets, the call of grepl("fox", test_sentences) does not
+   In case of big data sets, the call of ~grepl("fox", test_sentences)~ does not
    perform well. Big data sets are e.g. crawled websites or million of Tweets,
    etc.
 
-   The ﬁrst acceleration is the usage of the perl = TRUE option. Even faster is
-   the option fixed = TRUE. A complete example would be:
+   The first acceleration is the usage of the ~perl=TRUE~ option. Even faster is
+   the option ~fixed=TRUE~. A complete example would be:
 
 #+begin_src R
   # example data
   test_sentences <- c("The quick brown fox", "jumps over the lazy dog")
 
-  grepl("fox", test_sentences, perl = TRUE)
+  grepl("fox", test_sentences, perl=TRUE)
   #[1] TRUE FALSE
 #+end_src
 
    In case of text mining, often a corpus gets used. A corpus cannot be used
-   directly with grepl. Therefore, consider this function:
+   directly with ~grepl~. Therefore, consider this function:
 
 #+begin_src R
   searchCorpus <- function(corpus, pattern) {
-    return(tm_index(corpus, FUN = function(x) {
-      grepl(pattern, x, ignore.case = TRUE, perl = TRUE)
-    })) }
+    return(tm_index(corpus, FUN=function(x) {
+      grepl(pattern, x, ignore.case=TRUE, perl=TRUE)
+    }))}
 #+end_src
