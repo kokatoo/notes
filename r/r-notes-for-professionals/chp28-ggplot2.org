@@ -81,7 +81,7 @@
   # melt from 'reshape2'
   library(reshape2)
 
-  sweetsLong <- melt(sweetsWide, id.vars = 'date')
+  sweetsLong <- melt(sweetsWide, id.vars='date')
 
   # melt from 'data.table'
   # which is an optimized & extended version of 'melt' from 'reshape2'
@@ -106,7 +106,7 @@
   ## 6   6 chocolate 3.382825
 #+end_src
 
-   See also Reshaping data between long and wide forms for details on converting
+   See also reshaping data between long and wide forms for details on converting
    data between long and wide format.
 
    The resulting ~sweetsLong~ has one column of prices and one column describing
@@ -236,18 +236,18 @@
 ** Section 28.6: Vertical and Horizontal Bar Chart
 
 #+begin_src R
-  ggplot(data = diamonds, aes(x=cut, fill=color)) +
+  ggplot(data=diamonds, aes(x=cut, fill=color)) +
     geom_bar(stat="count", position="dodge")
 #+end_src
 
 [[./images/chp28.5_plots4.png]]
 
-   it is possible to obtain an horizontal bar chart simply adding coord_flip()
+   it is possible to obtain an horizontal bar chart simply adding ~coord_flip()~
    aesthetic to the ggplot object:
 
 #+begin_src R
   ggplot(data = diamonds, aes(x=cut, fill=color)) + 
-    geom_bar(stat="count", position="dodge")+
+    geom_bar(stat="count", position="dodge") +
     coord_flip()
 #+end_src
 

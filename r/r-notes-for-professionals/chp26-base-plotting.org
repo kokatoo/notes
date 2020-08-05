@@ -52,7 +52,7 @@
   par()
 #+end_src
 
-   ~par~ uses the arguments mfrow or mfcol to create a matrix of nrows and ncols
+   ~par~ uses the arguments ~mfrow~ or ~mfcol~ to create a matrix of nrows and ncols
    ~c(nrows, ncols)~ which will serve as a grid for your plots. The following
    example shows how to combine four plots in one graph:
 
@@ -107,7 +107,7 @@
 
 *** Boxplot
 
-    You have some variables and you want to examine their Distributions
+    You have some variables and you want to examine their distributions.
 
 #+begin_src R
   # boxplot is an easy way to see if we have some outliers in the data.
@@ -128,14 +128,14 @@
 
 *** Pie_charts
 
-    If you want to visualize the frequencies of a variable just draw pie
+    If you want to visualize the frequencies of a variable just draw pie.
 
     First we have to generate data with frequencies, for example :
 
 #+begin_src R
   P <- c(rep('A', 3) , rep('B', 10) , rep('C', 7))
   t <- table(P) # this is a frequency matrix of variable P
-  pie(t)        # And this is a visual version of the matrix above
+  pie(t)        # and this is a visual version of the matrix above
 #+end_src
 
 [[./images/chp26.3_plots.png]]
@@ -147,8 +147,10 @@
    the 1920s. (To find out more about the dataset, use ~help(cars)~).
 
 #+begin_src R
-  plot(x=cars$speed, y=cars$dist, pch=1, col=1,
-       main="Distance vs Speed of Cars", xlab="Speed", ylab="Distance")
+  plot(x=cars$speed, y=cars$dist,
+       pch=1, col=1,
+       main="Distance vs Speed of Cars",
+       xlab="Speed", ylab="Distance")
 #+end_src
 
 [[./images/chp26.4_plots.png]]
@@ -157,7 +159,8 @@
    also change the parameters to obtain different results.
 
 #+begin_src R
-  with(cars, plot(dist~speed, pch=2, col=3,
+  with(cars, plot(dist ~ speed,
+                  pch=2, col=3,
                   main="Distance to stop vs Speed of Cars",
                   xlab="Speed", ylab="Distance"))
 #+end_src
@@ -168,12 +171,13 @@
    ~text()~, ~mtext()~, ~lines()~, ~grid()~, etc.
 
 #+begin_src R
-  plot(dist~speed, pch="*", col="magenta", data=cars,
+  plot(dist ~ speed, data=cars,
+       pch="*", col="magenta",
        main="Distance to stop vs Speed of Cars",
        xlab="Speed", ylab="Distance")
 
   mtext("In the 1920s")
-  grid(,col="lightblue")
+  grid(, col="lightblue")
 #+end_src
 
 [[./images/chp26.4_plots3.png]]

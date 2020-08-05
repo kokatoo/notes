@@ -60,20 +60,20 @@
   newSpeciesOrder <- factor(iris$Species,
                             levels=c("virginica","versicolor","setosa"))
 
-  boxplot(Sepal.Length~newSpeciesOrder, data=iris)
+  boxplot(Sepal.Length ~ newSpeciesOrder, data=iris)
 #+end_src
 
 [[./images/chp27.1_plots3.png]]
 
 *** Change groups names
 
-    If you want to specify a better name to your groups you can use the Names
+    If you want to specify a better name to your groups you can use the ~names~
     parameter. It take a vector of the size of the levels of categorical
     variable
 
 #+begin_src R
   boxplot(Sepal.Length ~ newSpeciesOrder, data=iris,
-          names=c("name1","name2","name3"))
+          names=c("name1", "name2", "name3"))
 #+end_src
 
 *** Small improvements
@@ -84,7 +84,7 @@
 
 #+begin_src R
     boxplot(Sepal.Length ~ Species, data=iris, 
-            col=c("green","yellow","orange"))
+            col=c("green", "yellow", "orange"))
 #+end_src
 
 [[./images/chp27.1_plots4.png]]
@@ -93,13 +93,13 @@
 
     ~boxwex~: set the margin between boxes.
 
-    Left ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=0.1)~
+    Left: ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=0.1)~
     
-    Right ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=1)~
+    Right: ~boxplot(Sepal.Length ~ Species, data=iris, boxwex=1)~
    
 [[./images/chp27.1_plots5.png]]
 
-    *See the summaries which the boxplots are based ~plot=FALSE~*
+    *See the summaries which the boxplots are based ~plot=FALSE~ *
 
     To see a summary you have to put the paramater ~plot~ to FALSE.
 
