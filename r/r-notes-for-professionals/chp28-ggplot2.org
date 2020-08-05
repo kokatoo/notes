@@ -207,7 +207,7 @@
 ** Section 28.5: Produce basic plots with qplot
 
    ~qplot~ is intended to be similar to base r ~plot()~ function, trying to
-   always plot out your data without requiring too much speciﬁcations.
+   always plot out your data without requiring too much specifications.
 
 *** basic qplot
 
