@@ -22,22 +22,25 @@
    command
 
 #+begin_src R
-  plot(density(rnorm(100)),main="Normal density",xlab="x")
+  plot(density(rnorm(100)), main="Normal density", xlab="x")
 #+end_src
 
    would look like
-   <pic>
+   
+[[./images/chp26.1_density.png]]
 
    You can overlay a histogram and a density curve with
 
 #+begin_src R
-  x=rnorm(100)
-  hist(x,prob=TRUE,main="Normal density + histogram")
-  lines(density(x),lty="dotted",col="red")
+  x = rnorm(100)
+
+  hist(x, prob=TRUE, main="Normal density + histogram")
+  lines(density(x), lty="dotted", col="red")
 #+end_src
 
    which gives
-   <pic>
+   
+[[./images/chp26.1_density2.png]]
 
 ** Section 26.2: Combining Plots
 
@@ -55,48 +58,49 @@
 
 #+begin_src R
   par(mfrow=c(2,2))
+
   plot(cars, main="Speed vs. Distance")
   hist(cars$speed, main="Histogram of Speed")
+  
   boxplot(cars$dist, main="Boxplot of Distance")
   boxplot(cars$speed, main="Boxplot of Speed")
 #+end_src
-<pic>
 
-#+begin_src R
-  layout()
-#+end_src
+[[./images/chp26.2_plots.png]]
 
    The ~layout()~ is more flexible and allows you to specify the location and
-   the extent of each plot within the ﬁnal combined graph. This function expects
+   the extent of each plot within the final combined graph. This function expects
    a matrix object as an input:
 
 #+begin_src R
-  layout(matrix(c(1,1,2,3), 2,2, byrow=T))
+  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow=T))
+
   hist(cars$speed, main="Histogram of Speed")
   boxplot(cars$dist, main="Boxplot of Distance")
   boxplot(cars$speed, main="Boxplot of Speed")
 #+end_src
-<pic>
+
+[[./images/chp26.2_plots2.png]]
 
 
-** Section 26.3: Getting Started with R_Plots
+** Section 26.3: Getting Started with R Plots
 
 *** Scatterplot
 
     You have two vectors and you want to plot them.
 
 #+begin_src R
-  x_values <- rnorm(n = 20 , mean = 5 , sd = 8) #20 values generated from Normal(5,8)
-  y_values <- rbeta(n = 20 , shape1 = 500 , shape2 = 10) #20 values generated from Beta(500,10)
+  x_values <- rnorm(n=20, mean=5, sd=8)          # 20 values generated from Normal(5,8)
+  y_values <- rbeta(n=20, shape1=500, shape2=10) # 20 values generated from Beta(500,10)
 #+end_src
 
-    If you want to make a plot which has the y_values in vertical axis and the
-    x_valuesin horizontal axis, you can use the following commands:
+    If you want to make a plot which has the ~y_values~ in vertical axis and the
+    ~x_values~ in horizontal axis, you can use the following commands:
 
 #+begin_src R
-  plot(x = x_values, y = y_values, type = "p") #standard scatter-plot
-  plot(x = x_values, y = y_values, type = "l") # plot with lines
-  plot(x = x_values, y = y_values, type = "n") # empty plot
+  plot(x=x_values, y=y_values, type="p") # standard scatter-plot
+  plot(x=x_values, y=y_values, type="l") # plot with lines
+  plot(x=x_values, y=y_values, type="n") # empty plot
 #+end_src
 
     You can type ~?plot()~ in the console to read about more options.
@@ -108,9 +112,9 @@
 #+begin_src R
   # boxplot is an easy way to see if we have some outliers in the data.
 
-  z<- rbeta(20 , 500 , 10) #generating values from beta distribution
+  z<- rbeta(20, 500, 10)          # generating values from beta distribution
   z[c(19 , 20)] <- c(0.97 , 1.05) # replace the two last values with outliers
-  boxplot(z) # the two points are the outliers of variable z.
+  boxplot(z)                      # the two points are the outliers of variable z.
 #+end_src
 
 *** Histograms
@@ -118,8 +122,8 @@
     Easy way to draw histograms
 
 #+begin_src R
-  hist(x = x_values) # Histogram for x vector
-  hist(x = x_values, breaks = 3) #use breaks to set the numbers of bars you want
+  hist(x=x_values)           # Histogram for x vector
+  hist(x=x_values, breaks=3) # use breaks to set the numbers of bars you want
 #+end_src
 
 *** Pie_charts
@@ -129,40 +133,50 @@
     First we have to generate data with frequencies, for example :
 
 #+begin_src R
-  P <- c(rep('A' , 3) , rep('B' , 10) , rep('C' , 7) )
+  P <- c(rep('A', 3) , rep('B', 10) , rep('C', 7))
   t <- table(P) # this is a frequency matrix of variable P
-  pie(t) # And this is a visual version of the matrix above
+  pie(t)        # And this is a visual version of the matrix above
 #+end_src
+
+[[./images/chp26.3_plots.png]]
 
 ** Section 26.4: Basic Plot
 
    A basic plot is created by calling ~plot()~. Here we use the built-in ~cars~
    data frame that contains the speed of cars and the distances taken to stop in
-   the 1920s. (To ﬁnd out more about the dataset, use ~help(cars)~).
+   the 1920s. (To find out more about the dataset, use ~help(cars)~).
 
 #+begin_src R
-  plot(x = cars$speed, y = cars$dist, pch = 1, col = 1, main = "Distance vs Speed of Cars", xlab = "Speed", ylab = "Distance")
+  plot(x=cars$speed, y=cars$dist, pch=1, col=1,
+       main="Distance vs Speed of Cars", xlab="Speed", ylab="Distance")
 #+end_src
-<pic>
+
+[[./images/chp26.4_plots.png]]
 
    We can use many other variations in the code to get the same result. We can
    also change the parameters to obtain different results.
 
 #+begin_src R
-  with(cars, plot(dist~speed, pch = 2, col = 3,
-                  main = "Distance to stop vs Speed of Cars",
-                  xlab = "Speed", ylab = "Distance"))
+  with(cars, plot(dist~speed, pch=2, col=3,
+                  main="Distance to stop vs Speed of Cars",
+                  xlab="Speed", ylab="Distance"))
 #+end_src
-<pic>
+
+[[./images/chp26.4_plots2.png]]
 
    Additional features can be added to this plot by calling ~points()~,
    ~text()~, ~mtext()~, ~lines()~, ~grid()~, etc.
 
 #+begin_src R
-  plot(dist~speed, pch = "*", col = "magenta", data=cars, main = "Distance to stop vs Speed of Cars", xlab = "Speed", ylab = "Distance")
-  mtext("In the 1920s.")
+  plot(dist~speed, pch="*", col="magenta", data=cars,
+       main="Distance to stop vs Speed of Cars",
+       xlab="Speed", ylab="Distance")
+
+  mtext("In the 1920s")
   grid(,col="lightblue")
 #+end_src
+
+[[./images/chp26.4_plots3.png]]
 
 ** Section 26.5: Histograms
 
@@ -172,12 +186,14 @@
 #+begin_src R
   hist(ldeaths)
 #+end_src
-<pic>
+
+[[./images/chp26.5_plots.png]]
 
 #+begin_src R
-hist(ldeaths, breaks = 20, freq = F, col = 3)
+  hist(ldeaths, breaks=20, freq=F, col=3)
 #+end_src
-<pic>
+
+[[./images/chp26.5_plots2.png]]
 
 ** Section 26.6: Matplot
 
@@ -203,14 +219,17 @@ hist(ldeaths, breaks = 20, freq = F, col = 3)
    ~plot~ call followed by three more ~points~ or ~lines~ calls.
 
 #+begin_src R
-  plot(xmat[,1], type = 'l')
-  lines(xmat[,2], col = 'red')
-  lines(xmat[,3], col = 'green')
-  lines(xmat[,4], col = 'blue')
+  plot(xmat[,1], type='l')
+
+  lines(xmat[,2], col='red')
+  lines(xmat[,3], col='green')
+  lines(xmat[,4], col='blue')
 #+end_src
 
+[[./images/chp26.6_plots.png]]
+
    However, this is both tedious, and causes problems because, among other
-   things, by default the axis limits are ﬁxed by ~plot~ to ﬁt only the ﬁrst
+   things, by default the axis limits are fixed by ~plot~ to fit only the first
    column.
 
    Much more convenient in this situation is to use the ~matplot~ function,
@@ -218,45 +237,51 @@ hist(ldeaths, breaks = 20, freq = F, col = 3)
    changing the aesthetics for each column to make them distinguishable.
 
 #+begin_src R
-  matplot(xmat, type = 'l')
+  matplot(xmat, type='l')
 #+end_src
+
+[[./images/chp26.6_plots2.png]]
 
    Note that, by default, ~matplot~ varies both color (~col~) and linetype
    (~lty~) because this increases the number of possible combinations before
-   they get repeated. However, any (or both) of these aesthetics can be ﬁxed to
-   a single value...
+   they get repeated. However, any (or both) of these aesthetics can be fixed to
+   a single value.
 
 #+begin_src R
-  matplot(xmat, type = 'l', col = 'black')
+  matplot(xmat, type='l', col='black')
 #+end_src
 
    ...or a custom vector (which will recycle to the number of columns, following
    standard R vector recycling rules).
 
 #+begin_src R
-  matplot(xmat, type = 'l', col = c('red', 'green', 'blue', 'orange'))
+  matplot(xmat, type='l', col=c('red', 'green', 'blue', 'orange'))
 #+end_src
+
+[[./images/chp26.6_plots3.png]]
 
    Standard graphical parameters, including ~main~, ~xlab~, ~xmin~, work exactly
    the same way as for ~plot~. For more on those, see ~?par~.
 
-   Like ~plot~, if given only one object, ~matplot~ assumes it's the y variable
-   and uses the indices for x. However, x and y can be speciﬁed explicitly.
+   Like ~plot~, if given only one object, ~matplot~ assumes it's the ~y~ variable
+   and uses the indices for ~x~. However, ~x~ and ~y~ can be specified explicitly.
 
 #+begin_src R
-  matplot(x = seq(0, 10, length.out = 100), y = xmat, type='l')
+  matplot(x=seq(0, 10, length.out=100), y=xmat, type='l')
 #+end_src
 
    In fact, both ~x~ and ~y~ can be matrices.
 
 #+begin_src R
-  xes <- cbind(seq(0, 10, length.out = 100),
-               seq(2.5, 12.5, length.out = 100),
-               seq(5, 15, length.out = 100),
-               seq(7.5, 17.5, length.out = 100))
+  xes <- cbind(seq(0, 10, length.out=100),
+               seq(2.5, 12.5, length.out=100),
+               seq(5, 15, length.out=100),
+               seq(7.5, 17.5, length.out=100))
 
   matplot(x = xes, y = xmat, type = 'l')
 #+end_src
+
+[[./images/chp26.6_plots4.png]]
 
 ** Section 26.7: Empirical Cumulative Distribution Function
 
@@ -265,10 +290,9 @@ hist(ldeaths, breaks = 20, freq = F, col = 3)
    ~ecdf()~ for this purpose. A basic plot produced by the command
 
 #+begin_src R
-  plot(ecdf(rnorm(100)),main="Cumulative distribution",xlab="x")
+  plot(ecdf(rnorm(100)), main="Cumulative distribution", xlab="x")
 #+end_src
 
    would look like
 
-
-
+[[./images/chp26.7_plots.png]]
