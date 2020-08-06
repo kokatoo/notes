@@ -109,6 +109,8 @@
 
 *** 5.2.4 Character functions
 
+**** Description
+
 | Function                                                       | Description                                                                                                                                                        |
 |----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ~nchar(x)~                                                     | Counts the number of characters of ~x~.                                                                                                                            |
@@ -120,16 +122,18 @@
 | ~toupper(x)~                                                   | Uppercase                                                                                                                                                          |
 | ~tolower(x)~                                                   | Lowercase                                                                                                                                                          |
 
-| Function                                                      | Example                                                   |
-|---------------------------------------------------------------+-----------------------------------------------------------|
-| ~nchar(x)~                                                    | ~nchar("fghij")~ returns ~5~.                             |
-| ~substr(x, start, stop)~                                      | ~substr("abcdef", 2, 4)~ returns ~bcd~.                   |
-| ~grep(pattern, x,ignore.case=FALSE, fixed=FALSE~              | ~grep("A", c("b","A","c"), fixed=TRUE)~ returns ~2~.      |
-| ~sub(pattern, replacement,x, ignore.case=FALSE, fixed=FALSE)~ | ~sub("\\s",".","Hello There")~ returns ~Hello.There.~     |
-| ~strsplit(x, split, fixed=FALSE)~                             | ~y <- strsplit("abc", "")~ returns ~c("a", "b", "c")~     |
-| ~paste(..., sep="")~                                          | ~paste("x", 1:3, sep="M")~ returns ~c("xM1","xM2" "xM3")~ |
-| ~toupper(x)~                                                  |                                                           |
-| ~tolower(x)~                                                  |                                                           |
+**** Example
+
+| Function                                                       | Example                                                   |
+|----------------------------------------------------------------+-----------------------------------------------------------|
+| ~nchar(x)~                                                     | ~nchar("fghij")~ returns ~5~.                             |
+| ~substr(x, start, stop)~                                       | ~substr("abcdef", 2, 4)~ returns ~bcd~.                   |
+| ~grep(pattern, x, ignore.case=FALSE, fixed=FALSE~              | ~grep("A", c("b","A","c"), fixed=TRUE)~ returns ~2~.      |
+| ~sub(pattern, replacement, x, ignore.case=FALSE, fixed=FALSE)~ | ~sub("\\s",".","Hello There")~ returns ~Hello.There.~     |
+| ~strsplit(x, split, fixed=FALSE)~                              | ~y <- strsplit("abc", "")~ returns ~c("a", "b", "c")~     |
+| ~paste(..., sep="")~                                           | ~paste("x", 1:3, sep="M")~ returns ~c("xM1","xM2" "xM3")~ |
+| ~toupper(x)~                                                   |                                                           |
+| ~tolower(x)~                                                   |                                                           |
 
 *** 5.2.5 Other useful functions
 
