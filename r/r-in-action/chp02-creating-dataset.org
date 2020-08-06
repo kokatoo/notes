@@ -112,6 +112,14 @@
 #+begin_src R
   mydata <- data.frame(age=numeric(0), gender=character(0), weight=numeric(0))
   mydata <- edit(mydata) # same as fix(mydata)
+
+  mydatatxt <- "
+  age gender weight
+  25 m 166
+  30 f 115
+  18 f 120
+  "
+  mydata <- read.table(header=TRUE, text=mydatatxt)
 #+end_src
 
 *** 2.3.2 Importing data from a delimited text file
@@ -121,6 +129,17 @@
                        row.names="StudentID", sep=",", stringsAsFactors=FALSE,
                        colClasses=c("character", "character", "character", "numeric", "numeric", "numeric"))
 #+end_src
+
+**** Importing data via connections
+
+     The following functions can be used in place of filename for
+     ~read.table()~:
+
+| Functions                                     | Comment                                                           |
+|-----------------------------------------------+-------------------------------------------------------------------|
+| ~file()~                                      | allows you to access files, clipboard, and C-level standard input |
+| ~gzfile()~, ~bzfile()~, ~xzfile()~, ~unzip()~ | access compresed files                                            |
+| ~url()~                                       | access online files                                               |
 
 *** 2.3.3 Importing data from Excel
 
@@ -142,7 +161,7 @@
   close(myconn)
 #+end_src
 
-    Using SQLite([[https://db.rstudio.com/databases/sqlite/][Ex]]):
+    Using SQLite ([[https://db.rstudio.com/databases/sqlite/][Ex]]):
 
 #+begin_src R
   install.packages("RSQLite")
@@ -173,19 +192,19 @@
 
 *** 2.5 Useful functions for working with data objects
 
-| Function                   | Comment                                                                       |
-|----------------------------+-------------------------------------------------------------------------------|
-| ~length(obj)~              | Gives the number of elements.                                                 |
-| ~dim(obj)~                 | Gives the dimensions of an obj.                                               |
-| ~str(obj)~                 | Gives the structure of an obj.                                                |
-| ~class(obj)~               | Gives the class of an obj.                                                    |
-| ~mode(obj)~                | Determines how an obj is stored.                                              |
-| ~names(obj)~               | Gives the names of components in an obj.                                      |
-| ~c(obj, obj, ...)~         | Combines objs into a vector.                                                  |
-| ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                     |
-| ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                        |
-| ~head(obj)~                | Lists the first part of an obj.                                               |
-| ~tail(obj)~                | Lists the last part of an obj.                                                |
-| ~rm(obj, obj, ...)~        | The statement rm(list = ls()) removes most objs from the working environment. |
-| ~newobj <- edit(obj)~      | Edits obj.                                                                    |
-| ~fix(obj)~                 | Edits an obj in place.                                                        |
+| Function                   | Comment                                                                         |
+|----------------------------+---------------------------------------------------------------------------------|
+| ~length(obj)~              | Gives the number of elements.                                                   |
+| ~dim(obj)~                 | Gives the dimensions of an obj.                                                 |
+| ~str(obj)~                 | Gives the structure of an obj.                                                  |
+| ~class(obj)~               | Gives the class of an obj.                                                      |
+| ~mode(obj)~                | Determines how an obj is stored.                                                |
+| ~names(obj)~               | Gives the names of components in an obj.                                        |
+| ~c(obj, obj, ...)~         | Combines objs into a vector.                                                    |
+| ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                       |
+| ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                          |
+| ~head(obj)~                | Lists the first part of an obj.                                                 |
+| ~tail(obj)~                | Lists the last part of an obj.                                                  |
+| ~rm(obj, obj, ...)~        | The statement ~rm(list = ls())~ removes most objs from the working environment. |
+| ~newobj <- edit(obj)~      | Edits obj.                                                                      |
+| ~fix(obj)~                 | Edits an obj in place.                                                          |
