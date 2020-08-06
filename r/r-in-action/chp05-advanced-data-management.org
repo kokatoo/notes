@@ -20,7 +20,7 @@
 | ~acos(x)~, ~asin(x)~, ~atan(x)~    | Arc-cosine, arc-sine, and arc-tangent                                                                |
 | ~cosh(x)~, ~sinh(x)~, ~tanh(x)~    | Hyperbolic cosine, sine, and tangent                                                                 |
 | ~acosh(x)~, ~asinh(x)~, ~atanh(x)~ | Hyperbolic arc-cosine, arc-sine, and arc-tangent                                                     |
-| ~log(x,base=n)~                    | Logarithm of x to the base n. ~log(x)~ is the natural logarithm. ~log10(x)~ is the common logarithm. |
+| ~log(x, base=n)~                   | Logarithm of x to the base n. ~log(x)~ is the natural logarithm. ~log10(x)~ is the common logarithm. |
 
 *** 5.2.2 Statistical functions
 
@@ -49,20 +49,20 @@
 
 **** Discrete Distribution
 
-| Distribution         | Function |
-|----------------------+----------|
-| Binomial             | ~binom~  |
+| Distribution         | Function   |
+|----------------------+------------|
+| Binomial             | ~binom~    |
 | Multinomial          | ~multinom~ |
-| Negative binomial    | ~nbinom~ |
-| Poisson              | ~pois~   |
-| Geometric            | ~geom~   |
-| Hypergeometric       | ~hyper~  |
+| Negative binomial    | ~nbinom~   |
+| Poisson              | ~pois~     |
+| Geometric            | ~geom~     |
+| Hypergeometric       | ~hyper~    |
 | Wilcoxon signed rank | ~signrank~ |
-| Wilcoxon rank sum    | ~wilcox~ |
+| Wilcoxon rank sum    | ~wilcox~   |
 
 **** Continuous Distribution
 
-| Distribution             | Abbrev    |
+| Distribution             | Function  |
 |--------------------------+-----------|
 | Beta                     | ~beta~    |
 | Cauchy                   | ~cauchy~  |
@@ -109,16 +109,27 @@
 
 *** 5.2.4 Character functions
 
-| Function                                                      | Example                                                   | Description                                                                                                                                                        |
-|---------------------------------------------------------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ~nchar(x)~                                                    | ~nchar("fghij")~ returns ~5~.                             | Counts the number of characters of ~x~.                                                                                                                            |
-| ~substr(x, start, stop)~                                      | ~substr("abcdef", 2, 4)~ returns ~bcd~.                   | Extracts or replaces substrings in a character                                                                                                                     |
-| ~grep(pattern, x,ignore.case=FALSE, fixed=FALSE~              | ~grep("A", c("b","A","c"), fixed=TRUE)~ returns ~2~.      | Searches for pattern in ~x~. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string. Returns the matching indices. |
-| ~sub(pattern, replacement,x, ignore.case=FALSE, fixed=FALSE)~ | ~sub("\\s",".","Hello There")~ returns ~Hello.There.~     | Finds pattern in x and substitutes the replacement text. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.   |
-| ~strsplit(x, split, fixed=FALSE)~                             | ~y <- strsplit("abc", "")~ returns ~c("a", "b", "c")~     | Splits the elements of character vector ~x~ at split. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.      |
-| ~paste(..., sep="")~                                          | ~paste("x", 1:3, sep="M")~ returns ~c("xM1","xM2" "xM3")~ | Concatenates strings after using the sep string to separate them.                                                                                                  |
-| ~toupper(x)~                                                  |                                                           | Uppercase                                                                                                                                                          |
-| ~tolower(x)~                                                  |                                                           | Lowercase                                                                                                                                                          |
+| Function                                                       | Description                                                                                                                                                        |
+|----------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~nchar(x)~                                                     | Counts the number of characters of ~x~.                                                                                                                            |
+| ~substr(x, start, stop)~                                       | Extracts or replaces substrings in a character                                                                                                                     |
+| ~grep(pattern, x, ignore.case=FALSE, fixed=FALSE~              | Searches for pattern in ~x~. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string. Returns the matching indices. |
+| ~sub(pattern, replacement, x, ignore.case=FALSE, fixed=FALSE)~ | Finds pattern in x and substitutes the replacement text. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.   |
+| ~strsplit(x, split, fixed=FALSE)~                              | Splits the elements of character vector ~x~ at split. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.      |
+| ~paste(..., sep="")~                                           | Concatenates strings after using the sep string to separate them.                                                                                                  |
+| ~toupper(x)~                                                   | Uppercase                                                                                                                                                          |
+| ~tolower(x)~                                                   | Lowercase                                                                                                                                                          |
+
+| Function                                                      | Example                                                   |
+|---------------------------------------------------------------+-----------------------------------------------------------|
+| ~nchar(x)~                                                    | ~nchar("fghij")~ returns ~5~.                             |
+| ~substr(x, start, stop)~                                      | ~substr("abcdef", 2, 4)~ returns ~bcd~.                   |
+| ~grep(pattern, x,ignore.case=FALSE, fixed=FALSE~              | ~grep("A", c("b","A","c"), fixed=TRUE)~ returns ~2~.      |
+| ~sub(pattern, replacement,x, ignore.case=FALSE, fixed=FALSE)~ | ~sub("\\s",".","Hello There")~ returns ~Hello.There.~     |
+| ~strsplit(x, split, fixed=FALSE)~                             | ~y <- strsplit("abc", "")~ returns ~c("a", "b", "c")~     |
+| ~paste(..., sep="")~                                          | ~paste("x", 1:3, sep="M")~ returns ~c("xM1","xM2" "xM3")~ |
+| ~toupper(x)~                                                  |                                                           |
+| ~tolower(x)~                                                  |                                                           |
 
 *** 5.2.5 Other useful functions
 
