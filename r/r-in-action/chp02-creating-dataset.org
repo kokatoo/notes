@@ -1,0 +1,6 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 2: Creating a dataset
+
+
