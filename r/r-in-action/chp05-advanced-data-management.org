@@ -1,0 +1,331 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 5: Advanced data management
+
+** Section 5.2 Numerical and character functions
+
+*** 5.2.1 Mathematical functions
+
+| Function                           | Description                                                                                          |
+|------------------------------------+------------------------------------------------------------------------------------------------------|
+| ~abs(x)~                           | Absolute value                                                                                       |
+| ~sqrt(x)~                          | Square root                                                                                          |
+| ~ceiling(x)~                       | Smallest integer not less than ~x~                                                                   |
+| ~floor(x)~                         | Largest integer not greater than ~x~                                                                 |
+| ~trunc(x)~                         | Integer formed by truncating values in ~x~ toward 0                                                  |
+| ~round(x, digits=n)~               | Rounds ~x~ to the specified number of decimal places                                                 |
+| ~signif(x, digits=n)~              | Rounds ~x~ to the specified number of significant digits                                             |
+| ~cos(x)~, ~sin(x)~, ~tan(x)~       | Cosine, sine, and tangent                                                                            |
+| ~acos(x)~, ~asin(x)~, ~atan(x)~    | Arc-cosine, arc-sine, and arc-tangent                                                                |
+| ~cosh(x)~, ~sinh(x)~, ~tanh(x)~    | Hyperbolic cosine, sine, and tangent                                                                 |
+| ~acosh(x)~, ~asinh(x)~, ~atanh(x)~ | Hyperbolic arc-cosine, arc-sine, and arc-tangent                                                     |
+| ~log(x,base=n)~                    | Logarithm of x to the base n. ~log(x)~ is the natural logarithm. ~log10(x)~ is the common logarithm. |
+
+*** 5.2.2 Statistical functions
+
+| Function                            | Description                                                                     |
+|-------------------------------------+---------------------------------------------------------------------------------|
+| ~mean(x)~                           | Mean                                                                            |
+| ~median(x)~                         | Median                                                                          |
+| ~sd(x)~                             | Standard deviation                                                              |
+| ~var(x)~                            | Variance                                                                        |
+| ~mad(x)~                            | Median absolute deviation                                                       |
+| ~quantile(x, probs)~                | Quantiles. ~y <- quantile(x, c(.27, .75))~                                      |
+| ~range(x)~                          | Return the min and max                                                          |
+| ~diff(x, lag=n)~                    | Lagged differences, with lag indicating which lag to use. The default lag is 1. |
+| ~min(x)~                            | Minimum                                                                         |
+| ~max(x)~                            | Maximum                                                                         |
+| ~scale(x, center=TRUE, scale=TRUE)~ | Column center (center=TRUE) or standardize (center=TRUE, scale=TRUE)            |
+
+*** 5.2.3 Probability functions
+
+| Abbrev | Comment               |
+|--------+-----------------------|
+| d      | density               |
+| p      | distribution function |
+| q      | quantile function     |
+| r      | random generation     |
+
+**** Discrete Distribution
+
+| Distribution         | Function |
+|----------------------+----------|
+| Binomial             | ~binom~  |
+| Multinomial          | ~multinom~ |
+| Negative binomial    | ~nbinom~ |
+| Poisson              | ~pois~   |
+| Geometric            | ~geom~   |
+| Hypergeometric       | ~hyper~  |
+| Wilcoxon signed rank | ~signrank~ |
+| Wilcoxon rank sum    | ~wilcox~ |
+
+**** Continuous Distribution
+
+| Distribution             | Abbrev    |
+|--------------------------+-----------|
+| Beta                     | ~beta~    |
+| Cauchy                   | ~cauchy~  |
+| Chi-squared (noncentral) | ~chisq~   |
+| Exponential              | ~exp~     |
+| F                        | ~f~       |
+| Logistic                 | ~logis~   |
+| Lognormal                | ~lnorm~   |
+| Normal                   | ~norm~    |
+| Gamma                    | ~gamma~   |
+| T                        | ~t~       |
+| Uniform                  | ~unif~    |
+| Weibull                  | ~weibull~ |
+
+#+begin_src R
+  x <- pretty(c(-3, 3), 30)
+  y <- dnorm(x)
+
+  plot(x, y, typ ="l", xlab="Normal Deviate", ylab="Density", yaxs="i" )
+  
+  pnorm(1.96)
+  qnorm(.9, mean=500, sd=100)
+  rnorm(50, mean=50, sd=10)
+#+end_src
+
+**** Generating Multivariate Normal Data
+
+#+begin_src R
+  library(MASS)
+
+  options(digits=3)
+  set.seed(1234)
+
+  mean <- c(230.7, 146.7, 3.6)
+  sigma <- matrix(c(15360.8, 6721.2, -47.1,
+                    6721.2, 4700.9, -16.5,
+                    -47.1, -16.5, 0.3),
+                  nrow=3, ncol=3)
+
+  mydata <- mvrnorm(500, mean, sigma)
+  mydata <- as.data.frame(mydata)
+  names(mydata) <- c("y", "x1", "x2")
+#+end_src
+
+*** 5.2.4 Character functions
+
+| Function                                                      | Example                                                   | Description                                                                                                                                                        |
+|---------------------------------------------------------------+-----------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~nchar(x)~                                                    | ~nchar("fghij")~ returns ~5~.                             | Counts the number of characters of ~x~.                                                                                                                            |
+| ~substr(x, start, stop)~                                      | ~substr("abcdef", 2, 4)~ returns ~bcd~.                   | Extracts or replaces substrings in a character                                                                                                                     |
+| ~grep(pattern, x,ignore.case=FALSE, fixed=FALSE~              | ~grep("A", c("b","A","c"), fixed=TRUE)~ returns ~2~.      | Searches for pattern in ~x~. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string. Returns the matching indices. |
+| ~sub(pattern, replacement,x, ignore.case=FALSE, fixed=FALSE)~ | ~sub("\\s",".","Hello There")~ returns ~Hello.There.~     | Finds pattern in x and substitutes the replacement text. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.   |
+| ~strsplit(x, split, fixed=FALSE)~                             | ~y <- strsplit("abc", "")~ returns ~c("a", "b", "c")~     | Splits the elements of character vector ~x~ at split. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.      |
+| ~paste(..., sep="")~                                          | ~paste("x", 1:3, sep="M")~ returns ~c("xM1","xM2" "xM3")~ | Concatenates strings after using the sep string to separate them.                                                                                                  |
+| ~toupper(x)~                                                  |                                                           | Uppercase                                                                                                                                                          |
+| ~tolower(x)~                                                  |                                                           | Lowercase                                                                                                                                                          |
+
+*** 5.2.5 Other useful functions
+
+| Function                                 | Description                                                                                                                                            |
+|------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~length(x)~                              | Returns the length of object ~x~.                                                                                                                      |
+| ~seq(from, to, by)~                      | Generates a sequence                                                                                                                                   |
+| ~rep(x, n)~                              | Repeat ~x~ ~n~ times                                                                                                                                   |
+| ~cut(x, n)~                              | Divides the continuous variable ~x~ into a factor with n levels. To cre- ate an ordered factor, include the option ordered_result = TRUE.              |
+| ~pretty(x, n)~                           | Creates pretty breakpoints. Divides a continuous variable x into n intervals by selecting n + 1 equally spaced rounded values. Often used in plotting. |
+| ~cat(... , file="myfile", append=FALSE)~ | Concatenates the objects in … and outputs them to the screen or to a file (if one is declared).                                                        |
+
+*** 5.2.6 Applying functions to matrices and data frames
+
+#+begin_src R
+  > a <- 5
+  > sqrt(a)
+  [1] 2.236068
+
+  > b <- c(1.243, 5.654, 2.99)
+  > round(b)
+  [1] 1 6 3
+
+  > c <- matrix(runif(12), nrow=3)
+  > log(c)
+         [,1]   [,2]   [,3]   [,4]
+  [1,] -0.866 -1.036 -0.358 -1.130
+  [2,] -3.614 -0.508 -1.711 -0.077
+  [3,] -0.403 -1.144 -0.513 -1.538
+  > mean(c)
+  [1] 0.444
+#+end_src
+
+#+begin_src R
+  > mydata <- matrix(rnorm(30), nrow=6)
+
+  # calculate row means
+  > apply(mydata, 1, mean)
+  [1] -0.155 -0.504 -0.511 0.154 -0.310 0.165
+
+  # calculate column means
+  > apply(mydata, 2, mean)
+  [1] -0.2907 0.0449 -0.5688 -0.3442 0.1906
+  > apply(mydata, 2, mean, trim=0.2)
+  [1] -0.1699 0.0127 -0.6475 -0.6575 0.2312
+#+end_src
+
+** 5.3 A solution for the data-management challenge
+
+#+begin_src R
+  options(digits=2)
+
+  Student <- c("John Davis", "Angela Williams", "Bullwinkle Moose",
+               "David Jones", "Janice Markhammer", "Cheryl Cushing",
+               "Reuven Ytzrhak", "Greg Knox", "Joel England", "Mary Rayburn")
+  Math <- c(502, 600, 412, 358, 495, 512, 410, 625, 573, 522)
+  Science <- c(95, 99, 80, 82, 75, 85, 80, 95, 89, 86)
+  English <- c(25, 22, 18, 15, 20, 28, 15, 30, 27, 18)
+  roster <- data.frame(Student, Math, Science, English, stringsAsFactors=FALSE)
+
+  z <- scale(roster[,2:4])
+  score <- apply(z, 1, mean
+                 roster <- cbind(roster, score)
+
+  y <- quantile(score, c(.8,.6,.4,.2))
+
+  roster$grade[score >= y[1]] <- "A"
+  roster$grade[score < y[1] & score >= y[2]] <- "B"
+  roster$grade[score < y[2] & score >= y[3]] <- "C"
+  roster$grade[score < y[3] & score >= y[4]] <- "D"
+  roster$grade[score < y[4]] <- "F"
+
+  name <- strsplit((roster$Student), " ")
+  Lastname <- sapply(name, "[", 2)
+  Firstname <- sapply(name, "[", 1)
+  roster <- cbind(Firstname, Lastname, roster[,-1])
+  roster <- roster[order(Lastname, Firstname),]
+#+end_src
+
+** Section 5.4 Control flow
+
+*** 5.4.1 Repetition and looping
+
+#+begin_src R
+  for (i in 1:10) print("Hello")
+
+  i <- 10
+  while (i > 0) {
+    print("Hello")
+    i <- i - 1
+  }
+#+end_src
+
+*** 5.4.2 Conditional execution
+
+#+begin_src R
+  if (!is.factor(grade)) 
+    grade <- as.factor(grade)
+  else
+    print("Grade already is a factor")
+
+  ifelse(score > 0.5, print("Passed"), print("Failed"))
+
+  switch(i,
+         happy = "I am glad you are happy",
+         afraid = "There is nothing to fear",
+         sad = "Cheer up",
+         angry = "Calm down now")
+#+end_src
+
+*** 5.5 User-written functions
+
+#+begin_src R
+  mystats <- function(x, parametric=TRUE, print=FALSE) {
+
+    if (parametric) {
+      center <- mean(x)
+      spread <- sd(x)
+    } else {
+      center <- median(x)
+      spread <- mad(x)
+    }
+
+    if (print & parametric) {
+      cat("Mean=", center, "\n", "SD=", spread, "\n")
+    } else if (print & !parametric) {
+      cat("Median=", center, "\n", "MAD=", spread, "\n")
+    } 
+
+    result <- list(center=center, spread=spread)
+    return(result)
+  }
+#+end_src
+
+** Section 5.6 Aggregation and reshaping
+
+*** 5.6.1 Transpose
+
+#+begin_src R
+  cars <- mtcars[1:5,1:4]
+  t(cars)
+#+end_src
+
+*** 5.6.2 Aggregating data
+
+#+begin_src R
+  options(digits=3)
+
+  with(mtcars, {
+    aggdata <<- aggregate(mtcars, by=list(cyl,gear), FUN=mean, na.rm=TRUE)
+  })
+#+end_src
+
+*** 5.6.3 The reshape2 package
+
+#+begin_src R
+  mydatatxt <- "
+  ID Time X1 X2
+  1 1 5 6
+  1 2 3 5
+  2 1 6 1
+  2 2 2 4
+  "
+  mydata <- read.table(header=TRUE, text=mydatatxt)
+
+  library(reshape2)
+  md <- melt(mydata, id=c("ID", "Time"))  
+#+end_src
+
+**** With aggregation
+
+#+begin_src R
+  > dcast(md, ID~variable, mean)
+    ID X1  X2
+  1  1  4 5.5
+  2  2  4 2.5
+
+  > dcast(md, Time~variable, mean)
+    Time  X1  X2
+  1    1 5.5 3.5
+  2    2 2.5 4.5
+
+  > dcast(md, ID~Time, mean)
+    ID   1 2
+  1  1 5.5 4
+  2  2 3.5 3
+#+end_src
+
+**** Without aggregation
+
+#+begin_src R
+  > dcast(md, ID+Time~variable)
+    ID Time X1 X2
+  1  1    1  5  6
+  2  1    2  3  5
+  3  2    1  6  1
+  4  2    2  2  4
+
+  > dcast(md, ID+variable~Time)
+    ID variable 1 2
+  1  1       X1 5 3
+  2  1       X2 6 5
+  3  2       X1 6 2
+  4  2       X2 1 4
+
+  > dcast(md, ID~variable+Time)
+    ID X1_1 X1_2 X2_1 X2_2
+  1  1    5    3    6    5
+  2  2    6    2    1    4
+#+end_src

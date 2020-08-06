@@ -1,0 +1,188 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 4: Basic data management
+
+#+begin_src R
+  manager <- c(1, 2, 3, 4, 5)
+  date <- c("10/24/08", "10/28/08", "10/1/08", "10/12/08", "5/1/09")
+  country <- c("US", "US", "UK", "UK", "UK")
+  gender <- c("M", "F", "F", "M", "F")
+  age <- c(32, 45, 25, 39, 99)
+
+  q1 <- c(5, 3, 3, 3, 2)
+  q2 <- c(4, 5, 5, 3, 2)
+  q3 <- c(5, 2, 5, 4, 1)
+  q4 <- c(5, 5, 5, NA, 2)
+  q5 <- c(5, 5, 2, NA, 1)
+
+  leadership <- data.frame(manager, date, country, gender, age, 
+                           q1, q2, q3, q4, q5, stringsAsFactors=FALSE)
+#+end_src
+
+** Section 4.2 Creating new variables
+
+#+begin_src R
+  mydata <- data.frame(x1=c(2, 2, 6, 4), x2=c(3, 4, 2, 8))
+  
+  # create sumx and meanx variables
+  mydata <- transform(mydata, sumx = x1 + x2, meanx = (x1 + x2)/2)
+#+end_src
+
+** Section 4.3 Recoding variables
+
+#+begin_src R
+  leadership <- within(leadership, {
+    agecat <- NA
+    agecat[age > 75] <- "Elder"
+    agecat[age >= 55 & age <= 75] <- "Middle Aged"
+    agecat[age < 55] <- "Young"
+  })
+#+end_src
+
+** Section 4.4 Renaming variables
+
+#+begin_src R
+  names(leadership)[6:10] <- c("item1", "item2", "item3", "item4", "item5")
+
+  library(plyr)
+  leadership <- rename(leadership, c(manager="managerID", date="testDate"))
+#+end_src
+
+** Section 4.5 Missing values
+
+#+begin_src R
+  is.na(leadership[,6:10])
+#+end_src
+
+*** 4.5.1 Recoding values to missing
+
+#+begin_src R
+  leadership$age[leadership$age == 99] <- NA
+#+end_src
+
+*** 4.5.2 Excluding missing values from analyses
+
+#+begin_src R
+  y <- sum(x, na.rm=TRUE)
+
+  newdata <- na.omit(leadership) # data frame with complete cases only
+#+end_src
+
+** Section 4.6 Date values
+
+| Symbol | Meaning                | Example |
+|--------+------------------------+---------|
+| ~%d~   | Day as a number (0–31) | 01–31   |
+| ~%a~   | Abbreviated weekday    | Mon     |
+| ~%A~   | Unabbreviated weekday  | Monday  |
+| ~%m~   | Month (00–12)          | 00–12   |
+| ~%b~   | Abbreviated month      | Jan     |
+| ~%B~   | Unabbreviated month    | January |
+| ~%y~   | Two-digit year         | 07      |
+| ~%Y~   | Four-digit year        | 2007    |
+
+#+begin_src R
+  # default format is yyyy-mm-dd
+  mydates <- as.Date(c("2007-06-22", "2004-02-13"))
+
+  strDates <- c("01/05/1965", "08/16/1975")
+  dates <- as.Date(strDates, "%m/%d/%Y")
+
+  Sys.Date() # return today's date
+  date()     # returns the current date and time
+
+  format(Sys.Date(), format="%B %d %Y")
+  difftime(Sys.Date(), as.Date("1956-10-12"), units="weeks")
+#+end_src
+
+*** 4.6.1 Converting dates to character variables
+
+#+begin_src R
+  strDates <- as.character(c(as.Date("2004-02-13"), as.Date("2005-02-13")))
+#+end_src
+
+*** 4.6.2 Going further
+
+#+begin_src R
+  # converting character data to dates
+  help(as.Date)
+  help(stftime)
+
+  # formatting dates and times
+  help(ISOdate-time)
+  help(package="lubridate")
+
+  # complex calculation with dates
+  help(package="timeDate")
+#+end_src
+
+** Section 4.7 Type conversions
+
+| Test              | Convert           |
+|-------------------+-------------------|
+| ~is.numeric()~    | ~as.numeric()~    |
+| ~is.character()~  | ~as.character()~  |
+| ~is.vector()~     | ~as.vector()~     |
+| ~is.matrix()~     | ~as.matrix()~     |
+| ~is.data.frame()~ | ~as.data.frame()~ |
+| ~is.factor()~     | ~as.factor()~     |
+| ~is.logical()~    | ~as.logical()~    |
+
+** Section 4.8 Sorting data
+
+#+begin_src R
+  with(leadership, {
+    newdata <<- leadership[order(gender, age),]
+  })
+
+  with(leadership, {
+    newdata <<- leadership[order(gender, -age),]
+  })
+#+end_src
+
+** Section 4.9 Merging datasets
+
+#+begin_src R
+  total <- merge(dataframeA, dataframeB, by=c("ID","Country"))
+#+end_src
+
+** Section 4.10 Subsetting datasets
+
+*** 4.10.2 Excluding (dropping) variables
+
+#+begin_src R
+  myvars <- names(leadership) %in% c("q3", "q4")
+  newdata <- leadership[!myvars]
+
+  # equivalent to above
+  leadership$q3 <- leadership$q4 <- NULL
+#+end_src
+
+*** 4.10.4 The subset() function
+
+#+begin_src R
+  newdata <- subset(leadership, age >= 35 | age < 24, 
+                    select=c(q1, q2, q3, q4))
+
+  # keep variables from gender through q4
+  newdata <- subset(leadership, gender=="M" & age > 25, 
+                    select=gender:q4)
+#+end_src
+
+*** 4.10.5 Random samples
+
+#+begin_src R
+mysample <- leadership[sample(1:nrow(leadership), 3, replace=FALSE),]
+
+help(package="sampling")
+help(package="survey")
+#+end_src
+
+** 4.11 Using SQL statements to manipulate data frames
+
+#+begin_src R
+  library(sqldf)
+
+  newdf <- sqldf("select * from mtcars where carb=1 order by mpg", row.names=TRUE)
+#+end_src
