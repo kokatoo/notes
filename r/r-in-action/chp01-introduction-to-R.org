@@ -14,11 +14,11 @@
 | ~ls()~                |                                          |
 | ~rm()~                | ~rm(list=c("x", "y"))~                   |
 | ~help()~              | ~help(rm)~ or ~?rm~                      |
-| ~~options()~          | ~options()~, ~options(digits=3)~         |
-| ~history()~           | ~history(10)~ (default = 25)             |
-| ~savehistory("file")~ | (default = .Rhistory)                    |
-| ~loadhistory("file")~ | (default = .Rhistory)                    |
-| ~save.image("file")~  | (default = .RData)                       |
+| ~options()~           | ~options()~, ~options(digits=3)~         |
+| ~history()~           | ~history(10)~, default=25                |
+| ~savehistory("file")~ | default=.Rhistory                        |
+| ~loadhistory("file")~ | default=.Rhistory                        |
+| ~save.image("file")~  | default=.RData                           |
 | ~save()~              | ~save(list=c("x", "y"), file="~/r.out")~ |
 | ~load()~              | ~load("~/r.out")~                        |
 | ~q()~                 |                                          |
@@ -26,26 +26,18 @@
 
 *** 1.3.4 Input and output
 
-| Function   | Example                                    | Comment                                   |
-|------------+--------------------------------------------+-------------------------------------------|
-| ~source()~ | ~source("myscript.R")~                     | submits a script to current session       |
-| ~sink()~   | ~sink("~/r.out", append=TRUE, split=TRUE)~ | ~split=TRUE~ sends o/p to file and screen |
-| ~bmp()~    | ~bmp("file.bmp")~                          | use ~dev.off()~ to return o/p to screen   |
-| ~jpeg()~   | ~jpg("file.jpg")~                          | use ~dev.off()~ to return o/p to screen   |
-| ~png()~    | ~png("file.png")~                          | use ~dev.off()~ to return o/p to screen   |
-| ~svg()~    | ~svg("file.svg")~                          | use ~dev.off()~ to return o/p to screen   |
+| Function   | Example                                    | Comment                                      |
+|------------+--------------------------------------------+----------------------------------------------|
+| ~source()~ | ~source("myscript.R")~                     | submits a script to current session          |
+| ~sink()~   | ~sink("~/r.out", append=TRUE, split=TRUE)~ | ~split=TRUE~ sends output to file and screen |
+| ~bmp()~    | ~bmp("file.bmp")~                          | use ~dev.off()~ to return output to screen   |
+| ~jpeg()~   | ~jpg("file.jpg")~                          | use ~dev.off()~ to return output to screen   |
+| ~png()~    | ~png("file.png")~                          | use ~dev.off()~ to return output to screen   |
+| ~svg()~    | ~svg("file.svg")~                          | use ~dev.off()~ to return output to screen   |
 
 ** Section 1.4 Packages
 
-   Standard Packages: base, datasets, utils, grDevices, graphics, stats, and methods
-
-| Function               | Comment                        |
-|------------------------+--------------------------------|
-| ~.libPaths()~          | shows where library is located |
-| ~library()~            | current installed packages     |
-| ~search()~             | current loaded packages        |
-| ~update.packages()~    |                                |
-| ~help(package="stat")~ | or ~library(help="stats")~     |
+   Standard Packages: ~base~, ~datasets~, ~utils~, ~grDevices~, ~graphics~, ~stats~, and ~methods~
 
    To set up your default CRAN mirror site include this in ~.Rprofile~:
 
@@ -56,6 +48,15 @@
     options(repos=r)
   })
 #+end_src
+
+| Function               | Comment                        |
+|------------------------+--------------------------------|
+| ~.libPaths()~          | shows where library is located |
+| ~library()~            | current installed packages     |
+| ~search()~             | current loaded packages        |
+| ~update.packages()~    | update current packages        |
+| ~help(package="stat")~ | or ~library(help="stats")~     |
+
 
 ** Section 1.5 Batch processing
 
