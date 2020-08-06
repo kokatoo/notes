@@ -3,4 +3,189 @@
 
 * Chapter 2: Creating a dataset
 
+** Section 2.2 Data structures
 
+*** 2.2.1 Vectors
+
+#+begin_src R
+  a <- c(1, 2, 5, 3, 6, -2, 4)
+  b <- c("one", "two", "three")
+  c <- c(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE)
+#+end_src
+
+*** 2.2.2 Matrices
+
+#+begin_src R
+  y <- matrix(1:20, nrow=5, ncol=4)
+
+  cells <- c(1, 26, 24, 68)
+  rnames <- c("R1", "R2")
+  cnames <- c("C1", "C2")
+
+  mymatrix <- matrix(cells, nrow=2, ncol=2, byrow=TRUE,
+                       dimnames=list(rnames, cnames))
+  > mymatrix
+       C1 C2
+    R1  1 26
+    R2 24 68
+
+  > x <- matrix(1:10, nrow=2)
+  > x
+        [,1] [,2] [,3] [,4] [,5]
+   [1,]    1   3     5    7    9
+   [2,]    2   4     6    8   10
+  > x[2,]
+  [1] 3 4
+  > x[,2]
+  [1] 3 4
+#+end_src
+
+*** 2.2.3 Arrays
+
+    Similar to matrices but can have more than 2 dimensions.
+
+#+begin_src R
+  dim1 <- c("A1", "A2")
+  dim2 <- c("B1", "B2", "B3")
+  dim3 <- c("C1", "C2", "C3", "C4")
+  z <- array(1:24, c(2, 3, 4), dimnames=list(dim1, dim2, dim3))
+#+end_src
+
+*** 2.2.4 Data frames
+
+#+begin_src R
+  patientID <- c(1, 2, 3, 4)
+  age <- c(25, 34, 28, 52)
+  diabetes <- c("Type1", "Type2", "Type1", "Type1")
+  status <- c("Poor", "Improved", "Excellent", "Poor")
+  
+  patientdata <- data.frame(patientID, age, diabetes, status)
+#+end_src
+
+    ~attach()~ function adds the data frame to R search path. ~<<-~ allows
+    object to be saved outside of the ~with()~ call.
+
+#+begin_src R
+  attach(mtcars)
+  summary(mpg)
+  plot(mpg, disp)
+  plot(mpg, wt)
+  detach(mtcars)
+
+  with(mtcars, {
+    stats <- summary(mpg)
+    keepstats <<- summary(mpg)
+    plot(mpg, disp)
+    plot(mpg, wt)})
+#+end_src
+
+*** 2.2.5 Factors
+
+#+begin_src R
+  status <- c("P", "I", "E", "P")
+  status <- factor(status, order=TRUE,
+                 levels=c("P", "I", "E")
+                 labels=c("Poor", "Improved", "Excellent"))
+#+end_src
+
+*** 2.2.6 List
+
+#+begin_src R
+  g <- "My First List"
+  h <- c(25, 26, 18, 39)
+  j <- matrix(1:10, nrow=5)
+  k <- c("one", "two", "three")
+  mylist <- list(title=g, ages=h, j, k)
+
+  > mylist[[2]]
+  [1] 25 26 18 39
+  > mylist[["ages"]]
+  [[1] 25 26 18 39
+  > mylist$ages
+  [[1] 25 26 18 39
+#+end_src
+
+** Section 2.3 Data input
+
+*** 2.3.1 Entering data from the keyboard
+
+#+begin_src R
+  mydata <- data.frame(age=numeric(0), gender=character(0), weight=numeric(0))
+  mydata <- edit(mydata) # same as fix(mydata)
+#+end_src
+
+*** 2.3.2 Importing data from a delimited text file
+
+#+begin_src R
+  grades <- read.table("studentgrades.csv", header=TRUE,
+                       row.names="StudentID", sep=",", stringsAsFactors=FALSE,
+                       colClasses=c("character", "character", "character", "numeric", "numeric", "numeric"))
+#+end_src
+
+*** 2.3.3 Importing data from Excel
+
+#+begin_src R
+  library(xlsx)
+
+  workbook <- "~/myworkbook.xlsx"
+  mydataframe <- read.xlsx(workbook, 1)
+#+end_src
+
+*** 2.3.11 Accessing database management systems (DBMSs)
+
+#+begin_src R
+  library(RODBC)
+
+  myconn <- odbcConnect("mydsn", uid="Rob", pwd="aardvark")
+  crimedat <- sqlFetch(myconn, Crime)
+  pundat <- sqlQuery(myconn, "select * from Punishment")
+  close(myconn)
+#+end_src
+
+    Using SQLite([[https://db.rstudio.com/databases/sqlite/][Ex]]):
+
+#+begin_src R
+  install.packages("RSQLite")
+  library(DBI)
+
+  con <- dbConnect(RSQLite::SQLite(), ":memory:")
+
+  dbWriteTable(con, "mtcars", mtcars)
+  dbListTables(con)
+
+  dbListFields(con, "mtcars")
+  dbReadTable(con, "mtcars")
+
+  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl=4")
+  dbFetch(res)
+
+  dbClearResult(res)
+
+  # Or a chunk at a time
+  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl=4")
+  while(!dbHasCompleted(res)) {
+    chunk <- dbFetch(res, n=5)
+    print(nrow(chunk))
+  }
+
+  dbDisconnect(con)
+#+end_src
+
+*** 2.5 Useful functions for working with data objects
+
+| Function                   | Comment                                                                       |
+|----------------------------+-------------------------------------------------------------------------------|
+| ~length(obj)~              | Gives the number of elements.                                                 |
+| ~dim(obj)~                 | Gives the dimensions of an obj.                                               |
+| ~str(obj)~                 | Gives the structure of an obj.                                                |
+| ~class(obj)~               | Gives the class of an obj.                                                    |
+| ~mode(obj)~                | Determines how an obj is stored.                                              |
+| ~names(obj)~               | Gives the names of components in an obj.                                      |
+| ~c(obj, obj, ...)~         | Combines objs into a vector.                                                  |
+| ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                     |
+| ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                        |
+| ~head(obj)~                | Lists the first part of an obj.                                               |
+| ~tail(obj)~                | Lists the last part of an obj.                                                |
+| ~rm(obj, obj, ...)~        | The statement rm(list = ls()) removes most objs from the working environment. |
+| ~newobj <- edit(obj)~      | Edits obj.                                                                    |
+| ~fix(obj)~                 | Edits an obj in place.                                                        |
