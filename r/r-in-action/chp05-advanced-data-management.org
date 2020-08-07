@@ -293,7 +293,9 @@
     result <- list(center=center, spread=spread)
     return(result)
   }
+#+end_src
 
+#+begin_src R
   mydate <- function(type="long") {
     switch(type,
            long = format(Sys.time(), "%A %B %d %Y"),

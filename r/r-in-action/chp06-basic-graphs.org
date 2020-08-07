@@ -10,9 +10,10 @@
 #+begin_src R
   library(vcd)
 
+  par(mfrow(c(1,2))
+
   counts <- table(Arthritis$Improved)
 
-  par(mfrow(c(1,2))
   barplot(counts, main="Simple Bar Plot",
           xlab="Improvement", ylab="Frequency")
   barplot(counts, main="Horizontal Bar Plot",
@@ -84,7 +85,7 @@
 #+begin_src R
   par(mfrow=c(2, 2))
 
-  slices <- c(10, 12,4, 16, 8)
+  slices <- c(10, 12, 4, 16, 8)
   lbls <- c("US", "UK", "Australia", "Germany", "France")
 
   pie(slices, labels=lbls, main="Simple Pie Chart")
@@ -112,7 +113,7 @@
 #+begin_src R
   library(plotrix)
 
-  slices <- c(10, 12,4, 16, 8)
+  slices <- c(10, 12, 4, 16, 8)
   lbls <- c("US", "UK", "Australia", "Germany", "France")
   fan.plot(slices, labels=lbls, main="Fan Plot")
 #+end_src
@@ -170,15 +171,18 @@
 #+begin_src R
   library(sm)
 
-  attach(mtcars)
-  cyl.f <- factor(cyl, levels= c(4, 6, 8),
-  labels = c("4 cylinder", "6 cylinder", "8 cylinder"))
+  with(mtcars, {
 
-  sm.density.compare(mpg, cyl, xlab="Miles Per Gallon")
-  title(main="MPG Distribution by Car Cylinders")
-  colfill <- c(2:(1 + length(levels(cyl.f))))
-  legend(locator(1), levels(cyl.f), fill=colfill)
-  detach(mtcars)
+    cyl.f <- factor(cyl, 
+                    levels=c(4, 6, 8),
+                    labels=c("4 cylinder", "6 cylinder", "8 cylinder"))
+
+    sm.density.compare(mpg, cyl, xlab="Miles Per Gallon")
+
+    title(main="MPG Distribution by Car Cylinders")
+    colfill <- c(2:(1 + length(levels(cyl.f))))
+    legend("topright", levels(cyl.f), fill=colfill)
+  })
 #+end_src
 
 [[./images/chp06.4_plot2.png]]
@@ -196,7 +200,14 @@
           xlab="Number of Cylinders", ylab="Miles Per Gallon")
 #+end_src
 
+
 [[./images/chp06.5_plot.png]]
+
+   The notch is the 95% confidence interval of the median. If two boxes' notches
+   don't overlap, there's strong evidence their medians differ.
+
+#+ATTR_ORG: :width 500
+[[./images/Notched_Box_Plot.jpg]]
 
 #+begin_src R
   mtcars$cyl.f <- factor(mtcars$cyl,
@@ -207,12 +218,15 @@
                         levels=c(0,1),
                         labels=c("auto", "standard"))
 
-  boxplot(mpg ~ am.f *cyl.f,
+  colfill <- c("gold","darkgreen")
+  boxplot(mpg ~ am.f * cyl.f,
           data=mtcars,
           varwidth=TRUE,
-          col=c("gold", "darkgreen"),
+          col=colfill,
           main="MPG Distribution by Auto Type",
           xlab="Auto Type", ylab="Miles Per Gallon")
+
+  legend("topright", levels(mtcars$am.f), fill=colfill)
 #+end_src
 
 [[./images/chp06.5_plot2.png]]
