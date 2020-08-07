@@ -26,7 +26,7 @@
   mydata <- data.frame(x1=c(2, 2, 6, 4), x2=c(3, 4, 2, 8))
   
   # create sumx and meanx variables
-  mydata <- transform(mydata, sumx = x1 + x2, meanx = (x1 + x2)/2)
+  mydata <- transform(mydata, sumx = x1+x2, meanx = (x1+x2)/2)
 #+end_src
 
 ** Section 4.3 Recoding variables
@@ -159,6 +159,17 @@
   leadership$q3 <- leadership$q4 <- NULL
 #+end_src
 
+*** 4.10.3 Selecting observations
+
+#+begin_src R
+  newdata <- leadership[1:3,]
+  newdata <- leadership[leadership$gender=="M" & leadership$age > 30,]
+
+  with(leadership, {
+    newdata <<- leadership[gender=='M' & age > 30,]
+  })
+#+end_src
+
 *** 4.10.4 The subset() function
 
 #+begin_src R
@@ -174,6 +185,7 @@
 
 #+begin_src R
 mysample <- leadership[sample(1:nrow(leadership), 3, replace=FALSE),]
+
 
 help(package="sampling")
 help(package="survey")
