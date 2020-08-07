@@ -17,12 +17,12 @@
 
 [[./images/chp03.2_plot.png]]
 
-*** 3.3.1 Symbols and ines
+*** 3.3.1 Symbols and lines
 
 | Parameter | Description                                                                                                                |
 |-----------+----------------------------------------------------------------------------------------------------------------------------|
 | ~pch~     | Specifies the symbol to use when plotting points.                                                                          |
-| ~cex~     | ~cex~ is symbol size expressed relative to the efault (1=default). ~cex=2~ generates a symbol twice as big as the default. |
+| ~cex~     | ~cex~ is symbol size expressed relative to the default (1=default). ~cex=2~ generates a symbol twice as big as the default. |
 | ~lty~     | Specifies the line type.                                                                                                   |
 | ~lwd~     | ~lwd~ is expressed relative to the default (1=default). ~lwd=2~ generates a line twice as wide as the default.             |
 
@@ -56,7 +56,12 @@
   n <- 7
   mycolors <- brewer.pal(n, "Set1")
   barplot(rep(1,n), col=mycolors)
+
+  # show all available palettes
+  display.brewer.all()
 #+end_src
+
+[[./images/chp03.3_plot4.png]]
 
 *** 3.3.3 Text characteristics
 
@@ -87,9 +92,8 @@
 *** 3.4.1 Titles
 
 #+begin_src R
-  title(main="My Title", col.main="red", sub="My Subtitle",
-        col.sub="blue", xlab="My X label", ylab="My Y label",
-        col.lab="green", cex.lab=0.75)
+  title(main="My Title", sub="My Subtitle", xlab="My X label", ylab="My Y label",
+        col.main="red", col.sub="blue", col.lab="green", cex.lab=0.75)
 #+end_src
 
 
@@ -151,6 +155,20 @@
 #+end_src
 
 ** Section 3.5 Combining graphs
+#+begin_src R
+  attach(mtcars)
+  
+  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE), 
+         widths=c(3, 1), heights=c(1, 2))
+  
+  hist(wt)
+  hist(mpg)
+  hist(disp)
+  
+  detach(mtcars)
+#+end_src
+
+[[./images/chp03.5_plots2.png]]
 
 #+begin_src R
   opar <- par(no.readonly=TRUE)
