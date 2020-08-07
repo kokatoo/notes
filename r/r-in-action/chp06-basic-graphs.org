@@ -206,8 +206,7 @@
    The notch is the 95% confidence interval of the median. If two boxes' notches
    don't overlap, there's strong evidence their medians differ.
 
-#+ATTR_ORG: :width 500
-[[./images/Notched_Box_Plot.jpg]]
+[[./images/Notched_Box_Plot.png]]
 
 #+begin_src R
   mtcars$cyl.f <- factor(mtcars$cyl,
