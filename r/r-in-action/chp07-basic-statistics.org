@@ -423,3 +423,149 @@
             Male            0.50000000 0.14285714 0.35714286 1.00000000
 #+end_src
 
+*** 7.2.2 Tests of independence
+
+**** Chi-square test of independence
+
+     
+
+#+begin_src R
+  library(vcd)
+
+  mytable <- xtabs( ~ Treatment+Improved, data=Arthritis)
+
+  > chisq.test(mytable)
+    Pearson's Chi-squared test
+
+  data:  mytable
+  X-squared = 13.055, df = 2, p-value = 0.001463
+
+  mytable <- xtabs(~Improved+Sex, data=Arthritis)
+
+  > chisq.test(mytable)
+    Pearson's Chi-squared test
+
+  data:  mytable
+  X-squared = 4.8407, df = 2, p-value = 0.08889
+
+  Warning message:
+  In chisq.test(mytable) : Chi-squared approximation may be incorrect
+#+end_src
+
+**** Fisher's exact test
+
+     Evaluates the null hypothesis of independence of rows and columns in a
+     contingency table with fixed marginals.
+
+#+begin_src R
+  mytable <- xtabs( ~ Treatment+Improved, data=Arthritis)
+
+  > fisher.test(mytable)
+    Fisher's Exact Test for Count Data
+
+  data:  mytable
+  p-value = 0.001393
+  alternative hypothesis: two.sided
+#+end_src
+
+**** Cochran–Mantel–Haenszel test
+
+     The ~mantelhaen.test()~ function provides a Cochran–Mantel–Haenszel
+     chi-square test of the null hypothesis that two nominal variables are
+     conditionally independent in each stratum of a third variable. The
+     following code tests the hypothesis that the Treatment and Improved
+     variables are independent within each level for Sex.
+
+#+begin_src R
+  mytable <- xtabs( ~ Treatment+Improved+Sex, data=Arthritis)
+
+  > mantelhaen.test(mytable)
+    Cochran-Mantel-Haenszel test
+
+  data:  mytable
+  Cochran-Mantel-Haenszel M^2 = 14.632, df = 2, p-value = 0.0006647
+#+end_src
+
+*** 7.2.3 Measures of association
+
+**** Measures of association for a two-way table
+
+     Large values indicate stronger associations.
+
+#+begin_src R
+  library(vcd)
+
+  mytable <- xtabs( ~ Treatment+Improved, data=Arthritis)
+
+  > assocstats(mytable)
+                      X^2 df  P(> X^2)
+  Likelihood Ratio 13.530  2 0.0011536
+  Pearson          13.055  2 0.0014626
+
+  Phi-Coefficient   : NA 
+  Contingency Coeff.: 0.367 
+  Cramer's V        : 0.394 
+#+end_src
+
+** Section 7.3 Correlations
+   
+*** 7.3.1 Types of correlations
+
+    R can produce a variety of correlation coefficients, including Pearson,
+   Spearman, Kendall, partial, polychoric, and polyserial.
+
+#+begin_src R
+  states<- state.x77[,1:6]
+
+  > cov(states)
+                Population      Income   Illiteracy     Life Exp      Murder
+  Population 19931683.7588 571229.7796  292.8679592 -407.8424612 5663.523714
+  Income       571229.7796 377573.3061 -163.7020408  280.6631837 -521.894286
+  Illiteracy      292.8680   -163.7020    0.3715306   -0.4815122    1.581776
+  Life Exp       -407.8425    280.6632   -0.4815122    1.8020204   -3.869480
+  Murder         5663.5237   -521.8943    1.5817755   -3.8694804   13.627465
+  HS Grad       -3551.5096   3076.7690   -3.2354694    6.3126849  -14.549616
+                  HS Grad
+  Population -3551.509551
+  Income      3076.768980
+  Illiteracy    -3.235469
+  Life Exp       6.312685
+  Murder       -14.549616
+  HS Grad       65.237894
+
+  > cor(states)
+              Population     Income Illiteracy    Life Exp     Murder     HS Grad
+  Population  1.00000000  0.2082276  0.1076224 -0.06805195  0.3436428 -0.09848975
+  Income      0.20822756  1.0000000 -0.4370752  0.34025534 -0.2300776  0.61993232
+  Illiteracy  0.10762237 -0.4370752  1.0000000 -0.58847793  0.7029752 -0.65718861
+  Life Exp   -0.06805195  0.3402553 -0.5884779  1.00000000 -0.7808458  0.58221620
+  Murder      0.34364275 -0.2300776  0.7029752 -0.78084575  1.0000000 -0.48797102
+  HS Grad    -0.09848975  0.6199323 -0.6571886  0.58221620 -0.4879710  1.00000000
+
+  > cor(states, method="spearman")
+             Population     Income Illiteracy   Life Exp     Murder    HS Grad
+  Population  1.0000000  0.1246098  0.3130496 -0.1040171  0.3457401 -0.3833649
+  Income      0.1246098  1.0000000 -0.3145948  0.3241050 -0.2174623  0.5104809
+  Illiteracy  0.3130496 -0.3145948  1.0000000 -0.5553735  0.6723592 -0.6545396
+  Life Exp   -0.1040171  0.3241050 -0.5553735  1.0000000 -0.7802406  0.5239410
+  Murder      0.3457401 -0.2174623  0.6723592 -0.7802406  1.0000000 -0.4367330
+  HS Grad    -0.3833649  0.5104809 -0.6545396  0.5239410 -0.4367330  1.0000000
+
+  # only show varibles you are interested in
+  x <- states[, c("Population", "Income", "Illiteracy", "HS Grad")]
+  y <- states[, c("Life Exp", "Murder")]
+  > cor(x,y)
+                Life Exp     Murder
+  Population -0.06805195  0.3436428
+  Income      0.34025534 -0.2300776
+  Illiteracy -0.58847793  0.7029752
+  HS Grad     0.58221620 -0.4879710
+
+#+end_src
+
+**** Partial correlations
+
+     A partial correlation is a correlation between two quantitative variables,
+     controlling for one or more other quantitative variables.
+
+
