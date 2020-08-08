@@ -196,6 +196,11 @@
   wt   0.17
 #+end_src
 
+*** 7.1.5 Visualizing results
+
+    For quantitative variables, you can use histograms, density plots, box plots
+    and dot plots.
+
 ** Section 7.2 Frequency and contingency tables
 
 *** 7.2.1 Generating frequency tables
@@ -427,7 +432,9 @@
 
 **** Chi-square test of independence
 
-     
+     Use ~chisq.test()~ to test the independence of row and column variables.
+     The p-values are the probability of obtaining the sample results assuming
+     independence of the row and column varaibles in the population.
 
 #+begin_src R
   library(vcd)
@@ -474,7 +481,8 @@
      chi-square test of the null hypothesis that two nominal variables are
      conditionally independent in each stratum of a third variable. The
      following code tests the hypothesis that the Treatment and Improved
-     variables are independent within each level for Sex.
+     variables are independent within each level for Sex. i.e. there are no
+     3-way interaction.
 
 #+begin_src R
   mytable <- xtabs( ~ Treatment+Improved+Sex, data=Arthritis)
@@ -490,7 +498,8 @@
 
 **** Measures of association for a two-way table
 
-     Large values indicate stronger associations.
+     After testing for independence, you want to access the magnitude of
+     association. Large values indicate stronger associations.
 
 #+begin_src R
   library(vcd)
@@ -507,12 +516,27 @@
   Cramer's V        : 0.394 
 #+end_src
 
+*** 7.2.4 Visualizing results
+
+    You can typically use bar charts to visalize frequencies in 1 direction. Or
+    use ~vcd~ package mosaic and association plots for visualizing relationships
+    among categorical variables in multidimensional datasets
+
 ** Section 7.3 Correlations
    
 *** 7.3.1 Types of correlations
 
-    R can produce a variety of correlation coefficients, including Pearson,
+   R can produce a variety of correlation coefficients, including Pearson,
    Spearman, Kendall, partial, polychoric, and polyserial.
+
+#+begin_src R
+  cor(x, use="everything", method="pearson")
+#+end_src
+| Option   | Description                                                                                                                                                                                                       |
+|----------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~x~      | Matrix or data frame.                                                                                                                                                                                             |
+| ~use~    | Specifies the handling of missing data. ~all.obs~ (assumes no missing data), everything (missing values will be set to missing), complete.obs (listwise deletion), and pairwise.complete.obs (pairwise deletion). |
+| ~method~ | Options are pearson, spearman, and kendall.                                                                                                                                                                       |
 
 #+begin_src R
   states<- state.x77[,1:6]
@@ -568,4 +592,224 @@
      A partial correlation is a correlation between two quantitative variables,
      controlling for one or more other quantitative variables.
 
+#+begin_src R
+  library(ggm)
 
+  colnames(states)
+
+  # correlation between variable 1 and 5 controlling for 2, 3, and 6
+  > pcor(c(1, 5, 2, 3, 6), cov(states))
+  [1] 0.3462724
+#+end_src
+
+*** 7.3.2 Testing correlations for significance
+
+    The typical null hypothesis is no relationship.
+
+    Where x and y are the variables to be correlated, alternative specifies a
+    two-tailed or one-tailed test (~two.side~, ~less~, or ~greater~), and method
+    specifies the type of correlation (~pearson~, ~kendall~, or ~spearman~) to
+    compute.
+
+#+begin_src R
+  cor.test(x, y, alternative=, method=)
+#+end_src
+
+#+begin_src R
+  > cor.test(states[,3], states[,5])
+
+    Pearson's product-moment correlation
+
+  data:  states[, 3] and states[, 5]
+  t = 6.8479, df = 48, p-value = 1.258e-08
+  alternative hypothesis: true correlation is not equal to 0
+  95 percent confidence interval:
+   0.5279280 0.8207295
+  sample estimates:
+        cor 
+  0.7029752 
+#+end_src
+
+#+begin_src R
+  library(psych)
+
+  > corr.test(states, use="complete")
+
+  Call:corr.test(x = states, use = "complete")
+  Correlation matrix 
+             Population Income Illiteracy Life Exp Murder HS Grad
+  Population       1.00   0.21       0.11    -0.07   0.34   -0.10
+  Income           0.21   1.00      -0.44     0.34  -0.23    0.62
+  Illiteracy       0.11  -0.44       1.00    -0.59   0.70   -0.66
+  Life Exp        -0.07   0.34      -0.59     1.00  -0.78    0.58
+  Murder           0.34  -0.23       0.70    -0.78   1.00   -0.49
+  HS Grad         -0.10   0.62      -0.66     0.58  -0.49    1.00
+  Sample Size 
+  [1] 50
+  Probability values (Entries above the diagonal are adjusted for multiple tests.) 
+             Population Income Illiteracy Life Exp Murder HS Grad
+  Population       0.00   0.59       1.00      1.0   0.10       1
+  Income           0.15   0.00       0.01      0.1   0.54       0
+  Illiteracy       0.46   0.00       0.00      0.0   0.00       0
+  Life Exp         0.64   0.02       0.00      0.0   0.00       0
+  Murder           0.01   0.11       0.00      0.0   0.00       0
+  HS Grad          0.50   0.00       0.00      0.0   0.00       0
+
+   To see confidence intervals of the correlations, print with the short=FALSE option
+#+end_src
+
+*** 7.3.3 Visualizing correlations
+
+    Bivariate relationships underlying correlation can be visualized through
+    scatter plots and scatter plot matrices. Correlograms provide a way for
+    comparing a large number of correlation coefficients.
+
+** Section 7.4 T-tests
+
+   Here we focus on group comparsion where the outcme varible is continous and
+   assumed to be normally distributed. Check section 7.3 for outcome that is categorical.
+
+*** 7.4.1 Independent t-test
+
+#+begin_src R
+  library(MASS)
+
+  > t.test(Prob ~ So, data=UScrime)
+
+    Welch Two Sample t-test
+
+  data:  Prob by So
+  t = -3.8954, df = 24.925, p-value = 0.0006506
+  alternative hypothesis: true difference in means is not equal to 0
+  95 percent confidence interval:
+   -0.03852569 -0.01187439
+  sample estimates:
+  mean in group 0 mean in group 1 
+       0.03851265      0.06371269 
+#+end_src
+
+*** 7.4.2 Dependent t-test
+
+#+begin_src R
+  library(MASS)
+
+  > sapply(UScrime[c("U1","U2")], function(x)(c(mean=mean(x),sd=sd(x))))
+             U1       U2
+  mean 95.46809 33.97872
+  sd   18.02878  8.44545
+
+  > with(UScrime, t.test(U1, U2, paired=TRUE))
+
+    Paired t-test
+
+  data:  U1 and U2
+  t = 32.407, df = 46, p-value < 2.2e-16
+  alternative hypothesis: true difference in means is not equal to 0
+  95 percent confidence interval:
+   57.67003 65.30870
+  sample estimates:
+  mean of the differences 
+                 61.48936 
+
+#+end_src
+
+*** 7.4.3 When there are more than two groups
+
+    Use ANOVA if you can assume the data are sampled from an IDD population.
+
+** Section 7.5 Nonparametric tests of group differences
+
+*** 7.5.1 Comparing two groups 
+
+    If the 2 groups are indpenednet, you can use the Wilcoxon rank sum test
+    (Mann-Whitney U test) to assess whether the obs are sampled from the same
+    probability distribution.
+
+#+begin_src R
+  > with(UScrime, by(Prob, So, median))
+  So: 0
+  [1] 0.038201
+  ------------------------------------------------------------ 
+  So: 1
+  [1] 0.055552
+
+  > wilcox.test(Prob ~ So, data=UScrime)
+
+    Wilcoxon rank sum exact test
+
+  data:  Prob by So
+  W = 81, p-value = 8.488e-05
+  alternative hypothesis: true location shift is not equal to 0
+#+end_src
+
+    Adding the ~paired=TRUE~ option provides a nonparametric alternative to the
+    dependent t-test. It's appropriate in situations where the groups are paried
+    and the assumption of normality is unwarranted.
+
+#+begin_src R
+  > sapply(UScrime[c("U1","U2")], median)
+  U1 U2 
+  92 34
+
+  > with(UScrime, wilcox.test(U1, U2, paired=TRUE))
+    Wilcoxon signed rank test with continuity correction
+
+  data:  U1 and U2
+  V = 1128, p-value = 2.464e-09
+  alternative hypothesis: true location shift is not equal to 0
+
+#+end_src
+
+*** 7.5.2 Comparing more than two groups
+
+    If you can’t meet the assumptions of ANOVA designs, you can use
+    nonparametric methods to evaluate group differences. If the groups are
+    independent, a Kruskal–Wallis test provides a useful approach. If the groups
+    are dependent (for example, repeated measures or randomized block design),
+    the Friedman test is more appropriate.
+
+
+#+begin_src R
+  states <- data.frame(state.region, state.x77)
+
+  > kruskal.test(Illiteracy ~ state.region, data=states)
+
+    Kruskal-Wallis rank sum test
+
+  data:  Illiteracy by state.region
+  Kruskal-Wallis chi-squared = 22.672, df = 3, p-value = 4.726e-05
+#+end_src
+
+#+begin_src R
+  source("http://www.statmethods.net/RiA/wmc.txt")
+
+  states <- data.frame(state.region, state.x77)
+  > wmc(Illiteracy ~ state.region, data=states, method="holm")
+  Descriptive Statistics
+
+             West North Central Northeast    South
+  n      13.00000      12.00000   9.00000 16.00000
+  median  0.60000       0.70000   1.10000  1.75000
+  mad     0.14826       0.14826   0.29652  0.59304
+
+  Multiple Comparisons (Wilcoxon Rank Sum Tests)
+  Probability Adjustment = holm
+
+          Group.1       Group.2    W            p    
+  1          West North Central 88.0 8.665618e-01    
+  2          West     Northeast 46.5 8.665618e-01    
+  3          West         South 39.0 1.788186e-02   *
+  4 North Central     Northeast 20.5 5.359707e-02   .
+  5 North Central         South  2.0 8.051509e-05 ***
+  6     Northeast         South 18.0 1.187644e-02   *
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#+end_src
+
+** Visualizing group differences
+
+   R provides a wide range of graphical methods for comparing groups, including
+   box plots (simple, notched, and violin); overlapping kernel density plots;
+   and graphical methods for visualizing outcomes in an ANOVA framework,
+   discussed in chapter 9. Advanced methods for visualizing group differences,
+   including grouping and faceting, are discussed in chapter 19.
