@@ -806,7 +806,7 @@
   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #+end_src
 
-** Visualizing group differences
+** Section 7.6 Visualizing group differences
 
    R provides a wide range of graphical methods for comparing groups, including
    box plots (simple, notched, and violin); overlapping kernel density plots;
