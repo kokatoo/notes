@@ -1,0 +1,130 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 1: Data and Variables
+
+** Introduction
+
+  There are different reasons for collecting data. One reason is to gan an
+  understanding of the data by organizing and graphing the individual values.
+  Another is to draw conclusions about a larger group of information.
+
+** Preliminaries
+
+   Statistics is the discipline that concerns the collection, organization,
+   analysis, interpretation and presentation of data.
+
+** Categorical and measurement variables
+
+   Data is typically collected from a number of people or things. We define a
+   variable to be some characteristic that can be assigned a number (discrete or
+   continous) or a category. The thing which is assigned the number or category
+   is called the case or observational unit. In the “states visited” example
+   above, the students in this class are the cases of interest.
+
+   In this book, we will distinguish between two different types of variables. A
+   categorical variable is a characteristic of an individual which can be
+   broken down into different classes or categories. A measurement variable is a
+   number associated with an individual that is obtained by means of some
+   measurement. Examples of a measurement variable include your age, your
+   height.
+
+   As the term variable suggests, the values assumed by a variable differ from
+   case to case. In other words, data display variability. The pattern of this
+   variability is called the distribution of the variable. Much of the practice
+   of statistics concerns distributions of variables, from displaying them
+   visually to summarizing them numerically to describing them verbally.
+
+#+begin_src R
+  mydata <- "
+    year brand
+    1992 Honda
+    1994 Oldsmobile
+    1967 Chevrolet
+    1985 Nissan
+    1994 Toyota
+    1987 Ford
+    1968 Chevrolet
+    1980 Ford
+    1989 Pontiac
+    1993 Toyota
+    1991 Chevrolet
+    1988 Oldsmobile
+    1990 Volkswagon
+    1984 Mercury
+    1994 Ford
+    1989 Ford
+    1992 Ford
+    1986 Volkswagon
+    1995 Buick
+    1977 Jeep
+    "
+  mydata <- read.table(header=TRUE, text=mydata)
+
+  myfile <- "./data/chp01-cars.rds"
+  saveRDS(mydata, file=myfile)
+  mydata <- readRDS(myfile)
+  mytable <- table(mydata$brand)
+
+  mydata <- as.data.frame(cbind(addmargins(mytable), addmargins(prop.table(mytable))))
+  names(mydata) <- c("Count", "Proportion")
+
+  > mydata  
+  Count Proportion
+  Buick          1       0.05
+  Chevrolet      3       0.15
+  Ford           5       0.25
+  Honda          1       0.05
+  Jeep           1       0.05
+  Mercury        1       0.05
+  Nissan         1       0.05
+  Oldsmobile     2       0.10
+  Pontiac        1       0.05
+  Toyota         2       0.10
+  Volkswagon     2       0.10
+  Sum           20       1.00
+
+  barplot(mytable, main="Used Car Ads",
+          ylab="Num Ads", cex.names=.9, las=2)
+#+end_src
+
+[[./images/chp01-plot1.png]]
+
+** Dotplots
+
+#+begin_src R
+  mydata <- "
+  City;Rate
+  New York City;8.3
+  Los Angeles;10.0
+  Chicago;5.6
+  Houston;6.9
+  Philadelphia;6.5
+  San Diego;8.3
+  Dallas;5.6
+  Phoenix;4.9
+  Detroit;6.8
+  San Antonio;5.6
+  San Jose;7.1
+  Indianapolis;4.4
+  San Francisco;6.5
+  Baltimore;6.3
+  Jacksonville;5.1
+  Columbus;4.1
+  Milwaukee;4.5
+  Memphis;4.4
+  Washington, D.C.;4.2
+  Boston;5.3
+  "
+  mydata <- read.table(header=TRUE, text=mydata, 
+
+  myfile <- "./data/chp01-unemployment.rds"
+  saveRDS(mydata, file=myfile)
+  mydata <- readRDS(myfile)
+
+  mydata <- mydata[order(mydata$Rate),]
+  dotchart(mydata$Rate, labels=mydata$City, cex=0.7,
+           xlab="Rate", main="Unemployment Rates")
+#+end_src
+
+[[./images/chp01-plot2.png]]

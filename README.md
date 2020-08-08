@@ -7,7 +7,11 @@ Compile brief notes from various sources in orgmode.
   * Bash Notes for Professionals
   * Git Notes for Professionals
   * R Notes for Professionals
-  
+
+## [Workshop Statistics (Discovery with Data, A Bayesian Approach) (1st Edition)](https://www.amazon.com/Workshop-Statistics-James-H-Albert/dp/1930190123)
+
+  * James H. Albert, Allan J. Rossman (Mar 2001)
+
 ## [R in Action (2nd Edition)](https://www.manning.com/books/r-in-action-second-edition)
 
   * Rob Kabacoff (May 2015)
