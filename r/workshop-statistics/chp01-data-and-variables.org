@@ -116,7 +116,7 @@
   Washington, D.C.;4.2
   Boston;5.3
   "
-  mydata <- read.table(header=TRUE, text=mydata, 
+  mydata <- read.table(header=TRUE, text=mydata, sep=";")
 
   myfile <- "./data/chp01-unemployment.rds"
   saveRDS(mydata, file=myfile)
