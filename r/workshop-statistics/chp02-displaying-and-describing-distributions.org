@@ -5,14 +5,14 @@
 
 ** Basic features of a data distribution
 
-   * The *center* of a distribution is usually the most important aspect to notice
+   The *center* of a distribution is usually the most important aspect to notice
    and describe.
 
-   * A distribution’s *variability* is a second important feature. How spread out
-     are the data?
+   A distribution’s *variability* is a second important feature. How spread out
+   are the data?
 
-   * The shape of a distribution can reveal much information. By shape, we are
-     referring to a general statement how the data values are distributed.
+   The shape of a distribution can reveal much information. By shape, we are
+   referring to a general statement how the data values are distributed.
 
      * A distribution is *symmetric* if one half is roughly a mirror image of the
        other.
@@ -24,14 +24,14 @@
        the right and the values trail off much farther to the left than to the
        right.
 
-   * A distribution may have *peaks* or *clusters* which indicate that the data fall
-     into natural subgroups.
+   A distribution may have *peaks* or *clusters* which indicate that the data fall
+   into natural subgroups.
 
-   * *Outliers*, observations which differ markedly from the pattern established
-     by the vast majority, often arise and warrant close examination.
+   *Outliers*, observations which differ markedly from the pattern established
+   by the vast majority, often arise and warrant close examination.
 
-   * A distribution may display *granularity* if its values occur only at fixed
-     intervals (such as multiples of 5 or 10).
+   A distribution may display *granularity* if its values occur only at fixed
+   intervals (such as multiples of 5 or 10).
   
 ** Stemplots
 
@@ -180,5 +180,12 @@
     5 | 0
     6 | 0
     7 | 3
+
+  hist1 <- hist(mydata$husband)
+  hist2 <- hist(mydata$wife)
+  plot(hist1, col=rgb(0,0,1,1/4))
+  plot(hist2, col=rgb(1,0,0,1/4), add=TRUE)
 #+end_src
+
+[[./images/chp02-plot2.png]]
 
