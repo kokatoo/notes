@@ -114,7 +114,7 @@ ggplot(mydata, aes(x=WomenRatio)) + geom_dotplot() +
   theme(plot.title=element_text(hjust=0.5))
 dev.off()
 
-## Actvitiy1-12: Hazardousness of Sports
+## Activity 1-12: Hazardousness of Sports
 mydata <- "
 sport;injuries;participants
 Basketball;647;26,200
