@@ -76,6 +76,29 @@ labs(title="Umemployment rate") +
 
 
 ## Activity 1-5: Women Employed
+mydata <- "
+Occupation;Male;Female;Total
+Architect;131;32;163
+Engineer;1772;162;1934
+Math/Computer Science;813;382;1195
+Natural Science;377;142;519
+Physician;524;169;693
+Registered Nurse;136;1841;1977
+Teacher - PK, K;9;489;498
+Teacher - Elem.;276;1462;1738
+Teacher - Second.;530;702;1232
+Lawyer;658;236;894
+Musician;101;60;161
+Photographer;99;37;136
+Barber;73;14;87
+Hairdresser;60;690;750
+Social Worker;233;494;727
+Librarian;31;164;195
+"
+
+myfile <- "./data/chp01-women.rds"
+saveRDS(mydata, file=myfile)
+
 myfile <- "./data/chp01-women.rds"
 mydata <- readRDS(myfile)
 mydata <- transform(mydata, WomenRatio=Female/(Male+Female))
@@ -142,5 +165,5 @@ cmp(mydata, "Bicycle riding", "Football", "per.thousand")
 cmp(mydata, "Soccer", "Ice hockey", "per.thousand")
 cmp(mydata, "Swimming", "Skateboarding", "per.thousand")
 
-head(mydata[order(mydata$per.thousand),])
-head(mydata[order(-mydata$per.thousand),])
+head(mydata[order(mydata$per.thousand), c("sport", "per.thousand")], 1)
+head(mydata[order(-mydata$per.thousand), c("sport", "per.thousand")], 1)

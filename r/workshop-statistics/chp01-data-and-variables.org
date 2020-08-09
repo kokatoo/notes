@@ -162,6 +162,7 @@
   myfile <- "./data/chp01-sports.rds"
   mydata <- readRDS(myfile)
   mydata <- transform(mydata, participants=as.numeric(gsub(",", "", participants)))
+
   cmp <- function(mydata, sportname1, sportname2, colname) {
     with(mydata, {
       sprintf("%s vs %s %s: %d vs %d",
@@ -174,16 +175,25 @@
   cmp(mydata, "Bicycle riding", "Football", "injuries")
   cmp(mydata, "Soccer", "Ice hockey", "injuries")
   cmp(mydata, "Swimming", "Skateboarding", "injuries")
+  > [1] "Bicycle riding vs Football injuries: 601 vs 454"
+  > [1] "Soccer vs Ice hockey injuries: 150 vs 55"
+  > [1] "Swimming vs Skateboarding injuries: 130 vs 56"
 
   mydata <- transform(mydata, per.thousand=round(injuries/participants*1000))
 
   cmp(mydata, "Bicycle riding", "Football", "per.thousand")
   cmp(mydata, "Soccer", "Ice hockey", "per.thousand")
   cmp(mydata, "Swimming", "Skateboarding", "per.thousand")
+  > [1] "Bicycle riding vs Football per.thousand: 11 vs 34"
+  > [1] "Soccer vs Ice hockey per.thousand: 15 vs 31"
+  > [1] "Swimming vs Skateboarding per.thousand: 2 vs 7"
 
-  head(mydata[order(mydata$per.thousand),])
-  head(mydata[order(-mydata$per.thousand),])
-
+  head(mydata[order(mydata$per.thousand), c("sport", "per.thousand")], 1)
+  head(mydata[order(-mydata$per.thousand), c("sport", "per.thousand")], 1)
+  >      sport per.thousand
+  18 Bowling            1
+  >      sport per.thousand
+  4 Football           34
 #+end_src
 
 ** Wrap-up
