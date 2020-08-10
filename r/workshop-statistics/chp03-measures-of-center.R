@@ -138,7 +138,5 @@ stem(mydata$percent.inc, scale=2)
 head(mydata[order(-mydata$percent.inc),], 3)
 head(mydata[order(mydata$percent.inc),], 3)
 
-
-
 mean(mydata$percent.inc)
 median(mydata$percent.inc)
