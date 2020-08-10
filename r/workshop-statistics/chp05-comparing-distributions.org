@@ -5,36 +5,41 @@
 
 ** Comparing Groups Using Boxplots
 
+   Suppose that we are interested in comparing the lengths of songs on the
+   Beatles’ three albums “Rubber Soul”, “Sergeant Pepper”, and “The White Album”
+   that were released in the years 1966, 1967 and 1968, respectively.
+
 #+begin_src R
-mylist <- list(RubberSoul=c(150, 126, 202, 165, 139, 164, 162,
-                                  171, 154, 147, 148, 137, 144, 139),
-                     SergeantPepper=c(119, 166, 205, 167, 153, 204,
-                                      156, 303, 158, 163, 155, 80, 303),
-                     TheWhiteAlbum=c(165, 240, 130, 190, 62, 185, 286,
-                                     167, 148, 121, 140, 124, 213, 232,
-                                     102, 106, 177, 160, 241, 166, 145,
-                                     195, 270, 188, 253, 162, 175, 191,
-                                     495, 194))
+  mylist <- list(RubberSoul=c(150, 126, 202, 165, 139, 164, 162,
+                              171, 154, 147, 148, 137, 144, 139),
+                 SergeantPepper=c(119, 166, 205, 167, 153, 204,
+                                  156, 303, 158, 163, 155, 80, 303),
+                 TheWhiteAlbum=c(165, 240, 130, 190, 62, 185, 286,
+                                 167, 148, 121, 140, 124, 213, 232,
+                                 102, 106, 177, 160, 241, 166, 145,
+                                 195, 270, 188, 253, 162, 175, 191,
+                                 495, 194))
 
-mydata <- melt(mylist)
-names(mydata) <- c("duration", "album")
+  mydata <- melt(mylist)
+  names(mydata) <- c("duration", "album")
 
-boxplot(duration ~ album, data=mydata,
-        horizontal=TRUE, main="Beatles Album")
+  boxplot(duration ~ album, data=mydata,
+          horizontal=TRUE, main="Beatles Album")
 #+end_src
 
 [[./images/chp05-plot1.png]]
 
 ** Statistical Tendency
 
-   Similarly, men tend to be taller than women, but there are certainly some
-   women who are taller than most men. Statistical tendencies pertain to average
-   or typical cases but not necessarily to individual cases.
+   Men tend to be taller than women, but there are certainly some women who are
+   taller than most men. Statistical tendencies pertain to average or typical
+   cases but not necessarily to individual cases.
 
 ** Activity 5-2: Professional Golfers’ Winnings
 
-   PGA for males, LPGA for females, and Seniors formales over 50 years of age)
-   in 1990.
+   The following data presents the winnings (in thousands of dollars) of the 30
+   highest money winners on each of the three professional golf tours (PGA for
+   males, LPGA for females, and Seniors for males over 50 years of age) in 1990.
 
 #+begin_src R
   myfile <- "./data/chp05-golf.rds"
@@ -116,5 +121,3 @@ boxplot(duration ~ album, data=mydata,
    concept of statistical tendencies. You have also expanded your knowledge of
    visual displays of distributions by encountering side-by- side stemplots and
    modified boxplots.
-
-
