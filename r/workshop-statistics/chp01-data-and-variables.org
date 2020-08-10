@@ -9,10 +9,8 @@
   understanding of the data by organizing and graphing the individual values.
   Another is to draw conclusions about a larger group of information.
 
-** Preliminaries
-
-   Statistics is the discipline that concerns the collection, organization,
-   analysis, interpretation and presentation of data.
+  Statistics is the discipline that concerns the collection, organization,
+  analysis, interpretation and presentation of data.
 
 ** Activity 1-1: Types of Variables
 

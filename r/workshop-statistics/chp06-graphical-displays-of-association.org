@@ -1,0 +1,70 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 6: Graphical Displays of Association
+
+  If we knew the temperature in Ohio for a particular day, could we accurately
+  predict the temperature in North Carolina?
+
+#+begin_src R
+  myfile <- "./data/chp06-weather.rds"
+  mydata <- readRDS(myfile)
+
+  plot(mydata$Ohio, mydata$NorthCarolina,
+       xlab="Ohio", ylab="North Carolina",
+       main="North Carolina vs Ohio Temperature (F)")
+#+end_src
+
+[[./images/chp06-plot1.png]]
+
+** Activity 6-1: Cars’ Fuel Efficiency (cont.)                                                                                        
+
+#+begin_src R
+myfile <- "./data/chp06-mpg.rds"
+mydata <- readRDS(myfile)
+
+plot(mydata$weight, mydata$mpg,
+     xlab="weight", ylab="mpg",
+     main="MPG vs Weight")
+#+end_src
+
+[[./images/chp06-plot2.png]]
+
+   The concept of association is an example of a statistical tendency. It is not
+   always the case that a heavier car is less fuel efficient, but heavier cars
+   certainly do tend to be.
+
+** Activity 6-5: Space Shuttle O-Ring Failures
+
+#+begin_src R
+myfile <- "./data/chp06-oring.rds"
+mydata <- readRDS(myfile)
+
+names(mydata) <- c("date", "failures", "temp")
+
+plot(mydata$temp, mydata$failures,
+     xlab="Temperature", ylab="O'Ring Failures",
+     main="O'Ring Failures vs Temperature")
+
+mydata <- mydata[mydata$failures > 0,]
+plot(mydata$temp, mydata$failures,
+     xlab="Temperature", ylab="O'Ring Failures",
+     main="O'Ring Failures vs Temperature")
+#+end_src
+
+[[./images/chp06-plot3.png]]
+
+   Excluding 0 failures:
+
+[[./images/chp06-plot4.png]]
+
+   As we can see from the plot, there is no discernable relationship after
+   excluding 0 failures datapoints.
+
+** Wrap-Up
+
+   This topic has introduced you to an area that occupies a prominent role in
+   statistical practice: exploring relationships between variables. You have
+   discovered the concept of association and learned how to construct and to
+   interpret scatterplots and labeled scatterplots as visual displays of
+   association.
