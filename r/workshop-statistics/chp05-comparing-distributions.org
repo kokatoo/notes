@@ -1,0 +1,120 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 5: Comparing Distributions
+
+** Comparing Groups Using Boxplots
+
+#+begin_src R
+mylist <- list(RubberSoul=c(150, 126, 202, 165, 139, 164, 162,
+                                  171, 154, 147, 148, 137, 144, 139),
+                     SergeantPepper=c(119, 166, 205, 167, 153, 204,
+                                      156, 303, 158, 163, 155, 80, 303),
+                     TheWhiteAlbum=c(165, 240, 130, 190, 62, 185, 286,
+                                     167, 148, 121, 140, 124, 213, 232,
+                                     102, 106, 177, 160, 241, 166, 145,
+                                     195, 270, 188, 253, 162, 175, 191,
+                                     495, 194))
+
+mydata <- melt(mylist)
+names(mydata) <- c("duration", "album")
+
+boxplot(duration ~ album, data=mydata,
+        horizontal=TRUE, main="Beatles Album")
+#+end_src
+
+[[./images/chp05-plot1.png]]
+
+** Statistical Tendency
+
+   Similarly, men tend to be taller than women, but there are certainly some
+   women who are taller than most men. Statistical tendencies pertain to average
+   or typical cases but not necessarily to individual cases.
+
+** Activity 5-2: Professional Golfers’ Winnings
+
+   PGA for males, LPGA for females, and Seniors formales over 50 years of age)
+   in 1990.
+
+#+begin_src R
+  myfile <- "./data/chp05-golf.rds"
+  mydata <- readRDS(myfile)
+
+  boxplot(winnings ~ tournament, data=mydata, main="Golf Tournaments")
+#+end_src
+
+[[./images/chp05-plot2.png]]
+
+** Activity 5-7: Automobile Theft Rates
+
+   Investigate whether states in the eastern or western part of the U.S. tend to
+   have higher rates of motor vehicle thefts. The following data divides states
+   according to whether they lie east or west of the Mississippi River and lists
+   their 1990 rate of automobile thefts per 100,000 residents.
+
+#+begin_src R
+  myfile <- "./data/chp05-theft.rds"
+  mydata <- readRDS(myfile)
+
+  boxplot(theft ~ region, data=mydata,
+          main="US Theft Rate Per 100,000 (1990)")
+#+end_src
+
+[[./images/chp05-plot3.png]]
+
+** Activity 5-15: Mutual Funds’ Returns
+
+   Mutual funds are collections of stocks and bonds which have become a very
+   popular investment option in recent years. Some funds require the buyer to
+   pay a fee called a ”load” which is similar to a commission charge. A natural
+   question to ask is whether funds that require a load charge perform better
+   than funds which require no load. The data lists the 1993 percentage return
+   for the mutual funds of the Fidelity Investment group:
+
+#+begin_src R
+  mylist <- list(NoLoad=c(13.9, 17.8, 21.9, 12.4, 22.1, 15.4, 13.9, 12.5, 9, 9.1,
+                          23.3, 36.7, 13.1, 13.1, 5.2, 26.3, 81.8, 13.9, 6.7, 13.1,
+                          19.3, 21.3, 11.2, 13.2, 14, 13.8, 18.9, 35.1, 12.9, 19.1,
+                          13.6, 9.8, 16.2, 12.8, 10.2, 25.5, 6.5, 20.5, 12.6, 15.6,
+                          25.9, 18.4, 12.2, 21.4, 22.9, 8.1, 5.5, 13.8, 12.5, 36.5),
+                 Load=c(24.5, 19.5, 33.4, 20.2, 21.4, 24.7, 26.4, 24.7, 26.8, 8.3,
+                        19.9, 40.1, 27.2, 63.9, 16.2, 21.1))
+
+  mydata <- melt(mylist)
+  names(mydata) <- c("return", "type")
+
+  boxplot(return ~ type, data=mydata, notch=TRUE,
+          main="Mutual Funds % Return (1993)")
+#+end_src
+
+[[./images/chp05-plot4.png]]
+
+** Activity 5-16: Star Trek Episodes
+
+   Editors of an Entertainment Weekly publication ranked every episode of Star
+   Trek: The Next Gener- ation from best (rank 1) to worst (rank 178).
+
+#+begin_src R
+  myfile <- "./data/chp05-star-trek.rds"
+  mydata <- readRDS(myfile)
+  mydata <- melt(mydata)
+  names(mydata) <- c("season", "rank")
+  mydata <- mydata[!is.na(mydata$rank),]
+
+  boxplot(rank ~ season, data=mydata,
+          horizontal=TRUE, cex.axis=0.7,
+          xlab="Ranking", ylab="Season",
+          main="Star Trek Episode Ranking")
+#+end_src
+
+[[./images/chp05-plot5.png]]
+
+** Wrap-Up
+
+   You have been introduced in this topic to methods of comparing distributions
+   between/among two or more groups. This task has led you to the very important
+   concept of statistical tendencies. You have also expanded your knowledge of
+   visual displays of distributions by encountering side-by- side stemplots and
+   modified boxplots.
+
+

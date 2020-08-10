@@ -165,3 +165,12 @@
 [[./images/chp04-plot4.png]]
 
 [[./images/chp04-plot5.png]]
+
+** Wrap-Up
+
+   In this topic you have learned to calculate and studied properties of the
+   range, quartile spread, and standard deviation as measures of the variability
+   of a distribution. You have also discovered a new visual display, the
+   boxplot, and studied the five-number summary on which it is based. In
+   addition, you have explored the 68-95-99.7 rule and z-scores as applications
+   of the standard deviation.
