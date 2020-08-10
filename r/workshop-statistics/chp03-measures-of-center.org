@@ -1,0 +1,160 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Topic 3: Measures of Center
+
+** Two averages – the mean and the median
+
+   There are two averages that are commonly used in summarizing data — the *mean*
+   and the *median*. The mean is the well-known arithmetic average that is
+   obtained by finding the sum of the measurements and dividing the sum by the
+   number of data items. The median is the number which divides the data in
+   half; half of the measurements are smaller than the median and half are
+   larger.
+
+   The median M is said to be a resistant measure since it is resistant
+   or not affected by extreme observations. The incorrect large sugar
+   measurement of Smacks had no impact on the value of the median. In contrast,
+   the mean x̄ can be affected by a single extreme observation. The mean is an
+   example of a summary measure which is sensitive or nonresistant to extreme
+   data values.
+
+   The median of an odd number of observations can be found in position
+   ~(n+1)/2~ (once the values are arranged in order), while the median of an n
+   even number of observations is the mean of those occupying positions ~n/2~
+   and ~n/2 + 1~.
+
+#+begin_src R
+  myfile <- "./data/chp03-sugar.rds"
+  mydata <- readRDS(file=myfile)
+
+  > stem(mydata$Sugar, scale=2)
+    The decimal point is at the |
+
+     0 | 000
+     2 | 000000
+     4 | 
+     6 | 000
+     8 | 
+    10 | 000
+    12 | 000
+    14 | 00
+
+  > mean(mydata$Sugar)
+  [1] 6.75
+  > median(mydata$Sugar)
+  [1] 6.5
+#+end_src   
+
+** Activity 3-1: Supreme Court Service
+
+#+begin_src R
+  myfile <- "./data/chp03-justice.rds"
+  mydata <- readRDS(file=myfile)
+
+  > stem(mydata$tenure)
+    The decimal point is 1 digit(s) to the right of the |
+
+    0 | 0134
+    0 | 68
+    1 | 3
+    1 | 9
+    2 | 2
+
+  mean(mydata$tenure)
+  median(mydata$tenure)
+
+  ggplot(mydata, aes(x=tenure)) + geom_dotplot() +
+    labs(title="Supreme Court Justice (1994)", x="Tenure")
+  mydata
+
+  hist(mydata$tenure, xlab="Tenure", main="Supreme Court Justice (1994)")
+
+  > with(mydata, {
+      avg <- mean(tenure)
+      sprintf("%d serve more than %.1f and %d serve less than %.1f.",
+              length(mydata[tenure > avg, "tenure"]),
+              avg,
+              length(mydata[tenure < avg, "tenure"]),
+              avg)
+    })
+  [1] "3 serve more than 8.4 and 6 serve less than 8.4."
+#+end_src
+
+[[./images/chp03-plot1.png]]
+
+[[./images/chp03-plot2.png]]
+
+** Activity 3-7: Supreme Court Service (cont.)
+
+#+begin_src R
+  mydata <- data.frame(tenure=c(5, 31, 32, 23, 21, 21, 19, 22,
+                                6, 6, 23, 1, 4, 14, 6, 9, 20,
+                                3, 5, 34, 13, 31, 20, 34, 32,
+                                8, 14, 15, 4, 8, 19, 7, 3, 8,
+                                30, 28, 23, 34, 10, 5, 15, 23,
+                                18, 4, 6, 16, 4, 18, 6, 2, 26,
+                                16, 36, 7, 24, 9, 18, 28, 28,
+                                7, 16, 5, 7, 9, 16, 17, 1, 33,
+                                15, 14, 20, 13, 10, 16, 5, 16,
+                                24, 13, 22, 19, 34, 11, 26, 10,
+                                11, 1, 33, 15, 15, 20, 27, 8, 5,
+                                29, 26, 15, 12, 5, 14, 4, 2, 5,
+                                10))
+
+  hist(mydata$tenure, xlab="Tenure", main="Supreme Court Justice (pre 1994)")
+
+  > mean(mydata$tenure)
+  [1] 15.4466
+  > median(mydata$tenure)
+  [1] 15
+#+end_src
+
+
+[[./images/chp03-plot3.png]]
+
+** Activity 3-9: Consumer Price Index
+
+#+begin_src R
+  myfile <- "./data/chp03-cpi.rds"
+  mydata <- readRDS(file=myfile)
+
+  > stem(mydata$percent.inc, scale=2)
+    The decimal point is 1 digit(s) to the right of the |
+
+    0 | 7
+    1 | 4
+    2 | 5789
+    3 | 0239
+    4 | 06
+    5 | 
+    6 | 59
+    7 | 1
+    8 | 
+    9 | 8
+
+  > head(mydata[order(-mydata$percent.inc),], 3)
+                      expenditure percent.inc
+  16              college tuition          98
+  14 tobacco and smoking products          71
+  12           prescription drugs          69
+
+  > head(mydata[order(mydata$percent.inc),], 3)
+          expenditure percent.inc
+  6 house furnishings           7
+  7  apparel products          14
+  8      new vehicles          25
+
+  > mean(mydata$percent.inc)
+  [1] 40.8125
+
+  > median(mydata$percent.inc)
+  [1] 32.5
+#+end_src
+
+** Wrap-Up
+
+   You have learned that these statistics measure only one aspect of a
+   distribution and that you must combine these numerical measures with what you
+   already know about displaying distributions visually and describing them
+   verbally.

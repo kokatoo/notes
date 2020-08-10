@@ -64,15 +64,15 @@
   myfile <- "./data/chp02-reigns.rds"
   mydata <- readRDS(myfile)
 
-  tail(mydata[order(mydata$reign),], 1)
-  head(mydata[order(mydata$reign),], 1)
-  >       ruler reign
+  > tail(mydata[order(mydata$reign),], 1)
+  > head(mydata[order(mydata$reign),], 1)
+        ruler reign
   36 Victoria    63
-  >       ruler reign
+        ruler reign
   17 Edward V     0
 
-  stem(mydata$reign)
-  >  The decimal point is 1 digit(s) to the right of the |
+  > stem(mydata$reign)
+    The decimal point is 1 digit(s) to the right of the |
 
     0 | 0123566799
     1 | 0023333579
@@ -82,11 +82,11 @@
     5 | 069
     6 | 3
 
-  summary(mydata$reign)
-  >  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-     0.00    9.75   19.50   21.88   33.50   63.00
-  length(mydata$reign)
-  > [1] 40
+  > summary(mydata$reign)
+    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    0.00    9.75   19.50   21.88   33.50   63.00
+  > length(mydata$reign)
+  [1] 40
 #+end_src
 
 ** Variations of stemplots
@@ -108,8 +108,8 @@
     theme(plot.title=element_text(hjust=0.5))
 
   # note that the values are rounded up
-  stem(mydata$price, scale=2)
-  > The decimal point is 2 digit(s) to the right of the |
+  > stem(mydata$price, scale=2)
+    The decimal point is 2 digit(s) to the right of the |
 
     0 | 5678899
     1 | 0022234
@@ -132,10 +132,10 @@
   histdata <- hist(mydata$price, numbins, xlab="Price", main="House Prices")
   intervals <- cbind((histdata$breaks+1)[-(numbins+1)], histdata$breaks[-1])
 
-  data.frame(interval=paste("(", paste(intervals[,1], intervals[,2], sep="-"), ")", sep=""),
-             count=histdata$counts,
-             proportion=round(histdata$counts/sum(histdata$counts), 2))
-  >   interval count proportion
+  > data.frame(interval=paste("(", paste(intervals[,1], intervals[,2], sep="-"), ")", sep=""),
+               count=histdata$counts,
+               proportion=round(histdata$counts/sum(histdata$counts), 2))
+      interval count proportion
   1     (1-50)     3       0.03
   2   (51-100)    31       0.30
   3  (101-150)    39       0.38
@@ -160,9 +160,9 @@
   myfile <- "./data/chp03-marriage.rds"
   mydata <- readRDS(file=myfile)
 
-  stem(mydata$husband, scale=2)
-  stem(mydata$wife, scale=2)
-  > The decimal point is 1 digit(s) to the right of the |
+  > stem(mydata$husband, scale=2)
+  > stem(mydata$wife, scale=2)
+    The decimal point is 1 digit(s) to the right of the |
 
     1 | 9
     2 | 3355556699
@@ -171,7 +171,8 @@
     5 | 144
     6 | 02
     7 | 1
-  > The decimal point is 1 digit(s) to the right of the |
+   
+    The decimal point is 1 digit(s) to the right of the |
 
     1 | 6
     2 | 22334456778
