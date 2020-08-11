@@ -143,3 +143,11 @@ plot(mydata$temp, mydata$failures,
      main="O'Ring Failures vs Temperature")
 dev.off()
 
+mydata <- mydata[mydata$failures > 0,]
+png("./images/chp06-plot4.png")
+plot(mydata$temp, mydata$failures,
+     xlab="Temperature", ylab="O'Ring Failures",
+     main="O'Ring Failures vs Temperature")
+dev.off()
+tm <- lm(temp ~ failures, data=mydata)
+summary(tm)

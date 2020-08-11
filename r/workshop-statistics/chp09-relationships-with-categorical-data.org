@@ -1,0 +1,188 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 9: Relationships with Categorical Variables
+
+  We can learn about the relationship between two categorical variables by means
+  of a *two-way table*. Although the two-way table can be used to learn about
+  the marginal totals of each variable, it is most useful in learning about the
+  relationship or the association between the two variables. To understand the
+  association in a two-way table, we compute conditional proportions in the
+  table.
+
+  Marginal and conditional distributions can be found the same table. Marginal
+  distributions are the totals for the probabilities. They are found in the
+  margins (that’s why they are called “marginal”). The total probabilities in
+  the margins are the marginal distributions. A conditional distribution on this
+  table would be a sub-population. Given two jointly distributed random
+  variables, they deal with finding the probability for one random variable
+  given certain restrictions for the other random variable.
+
+** Activity 9-2: Age and Political Ideology
+
+#+begin_src R
+  myfile <- "./data/chp09-politics.rds"
+  saveRDS(mydata, file = myfile)
+
+  myfile <- "./data/chp06-politics.rds"
+  mydata <- readRDS(myfile)
+
+  mytable <- with(mydata, table(ages, ideologies))
+  mytable <- mytable[c(3, 1, 2), c(2, 3, 1)]
+  > mytable
+            ideologies
+  ages       liberal moderate conservative
+    under-30      83      140           73
+    30-49        119      280          161
+    over-50       88      284          214
+
+  > margin.table(mytable, 1)["under-30"]
+  under-30 
+       296
+  > margin.table(mytable, 1)["30-49"]
+  30-49 
+    560 
+  > margin.table(mytable, 1)["over-50"]
+  over-50 
+      586
+
+  barplot(margin.table(prop.table(mytable), 1),
+          xlab = "Age", ylab = "Proportion",
+          main = "Bar graph of age variable")
+#+end_src
+
+[[./images/chp09-plot1.png]]
+
+#+begin_src R
+> mytable["under-30", "liberal"]
+[1] 83
+> mytable["under-30", "moderate"]
+[1] 140
+> mytable["under-30", "conservative"]
+[1] 73
+
+counts <- t(prop.table(mytable[c("30-49", "over-50"),], 1))
+> counts
+             ages
+ideologies         30-49   over-50
+  liberal      0.2125000 0.1501706
+  moderate     0.5000000 0.4846416
+  conservative 0.2875000 0.3651877
+#+end_src
+
+[[./images/chp09-plot2.png]]
+
+#+begin_src R
+counts <- t(prop.table(mytable, 1))
+barplot(counts,
+  main = "Segmented bar graph of political ideology data",
+  xlab = "Age", ylab = "Percentage",
+  col = c("red", "yellow", "green"),
+  legend = rownames(counts)
+)
+#+end_src
+
+[[./images/chp09-plot3.png]]
+
+** Activity 9-4: Hypothetical Hospital Recovery Rates
+
+#+begin_src R
+  mytable <- matrix(c(800, 900, 200, 100), 2, 2)
+  rownames(mytable) <- c("hospitalA", "hospitalB")
+  colnames(mytable) <- c("survived", "died")
+  mytable <- as.table(mytable)
+  > mytable
+            survived died
+  hospitalA      800  200
+  hospitalB      900  100
+
+  > addmargins(prop.table(mytable, 1), 2)
+            survived died Sum
+  hospitalA      0.8  0.2 1.0
+  hospitalB      0.9  0.1 1.0
+
+  good_cond <- matrix(c(590, 870, 10, 30), 2, 2)
+  rownames(good_cond) <- c("hospitalA", "hospitalB")
+  colnames(good_cond) <- c("survived", "died")
+  good_cond <- as.table(good_cond)
+  > good_cond
+            survived died
+  hospitalA      590   10
+  hospitalB      870   30
+
+  > addmargins(prop.table(good_cond, 1), 2)
+            survived died  Sum
+  hospitalA     0.98 0.02 1.00
+  hospitalB     0.97 0.03 1.00
+
+  bad_cond <- matrix(c(210, 30, 190, 70), 2, 2)
+  rownames(bad_cond) <- c("hospitalA", "hospitalB")
+  colnames(bad_cond) <- c("survived", "died")
+  mytable <- as.table(bad_cond)
+  > mytable
+            survived died
+  hospitalA      210  190
+  hospitalB       30   70
+
+  > addmargins(prop.table(bad_cond, 1), 2)
+            survived died Sum
+  hospitalA      0.5  0.5   1
+  hospitalB      0.3  0.7   1
+
+  > good_cond + bad_cond
+            survived died
+  hospitalA      800  200
+  hospitalB      900  100
+#+end_src
+
+   The phenomenon that you have just discovered is called Simpson’s paradox,
+   which refers to the fact that aggregate proportions can reverse the direction
+   of the relationship seen in the individual pieces. In this case, hospital B
+   has the higher recovery rate overall, yet hospital A has the higher recovery
+   for each type of patient.
+
+   This happens because hospital B admits more good condition patients and they
+   tend to survive more.
+
+** Activity 9-5: Hypothetical Employee Retention Predictions
+
+   Suppose that an organization is concerned about the number of its new
+   employees who leave the company before they finish one year of work. In an
+   effort to predict whether a new employee will leave or stay, they develop a
+   standardized test and apply it to 100 new employees. After one year, they
+   note what the test had predicted (stay or leave) and whether the employee
+   actually stayed or left.
+
+#+begin_src R
+  rownames(mytable) <- c("predicted to stay", "predicted to leave")
+  colnames(mytable) <- c("actually stays", "actually leaves")
+  mytable <- as.table(mytable)
+  > addmargins(mytable)
+                     actually stays actually leaves Sum
+  predicted to stay              63              12  75
+  predicted to leave             21               4  25
+  Sum                            84              16 100
+
+  > addmargins(prop.table(mytable, 1), 2)
+                     actually stays actually leaves Sum
+  predicted to stay             0.8             0.2 1.0
+  predicted to leave            0.8             0.2 1.0
+
+  barplot(t(prop.table(mytable, 1)),
+    main = "Segmented bar graph of political ideology data",
+    ylab = "Percentage",
+    legend = colnames(mytable)
+  )
+#+end_src
+   
+** Wrap-Up
+
+   With this topic we have concluded our investigation of relationships between
+   variables. This topic has differed from earlier ones in that it has dealt
+   exclusively with categorical variables. The most important technique that
+   this topic has covered has involved interpreting information presented in
+   two-way tables. You have encountered the ideas of marginal distributions and
+   conditional distributions, and you have learned to draw bar graphs and
+   segmented bar graphs to display these distribu- tions. Finally, you have
+   discovered and explained the phenomenon known as Simpson’s Paradox, which
+   raises interesting issues with regard to analyzing two-way tables.
