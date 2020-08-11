@@ -91,6 +91,7 @@ barplot(counts,
   rownames(mytable) <- c("hospitalA", "hospitalB")
   colnames(mytable) <- c("survived", "died")
   mytable <- as.table(mytable)
+  
   > mytable
             survived died
   hospitalA      800  200
@@ -105,6 +106,7 @@ barplot(counts,
   rownames(good_cond) <- c("hospitalA", "hospitalB")
   colnames(good_cond) <- c("survived", "died")
   good_cond <- as.table(good_cond)
+  
   > good_cond
             survived died
   hospitalA      590   10
@@ -119,6 +121,7 @@ barplot(counts,
   rownames(bad_cond) <- c("hospitalA", "hospitalB")
   colnames(bad_cond) <- c("survived", "died")
   mytable <- as.table(bad_cond)
+  
   > mytable
             survived died
   hospitalA      210  190
@@ -135,7 +138,7 @@ barplot(counts,
   hospitalB      900  100
 #+end_src
 
-   The phenomenon that you have just discovered is called Simpson’s paradox,
+   The phenomenon that you have just discovered is called *Simpson’s paradox*,
    which refers to the fact that aggregate proportions can reverse the direction
    of the relationship seen in the individual pieces. In this case, hospital B
    has the higher recovery rate overall, yet hospital A has the higher recovery
@@ -157,6 +160,7 @@ barplot(counts,
   rownames(mytable) <- c("predicted to stay", "predicted to leave")
   colnames(mytable) <- c("actually stays", "actually leaves")
   mytable <- as.table(mytable)
+  
   > addmargins(mytable)
                      actually stays actually leaves Sum
   predicted to stay              63              12  75
