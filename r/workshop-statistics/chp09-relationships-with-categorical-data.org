@@ -178,7 +178,17 @@ barplot(counts,
     legend = colnames(mytable)
   )
 #+end_src
-   
+
+   The segmented bar graph displaying the conditional distribution of employee
+   retention between those predicted to stay and those predicted to leave.
+
+   Two categorical variables are said to be independent if the conditional
+   distributions of one variable are identical for every category of the other
+   variable. In this case the employee outcome is *independent* of the test
+   prediction.
+
+[[./images/chp09-plot4.png]]
+
 ** Wrap-Up
 
    With this topic we have concluded our investigation of relationships between

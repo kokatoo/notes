@@ -1,0 +1,282 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 8: Regression
+
+| Type of regression       | Typical use                                                                                                                                                                              |
+|--------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Simple linear            | Predicting a quantitative response variable from a quantitative explanatory variable.                                                                                                    |
+| Polynomial               | Predicting a quantitative response variable from a quantitative explanatory variable, where the relationship is modeled as an nth order polynomial.                                      |
+| Multiple linear          | Predicting a quantitative response variable from two or more explanatory variables.                                                                                                      |
+| Multilevel               | Predicting a response variable from data that have a hierarchical structure (for example, students within classrooms within schools). Also called hierarchical, nested, or mixed models. |
+| Multivariate             | Predicting more than one response variable from one or more explanatory variables.                                                                                                       |
+| Logistic                 | Predicting a categorical response variable from one or more explanatory variables.                                                                                                       |
+| Poisson                  | Predicting a response variable representing counts from one or more explanatory variables.                                                                                               |
+| Cox proportional hazards | Predicting time to an event (death, failure, relapse) from one or more explanatory variables.                                                                                            |
+| Time-series              | Modeling time-series data with correlated errors.                                                                                                                                        |
+| Nonlinear                | Predicting a quantitative response variable from one or more explanatory variables, where the form of the model is nonlinear.                                                            |
+| Nonparametric            | Predicting a quantitative response variable from one or more explanatory variables, where the form of the model is derived from the data and not specified a priori.                     |
+| Robust                   | Predicting a quantitative response variable from one or more explanatory variables using an approach that’s resistant to the effect of influential observations.                         |
+
+** Section 8.2 OLS regression
+
+| Symbol     | Usage                                                                                                                                                                                                                                                                                     |
+|------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| =~=        | Separates response variables on the left from the explanatory variables on the right. For example, a prediction of ~y~ from ~x~, ~z~, and ~w~ would be coded =y ~ x + z + w=.                                                                                                             |
+| ~+~        | Separates predictor variables.                                                                                                                                                                                                                                                            |
+| ~:~        | Denotes an interaction between predictor variables. A prediction of ~y~ from ~x~, ~z~, and the interaction between ~x~ and ~z~ would be coded =y ~ x + z + x:z=.                                                                                                                          |
+| ~*~        | A shortcut for denoting all possible interactions. The code =y ~ x * z * w= expands to =y ~ x + z + w + x:z + x:w + z:w + x:z:w=.                                                                                                                                                         |
+| ~^~        | Denotes interactions up to a specified degree. The code =y ~ (x + z + w)^2= expands to =y ~ x + z + w + x:z + x:w + z:w=.                                                                                                                                                                 |
+| ~.~        | A placeholder for all other variables in the data frame except the dependent variable. For example, if a data frame contained the variables ~x~, ~y~, ~z~, and ~w~, then the code =y ~ .= would expand to =y ~ x + z + w=.                                                                |
+| ~-~        | A minus sign removes a variable from the equation. For example, =y ~ (x + z + w)^2 – x:w= expands to =y ~ x + z + w + x:z + z:w=.                                                                                                                                                         |
+| ~-1~       | Suppresses the intercept. For example, the formula =y ~ x -1= fits a regression of ~y~ on ~x~, and forces the line through the origin at ~x=0~.                                                                                                                                           |
+| ~I()~      | Elements within the parentheses are interpreted arithmetically. For example, =y ~ x + (z + w)^2= would expand to =y ~ x + z + w + z:w=. In contrast, the code =y ~ x + I((z + w)^2)= would expand to =y ~ x + h=, where ~h~ is a new variable created by squaring the sum of ~z~ and ~w~. |
+| ~function~ | Mathematical functions can be used in formulas. For example, =log(y) ~ x + z + w= would predict ~log(y)~ from ~x~, ~z~, and ~w~.                                                                                                                                                          |
+
+| Function         | Action                                                                                             |
+|------------------+----------------------------------------------------------------------------------------------------|
+| ~summary()~      | Displays detailed results for the fitted model                                                     |
+| ~coefficients()~ | Lists the model parameters (intercept and slopes) for the fitted model                             |
+| ~confint()~      | Provides confidence intervals for the model parameters (95% by default)                            |
+| ~fitted()~       | Lists the predicted values in a fitted model                                                       |
+| ~residuals()~    | Lists the residual values in a fitted model                                                        |
+| ~anova()~        | Generates an ANOVA table for a fitted model, or an ANOVA table comparing two or more fitted models |
+| ~vcov()~         | Lists the covariance matrix for model parameters                                                   |
+| ~AIC()~          | Prints Akaike’s Information Criterion                                                              |
+| ~plot()~         | Generates diagnostic plots for evaluating the fit of a model                                       |
+| ~predict()~      | Uses a fitted model to predict response values for a new dataset                                   |
+
+*** 8.2.2 Simple linear regression
+
+#+begin_src R
+  fit <- lm(weight ~ height, data=women)
+  > summary(fit)
+
+  Call:
+  lm(formula = weight ~ height, data = women)
+
+  Residuals:
+      Min      1Q  Median      3Q     Max 
+  -1.7333 -1.1333 -0.3833  0.7417  3.1167 
+
+  Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+  (Intercept) -87.51667    5.93694  -14.74 1.71e-09 ***
+  height        3.45000    0.09114   37.85 1.09e-14 ***
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+  Residual standard error: 1.525 on 13 degrees of freedom
+  Multiple R-squared:  0.991,	Adjusted R-squared:  0.9903 
+  F-statistic:  1433 on 1 and 13 DF,  p-value: 1.091e-14
+
+  plot(women$height, women$weight,
+       xlab="Height (in inches)",
+       ylab="Weight (in pounds)")
+  abline(fit)
+#+end_src
+
+*** 8.2.3 Polynomial regression
+
+#+begin_src R
+fit2 <- lm(weight ~ height + I(height^2), data=women)
+> summary(fit2)
+
+Call:
+lm(formula = weight ~ height + I(height^2), data = women)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.50941 -0.29611 -0.00941  0.28615  0.59706 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 261.87818   25.19677  10.393 2.36e-07 ***
+height       -7.34832    0.77769  -9.449 6.58e-07 ***
+I(height^2)   0.08306    0.00598  13.891 9.32e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3841 on 12 degrees of freedom
+Multiple R-squared:  0.9995,	Adjusted R-squared:  0.9994 
+F-statistic: 1.139e+04 on 2 and 12 DF,  p-value: < 2.2e-16
+#+end_src
+
+#+begin_src R
+fit3 <- lm(weight ~ height + I(height^2) +I(height^3), data=women)
+#+end_src
+
+    *Linear vs. nonlinear models*
+
+    Note that this polynomial equation is still considered a linear regression
+    because the equation involves a weighted sum of predictor variables
+    (coefficients). Even a model such as ~Y = B1log(X1) + B2log(X2)~ is linear.
+    However, ~Y = B0 + B1exp(X/B2)~ is nonlinear and can be fit with the ~nls()~
+    function.
+
+#+begin_src R
+  library(car)
+
+  scatterplot(weight ~ height, data=women,
+              spread=FALSE, smoother.args=list(lty=2), 
+              pch=19, main="Women Age 30-39",
+              xlab="Height (inches)", ylab="Weight (lbs.)")
+#+end_src
+
+[[./images/chp08-plot1.png]]
+
+*** 8.2.4 Multiple linear regression
+
+#+begin_src R
+  states <- as.data.frame(state.x77
+                          [, c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+
+  > cor(states)
+                   Murder Population Illiteracy     Income      Frost
+  Murder      1.0000000  0.3436428  0.7029752 -0.2300776 -0.5388834
+  Population  0.3436428  1.0000000  0.1076224  0.2082276 -0.3321525
+  Illiteracy  0.7029752  0.1076224  1.0000000 -0.4370752 -0.6719470
+  Income     -0.2300776  0.2082276 -0.4370752  1.0000000  0.2262822
+  Frost      -0.5388834 -0.3321525 -0.6719470  0.2262822  1.0000000
+
+  scatterplotMatrix(states, spread=FALSE, smoother.args=list(lty=2), main="Scatter Plot Matrix")
+#+end_src
+
+[[./images/chp08-plot2.png]]
+
+#+begin_src R
+fit <- lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+> summary(fit)
+
+Call:
+lm(formula = Murder ~ Population + Illiteracy + Income + Frost, 
+    data = states)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7960 -1.6495 -0.0811  1.4815  7.6210 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 1.235e+00  3.866e+00   0.319   0.7510    
+Population  2.237e-04  9.052e-05   2.471   0.0173 *  
+Illiteracy  4.143e+00  8.744e-01   4.738 2.19e-05 ***
+Income      6.442e-05  6.837e-04   0.094   0.9253    
+Frost       5.813e-04  1.005e-02   0.058   0.9541    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.535 on 45 degrees of freedom
+Multiple R-squared:  0.567,	Adjusted R-squared:  0.5285 
+F-statistic: 14.73 on 4 and 45 DF,  p-value: 9.133e-08
+#+end_src
+
+*** 8.2.5 Multiple linear regression with interactions
+
+#+begin_src R
+fit <- lm(mpg ~ hp + wt + hp:wt, data=mtcars)
+> summary(fit)
+
+Call:
+lm(formula = mpg ~ hp + wt + hp:wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.0632 -1.6491 -0.7362  1.4211  4.5513 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 49.80842    3.60516  13.816 5.01e-14 ***
+hp          -0.12010    0.02470  -4.863 4.04e-05 ***
+wt          -8.21662    1.26971  -6.471 5.20e-07 ***
+hp:wt        0.02785    0.00742   3.753 0.000811 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.153 on 28 degrees of freedom
+Multiple R-squared:  0.8848,	Adjusted R-squared:  0.8724 
+F-statistic: 71.66 on 3 and 28 DF,  p-value: 2.981e-13
+
+library(effects)
+
+> plot(effect("hp:wt", fit,, list(wt=c(2.2,3.2,4.2))), multiline=TRUE)
+#+end_src
+
+[[./images/chp08-plot3.png]]
+
+** 8.3 Regression diagnostics
+
+#+begin_src R
+  states <- as.data.frame(state.x77[,c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+  fit <- lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+  > confint(fit)
+                      2.5 %       97.5 %
+  (Intercept) -6.552191e+00 9.0213182149
+  Population   4.136397e-05 0.0004059867
+  Illiteracy   2.381799e+00 5.9038743192
+  Income      -1.312611e-03 0.0014414600
+  Frost       -1.966781e-02 0.0208304170
+
+  fit <- lm(weight ~ height, data=women)
+  par(mfrow=c(2,2))
+  plot(fit)
+#+end_src
+
+[[./images/chp08-plot4.png]]
+
+   Assumptions of OLS regression:
+   
+   * Normality
+   * Independence
+   * Linearity
+   * Homoscedasticity
+
+   Residuals vs. Leverage graph:
+
+   * An outlier is an observation that isn’t predicted well by the fitted
+     regression model (that is, has a large positive or negative residual).
+
+   * An observation with a high leverage value has an unusual combination of
+     predictor values. That is, it’s an outlier in the predictor space. The
+     dependent variable value isn’t used to calculate an observation’s leverage.
+
+   * An influential observation is an observation that has a disproportionate
+     impact on the determination of the model parameters. Influential
+     observations are identified using a statistic called Cook’s distance, or
+     Cook’s D.
+
+#+begin_src R
+  fit2 <- lm(weight ~ height + I(height^2), data=women)
+  par(mfrow=c(2,2))
+  plot(fit2)
+
+  newfit <- lm(weight~ height + I(height^2), data=women[-c(13,15),])
+#+end_src
+
+[[./images/chp08-plot5.png]]
+
+#+begin_src R
+states <- as.data.frame(state.x77[,c("Murder", "Population", "Illiteracy", "Income", "Frost")])
+fit <- lm(Murder ~ Population + Illiteracy + Income + Frost, data=states)
+
+par(mfrow=c(2,2))
+plot(fit)
+#+end_src
+
+[[./images/chp08-plot6.png]]
+
+*** 8.3.2 An enhanced approach
+
+| Function              | Purpose                                      |
+|-----------------------+----------------------------------------------|
+| ~qqPlot()~            | Quantile comparisons plot                    |
+| ~durbinWatsonTest()~  | Durbin–Watson test for autocorrelated errors |
+| ~crPlots()~           | Component plus residual plots                |
+| ~ncvTest()~           | Score test for nonconstant error variance    |
+| ~spreadLevelPlot()~   | Spread-level plots                           |
+| ~outlierTest()~       | Bonferroni outlier test                      |
+| ~avPlots()~           | Added variable plots                         |
+| ~influencePlot()~     | Regression influence plots                   |
+| ~scatterplot()~       | Enhanced scatter plots                       |
+| ~scatterplotMatrix()~ | Enhanced scatter plot matrixes               |
+| ~vif()~               | Variance inflation factors                   |
