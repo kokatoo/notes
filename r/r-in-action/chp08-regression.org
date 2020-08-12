@@ -24,22 +24,18 @@
    weighted sum of predictor variables. The weights are parameters estimated
    from the data.
 
-   *OLS model assumptions:*
+*** OLS model assumptions:  
    
    * Normality:
-     
      The error terms are normally distributed.
 
    * Independence:
-
      The dependent variable (Y(i)) are independent of each other.
 
    * Linearity:
-
      The dependent variable is linearly related to the independent variables.
 
    * Homoscedasticity:
-
      The variance of the dependent variable doesn't vary with the levels of the
      independent variables.
      

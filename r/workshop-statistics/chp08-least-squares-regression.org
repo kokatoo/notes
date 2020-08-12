@@ -1,0 +1,127 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 8: Least Squares Regression
+
+  Then the slope of the least squares line is given by
+ 
+ #+begin_src R
+   b <- r * sd(y)/sd(x)
+   intercept <- mean(y) - b*mean(x)
+ #+end_src
+
+#+begin_src R
+ohio_temps <- c(31, 20, 65, 38, 36, 29, 53, 57, 35, 39)
+nc_temps <- c(50, 51, 79, 54, 57, 46, 70, 66, 55, 65)
+
+fit <- lm(nc_temps ~ ohio_temps)
+> fit$coef
+(Intercept)  ohio_temps 
+      31.88        0.68
+> coefficients(fit)
+(Intercept)  ohio_temps 
+      31.88        0.68
+#+end_src
+
+** Activity 8-3: Air Fares (cont.)
+
+#+begin_src R
+  mydata <- data.frame(
+    mean = c(166.92, 712.67),
+    sd = c(59.45, 402.69),
+    row.names = c("air.fare", "distance")
+  )
+  r <- 0.795
+
+  b <- r * mydata["air.fare", "sd"] / mydata["distance", "sd"]
+  > b
+  [1] 0.12
+
+  intercept <- mydata["air.fare", "mean"] - b * mydata["distance", "mean"]
+  > intercept
+  [1] 83
+
+  dist <- 300
+  > b * dist + intercep
+  [1] 118
+
+  dist <- 1500
+  > b * dist + intercept
+  [1] 259
+#+end_src
+
+**  Activity 8-5: Air Fares (cont.)
+
+#+begin_src R
+myfile <- "./data/chp07-fare.rds"
+mydata <- readRDS(myfile)
+
+fit <- lm(air.fare ~ distance, data = mydata)
+summary(fit)
+
+mydata <- transform(mydata, fitted = fitted(fit), resid = residuals(fit))
+> mydata[which.max(mydata$resid), ]
+        destination distance air.fare fitted residual resid
+4 Dallas/Fort Worth     1216      278    226       52    52
+
+> mydata[which.min(mydata$resid), ]
+   destination distance air.fare fitted residual resid
+12   St. Louis      737       98    170      -72   -72
+
+air_fare_sd <- 59.45
+
+r <- sd(mydata$fit) / air_fare_sd
+[1] 0.8
+r2 <- r^2
+> r2
+[1] 0.63
+#+end_src
+
+** Activity 8-10: Basketball Rookie Salaries
+
+   The dataset pertains to basketball players selected in the first round of
+   the 1991 National Basketball Association draft. It lists the draft number
+   (the order in which the player was selected) of each player and the annual
+   salary of the contract that the player signed. The two missing entries are
+   for players who signed with European teams.
+
+#+begin_src R
+  myfile <- "./data/chp07-nba.rds"
+  mydata <- readRDS(myfile)
+
+  plot(mydata$pick, mydata$salary,
+    xlab = "Pick #", ylab = "Salary"
+  )
+
+  fit <- lm(salary ~ pick, data = mydata)
+  attributes(summary(fit))
+  > summary(fit)$r.squared
+  [1] 0.79
+
+  > predict(fit, data.frame(pick = 12))
+        1 
+  1469956 
+
+  > predict(fit, data.frame(pick = 15))
+        1 
+  1173085 
+
+  > coefficients(fit)[2]
+    pick 
+  -98957
+#+end_src
+
+[[./images/chp08-plot1.png]]
+
+** Wrap-Up
+
+   This topic has led you to study a formal mathematical model for describing
+   the relationship between two variables. In studying least squares regression,
+   you have encountered a variety of related terms and concepts. These ideas
+   include the use of regression in prediction, the danger of extrapolation, the
+   interpretation of the slope coefficient, the concepts of fitted values and
+   residuals, and the interpretation of r 2 as the proportion of variability
+   explained by the regression line. Understanding all of these ideas is
+   important to applying regression techniques thoughtfully and appropriately.
+
+
