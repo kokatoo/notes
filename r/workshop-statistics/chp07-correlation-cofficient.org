@@ -1,0 +1,156 @@
+#+STARTUP: showeverything
+#+title: Workshop Statistics
+
+* Chapter 7: Correlation Coefficient
+
+  Correlation between Ohio and North Carolina temperatures.
+
+#+begin_src R
+  ohio_temps <- c(31, 20, 65, 38, 36, 29, 53, 57, 35, 39)
+  ohio_temps <- scale(ohio_temps)
+  > ohio_temps
+              [,1]
+   [1,] -0.67076223
+   [2,] -1.46413691
+   [3,]  1.78148678
+   [4,] -0.16588743
+   [5,] -0.31013738
+   [6,] -0.81501217
+   [7,]  0.91598713
+   [8,]  1.20448702
+   [9,] -0.38226235
+  [10,] -0.09376246
+
+  nc_temps <- c(50, 51, 79, 54, 57, 46, 70, 66, 55, 65)
+  > nc_temps <- scale(nc_temps)
+             [,1]
+   [1,] -0.8985519
+   [2,] -0.8019334
+   [3,]  1.9033841
+   [4,] -0.5120780
+   [5,] -0.2222225
+   [6,] -1.2850258
+   [7,]  1.0338178
+   [8,]  0.6473438
+   [9,] -0.4154595
+  [10,]  0.5507254
+
+  corr <- sum(ohio_temps * nc_temps) / (length(ohio_temps) - 1)
+  > corr
+  [1] 0.9114161
+#+end_src
+
+** Activity 7-2: Televisions and Life Expectancy
+
+#+begin_src R
+myfile <- "./data/chp07-politics.rds"
+mydata <- readRDS(myfile)
+
+> mydata[order(-mydata$"per.TV"), ][1, 1]
+[1] "Haiti"
+> mydata[order(mydata$"per.TV"), ][1, 1]
+[1] "United States"
+
+plot(mydata$per.TV, mydata$life.exp,
+     main = "Life Expectancy vs People Per TV",
+     xlab = "People Per TV", ylab = "Life Expectancy")
+
+> cor(mydata$per.TV, mydata$life.exp)
+[1] -0.8038097
+#+end_src
+
+[[./images/chp07-plot1.png]]
+
+   This example illustrates the very important distinction between association
+   and causation. Two variables may be strongly associated (as measured by the
+   correlation coefficient) without a cause- and-effect relationship existing
+   between them. Often the explanation is that both variables are re- lated to a
+   third variable not being measured; this variable is often called a lurking or
+   confounding variable.
+
+** Activity 7-3: High School Completion Rates
+
+   High school completion rate vs distance from Canada.
+
+#+begin_src R
+  myfile <- "./data/chp07-school.rds"
+  mydata <- readRDS(myfile)
+
+  plot(mydata$Distance, mydata$Completion.Rate,
+    main = "High School Rate vs Distance",
+    xlab = "Distance from Canada",
+    ylab = "High School Completion Rate"
+  )
+
+  > cor(mydata$Completion.Rate, mydata$Distance)
+  [1] -0.5323664
+#+end_src
+
+[[./images/chp07-plot2.png]]
+
+** Activity 7-11: Climatic Conditions
+
+   The following table lists a number of climatic variables for a sample of 25
+   American cities. These variables measure long-term averages of:
+
+| Jan.hi  | January high temperature (in degrees Fahrenheit) |
+| Jan.lo  | January low temperature                          |
+| July.hi | July high temperature                            |
+| July.lo | July low temperature                             |
+| precip  | annual precipitation (in inches)                 |
+| precday | days of measurable precipitation per year        |
+| snow    | annual snow accumulation                         |
+| sun     | percentage of sunshine                           |
+
+
+#+begin_src R
+  myfile <- "./data/chp07-temperature.rds"
+  mydata <- readRDS(myfile)
+
+  cors <- cor(mydata[-1])
+  > cors
+          Jan.hi  Jan.lo July.hi July.lo  precip precday  snow   sun
+  Jan.hi   1.000  0.9648   0.152    0.55 -0.0731   -0.57 -0.81  0.64
+  Jan.lo   0.965  1.0000  -0.022    0.47  0.0023   -0.46 -0.83  0.51
+  July.hi  0.152 -0.0222   1.000    0.71  0.1138   -0.13 -0.08  0.38
+  July.lo  0.554  0.4728   0.712    1.00  0.2430   -0.35 -0.61  0.52
+  precip  -0.073  0.0023   0.114    0.24  1.0000    0.70 -0.16 -0.51
+  precday -0.572 -0.4600  -0.130   -0.35  0.6954    1.00  0.44 -0.83
+  snow    -0.807 -0.8251  -0.080   -0.61 -0.1567    0.44  1.00 -0.36
+  sun      0.643  0.5118   0.377    0.52 -0.5059   -0.83 -0.36  1.00
+
+  tmp <- cors
+  diag(tmp) <- 0
+
+  idxs <- which(tmp == max(tmp), arr.ind = TRUE)
+  > row.names(idxs)
+  [1] "Jan.lo" "Jan.hi"
+  > cors[idxs]
+  [1] 0.96 0.96
+
+  idxs <- which(tmp == min(tmp), arr.ind = TRUE)
+  > row.names(idxs)
+  [1] "sun"     "precday"
+  > cors[idxs]
+  [1] -0.83 -0.83
+
+  tmp <- abs(cors)
+  idxs <- which(tmp == min(tmp), arr.ind = TRUE)
+  > row.names(idxs)
+  [1] "precip" "Jan.lo"
+  > cors[idxs]
+  [1] 0.0023 0.0023
+#+end_src
+
+** Wrap-Up
+
+   In this topic you have discovered the very important correlation coefficient
+   as a measure of the linear relationship between two variables. You have
+   derived some of the properties of this measure, such as the values it can
+   assume, how its sign and value relate to the direction and strength of the
+   association, and its lack of resistance to outliers. You have also practiced
+   judging the direction and strength of a relationship from looking at a
+   scatterplot. In addition, you have discovered the distinction between
+   correlation and causation and learned that one needs to be very careful about
+   inferring causal relationships between variables based solely on a strong
+   correlation.
