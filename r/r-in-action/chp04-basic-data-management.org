@@ -16,17 +16,25 @@
   q4 <- c(5, 5, 5, NA, 2)
   q5 <- c(5, 5, 2, NA, 1)
 
-  leadership <- data.frame(manager, date, country, gender, age, 
-                           q1, q2, q3, q4, q5, stringsAsFactors=FALSE)
+  leadership <- data.frame(manager,
+                           date,
+                           country,
+                           gender,
+                           age, 
+                           q1, q2, q3, q4, q5,
+                           stringsAsFactors = FALSE)
 #+end_src
 
 ** Section 4.2 Creating new variables
 
 #+begin_src R
-  mydata <- data.frame(x1=c(2, 2, 6, 4), x2=c(3, 4, 2, 8))
-  
+  mydata <- data.frame(x1 = c(2, 2, 6, 4),
+                       x2 = c(3, 4, 2, 8))
+
   # create sumx and meanx variables
-  mydata <- transform(mydata, sumx = x1+x2, meanx = (x1+x2)/2)
+  mydata <- transform(mydata,
+                      sumx = x1 + x2,
+                      meanx = (x1 + x2)/2)
 #+end_src
 
 ** Section 4.3 Recoding variables
@@ -46,7 +54,7 @@
   names(leadership)[6:10] <- c("item1", "item2", "item3", "item4", "item5")
 
   library(plyr)
-  leadership <- rename(leadership, c(manager="managerID", date="testDate"))
+  leadership <- rename(leadership, c(manager = "managerID", date = "testDate"))
 #+end_src
 
 ** Section 4.5 Missing values
@@ -64,9 +72,10 @@
 *** 4.5.2 Excluding missing values from analyses
 
 #+begin_src R
-  y <- sum(x, na.rm=TRUE)
+  y <- sum(x, na.rm = TRUE)
 
-  newdata <- na.omit(leadership) # data frame with complete cases only
+  # data frame with complete cases only
+  newdata <- na.omit(leadership)
 #+end_src
 
 ** Section 4.6 Date values
@@ -92,14 +101,17 @@
   Sys.Date() # return today's date
   date()     # returns the current date and time
 
-  format(Sys.Date(), format="%B %d %Y")
-  difftime(Sys.Date(), as.Date("1956-10-12"), units="weeks")
+  format(Sys.Date(), format = "%B %d %Y")
+  difftime(Sys.Date(),
+           as.Date("1956-10-12"),
+           units = "weeks")
 #+end_src
 
 *** 4.6.1 Converting dates to character variables
 
 #+begin_src R
-  strDates <- as.character(c(as.Date("2004-02-13"), as.Date("2005-02-13")))
+  strDates <- as.character(c(as.Date("2004-02-13"),
+                             as.Date("2005-02-13")))
 #+end_src
 
 *** 4.6.2 Going further
@@ -110,11 +122,11 @@
   help(stftime)
 
   # formatting dates and times
-  help(ISOdate-time)
-  help(package="lubridate")
+  help(ISOdatetime)
+  help(package = "lubridate")
 
   # complex calculation with dates
-  help(package="timeDate")
+  help(package = "timeDate")
 #+end_src
 
 ** Section 4.7 Type conversions
@@ -144,7 +156,9 @@
 ** Section 4.9 Merging datasets
 
 #+begin_src R
-  total <- merge(dataframeA, dataframeB, by=c("ID","Country"))
+  total <- merge(dataframeA,
+                 dataframeB,
+                 by = c("ID","Country"))
 #+end_src
 
 ** Section 4.10 Subsetting datasets
@@ -173,22 +187,26 @@
 *** 4.10.4 The subset() function
 
 #+begin_src R
-  newdata <- subset(leadership, age >= 35 | age < 24, 
-                    select=c(q1, q2, q3, q4))
+  newdata <- subset(leadership,
+                    age >= 35 | age < 24, 
+                    select = c(q1, q2, q3, q4))
 
   # keep variables from gender through q4
-  newdata <- subset(leadership, gender=="M" & age > 25, 
-                    select=gender:q4)
+  newdata <- subset(leadership,
+                    gender=="M" & age > 25, 
+                    select = gender:q4)
 #+end_src
 
 *** 4.10.5 Random samples
 
 #+begin_src R
-mysample <- leadership[sample(1:nrow(leadership), 3, replace=FALSE),]
+  mysample <- leadership[
+    sample(1:nrow(leadership),
+           3,
+           replace = FALSE),]
 
-
-help(package="sampling")
-help(package="survey")
+  help(package = "sampling")
+  help(package = "survey")
 #+end_src
 
 ** 4.11 Using SQL statements to manipulate data frames
@@ -196,5 +214,6 @@ help(package="survey")
 #+begin_src R
   library(sqldf)
 
-  newdf <- sqldf("select * from mtcars where carb=1 order by mpg", row.names=TRUE)
+  newdf <- sqldf("select * from mtcars where carb=1 order by mpg",
+                 row.names = TRUE)
 #+end_src
