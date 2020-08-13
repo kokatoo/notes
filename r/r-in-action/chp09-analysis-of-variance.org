@@ -5,7 +5,7 @@
 
   When factors are included as explanatory variables, the focus usually shifts
   from prediction to understanding group differences, and the methodology is
-  referred to as /analysis of variance (ANOVA/.
+  referred to as /analysis of variance (ANOVA)/.
 
   Effects in ANOVA designs are primarily evaluated through F tests. If the F test
   for Treatment is significant, you can conclude the differences in treatment is
