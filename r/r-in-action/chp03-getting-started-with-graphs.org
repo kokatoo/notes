@@ -76,14 +76,14 @@
 | ~font.lab~  | Font for axis labels.                                            |
 | ~font.main~ | Font for titles.                                                 |
 | ~font.sub~  | Font for subtitles.                                              |
-| ~ps~        | Font point size (roughly 1/72 inch). text size=~ps*cex~.         |
+| ~ps~        | Font point size (roughly 1/72 inch). text size=ps*cex.           |
 | ~family~    | Standard values are serif, sans, and mono.                       |
 
 *** 3.3.4 Graph and margin dimensions
 
 | Parameter | Description                                                                                                   |
 |-----------+---------------------------------------------------------------------------------------------------------------|
-| ~pin~     | Plot dimensions ~(width, height)~ in inches.                                                                  |
+| ~pin~     | Plot dimensions ~c(width, height)~ in inches.                                                                 |
 | ~mai~     | Margin size, where ~c(bottom, left, top, right)~ is expressed in inches.                                      |
 | ~mar~     | Margin size, where ~c(bottom, left, top, right)~ is expressed in lines. The default is ~c(5, 4, 4, 2) + 0.1~. |
 
@@ -119,19 +119,37 @@
   opar <- par(no.readonly = TRUE)
 
   par(mar = c(5, 4, 4, 8) + 0.1)
-  plot(x, y, type = "b", pch = 21, 
-       col = "red", yaxt = "n",
-       lty = 3, ann = FALSE)
-  lines(x, z, type = "b", pch = 22, col = "blue", lty = 2)
+  plot(x, y,
+       type = "b",
+       lty = 3,
+       pch = 21,
+       col = "red",
+       yaxt = "n",
+       ann = FALSE)
 
-  axis(2, at = x, labels = x, col.axis = "red", las = 2)
-  axis(4, at = z, labels = round(z, digits = 2),
-       col.axis = "blue", las = 2,
-       cex.axis = 0.7, tck = -.01)
+  lines(x, z, type = "b",
+        pch = 22,
+        lty = 2,
+        col = "blue")
 
-  mtext("y = 1/x", side = 4,
-        line = 3, cex.lab = 1, 
-        las = 2, col = "blue")
+  axis(2, at = x, 
+       labels = x,
+       las = 2,
+       col.axis = "red")
+  axis(4, at = z,
+       las = 2,
+       tck = -.01,
+       cex.axis = 0.7,
+       col.axis = "blue",
+       labels = round(z, digits = 2))
+
+  mtext("y = 1/x",
+        side = 4,
+        line = 3,
+        las = 2,
+        cex.lab = 1, 
+        col = "blue")
+
   title("An Example of Creative Axes",
         xlab = "X values", ylab = "Y = X")
 
@@ -148,39 +166,54 @@
 
   # add vertical lines at x = 1..10 step = 2
   abline(v = seq(1, 10, 2),
-         lty = 2, col = "blue")
+         lty = 2,
+         col = "blue")
 #+end_src
 
 *** 3.4.4 Legend
 
 #+begin_src R
-  legend("topleft", inset = .05,
-         title = "Drug Type", c("A","B"),
-         lty = c(1, 2), pch = c(15, 17),
+  legend("topleft", 
+         inset = .05,
+         c("A","B"),
+         lty = c(1, 2),
+         pch = c(15, 17),
+         title = "Drug Type",
          col = c("red", "blue"))
 #+end_src
 
 *** 3.4.5 Text annotations
 
 #+begin_src R
-  text(wt, mpg, row.names(mtcars), 
-       cex = 0.6, pos = 4, col = "red")
-  mtext("y = 1/x", side = 4, line = 3, 
-        cex.lab = 1, las = 2, col = "blue")
+  text(wt, mpg,
+     cex = 0.6,
+     pos = 4,
+     col = "red",
+     row.names(mtcars))
+
+  mtext("y = 1/x",
+        side = 4,
+        line = 3, 
+        cex.lab = 1,
+        las = 2,
+        col = "blue")
 #+end_src
 
 ** Section 3.5 Combining graphs
 
 #+begin_src R
   attach(mtcars)
-  
-  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow  = TRUE), 
-         widths = c(3, 1), heights = c(1, 2))
-  
+
+  layout(matrix(c(1, 1, 2, 3),
+                2, 2,
+                byrow  = TRUE), 
+         widths = c(3, 1),
+         heights = c(1, 2))
+
   hist(wt)
   hist(mpg)
   hist(disp)
-  
+
   detach(mtcars)
 #+end_src
 
@@ -200,8 +233,10 @@
   par(fig = c(0.65, 1, 0, 0.8), new = TRUE)
   boxplot(mtcars$mpg, axes = FALSE)
 
-  mtext("Enhanced Scatterplot", side = 3,
-        outer = TRUE, line = -3)
+  mtext("Enhanced Scatterplot",
+        side = 3,
+        line = -3,
+        outer = TRUE)
 
   par(opar)
 #+end_src

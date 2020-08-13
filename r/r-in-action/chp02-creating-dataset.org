@@ -22,8 +22,10 @@
   rnames <- c("R1", "R2")
   cnames <- c("C1", "C2")
 
-  mymatrix <- matrix(cells, nrow = 2, ncol = 2, byrow = TRUE,
-                       dimnames = list(rnames, cnames))
+  mymatrix <- matrix(cells,
+                     nrow = 2, ncol = 2,
+                     byrow = TRUE,
+                     dimnames = list(rnames, cnames))
   > mymatrix
        C1 C2
     R1  1 26
@@ -34,7 +36,7 @@
         [,1] [,2] [,3] [,4] [,5]
    [1,]    1   3     5    7    9
    [2,]    2   4     6    8   10
-  
+
   > x[2,]
   [1] 3 4
 
@@ -125,7 +127,8 @@
   j <- matrix(1:10, nrow = 5)
   k <- c("one", "two", "three")
 
-  mylist <- list(title = g, ages = h, j, k)
+  mylist <- list(title = g,
+                 ages = h, j, k)
 
   > mylist[[2]]
   [1] 25 26 18 39
@@ -171,7 +174,8 @@
 #+begin_src R
   grades <- read.table("studentgrades.csv",
                        row.names = "StudentID",
-                       header = TRUE, sep = ",",
+                       header = TRUE,
+                       sep = ",",
                        stringsAsFactors = FALSE,
                        colClasses = c("character", "character", "character",
                                       "numeric", "numeric", "numeric"))
@@ -202,7 +206,9 @@
 #+begin_src R
   library(RODBC)
 
-  myconn <- odbcConnect("mydsn", uid = "Rob", pwd = "aardvark")
+  myconn <- odbcConnect("mydsn",
+                        uid = "Rob",
+                        pwd = "aardvark")
   crimedat <- sqlFetch(myconn, Crime)
   pundat <- sqlQuery(myconn, "select * from Punishment")
   close(myconn)
