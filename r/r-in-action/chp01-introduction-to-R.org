@@ -7,17 +7,17 @@
 
 *** 1.3.2 Getting help
 
-| Function                         | Comment                                                                     |
-|----------------------------------+-----------------------------------------------------------------------------|
-| ~help.start()~                   | General help                                                                |
-| ~help(lm)~ or ~?lm~              | Help on function lm                                                         |
-| ~help.search(lm)~ or ~??lm~      | Searches the help system                                                    |
-| ~example(lm)~                    | Examples of function lm                                                     |
-| ~RSiteSearch("lm")~              | Searches in online help manuals and archived mailing lists                  |
-| ~apropos("lm", mode="function")~ | Lists all available functions with lm in their name                         |
-| ~data()~                         | Lists all available example datasets contained in currently loaded packages |
-| ~vignette()~                     | Lists all available vignettes for currently installed packages              |
-| ~vignette("zoo")~                | Displays specific vignettes for topic foo                                   |
+| Function                           | Comment                                                                     |
+|------------------------------------+-----------------------------------------------------------------------------|
+| ~help.start()~                     | General help                                                                |
+| ~help(lm)~ or ~?lm~                | Help on function ~lm~                                                       |
+| ~help.search(lm)~ or ~??lm~        | Searches the help system                                                    |
+| ~example(lm)~                      | Examples of function ~lm~                                                   |
+| ~RSiteSearch("lm")~                | Searches in online help manuals and archived mailing lists                  |
+| ~apropos("lm", mode = "function")~ | Lists all available functions with lm in their name                         |
+| ~data()~                           | Lists all available example datasets contained in currently loaded packages |
+| ~vignette()~                       | Lists all available vignettes for currently installed packages              |
+| ~vignette("zoo")~                  | Displays specific vignettes for topic foo                                   |
 
 *** 1.3.3: The workspace
 
@@ -34,9 +34,8 @@
 | ~loadhistory("file")~ | default=.Rhistory                        |
 | ~save.image("file")~  | default=.RData                           |
 | ~save()~              | ~save(list=c("x", "y"), file="~/r.out")~ |
-| ~load()~              | ~load("~/.RData")~                  |
+| ~load()~              | ~load("~/.RData")~                       |
 | ~q()~                 |                                          |
-
 
 *** 1.3.4 Input and output
 
@@ -50,6 +49,7 @@
 | ~svg()~    | ~svg("file.svg")~                          | use ~dev.off()~ to return output to screen   |
 
     Alternative way to plot and save plot to file:
+
 #+begin_src R
   # plot as usual before calling dev.copy()
   dev.copy(png, "file.png")
@@ -59,7 +59,8 @@
 
 ** Section 1.4 Packages
 
-   Standard Packages: ~base~, ~datasets~, ~utils~, ~grDevices~, ~graphics~, ~stats~, and ~methods~
+   Standard Packages: ~base~, ~datasets~, ~utils~, ~grDevices~, ~graphics~,
+   ~stats~, and ~methods~
 
    To set up your default CRAN mirror site include this in ~.Rprofile~:
 
@@ -67,18 +68,18 @@
   local({
     r <- getOption("repos")
     r["CRAN"] <- "https://cran.asia/"
-    options(repos=r)
+
+    options(repos = r)
   })
 #+end_src
 
-| Function               | Comment                        |
-|------------------------+--------------------------------|
-| ~.libPaths()~          | shows where library is located |
-| ~library()~            | current installed packages     |
-| ~search()~             | current loaded packages        |
-| ~update.packages()~    | update current packages        |
-| ~help(package="stat")~ | or ~library(help="stats")~     |
-
+| Function                      | Comment                        |
+|-------------------------------+--------------------------------|
+| ~.libPaths()~                 | shows where library is located |
+| ~library()~                   | current installed packages     |
+| ~search()~                    | current loaded packages        |
+| ~update.packages(ask = TRUE)~ | update current packages        |
+| ~help(package = "stat")~      | or ~library(help = "stats")~   |
 
 ** Section 1.5 Batch processing
 

@@ -5,26 +5,25 @@
 
 ** Section 3.2 A simple example
 
-
 #+begin_src R
   dose <- c(20, 30, 40, 45, 60)
   drugA <- c(16, 20, 27, 40, 60)
   drugB <- c(15, 18, 25, 31, 40)
 
   # "b" display both point and line
-  plot(dose, drugA, type="b")
+  plot(dose, drugA, type = "b")
 #+end_src
 
 [[./images/chp03.2_plot.png]]
 
 *** 3.3.1 Symbols and lines
 
-| Parameter | Description                                                                                                                |
-|-----------+----------------------------------------------------------------------------------------------------------------------------|
-| ~pch~     | Specifies the symbol to use when plotting points.                                                                          |
+| Parameter | Description                                                                                                                 |
+|-----------+-----------------------------------------------------------------------------------------------------------------------------|
+| ~pch~     | Specifies the symbol to use when plotting points.                                                                           |
 | ~cex~     | ~cex~ is symbol size expressed relative to the default (1=default). ~cex=2~ generates a symbol twice as big as the default. |
-| ~lty~     | Specifies the line type.                                                                                                   |
-| ~lwd~     | ~lwd~ is expressed relative to the default (1=default). ~lwd=2~ generates a line twice as wide as the default.             |
+| ~lty~     | Specifies the line type.                                                                                                    |
+| ~lwd~     | ~lwd~ is expressed relative to the default (~1=default~). ~lwd=2~ generates a line twice as wide as the default.            |
 
 
 [[./images/chp03.3_plot.png]]
@@ -55,77 +54,86 @@
 
   n <- 7
   mycolors <- brewer.pal(n, "Set1")
-  barplot(rep(1,n), col=mycolors)
 
-  # show all available palettes
+  barplot(rep(1, n), col = mycolors)
   display.brewer.all()
 #+end_src
+
+[[./images/chp03-plot.png]]
 
 [[./images/chp03.3_plot4.png]]
 
 *** 3.3.3 Text characteristics
 
-| Parameter   | Description                                              |
-|-------------+----------------------------------------------------------|
-| ~cex.axis~  | Magnification of axis text.                              |
-| ~cex.lab~   | Magnification of axis labels.                            |
-| ~cex.main~  | Magnification of titles.                                 |
-| ~cex.sub~   | Magnification of subtitles                               |
-| ~font~      | 1=plain, 2=bold, 3=italic, 4=bold italic, and 5=symbol   |
-| ~font.axis~ | Font for axis text.                                      |
-| ~font.lab~  | Font for axis labels.                                    |
-| ~font.main~ | Font for titles.                                         |
-| ~font.sub~  | Font for subtitles.                                      |
-| ~ps~        | Font point size (roughly 1/72 inch). text size = ~ps*cex~. |
-| ~family~    | Standard values are serif, sans, and mono.               |
+| Parameter   | Description                                                      |
+|-------------+------------------------------------------------------------------|
+| ~cex.axis~  | Magnification of axis text.                                      |
+| ~cex.lab~   | Magnification of axis labels.                                    |
+| ~cex.main~  | Magnification of titles.                                         |
+| ~cex.sub~   | Magnification of subtitles                                       |
+| ~font~      | ~1=plain~, ~2=bold~, ~3=italic~, ~4=bold italic~, and ~5=symbol~ |
+| ~font.axis~ | Font for axis text.                                              |
+| ~font.lab~  | Font for axis labels.                                            |
+| ~font.main~ | Font for titles.                                                 |
+| ~font.sub~  | Font for subtitles.                                              |
+| ~ps~        | Font point size (roughly 1/72 inch). text size=~ps*cex~.         |
+| ~family~    | Standard values are serif, sans, and mono.                       |
 
 *** 3.3.4 Graph and margin dimensions
 
-| Parameter | Description                                                                                                 |
-|-----------+-------------------------------------------------------------------------------------------------------------|
-| ~pin~     | Plot dimensions (width, height) in inches.                                                                  |
-| ~mai~     | Margin size, where c(bottom, left, top, right) is expressed in inches.                                      |
-| ~mar~     | Margin size, where c(bottom, left, top, right) is expressed in lines. The default is ~c(5, 4, 4, 2) + 0.1~. |
+| Parameter | Description                                                                                                   |
+|-----------+---------------------------------------------------------------------------------------------------------------|
+| ~pin~     | Plot dimensions ~(width, height)~ in inches.                                                                  |
+| ~mai~     | Margin size, where ~c(bottom, left, top, right)~ is expressed in inches.                                      |
+| ~mar~     | Margin size, where ~c(bottom, left, top, right)~ is expressed in lines. The default is ~c(5, 4, 4, 2) + 0.1~. |
 
 ** Section 3.4 Adding text, customized axes and legends
 
 *** 3.4.1 Titles
 
 #+begin_src R
-  title(main="My Title", sub="My Subtitle", xlab="My X label", ylab="My Y label",
-        col.main="red", col.sub="blue", col.lab="green", cex.lab=0.75)
+  title(main = "My Title", sub = "My Subtitle",
+        xlab = "My X label", ylab = "My Y label",
+        col.main = "red", col.sub = "blue",
+        col.lab = "green", cex.lab = 0.75)
 #+end_src
-
 
 *** 3.4.2 Axes
 
-| Parameter | Description                                                                                                                                                                                             |
-|-----------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ~side~    | Side of the graph on which to draw the axis (1=bottom, 2=left, 3=top, and 4=right).                                                                                                                     |
-| ~at~      | Where tick marks should be drawn.                                                                                                                                                                       |
-| ~labels~  | Labels to be placed at the tick marks.                                                                                                                                                                  |
-| ~pos~     | Coordinate at which the axis line is to be drawn.                                                                                                                                                       |
-| ~lty~     | Line type.                                                                                                                                                                                              |
-| ~col~     | Line and tick mark color.                                                                                                                                                                               |
-| ~las~     | Specifies that labels are parallel (=0) or perpendicular (=2) to the axis.                                                                                                                              |
-| ~tck~     | Length of each tick mark as a fraction of the plotting region (a negative number is outside the graph, a positive number is inside, 0 suppresses ticks, and 1 creates gridlines). The default is –0.01. |
+| Parameter | Description                                                                                                                                                                                                   |
+|-----------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~side~    | Side of the graph on which to draw the axis (1=bottom, 2=left, 3=top, and 4=right).                                                                                                                           |
+| ~at~      | Where tick marks should be drawn.                                                                                                                                                                             |
+| ~labels~  | Labels to be placed at the tick marks.                                                                                                                                                                        |
+| ~pos~     | Coordinate at which the axis line is to be drawn.                                                                                                                                                             |
+| ~lty~     | Line type.                                                                                                                                                                                                    |
+| ~col~     | Line and tick mark color.                                                                                                                                                                                     |
+| ~las~     | Specifies that labels are parallel (~=0~) or perpendicular (~=2~) to the axis.                                                                                                                                |
+| ~tck~     | Length of each tick mark as a fraction of the plotting region (a negative number is outside the graph, a positive number is inside, ~0~ suppresses ticks, and ~1~ creates gridlines). The default is ~–0.01~. |
 
 #+begin_src R
   x <- c(1:10)
   y <- x
   z <- 10/x
 
-  opar <- par(no.readonly=TRUE)
+  opar <- par(no.readonly = TRUE)
 
-  par(mar=c(5, 4, 4, 8) + 0.1)
-  plot(x, y, type="b", pch=21, col="red", yaxt="n", lty=3, ann=FALSE)
-  lines(x, z, type="b", pch=22, col="blue", lty=2)
+  par(mar = c(5, 4, 4, 8) + 0.1)
+  plot(x, y, type = "b", pch = 21, 
+       col = "red", yaxt = "n",
+       lty = 3, ann = FALSE)
+  lines(x, z, type = "b", pch = 22, col = "blue", lty = 2)
 
-  axis(2, at=x, labels=x, col.axis="red", las=2)
-  axis(4, at=z, labels=round(z, digits=2), col.axis="blue", las=2, cex.axis=0.7, tck=-.01)
+  axis(2, at = x, labels = x, col.axis = "red", las = 2)
+  axis(4, at = z, labels = round(z, digits = 2),
+       col.axis = "blue", las = 2,
+       cex.axis = 0.7, tck = -.01)
 
-  mtext("y=1/x", side=4, line=3, cex.lab=1, las=2, col="blue")
-  title("An Example of Creative Axes", xlab="X values", ylab="Y=X")
+  mtext("y = 1/x", side = 4,
+        line = 3, cex.lab = 1, 
+        las = 2, col = "blue")
+  title("An Example of Creative Axes",
+        xlab = "X values", ylab = "Y = X")
 
   par(opar)
 #+end_src
@@ -135,31 +143,39 @@
 *** 3.4.3 Reference lines
 
 #+begin_src R
-  abline(h=c(1, 5, 7)) # add horizontal lines at y=1, 5, and 7
+  # add horizontal lines at y = 1, 5, and 7  
+  abline(h = c(1, 5, 7))
 
-  abline(v=seq(1, 10, 2), lty=2, col="blue") # add vertical lines at x=1..10 step=2
+  # add vertical lines at x = 1..10 step = 2
+  abline(v = seq(1, 10, 2),
+         lty = 2, col = "blue")
 #+end_src
 
 *** 3.4.4 Legend
 
 #+begin_src R
-  legend("topleft", inset=.05, title="Drug Type", c("A","B"),
-         lty=c(1, 2), pch=c(15, 17), col=c("red", "blue"))
+  legend("topleft", inset = .05,
+         title = "Drug Type", c("A","B"),
+         lty = c(1, 2), pch = c(15, 17),
+         col = c("red", "blue"))
 #+end_src
 
 *** 3.4.5 Text annotations
 
 #+begin_src R
-  text(wt, mpg, row.names(mtcars), cex=0.6, pos=4, col="red")
-  mtext("y=1/x", side=4, line=3, cex.lab=1, las=2, col="blue") # margin text
+  text(wt, mpg, row.names(mtcars), 
+       cex = 0.6, pos = 4, col = "red")
+  mtext("y = 1/x", side = 4, line = 3, 
+        cex.lab = 1, las = 2, col = "blue")
 #+end_src
 
 ** Section 3.5 Combining graphs
+
 #+begin_src R
   attach(mtcars)
   
-  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE), 
-         widths=c(3, 1), heights=c(1, 2))
+  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow  = TRUE), 
+         widths = c(3, 1), heights = c(1, 2))
   
   hist(wt)
   hist(mpg)
@@ -171,21 +187,23 @@
 [[./images/chp03.5_plots2.png]]
 
 #+begin_src R
-  opar <- par(no.readonly=TRUE)
+  opar <- par(no.readonly = TRUE)
 
-  par(fig=c(0, 0.8, 0, 0.8))
-  plot(mtcars$wt, mtcars$mpg, xlab="Miles Per Gallon", ylab="Car Weight")
+  par(fig = c(0, 0.8, 0, 0.8))
+  plot(mtcars$wt, mtcars$mpg,
+       xlab = "Miles Per Gallon",
+       ylab = "Car Weight")
 
-  par(fig=c(0, 0.8, 0.55, 1), new=TRUE)
-  boxplot(mtcars$wt, horizontal=TRUE, axes=FALSE)
+  par(fig = c(0, 0.8, 0.55, 1), new = TRUE)
+  boxplot(mtcars$wt, horizontal = TRUE, axes = FALSE)
 
-  par(fig=c(0.65, 1, 0, 0.8), new=TRUE)
-  boxplot(mtcars$mpg, axes=FALSE)
+  par(fig = c(0.65, 1, 0, 0.8), new = TRUE)
+  boxplot(mtcars$mpg, axes = FALSE)
 
-  mtext("Enhanced Scatterplot", side=3, outer=TRUE, line=-3)
+  mtext("Enhanced Scatterplot", side = 3,
+        outer = TRUE, line = -3)
 
   par(opar)
 #+end_src
 
 [[./images/chp03.5_plots.png]]
-

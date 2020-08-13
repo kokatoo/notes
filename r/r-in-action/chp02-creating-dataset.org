@@ -16,26 +16,28 @@
 *** 2.2.2 Matrices
 
 #+begin_src R
-  y <- matrix(1:20, nrow=5, ncol=4)
+  y <- matrix(1:20, nrow = 5, ncol = 4)
 
   cells <- c(1, 26, 24, 68)
   rnames <- c("R1", "R2")
   cnames <- c("C1", "C2")
 
-  mymatrix <- matrix(cells, nrow=2, ncol=2, byrow=TRUE,
-                       dimnames=list(rnames, cnames))
+  mymatrix <- matrix(cells, nrow = 2, ncol = 2, byrow = TRUE,
+                       dimnames = list(rnames, cnames))
   > mymatrix
        C1 C2
     R1  1 26
     R2 24 68
 
-  > x <- matrix(1:10, nrow=2)
+  > x <- matrix(1:10, nrow = 2)
   > x
         [,1] [,2] [,3] [,4] [,5]
    [1,]    1   3     5    7    9
    [2,]    2   4     6    8   10
+  
   > x[2,]
   [1] 3 4
+
   > x[,2]
   [1] 3 4
 #+end_src
@@ -48,7 +50,32 @@
   dim1 <- c("A1", "A2")
   dim2 <- c("B1", "B2", "B3")
   dim3 <- c("C1", "C2", "C3", "C4")
-  z <- array(1:24, c(2, 3, 4), dimnames=list(dim1, dim2, dim3))
+
+  z <- array(1:24, c(2, 3, 4), dimnames = list(dim1, dim2, dim3))
+  > z
+  , , C1
+
+  B1 B2 B3
+  A1  1  3  5
+  A2  2  4  6
+
+  , , C2
+
+  B1 B2 B3
+  A1  7  9 11
+  A2  8 10 12
+
+  , , C3
+
+  B1 B2 B3
+  A1 13 15 17
+  A2 14 16 18
+
+  , , C4
+
+  B1 B2 B3
+  A1 19 21 23
+  A2 20 22 24
 #+end_src
 
 *** 2.2.4 Data frames
@@ -76,16 +103,18 @@
     stats <- summary(mpg)
     keepstats <<- summary(mpg)
     plot(mpg, disp)
-    plot(mpg, wt)})
+    plot(mpg, wt)
+  })
 #+end_src
 
 *** 2.2.5 Factors
 
 #+begin_src R
   status <- c("P", "I", "E", "P")
-  status <- factor(status, order=TRUE,
-                 levels=c("P", "I", "E")
-                 labels=c("Poor", "Improved", "Excellent"))
+  status <- factor(status,
+                   order = TRUE,
+                   levels = c("P", "I", "E"),
+                   labels = c("Poor", "Improved", "Excellent"))
 #+end_src
 
 *** 2.2.6 List
@@ -93,16 +122,27 @@
 #+begin_src R
   g <- "My First List"
   h <- c(25, 26, 18, 39)
-  j <- matrix(1:10, nrow=5)
+  j <- matrix(1:10, nrow = 5)
   k <- c("one", "two", "three")
-  mylist <- list(title=g, ages=h, j, k)
+
+  mylist <- list(title = g, ages = h, j, k)
 
   > mylist[[2]]
   [1] 25 26 18 39
+
   > mylist[["ages"]]
   [[1] 25 26 18 39
+
   > mylist$ages
   [[1] 25 26 18 39
+
+  >  mylist[[3]]
+       [,1] [,2]
+  [1,]    1    6
+  [2,]    2    7
+  [3,]    3    8
+  [4,]    4    9
+  [5,]    5   10
 #+end_src
 
 ** Section 2.3 Data input
@@ -110,8 +150,12 @@
 *** 2.3.1 Entering data from the keyboard
 
 #+begin_src R
-  mydata <- data.frame(age=numeric(0), gender=character(0), weight=numeric(0))
-  mydata <- edit(mydata) # same as fix(mydata)
+  mydata <- data.frame(age = numeric(0), 
+                       gender = character(0), 
+                       weight = numeric(0))
+
+  mydata <- edit(mydata)
+  mydata <- fix(mydata)
 
   mydatatxt <- "
   age gender weight
@@ -119,15 +163,18 @@
   30 f 115
   18 f 120
   "
-  mydata <- read.table(header=TRUE, text=mydatatxt)
+  mydata <- read.table(header = TRUE, text = mydatatxt)
 #+end_src
 
 *** 2.3.2 Importing data from a delimited text file
 
 #+begin_src R
-  grades <- read.table("studentgrades.csv", header=TRUE,
-                       row.names="StudentID", sep=",", stringsAsFactors=FALSE,
-                       colClasses=c("character", "character", "character", "numeric", "numeric", "numeric"))
+  grades <- read.table("studentgrades.csv",
+                       row.names = "StudentID",
+                       header = TRUE, sep = ",",
+                       stringsAsFactors = FALSE,
+                       colClasses = c("character", "character", "character",
+                                      "numeric", "numeric", "numeric"))
 #+end_src
 
 **** Importing data via connections
@@ -155,7 +202,7 @@
 #+begin_src R
   library(RODBC)
 
-  myconn <- odbcConnect("mydsn", uid="Rob", pwd="aardvark")
+  myconn <- odbcConnect("mydsn", uid = "Rob", pwd = "aardvark")
   crimedat <- sqlFetch(myconn, Crime)
   pundat <- sqlQuery(myconn, "select * from Punishment")
   close(myconn)
@@ -167,23 +214,27 @@
   install.packages("RSQLite")
   library(DBI)
 
+  con <- dbConnect(RSQLite::SQLite(), "~/example.db")
   con <- dbConnect(RSQLite::SQLite(), ":memory:")
 
   dbWriteTable(con, "mtcars", mtcars)
+  
   dbListTables(con)
+  res <- dbSendQuery(con, "pragma table_info(tablename)")
+  dbFetch(res)
 
   dbListFields(con, "mtcars")
   dbReadTable(con, "mtcars")
 
-  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl=4")
+  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl = 4")
   dbFetch(res)
 
   dbClearResult(res)
 
   # Or a chunk at a time
-  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl=4")
+  res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl = 4")
   while(!dbHasCompleted(res)) {
-    chunk <- dbFetch(res, n=5)
+    chunk <- dbFetch(res, n = 5)
     print(nrow(chunk))
   }
 
@@ -200,11 +251,12 @@
 | ~class(obj)~               | Gives the class of an obj.                                                      |
 | ~mode(obj)~                | Determines how an obj is stored.                                                |
 | ~names(obj)~               | Gives the names of components in an obj.                                        |
+| ~attributes(obj)~          | Access an object's attributes                                                   |
 | ~c(obj, obj, ...)~         | Combines objs into a vector.                                                    |
 | ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                       |
 | ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                          |
 | ~head(obj)~                | Lists the first part of an obj.                                                 |
 | ~tail(obj)~                | Lists the last part of an obj.                                                  |
-| ~rm(obj, obj, ...)~        | The statement ~rm(list = ls())~ removes most objs from the working environment. |
+| ~rm(obj, obj, ...)~        | The statement ~rm(list=ls())~ removes most objs from the working environment.   |
 | ~newobj <- edit(obj)~      | Edits obj.                                                                      |
 | ~fix(obj)~                 | Edits an obj in place.                                                          |
