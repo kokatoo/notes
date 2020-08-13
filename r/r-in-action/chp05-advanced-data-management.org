@@ -26,10 +26,11 @@
 
 #+begin_src R
   # trimmed mean dropping the highest and lowest 5%
-  z <- mean(x, trim=0.05, na.rm=TRUE)
+  z <- mean(x, trim = 0.05, na.rm = TRUE)
 
   # standardize myvar to a mean of 50 and sd of 10
-  newdata <- transform(mydata, myvar=scale(myvar)*10 + 50)
+  newdata <- transform(mydata,
+                       myvar = scale(myvar)*10 + 50)
 #+end_src
 
 | Function                            | Description                                                                     |
@@ -44,7 +45,7 @@
 | ~diff(x, lag=n)~                    | Lagged differences, with lag indicating which lag to use. The default lag is 1. |
 | ~min(x)~                            | Minimum                                                                         |
 | ~max(x)~                            | Maximum                                                                         |
-| ~scale(x, center=TRUE, scale=TRUE)~ | center (center=TRUE) or standardize (center=TRUE, scale=TRUE) the columns       |
+| ~scale(x, center=TRUE, scale=TRUE)~ | center (~center=TRUE~) or standardize (~center=TRUE~, ~scale=TRUE~) the columns |
 
 *** 5.2.3 Probability functions
 
@@ -89,15 +90,19 @@
   x <- pretty(c(-3, 3), 30)
   y <- dnorm(x)
 
-  plot(x, y, typ ="l", xlab="Normal Deviate", ylab="Density", yaxs="i")
-  
+  plot(x, y,
+       type = "l",
+       xlab = "Normal Deviate",
+       ylab = "Density",
+       yaxs = "i")
+
   > pnorm(1.96)
   [1] 0.9750021
 
-  > qnorm(0.9, mean=500, sd=100)
+  > qnorm(0.9, mean = 500, sd = 100)
   [1] 628.1552
-  
-  > rnorm(16, mean=50, sd=10)
+
+  > rnorm(16, mean = 50, sd = 10)
   [1] 44.27405 50.08160 45.27951 53.42730 48.05895 49.19179 52.47510 61.22421
   [9] 71.35383 49.53297 53.25180 51.66115 51.93746 42.56534 60.37570 72.62523
 #+end_src
@@ -115,14 +120,14 @@
 #+begin_src R
   library(MASS)
 
-  options(digits=3)
+  options(digits = 3)
   set.seed(1234)
 
   mean <- c(230.7, 146.7, 3.6)
   sigma <- matrix(c(15360.8, 6721.2, -47.1,
                     6721.2, 4700.9, -16.5,
                     -47.1, -16.5, 0.3),
-                  nrow=3, ncol=3)
+                  nrow = 3, ncol = 3)
 
   mydata <- mvrnorm(500, mean, sigma)
   mydata <- as.data.frame(mydata)
@@ -138,9 +143,9 @@
 | ~nchar(x)~                                                     | Counts the number of characters of ~x~.                                                                                                                            |
 | ~substr(x, start, stop)~                                       | Extracts or replaces substrings in a character                                                                                                                     |
 | ~grep(pattern, x, ignore.case=FALSE, fixed=FALSE~              | Searches for pattern in ~x~. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string. Returns the matching indices. |
-| ~sub(pattern, replacement, x, ignore.case=FALSE, fixed=FALSE)~ | Finds pattern in x and substitutes the replacement text. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.   |
+| ~sub(pattern, replacement, x, ignore.case=FALSE, fixed=FALSE)~ | Finds pattern in ~x~ and substitutes the replacement text. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string. |
 | ~strsplit(x, split, fixed=FALSE)~                              | Splits the elements of character vector ~x~ at split. If ~fixed=FALSE~, then pattern is a regular expression. If ~fixed=TRUE~, then pattern is a text string.      |
-| ~paste(..., sep="")~                                           | Concatenates strings after using the sep string to separate them.                                                                                                  |
+| ~paste(..., sep="")~                                           | Concatenates strings after using the ~sep~ string to separate them.                                                                                                |
 | ~toupper(x)~                                                   | Uppercase                                                                                                                                                          |
 | ~tolower(x)~                                                   | Lowercase                                                                                                                                                          |
 
@@ -159,14 +164,14 @@
 
 *** 5.2.5 Other useful functions
 
-| Function                                 | Description                                                                                                                                            |
-|------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ~length(x)~                              | Returns the length of object ~x~.                                                                                                                      |
-| ~seq(from, to, by)~                      | Generates a sequence                                                                                                                                   |
-| ~rep(x, n)~                              | Repeat ~x~ ~n~ times                                                                                                                                   |
-| ~cut(x, n)~                              | Divides the continuous variable ~x~ into a factor with ~n~ levels. To create an ordered factor, include the option ~ordered_result=TRUE~.              |
-| ~pretty(x, n)~                           | Creates pretty breakpoints. Divides a continuous variable x into n intervals by selecting n + 1 equally spaced rounded values. Often used in plotting. |
-| ~cat(... , file="myfile", append=FALSE)~ | Concatenates the objects in … and outputs them to the screen or to a file (if one is declared).                                                        |
+| Function                                 | Description                                                                                                                                                |
+|------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~length(x)~                              | Returns the length of object ~x~.                                                                                                                          |
+| ~seq(from, to, by)~                      | Generates a sequence                                                                                                                                       |
+| ~rep(x, n)~                              | Repeat ~x~ ~n~ times                                                                                                                                       |
+| ~cut(x, n)~                              | Divides the continuous variable ~x~ into a factor with ~n~ levels. To create an ordered factor, include the option ~ordered_result=TRUE~.                  |
+| ~pretty(x, n)~                           | Creates pretty breakpoints. Divides a continuous variable ~x~ into ~n~ intervals by selecting n + 1 equally spaced rounded values. Often used in plotting. |
+| ~cat(... , file="myfile", append=FALSE)~ | Concatenates the objects in … and outputs them to the screen or to a file (if one is declared).                                                            |
 
 *** 5.2.6 Applying functions to matrices and data frames
 
@@ -179,7 +184,7 @@
   > round(b)
   [1] 1 6 3
 
-  > c <- matrix(runif(12), nrow=3)
+  > c <- matrix(runif(12), nrow = 3)
   > log(c)
          [,1]   [,2]   [,3]   [,4]
   [1,] -0.866 -1.036 -0.358 -1.130
@@ -194,23 +199,23 @@
     or list while ~lapply()~ returns a list.
 
 #+begin_src R
-  > mydata <- matrix(rnorm(30), nrow=6)
+  > mydata <- matrix(rnorm(30), nrow = 6)
 
-  # margin=1 indicate row means
+  # margin = 1 indicate row means
   > apply(mydata, 1, mean)
   [1] -0.155 -0.504 -0.511 0.154 -0.310 0.165
 
-  # margin=2 indicate column means
+  # margin = 2 indicate column means
   > apply(mydata, 2, mean)
   [1] -0.2907 0.0449 -0.5688 -0.3442 0.1906
-  > apply(mydata, 2, mean, trim=0.2)
+  > apply(mydata, 2, mean, trim = 0.2)
   [1] -0.1699 0.0127 -0.6475 -0.6575 0.2312
 #+end_src
 
 ** 5.3 A solution for the data-management challenge
 
 #+begin_src R
-  options(digits=2)
+  options(digits = 2)
 
   Student <- c("John Davis", "Angela Williams", "Bullwinkle Moose",
                "David Jones", "Janice Markhammer", "Cheryl Cushing",
@@ -219,7 +224,7 @@
   Science <- c(95, 99, 80, 82, 75, 85, 80, 95, 89, 86)
   English <- c(25, 22, 18, 15, 20, 28, 15, 30, 27, 18)
 
-  roster <- data.frame(Student, Math, Science, English, stringsAsFactors=FALSE)
+  roster <- data.frame(Student, Math, Science, English, stringsAsFactors = FALSE)
 
   z <- scale(roster[,2:4])
   score <- apply(z, 1, mean)
@@ -274,7 +279,7 @@
 *** 5.5 User-written functions
 
 #+begin_src R
-  mystats <- function(x, parametric=TRUE, print=FALSE) {
+  mystats <- function(x, parametric = TRUE, print = FALSE) {
 
     if (parametric) {
       center <- mean(x)
@@ -290,13 +295,13 @@
       cat("Median=", center, "\n", "MAD=", spread, "\n")
     } 
 
-    result <- list(center=center, spread=spread)
+    result <- list(center = center, spread = spread)
     return(result)
   }
 #+end_src
 
 #+begin_src R
-  mydate <- function(type="long") {
+  mydate <- function(type = "long") {
     switch(type,
            long = format(Sys.time(), "%A %B %d %Y"),
            short = format(Sys.time(), "%m-%d-%y"),
@@ -316,10 +321,13 @@
 *** 5.6.2 Aggregating data
 
 #+begin_src R
-  options(digits=3)
+  options(digits = 3)
 
   with(mtcars, {
-    aggdata <<- aggregate(mtcars, by=list(Group.cyl=cyl, Group.gear=gear), FUN=mean, na.rm=TRUE)
+    aggdata <<- aggregate(mtcars,
+                          by = list(Group.cyl = cyl, Group.gear = gear),
+                          FUN = mean,
+                          na.rm = TRUE)
   })
 #+end_src
 
@@ -333,10 +341,10 @@
    2    1  6  1
    2    2  2  4
   "
-  mydata <- read.table(header=TRUE, text=mydatatxt)
+  mydata <- read.table(header = TRUE, text = mydatatxt)
 
   library(reshape2)
-  md <- melt(mydata, id=c("ID", "Time"))  
+  md <- melt(mydata, id = c("ID", "Time"))  
 #+end_src
 
 **** With aggregation

@@ -54,7 +54,9 @@
   names(leadership)[6:10] <- c("item1", "item2", "item3", "item4", "item5")
 
   library(plyr)
-  leadership <- rename(leadership, c(manager = "managerID", date = "testDate"))
+  leadership <- rename(leadership,
+                       c(manager = "managerID",
+                         date = "testDate"))
 #+end_src
 
 ** Section 4.5 Missing values
