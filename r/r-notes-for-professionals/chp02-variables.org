@@ -27,7 +27,7 @@
      be used freely, where reference with or without backticks points to the
      same object.
 
-   * Names that begin with . are considered system names and are not always
+   * Names that begin with ~.~ are considered system names and are not always
      visible using the ~ls()~ function.
 
    There is no restriction on the number of characters in a variable name.
@@ -63,8 +63,8 @@
 #+begin_src R
   # actually two function calls: first one to `<-`; second one to the `()`-function
   > (x <- 5)
-    [1] 5
-  1
+  [1] 5
+  
   # Often used in R help page examples for its side-effect of printing.
   > is.function(`(`)
   [1] TRUE
@@ -78,29 +78,37 @@
   [1] 5
 #+end_src
 
-   *Types of data structures*
+*** Types of data structures
 
-   There are no scalar data types in R. Vectors of length-one act like scalars.
+    There are no scalar data types in R. Vectors of length-one act like scalars.
 
-   * Vectors: Atomic vectors must be sequence of same-class objects.: a sequence
-     of numbers, or a sequence of logicals or a sequence of characters. ~v <-
-     c(2, 3, 7, 10)~, ~v2 <- c("a", "b", "c")~ are both vectors.
+    * Vectors: Atomic vectors must be sequence of same-class objects.: a sequence
+      of numbers, or a sequence of logicals or a sequence of characters. ~v <-
+      c(2, 3, 7, 10)~, ~v2 <- c("a", "b", "c")~ are both vectors.
 
-   * Matrices: A matrix of numbers, logical or characters. 
+    * Matrices: A matrix of numbers, logical or characters. 
 
 #+begin_src R
-  a <- matrix(data=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow=4, ncol=3, byrow=F)
+  a <- matrix(data=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+              nrow=4,
+              ncol=3,
+              byrow=F)
 #+end_src
 
-     Like vectors, matrix must be made of same-class elements. To extract
-     elements from a matrix rows and columns must be specified: ~a[1,2]~ returns
-     ~[1] 5~ that is the element on the first row, second column.
+      Like vectors, matrix must be made of same-class elements. To extract
+      elements from a matrix rows and columns must be specified: ~a[1,2]~ returns
+      ~[1] 5~ that is the element on the first row, second column.
 
-   * Lists: concatenation of different elements
+    * Lists: concatenation of different elements
 #+begin_src R
-  mylist <- list(course='stat', date='04/07/2009', num_isc=7, num_cons=6,
-                 num_mat=as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674)),
-                 results=c(30, 19, 29, NA, 25, 26 ,27))
+  mylist <- list(course = 'stat',
+                 date = '04/07/2009',
+                 num_isc = 7,
+                 num_cons = 6,
+                 num_mat = as.character(c(45020, 45679, 46789,
+                                          43126, 42345, 47568,
+                                          45674)),
+                 results = c(30, 19, 29, NA, 25, 26 ,27))
 #+end_src
      
      Extracting elements from a list can be done by name (if the list is named)
@@ -109,29 +117,31 @@
      but it extract the result as a list. While ~mylist[[6]][2]~ is permitted
      (it gives you 19), ~mylist[6][2]~ gives you an error.
 
-   * data.frame: object with columns that are vectors of equal length, but
+   * ~data.frame~: object with columns that are vectors of equal length, but
      (possibly) different types. They are not matrices.
 #+begin_src R
-  exam <- data.frame(matr=as.character(c(45020, 45679, 46789, 43126, 42345, 47568, 45674)),
+  exam <- data.frame(matr=as.character(c(45020, 45679, 46789,
+                                         43126, 42345, 47568,
+                                         45674)),
                      res_S = c(30, 19, 29, NA, 25, 26, 27),
                      res_O = c(3, 3, 1, NA, 3, 2, NA),
                      res_TOT = c(30,22,30,NA,28,28,27))
 #+end_src
      
-     Columns can be read by name ~exam$matr~, ~exam[,'matr']~ or by index
-     ~exam[1]~, ~exam[,1]~.
+      Columns can be read by name ~exam$matr~, ~exam[, 'matr']~ or by index
+      ~exam[1]~, ~exam[, 1]~.
      
-     Rows can also be read by name ~exam['rowname', ]~ or index ~exam[1,]~.
-     Dataframes are actually just lists with a particular structure
-     (rownames-attribute and equal length components)
+      Rows can also be read by name ~exam['rowname', ]~ or index ~exam[1,]~.
+      Dataframes are actually just lists with a particular structure
+      (rownames-attribute and equal length components)
 
-   *Common operations and some cautionary advice*
+*** Common operations and some cautionary advice
 
-   Default operations are done element by element. See ~?Syntax~ for the rules of
-   operator precedence. Most operators (and many other functions in base R) have
-   recycling rules that allow arguments of unequal length. Given these objects:
+    Default operations are done element by element. See ~?Syntax~ for the rules of
+    operator precedence. Most operators (and many other functions in base R) have
+    recycling rules that allow arguments of unequal length. Given these objects:
 
-   *Example objects*
+**** Example objects
 
 #+begin_src R
   a <- 1
@@ -144,7 +154,7 @@
   Z <- rbind(rep(0,3),1:3,rep(10,3),c(4,7,1))
 #+end_src
 
-   *Some vector operations*
+**** Some vector operations
 
 #+begin_src R
   > a+b # scalar + scalar
@@ -153,7 +163,7 @@
   [1] 12 13 14
   > a*b # scalar * scalar
   [1] 2
-  > c*d # vector * vector (componentwise!)
+  > c*d # vector * vector (componentwise)
   [1] 20 30 40
   > c+a # vector + scalar
   [1] 3 4 5
@@ -163,10 +173,10 @@
   [1] 7.389056 20.085537 54.598150
 #+end_src
 
-   *Some vector operation Warnings!*
+**** Some vector operation Warnings!
 
 #+begin_src R
-  > c+e # warning but.. no errors, since recycling is assumed to be desired.
+  > c + e # warning but.. no errors, since recycling is assumed to be desired.
   [1] 3 5 7 6
   Warning message:
   In c + e : longer object length is not a multiple of shorter object length
@@ -176,7 +186,7 @@
    The warning was given only because the two vectors have lengths that are not
    exactly multiples. ~c+f~ gives no warning whatsoever.
 
-   *Some Matrix operations Warning!*
+**** Some Matrix operations Warning!
 
 #+begin_src R
   > Z+W # matrix + matrix #(componentwise)
@@ -201,7 +211,7 @@
   [4,]   6   11   16
 #+end_src
 
-   *“Private” variables*
+**** “Private” variables
 
    A leading dot in a name of a variable or function in R is commonly used to
    denote that the variable or function is meant to be hidden.
@@ -225,6 +235,6 @@
    variable
 
 #+begin_src R
-  > ls(all.names=TRUE)
+  > ls(all.names = TRUE)
   [1] ".foo" "foo"
 #+end_src

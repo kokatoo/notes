@@ -142,6 +142,7 @@
 | ~is.data.frame()~ | ~as.data.frame()~ |
 | ~is.factor()~     | ~as.factor()~     |
 | ~is.logical()~    | ~as.logical()~    |
+| ~is.function()~   |                   |
 
 ** Section 4.8 Sorting data
 
@@ -153,7 +154,8 @@
   with(leadership, {
     newdata <<- leadership[order(gender, -age),]
   })
-#+end_src
+#+end_sr
+c
 
 ** Section 4.9 Merging datasets
 

@@ -46,10 +46,11 @@
    Type
    
 #+begin_src R
-  1+1
+  > 1 + 1
+  [1] 2
 #+end_src
 
-   to immediately see the result. The leading [1] indicates that R returns a
+   to immediately see the result. The leading ~[1]~ indicates that R returns a
    vector. In this case, the vector contains only one number (2).
 
    *The first plot*
@@ -68,17 +69,20 @@
   ## $ weight: num 4.17 5.58 5.18 6.11 4.5 4.61 5.17 4.53 5.33 5.14 ...
   ## $ group : Factor w/ 3 levels "ctrl","trt1",..: 1 1 1 1 1 1 1 1 1 1 ...
 
-  anova(lm(weight ~ group, data=PlantGrowth))
+  anova(lm(weight ~ group, data = PlantGrowth))
   ## Analysis of Variance Table
   ##
   ## Response: weight
-  ## Df Sum Sq Mean Sq F value Pr(>F)
-  ## group 2 3.7663 1.8832 4.8461 0.01591 *
-  ## Residuals 27 10.4921 0.3886
+  ##           Df  Sum Sq Mean Sq F value  Pr(>F)
+  ## group      2  3.7663  1.8832  4.8461 0.01591 *
+  ## Residuals 27 10.4921  0.3886
   ## ---
   ## Signif. codes: 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-  boxplot(weight ~ group, data=PlantGrowth, ylab="Dry weight")
+  # same as above
+  summary(aov(weight ~ group, data=PlantGrowth))
+
+  boxplot(weight ~ group, data = PlantGrowth, ylab = "Dry weight")
 #+end_src
 
 #+RESULTS:
@@ -138,10 +142,12 @@
 #+begin_src R
   data(PlantGrowth)
 
-  anova(lm(weight ~ group, data=PlantGrowth))
+  anova(lm(weight ~ group, data = PlantGrowth))
 
-  png("plant_boxplot.png", width=400, height=300)
-  boxplot(weight ~ group, data=PlantGrowth, ylab="Dry weight")
+  png("plant_boxplot.png", width = 400, height = 300)
+  boxplot(weight ~ group,
+          data = PlantGrowth,
+          ylab = "Dry weight")
   dev.off()
 #+end_src
 
@@ -149,7 +155,7 @@
    operating system, not an interactive R session like in the previous section!)
 
 #+begin_src bash
-  R --no-save <plant.R >plant_result.txt
+  R --no-save < plant.R > plant_result.txt
 #+end_src
 
    The file ~plant_result.txt~ contains the results of your calculation, as if you
