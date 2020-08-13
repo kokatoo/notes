@@ -3,7 +3,34 @@
 
 * Chapter 9: Analysis of variance
 
+  When factors are included as explanatory variables, the focus usually shifts
+  from prediction to understanding group differences, and the methodology is
+  referred to as /analysis of variance (ANOVA/.
+
+  Effects in ANOVA designs are primarily evaluated through F tests. If the F test
+  for Treatment is significant, you can conclude the differences in treatment is
+  significant.
+
+| Experimental Design     | Comment                                                                        |
+|-------------------------+--------------------------------------------------------------------------------|
+| Balanced design         | Equal number of obs in each treatment group                                    |
+| Unbalanced design       | Sample sizes are unequal across the cells of a design                          |
+| One-way ANOVA           | Single classification variable                                                 |
+| Between-groups factor   | Subjects are assigned to one and only one group                                |
+| Within-groups factor    | Subjects are assigned to multiple groups                                       |
+| Repeated measures ANOVA | Subjects are measured more than once                                           |
+| Factorial ANOVA         | Crossing multiple factors (include interaction) (two-way, three-way ANOVA etc) |
+| Mixed-model ANOVA       | Includes both between-groups and within-groups factors                         |
+| Confounding variable    | Affects the dependent variable but not in the study                            |
+| Covariate               | Including the adjusting the confounding variable in the design                 |
+| ANCOVA                  | Analysis of Covariance (Including covariates)                                  |
+| MANOVA                  | Multivariate analysis of variance                                              |
+| MANCOVA                 | Multivariate analysis of covariance                                            |
+
 ** Section 9.2 Fitting ANOVA models
+
+   Both ANOVA and regression are both special cases of the general linear model.
+   You can analyze using the ~lm()~ function or the ~aov()~ function.
 
 *** 9.2.1 The aov() function
 
@@ -14,6 +41,13 @@
 | ~*~    | Denotes the complete crossing variables. The code =y ~ A*B*C= expands to =y ~ A + B + C + A:B + A:C + B:C + A:B:C= |
 | ~^~    | Denotes crossing to a specified degree. The code =y ~ (A+B+C)^2= expands to =y ~ A + B + C + A:B + A:C + A:B=      |
 | ~.~    | Denotes all remaining variables. The code =y ~ .= expands to =y ~ A + B + C=                                       |
+
+#+begin_src R
+  aov(formula, data=data.frame)
+#+end_src
+
+    Lowercase variables are quantitative variables, uppercase variables are
+    grouping factos, and ~Subject~ is a unique identifier variable for subjects.
 
 | Design                                                                                  | Formula                                    |
 |-----------------------------------------------------------------------------------------+--------------------------------------------|
@@ -33,14 +67,20 @@
   Y ~ A + B + A:B
 #+end_src
 
-    there are three typical approaches for partitioning the variance in y among
+    There are three typical approaches for partitioning the variance in y among
     the effects on the right side of this equation.
 
 | TYPE I (SEQUENTIAL)    | Effects are adjusted for those that appear earlier in the formula. ~A~ is unadjusted. ~B~ is adjusted for the ~A~. The ~A:B~ interaction is adjusted for ~A~ and ~B~.              |
 | TYPE II (HIERARCHICAL) | Effects are adjusted for other effects at the same or lower level. ~A~ is adjusted for ~B~. ~B~ is adjusted for ~A~. The ~A:B~ interaction is adjusted for both ~A~ and ~B~.       |
 | TYPE III (MARGINAL)    | Each effect is adjusted for every other effect in the model. ~A~ is adjusted for ~B~ and ~A:B~. ~B~ is adjusted for ~A~ and ~A:B. The A:B interaction is adjusted for ~A~ and ~B~. |
 
-     R employs the Type I approach by default. Other programs such as SAS and SPSS employ the Type III approach by default.
+     R employs the Type I approach by default. Other programs such as SAS and
+     SPSS employ the Type III approach by default.
+
+     In other words, R ANOVA table will assess the impact of:
+     * The impact of A on y
+     * The impact of B on y, controlling for A
+     * The interaction of And B, controling for the A and B main effects
 
 ** 9.3 One-way ANOVA
 
@@ -90,190 +130,240 @@
 
 *** 9.3.1 Multiple comparisons
 
+    The F-test doesn't tell you which treatments differ from one another. You
+    can use a multiple comparison procedure to answer the question.
+
 #+begin_src R
-> TukeyHSD(fit)
-  Tukey multiple comparisons of means
-    95% family-wise confidence level
+  > TukeyHSD(fit)
+    Tukey multiple comparisons of means
+      95% family-wise confidence level
 
-Fit: aov(formula = response ~ trt)
+  Fit: aov(formula = response ~ trt)
 
-$trt
-                  diff        lwr       upr     p adj
-2times-1time   3.44300 -0.6582817  7.544282 0.1380949
-4times-1time   6.59281  2.4915283 10.694092 0.0003542
-drugD-1time    9.57920  5.4779183 13.680482 0.0000003
-drugE-1time   15.16555 11.0642683 19.266832 0.0000000
-4times-2times  3.14981 -0.9514717  7.251092 0.2050382
-drugD-2times   6.13620  2.0349183 10.237482 0.0009611
-drugE-2times  11.72255  7.6212683 15.823832 0.0000000
-drugD-4times   2.98639 -1.1148917  7.087672 0.2512446
-drugE-4times   8.57274  4.4714583 12.674022 0.0000037
-drugE-drugD    5.58635  1.4850683  9.687632 0.0030633
+  $trt
+                    diff        lwr       upr     p adj
+  2times-1time   3.44300 -0.6582817  7.544282 0.1380949
+  4times-1time   6.59281  2.4915283 10.694092 0.0003542
+  drugD-1time    9.57920  5.4779183 13.680482 0.0000003
+  drugE-1time   15.16555 11.0642683 19.266832 0.0000000
+  4times-2times  3.14981 -0.9514717  7.251092 0.2050382
+  drugD-2times   6.13620  2.0349183 10.237482 0.0009611
+  drugE-2times  11.72255  7.6212683 15.823832 0.0000000
+  drugD-4times   2.98639 -1.1148917  7.087672 0.2512446
+  drugE-4times   8.57274  4.4714583 12.674022 0.0000037
+  drugE-drugD    5.58635  1.4850683  9.687632 0.0030633
 
-par(las=2)
-par(mar=c(5,8,4,2))
-plot(TukeyHSD(fit))
+  par(las=2)
+  par(mar=c(5,8,4,2))
+  plot(TukeyHSD(fit))
 #+end_src
 
 [[./images/chp09-plot2.png]]
 
 #+begin_src R
-library(multcomp)
+  library(multcomp)
 
-par(mar=c(5,4,6,2))
-tuk <- glht(fit, linfct=mcp(trt="Tukey"))
+  par(mar=c(5,4,6,2))
+  tuk <- glht(fit, linfct=mcp(trt="Tukey"))
 
-plot(cld(tuk, level=.05),col="lightgrey")
+  plot(cld(tuk, level=.05),col="lightgrey") # 0.05 significance level
 #+end_src
 
 [[./images/chp09-plot3.png]]
 
 *** 9.3.2 Assessing test assumptions
 
+    In a one-way ANOVA, the dependent variable is assumed to be normally
+    distributed and have equal variance in each group. It is equivalent to
+    saying the residuals are normally distributed.
+
+    In ANOVA, you actually have two options for testing normality.  If there
+    really are many values of Y for each value of X (each group), and there
+    really are only a few groups (say, four or fewer), go ahead and check
+    normality separately for each group.
+
+
+    But if you have many groups (a 2x2x3 ANOVA has 12 groups) or if there are
+    few observations per group (it’s hard to check normality on only 20 data
+    points), it’s often easier to just use the residuals and check them all
+    together.
+
 #+begin_src R
-library(car)
+  library(car)
 
-qqPlot(lm(response ~ trt, data=cholesterol), simulate=TRUE, main="Q-Q Plot", labels=FALSE)
-> bartlett.test(response ~ trt, data=cholesterol)
-	Bartlett test of homogeneity of variances
+  qqPlot(lm(response ~ trt, data=cholesterol), simulate=TRUE, main="Q-Q Plot", labels=FALSE)
+  > bartlett.test(response ~ trt, data=cholesterol)
+    Bartlett test of homogeneity of variances
 
-data:  response by trt
-Bartlett's K-squared = 0.57975, df = 4, p-value = 0.9653
+  data:  response by trt
+  Bartlett's K-squared = 0.57975, df = 4, p-value = 0.9653
 #+end_src
 
 [[./images/chp09-plot4.png]]
 
 #+begin_src R
-library(car)
+  library(car)
 
-> outlierTest(fit)
-No Studentized residuals with Bonferroni p < 0.05
-Largest |rstudent|:
-   rstudent unadjusted p-value Bonferroni p
-19 2.251149           0.029422           NA
+  > outlierTest(fit)
+  No Studentized residuals with Bonferroni p < 0.05
+  Largest |rstudent|:
+     rstudent unadjusted p-value Bonferroni p
+  19 2.251149           0.029422           NA
 #+end_src
 
 ** 9.4 One-way ANCOVA
 
 #+begin_src R
-data(litter, package="multcomp")
-attach(litter)
-> table(dose)
-dose
-  0   5  50 500 
- 20  19  18  17 
+  data(litter, package="multcomp")
+  attach(litter)
+  > table(dose)
+  dose
+    0   5  50 500 
+   20  19  18  17 
 
-> aggregate(weight, by=list(dose), FUN=mean)
-  Group.1        x
-1       0 32.30850
-2       5 29.30842
-3      50 29.86611
-4     500 29.64647
+  > aggregate(weight, by=list(dose), FUN=mean)
+    Group.1        x
+  1       0 32.30850
+  2       5 29.30842
+  3      50 29.86611
+  4     500 29.64647
 
-fit <- aov(weight ~ gesttime + dose)
-> summary(fit)
-            Df Sum Sq Mean Sq F value  Pr(>F)   
-gesttime     1  134.3  134.30   8.049 0.00597 **
-dose         3  137.1   45.71   2.739 0.04988 * 
-Residuals   69 1151.3   16.69                   
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  fit <- aov(weight ~ gesttime + dose)
+  > summary(fit)
+              Df Sum Sq Mean Sq F value  Pr(>F)   
+  gesttime     1  134.3  134.30   8.049 0.00597 **
+  dose         3  137.1   45.71   2.739 0.04988 * 
+  Residuals   69 1151.3   16.69                   
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #+end_src
 
+   Checking the means of ~dose~ after adjusting for the covariate ~gesttime.
+   Compare this to ~aggregate(weight, by=list(dose), FUN=mean)~
+
 #+begin_src R
-library(effects)
+  library(effects)
 
-> effect("dose", fit)
+  > effect("dose", fit)
 
- dose effect
-dose
-       0        5       50      500 
-32.35367 28.87672 30.56614 29.33460 
+   dose effect
+  dose
+         0        5       50      500 
+  32.35367 28.87672 30.56614 29.33460 
+#+end_src
+
+   The F-test for ~dose~ doesn't tell you which means differ from one another.
+   You can use the multiple comparison procedures to compute all pairwise mean
+   comparisons.
+
+#+begin_src R
+  library(multcomp)
+
+  # c(3, -1, -1, -1) specifies a comparsion of the first group with the average of the other 3
+  contrast <- rbind("no drug vs. drug" = c(3, -1, -1, -1))
+
+  > summary(glht(fit, linfct=mcp(dose=contrast)))
+
+     Simultaneous Tests for General Linear Hypotheses
+
+  Multiple Comparisons of Means: User-defined Contrasts
+
+
+  Fit: aov(formula = weight ~ gesttime + dose)
+
+  Linear Hypotheses:
+           Estimate Std. Error t value Pr(>|t|)  
+  no drug vs. drug == 0    8.284      3.209   2.581    0.012 *
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  (Adjusted p values reported -- single-step method)
 #+end_src
 
 *** 9.4.1 Assessing test assumptions
 
+    ANCOVA designs make the same normality and homogeneity of variance
+    assumptions as ANOVA. In addition, ANCOVA  designs assume homogeneity of
+    regression slopes. Check the significance of the interaction term to test
+    this assumption.
+
 #+begin_src R
-library(multcomp)
+  library(multcomp)
 
-contrast <- rbind("no drug vs. drug" = c(3, -1, -1, -1))
-> summary(glht(fit, linfct=mcp(dose=contrast)))
-
-	 Simultaneous Tests for General Linear Hypotheses
-
-Multiple Comparisons of Means: User-defined Contrasts
-
-
-Fit: aov(formula = weight ~ gesttime + dose)
-
-Linear Hypotheses:
-                      Estimate Std. Error t value Pr(>|t|)  
-no drug vs. drug == 0    8.284      3.209   2.581    0.012 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-(Adjusted p values reported -- single-step method)
+  fit2 <- aov(weight ~ gesttime*dose, data=litter)
+  > summary(fit2)
+                Df Sum Sq Mean Sq F value  Pr(>F)   
+  gesttime       1  134.3  134.30   8.289 0.00537 **
+  dose           3  137.1   45.71   2.821 0.04556 * 
+  gesttime:dose  3   81.9   27.29   1.684 0.17889   
+  Residuals     66 1069.4   16.20                   
+  ---
+    Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #+end_src
 
 *** 9.4.2 Visualizing the results
 
 #+begin_src R
-library(HH)
+  library(HH)
 
-> ancova(weight ~ gesttime + dose, data=litter)
-Analysis of Variance Table
+  > ancova(weight ~ gesttime + dose, data=litter)
+  Analysis of Variance Table
 
-Response: weight
-          Df  Sum Sq Mean Sq F value   Pr(>F)   
-gesttime   1  134.30 134.304  8.0493 0.005971 **
-dose       3  137.12  45.708  2.7394 0.049883 * 
-Residuals 69 1151.27  16.685                    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Response: weight
+            Df  Sum Sq Mean Sq F value   Pr(>F)   
+  gesttime   1  134.30 134.304  8.0493 0.005971 **
+  dose       3  137.12  45.708  2.7394 0.049883 * 
+  Residuals 69 1151.27  16.685                    
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #+end_src
 
 [[./images/chp09-plot5.png]]
 
+    For visaulizaing the case where homogeneity of regression slopes doesn't
+    hold, you need to generate a ploot that allows both the slopes and
+    intercepts to vary by group.
+
 ** 9.5 Two-way factorial ANOVA
 
 #+begin_src R
-attach(ToothGrowth)
+  attach(ToothGrowth)
 
-> table(supp, dose)
-    dose
-supp 0.5  1  2
-  OJ  10 10 10
-  VC  10 10 10
+  > table(supp, dose)
+      dose
+  supp 0.5  1  2
+    OJ  10 10 10
+    VC  10 10 10
 
-> aggregate(len, by=list(supp, dose), FUN=mean)
-  Group.1 Group.2     x
-1      OJ     0.5 13.23
-2      VC     0.5  7.98
-3      OJ     1.0 22.70
-4      VC     1.0 16.77
-5      OJ     2.0 26.06
-6      VC     2.0 26.14
+  > aggregate(len, by=list(supp, dose), FUN=mean)
+    Group.1 Group.2     x
+  1      OJ     0.5 13.23
+  2      VC     0.5  7.98
+  3      OJ     1.0 22.70
+  4      VC     1.0 16.77
+  5      OJ     2.0 26.06
+  6      VC     2.0 26.14
 
-> aggregate(len, by=list(supp, dose), FUN=sd)
-  Group.1 Group.2        x
-1      OJ     0.5 4.459709
-2      VC     0.5 2.746634
-3      OJ     1.0 3.910953
-4      VC     1.0 2.515309
-5      OJ     2.0 2.655058
-6      VC     2.0 4.797731
+  > aggregate(len, by=list(supp, dose), FUN=sd)
+    Group.1 Group.2        x
+  1      OJ     0.5 4.459709
+  2      VC     0.5 2.746634
+  3      OJ     1.0 3.910953
+  4      VC     1.0 2.515309
+  5      OJ     2.0 2.655058
+  6      VC     2.0 4.797731
 
-dose <- factor(dose)
-fit <- aov(len ~ supp*dose)
-> summary(fit)
-            Df Sum Sq Mean Sq F value   Pr(>F)    
-supp         1  205.4   205.4  15.572 0.000231 ***
-dose         2 2426.4  1213.2  92.000  < 2e-16 ***
-supp:dose    2  108.3    54.2   4.107 0.021860 *  
-Residuals   54  712.1    13.2                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  dose <- factor(dose)
+  fit <- aov(len ~ supp*dose)
+  > summary(fit)
+              Df Sum Sq Mean Sq F value   Pr(>F)    
+  supp         1  205.4   205.4  15.572 0.000231 ***
+  dose         2 2426.4  1213.2  92.000  < 2e-16 ***
+  supp:dose    2  108.3    54.2   4.107 0.021860 *  
+  Residuals   54  712.1    13.2                     
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-detach(ToothGrowth)
+  detach(ToothGrowth)
 #+end_src
 
 #+begin_src R
@@ -297,36 +387,45 @@ detach(ToothGrowth)
 [[./images/chp09-plot7.png]]
 
 #+begin_src R
-library(HH)
+  library(HH)
 
-interaction2wt(len~supp*dose)
+  interaction2wt(len~supp*dose)
 #+end_src
 
 [[./images/chp09-plot8.png]]
 
 ** 9.6 Repeated measures ANOVA
 
+   When dealing with repeated measures designs, you typically need the data in
+   long format before fitting the model. In long format, each measurement of the
+   dependent variable is placed in its own row.
+
+   Traditional repeated measures ANOVA assumes that the covariance matrix for
+   any within-groups factor follows a specified form known as sphericity. It
+   assumes that the variances of the differences between any 2 levels of the
+   within-groups factor are equal.
+
 #+begin_src R
-CO2$conc <- factor(CO2$conc)
-w1b1 <- subset(CO2, Treatment=='chilled')
-fit <- aov(uptake ~ conc*Type + Error(Plant/(conc)), w1b1)
+  CO2$conc <- factor(CO2$conc)
+  w1b1 <- subset(CO2, Treatment=='chilled')
+  fit <- aov(uptake ~ conc*Type + Error(Plant/(conc)), w1b1)
 
-> summary(fit)
+  > summary(fit)
 
-Error: Plant
-          Df Sum Sq Mean Sq F value  Pr(>F)   
-Type       1 2667.2  2667.2   60.41 0.00148 **
-Residuals  4  176.6    44.1                   
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Error: Plant
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+  Type       1 2667.2  2667.2   60.41 0.00148 **
+  Residuals  4  176.6    44.1                   
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Error: Plant:conc
-          Df Sum Sq Mean Sq F value   Pr(>F)    
-conc       6 1472.4  245.40   52.52 1.26e-12 ***
-conc:Type  6  428.8   71.47   15.30 3.75e-07 ***
-Residuals 24  112.1    4.67                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Error: Plant:conc
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+  conc       6 1472.4  245.40   52.52 1.26e-12 ***
+  conc:Type  6  428.8   71.47   15.30 3.75e-07 ***
+  Residuals 24  112.1    4.67                     
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #+end_src
 
 #+begin_src R
@@ -348,68 +447,94 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 ** 9.7 Multivariate analysis of variance (MANOVA)
 
 #+begin_src R
-library(MASS)
+  library(MASS)
 
-attach(UScereal)
-shelf <- factor(shelf)
-y <- cbind(calories, fat, sugars)
-> aggregate(y, by=list(shelf), FUN=mean)
-  Group.1 calories       fat    sugars
-1       1 119.4774 0.6621338  6.295493
-2       2 129.8162 1.3413488 12.507670
-3       3 180.1466 1.9449071 10.856821
+  attach(UScereal)
 
-> cov(y)
-           calories       fat     sugars
-calories 3895.24210 60.674383 180.380317
-fat        60.67438  2.713399   3.995474
-sugars    180.38032  3.995474  34.050018
+  shelf <- factor(shelf)
+  y <- cbind(calories, fat, sugars)
+  > aggregate(y, by=list(shelf), FUN=mean)
+    Group.1 calories       fat    sugars
+  1       1 119.4774 0.6621338  6.295493
+  2       2 129.8162 1.3413488 12.507670
+  3       3 180.1466 1.9449071 10.856821
 
-fit <- manova(y ~ shelf)
-> summary(fit)
-           Df Pillai approx F num Df den Df    Pr(>F)    
-shelf      2 0.4021   5.1167      6    122 0.0001015 ***
-Residuals 62                                            
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  > cov(y)
+             calories       fat     sugars
+  calories 3895.24210 60.674383 180.380317
+  fat        60.67438  2.713399   3.995474
+  sugars    180.38032  3.995474  34.050018
 
-> summary.aov(fit)
- Response calories :
-            Df Sum Sq Mean Sq F value    Pr(>F)    
-shelf        2  50435 25217.6  7.8623 0.0009054 ***
-Residuals   62 198860  3207.4                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  fit <- manova(y ~ shelf)
+  > summary(fit)
+             Df Pillai approx F num Df den Df    Pr(>F)    
+  shelf      2 0.4021   5.1167      6    122 0.0001015 ***
+  Residuals 62                                            
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
- Response fat :
-            Df Sum Sq Mean Sq F value  Pr(>F)  
-shelf        2  18.44  9.2199  3.6828 0.03081 *
-Residuals   62 155.22  2.5035                  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  > summary.aov(fit)
+   Response calories :
+              Df Sum Sq Mean Sq F value    Pr(>F)    
+  shelf        2  50435 25217.6  7.8623 0.0009054 ***
+  Residuals   62 198860  3207.4                      
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
- Response sugars :
-            Df  Sum Sq Mean Sq F value   Pr(>F)   
-shelf        2  381.33 190.667  6.5752 0.002572 **
-Residuals   62 1797.87  28.998                    
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+   Response fat :
+              Df Sum Sq Mean Sq F value  Pr(>F)  
+  shelf        2  18.44  9.2199  3.6828 0.03081 *
+  Residuals   62 155.22  2.5035                  
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+   Response sugars :
+              Df  Sum Sq Mean Sq F value   Pr(>F)   
+  shelf        2  381.33 190.667  6.5752 0.002572 **
+  Residuals   62 1797.87  28.998                    
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #+end_src
 
 *** 9.7.1 Assessing test assumptions
+
+    The two assumptions underlying a one-way MANOVA design are multivariate
+    normality and homogeneity of variance-covariance matrices.
+
+    If you have p × 1 multivariate normal random vector x with mean µ and
+    covariance matrix Σ, then the squared Mahalanobis distance between x and µ
+    is chi-square dis- tributed with p degrees of freedom. The Q-Q plot graphs
+    the quantiles of the chi-square distribution for the sample against the
+    Mahalanobis D-squared values. To the degree that the points fall along a
+    line with slope 1 and intercept 0, there’s evidence that the data is
+    multivariate normal.
+
+    If the data follow a multivariate normal distribution, then points will fall
+    on the line on the Q-Q plot.
+
+    Unfortunaately, there are no easy way to test the homogeneity of
+    variance-covariance matrices.
 
 #+begin_src R
   center <- colMeans(y)
   n <- nrow(y)
   p <- ncol(y)
   cov <- cov(y)
+
   d <- mahalanobis(y,center,cov)
   coord <- qqplot(qchisq(ppoints(n),df=p), d,
                   main="Q-Q Plot Assessing Multivariate Normality",
+
   ylab="Mahalanobis D2")
   abline(a=0,b=1)
   identify(coord$x, coord$y, labels=row.names(UScereal))
+#+end_src
 
+[[./images/chp09-plot11.png]]
+
+    Testing for outliers:
+
+#+begin_src R
   library(mvoutlier)
 
   outliers <- aq.plot(y)
@@ -422,63 +547,83 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
   [61] FALSE FALSE FALSE FALSE FALSE
 #+end_src
 
+
 [[./images/chp09-plot10.png]]
 
 *** 9.7.2 Robust MANOVA
 
-#+begin_src R
-library(rrcov)
+    If the assumptions of multivariate normality or homogeneity of
+    variance-covariance matrices are untenable, or if you're concerned about
+    multivariate outliers, consider using a robust or nonparametric version of
+    the MANOVA test.
 
-> Wilks.test(y,shelf,method="mcd")
+    ~Wiki.test()~ is a robust version of the one-way MANOVA test.
+
+#+begin_src R
+  library(rrcov)
+
+  > Wilks.test(y,shelf,method="mcd")
+        Robust One-way MANOVA (Bartlett Chi2)
+
+  data: x
+  Wilks' Lambda = 0.511, Chi2-Value = 23.96, DF = 4.98, p-value = 0.0002167
+  sample estimates:
+    calories   fat sugars
+  1      120 0.701   5.66
+  2      128 1.185  12.54
+  3      161 1.652  10.35
 #+end_src
+
+   The ~adonis()~ function in the ~vegan~ package can provide the equivalent of
+   a nonparmaetric MANOVA.
 
 ** 9.8 ANOVA as regression
 
 #+begin_src R
-library(multcomp)
+  library(multcomp)
 
-> levels(cholesterol$trt)
-[1] "1time"  "2times" "4times" "drugD"  "drugE" 
+  > levels(cholesterol$trt)
+  [1] "1time"  "2times" "4times" "drugD"  "drugE" 
 
-fit.aov <- aov(response ~ trt, data=cholesterol)
-> summary(fit.aov)
-             Df Sum Sq Mean Sq F value   Pr(>F)    
-trt          4 1351.4   337.8   32.43 9.82e-13 ***
-Residuals   45  468.8    10.4                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  fit.aov <- aov(response ~ trt, data=cholesterol)
+  > summary(fit.aov)
+               Df Sum Sq Mean Sq F value   Pr(>F)    
+  trt          4 1351.4   337.8   32.43 9.82e-13 ***
+  Residuals   45  468.8    10.4                     
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-fit.lm <- lm(response ~ trt, data=cholesterol)
-> summary(fit.lm)
-Call:
-lm(formula = response ~ trt, data = cholesterol)
+  fit.lm <- lm(response ~ trt, data=cholesterol)
+  > summary(fit.lm)
+  Call:
+  lm(formula = response ~ trt, data = cholesterol)
 
-Residuals:
-    Min      1Q  Median      3Q     Max 
--6.5418 -1.9672 -0.0016  1.8901  6.6008 
+  Residuals:
+      Min      1Q  Median      3Q     Max 
+  -6.5418 -1.9672 -0.0016  1.8901  6.6008 
 
-Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)    5.782      1.021   5.665 9.78e-07 ***
-trt2times      3.443      1.443   2.385   0.0213 *  
-trt4times      6.593      1.443   4.568 3.82e-05 ***
-trtdrugD       9.579      1.443   6.637 3.53e-08 ***
-trtdrugE      15.166      1.443  10.507 1.08e-13 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+  (Intercept)    5.782      1.021   5.665 9.78e-07 ***
+  trt2times      3.443      1.443   2.385   0.0213 *  
+  trt4times      6.593      1.443   4.568 3.82e-05 ***
+  trtdrugD       9.579      1.443   6.637 3.53e-08 ***
+  trtdrugE      15.166      1.443  10.507 1.08e-13 ***
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 3.227 on 45 degrees of freedom
-Multiple R-squared:  0.7425,	Adjusted R-squared:  0.7196 
-F-statistic: 32.43 on 4 and 45 DF,  p-value: 9.819e-13
-
-> contrasts(cholesterol$trt)
-       2times 4times drugD drugE
-1time       0      0     0     0
-2times      1      0     0     0
-4times      0      1     0     0
-drugD       0      0     1     0
-drugE       0      0     0     1
+  Residual standard error: 3.227 on 45 degrees of freedom
+  Multiple R-squared:  0.7425,	Adjusted R-squared:  0.7196 
+  F-statistic: 32.43 on 4 and 45 DF,  p-value: 9.819e-13
 #+end_src
+
+   Because linear models require numeric perdictors, when ~lm()~ encounters a
+   factor, it replaces that factor with a set of numeric variables representing
+   the contrasts among the level. /k/ levels factor will have /k-1/ contrast
+   variables.
+
+   By default, treatment contrasts are used for unordered factors, and
+   orthogonal polynomials are used for ordered factors.
 
 | Contrast          | Description                                                                                                                                                      |
 |-------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -488,7 +633,26 @@ drugE       0      0     0     1
 | ~contr.treatment~ | Contrasts each level with the baseline level (first level by default). Also called dummy coding.                                                                 |
 | ~contr.SAS~       | Similar to contr.treatment, but the baseline level is the last level. This pro- duces coefficients similar to contrasts used in most SAS procedures.             |
 
+   With treatment contrasts, the first level of the factor becomes the reference
+   group and each subsequent level is compared with it. ~trt2times~ is a
+   contrast between ~1time~ and ~2times~, and so on.
+
 #+begin_src R
-fit.lm <- lm(response ~ trt, data=cholesterol, contrasts="contr.helmert")
-options(contrasts = c("contr.SAS", "contr.helmert"))
+> contrasts(cholesterol$trt)
+    
+     2times 4times drugD drugE
+  1time       0      0     0     0
+  2times      1      0     0     0
+  4times      0      1     0     0
+  drugD       0      0     1     0
+  drugE       0      0     0     1
+#+end_src
+
+   You can change the default contrasts:
+
+#+begin_src R
+  fit.lm <- lm(response ~ trt, data=cholesterol, contrasts="contr.helmert")
+
+  # this changes the session contrasts
+  options(contrasts = c("contr.SAS", "contr.helmert"))
 #+end_src
