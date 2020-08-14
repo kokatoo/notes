@@ -20,9 +20,11 @@
 #+begin_src R
   > letters
   [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
+  
   > LETTERS[7:9]
   [1] "G" "H" "I"
-  > letters[c(1,5,3,2,4)]
+  
+  > letters[c(1, 5, 3, 2, 4)]
   [1] "a" "e" "c" "b" "d"
 #+end_src
 
@@ -31,9 +33,11 @@
 #+begin_src R
   > month.abb
   [1] "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"
+  
   > month.name[1:4]
   [1] "January" "February" "March" "April"
-  > month.abb[c(3,6,9,12)]
+  
+  > month.abb[c(3, 6, 9, 12)]
   [1] "Mar" "Jun" "Sep" "Dec"
 #+end_src
 
@@ -42,7 +46,7 @@
    Named vector can be created in several ways. With ~c~:
 
 #+begin_src R
-  xc <- c('a'=5, 'b'=6, 'c'=7, 'd'=8)
+  xc <- c('a' = 5, 'b' = 6, 'c' = 7, 'd' = 8)
 #+end_src
 
    which results in:
@@ -56,7 +60,7 @@
    with list:
 
 #+begin_src R
-  xl <- list('a'=5, 'b'=6, 'c'=7, 'd'=8)
+  xl <- list('a' = 5, 'b' = 6, 'c' = 7, 'd' = 8)
 #+end_src
 
    which results in:
@@ -113,7 +117,7 @@
    dataframe. Considering the following dataframe:
 
 #+begin_src R
-  mydf <- data.frame(let=c('c','a','b','d'))
+  mydf <- data.frame(let = c('c','a','b','d'))
 
   > mydf
     let
@@ -192,22 +196,22 @@
    As well as the start
 
 #+begin_src R
-  seq(2, 5) # or seq(from=2, to=5)
+  seq(2, 5) # or seq(from = 2, to = 5)
   # [1] 2 3 4 5
 #+end_src
 
    And finally the step (~by~)
 
 #+begin_src R
-  seq(2, 5, 0.5) # or seq(from=2, to=5, by=0.5)
+  seq(2, 5, 0.5) # or seq(from = 2, to = 5, by = 0.5)
   # [1] 2.0 2.5 3.0 3.5 4.0 4.5 5.0
 #+end_src
 
    ~seq~ can optionally infer the (evenly spaced) steps when alternatively the
-   desired length of the output (length.out) is supplied
+   desired length of the output (~length.out~) is supplied
 
 #+begin_src R
-  seq(2, 5, length.out=10)
+  seq(2, 5, length.out = 10)
   # [1] 2.0 2.3 2.6 2.9 3.2 3.5 3.8 4.1 4.4 4.7 5.0
 #+end_src
 
@@ -216,7 +220,7 @@
 
 #+begin_src R
   x = 1:8
-  seq(2, 5, along.with=x)
+  seq(2, 5, along.with = x)
   # [1] 2.000000 2.428571 2.857143 3.285714 3.714286 4.142857 4.571429 5.000000
 #+end_src
 
@@ -343,17 +347,17 @@
   [1] 1 2 3 4 5 1 2 3 4 5
 
   # repeat vector with incomplete recycling
-  rep(1:5, 2, length.out=7)
+  rep(1:5, 2, length.out = 7)
   [1] 1 2 3 4 5 1 2
 #+end_src
 
    The each argument is especially useful for expanding a vector of statistics
-   of observational/experimental units into a vector of data.frame with repeated
+   of observational/experimental units into a vector of ~data.frame~ with repeated
    observations of these units.
 
 #+begin_src R
   # same except repeat each integer next to each other
-  rep(1:5, each=2)
+  rep(1:5, each = 2)
   [1] 1 1 2 2 3 3 4 4 5 5
 #+end_src
 
@@ -368,7 +372,7 @@
   [1] 1 2 2 3 3 3 4 4 4 4 5 5 5 5 5
 
   # hand-fed repetition length vector
-  rep(1:5, c(1,1,1,2,2))
+  rep(1:5, c(1, 1, 1, 2, 2))
   [1] 1 2 3 4 4 5 5
 #+end_src
 
@@ -387,6 +391,6 @@
   [1] 1 2 3 4 5 1 2 3 4 5
 
   # repeat vector with incomplete recycling
-  rep_len(1:5, length.out=7)
+  rep_len(1:5, length.out = 7)
   [1] 1 2 3 4 5 1 2
 #+end_src

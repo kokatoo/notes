@@ -14,9 +14,10 @@
    In principle, a ~data.frame~ could have no rows and no columns:
 
 #+begin_src R
-  > structure(list(character()), class="data.frame")
-  NULL
-  <0 rows> (or 0-length row.names)
+    > structure(list(character()),
+                class = "data.frame")
+    NULL
+    <0 rows> (or 0-length row.names)
 #+end_src
 
    But this is unusual. It is more common for a data.frame to have many columns
@@ -24,7 +25,9 @@
    numeric class and ~b~ is character class):
 
 #+begin_src R
-  > structure(list(a=1:3, b=letters[1:3]), class="data.frame")
+  > structure(list(a = 1:3,
+                   b = letters[1:3]),
+              class = "data.frame")
   [1] a b
   <0 rows> (or 0-length row.names)
 #+end_src
@@ -33,22 +36,30 @@
    Here we use just the numbers ~1:3~:
 
 #+begin_src R
-  > structure(list(a=1:3, b=letters[1:3]), class="data.frame", row.names=1:3)
+  > structure(list(a = 1:3,
+                   b = letters[1:3]),
+              class = "data.frame",
+              row.names = 1:3)
     a b
   1 1 a
   2 2 b
   3 3 c
 #+end_src
 
-   Now it becomes obvious that we have a data.frame with 3 rows and 2 columns.
+   Now it becomes obvious that we have a ~data.frame~ with 3 rows and 2 columns.
    You can check this using ~nrow()~, ~ncol()~, and ~dim()~:
 
 #+begin_src R
-  > x <- structure(list(a=numeric(3), b=character(3)), class="data.frame", row.names=1:3)
+  > x <- structure(list(a = numeric(3),
+                        b = character(3)),
+                   class = "data.frame",
+                   row.names = 1:3)
   > nrow(x)
   [1] 3
+
   > ncol(x)
   [1] 2
+
   > dim(x)
   [1] 3 2
 #+end_src
@@ -61,7 +72,8 @@
    exactly what you expect:
 
 #+begin_src R
-  > str(data.frame("a a a"=numeric(3), "b-b-b"=character(3)))
+  > str(data.frame("a a a" = numeric(3),
+                   "b-b-b" = character(3)))
   'data.frame': 3 obs. of 2 variables:
   $ a.a.a: num 0 0 0
   $ b.b.b: Factor w/ 1 level "": 1 1 1
@@ -69,10 +81,10 @@
 
    The other function is called ~as.data.frame()~. This can be used to coerce an
    object that is not a ~data.frame~ into being a ~data.frame~ by running it
-   through ~data.frame()~. As an example, consider a matrix:
+   through ~data.frame()~. As an example, consider a ~matrix~:
 
 #+begin_src R
-  > m <- matrix(letters[1:9], nrow=3)
+  > m <- matrix(letters[1:9], nrow = 3)
   > m
        [,1] [,2] [,3]
   [1,]  "a"  "d"  "g"
@@ -98,42 +110,43 @@
 
 ** Section 18.2: Subsetting rows and columns from a data frame
 
-   *Syntax for accessing rows and columns: [, [[, and $*
+*** Syntax for accessing rows and columns: [, [[, and $
 
-   This topic covers the most common syntax to access specific rows and columns
-   of a data frame. These are
+    This topic covers the most common syntax to access specific rows and columns
+    of a data frame. These are
 
-   * Like a matrix with single brackets ~data[rows, columns]~
+    * Like a matrix with single brackets ~data[rows, columns]~
      
-     * Using row and column numbers
+      * Using row and column numbers
 
-     * Using column (and row) names
+      * Using column (and row) names
 
-   * Like a list:
+    * Like a list:
 
-     * With single brackets ~data[columns]~ to get a data frame
+      * With single brackets ~data[columns]~ to get a data frame
 
-     *  With double brackets ~data[[one_column]]~ to get a vector
+      * With double brackets ~data[[one_column]]~ to get a vector
 
-    * With ~$~ for a single column ~data$column_name~
+      * With ~$~ for a single column ~data$column_name~
 
-  We will use the built-in ~mtcars~ data frame to illustrate.
+    We will use the built-in ~mtcars~ data frame to illustrate.
 
 *** Like a matrix: ~data[rows, columns]~
 
-    *With numeric indexes*
+**** With numeric indexes
 
-    Using the built in data frame ~mtcars~, we can extract rows and columns
+     Using the built in data frame ~mtcars~, we can extract rows and columns
      using ~[]~ brackets with a comma included. Indices before the comma are rows:
 
 #+begin_src R
   # get the first row
   mtcars[1, ]
+
   # get the first five rows
   mtcars[1:5, ]
 #+end_src
 
-   Similarly, after the comma are columns:
+    Similarly, after the comma are columns:
 
 #+begin_src R
   # get the first column
@@ -142,15 +155,15 @@
   mtcars[, c(1, 3, 5)]
 #+end_src
 
-   As shown above, if either rows or columns are left blank, all will be
-   selected. ~mtcars[1, ]~ indicates the first row with all the columns.
+    As shown above, if either rows or columns are left blank, all will be
+    selected. ~mtcars[1, ]~ indicates the first row with all the columns.
 
-*** With column (and row) names
+**** With column (and row) names
 
-    So far, this is identical to how rows and columns of matrices are accessed.
-    With data.frames, most of the time it is preferable to use a column name to a
-    column index. This is done by using a character with the column name instead
-    of numeric with a column number:
+     So far, this is identical to how rows and columns of matrices are accessed.
+     With data.frames, most of the time it is preferable to use a column name to a
+     column index. This is done by using a character with the column name instead
+     of numeric with a column number:
 
 #+begin_src R
   # get the mpg column
@@ -160,15 +173,15 @@
   mtcars[, c("mpg", "cyl", "disp")]
 #+end_src
 
-   Though less common, row names can also be used:
+    Though less common, row names can also be used:
 
 #+begin_src R
   mtcars["Mazda Rx4", ]
 #+end_src
 
-*** Rows and columns together
+**** Rows and columns together
 
-    The row and column arguments can be used together:
+     The row and column arguments can be used together:
 
 #+begin_src R
   # first four rows of the mpg column
@@ -178,11 +191,11 @@
   mtcars[c(2, 5), c("mpg", "cyl", "disp")]
 #+end_src
 
-*** A warning about dimensions:
+**** A warning about dimensions:
 
-    When using these methods, if you extract multiple columns, you will get a
-    data frame back. However, if you extract a single column, you will get a
-    vector, not a data frame under the default options.
+     When using these methods, if you extract multiple columns, you will get a
+     data frame back. However, if you extract a single column, you will get a
+     vector, not a data frame under the default options.
 
 #+begin_src R
   ## multiple columns returns a data frame
@@ -194,12 +207,12 @@
   # [1] "numeric"
 #+end_src
 
-   There are two ways around this. One is to treat the data frame as a list (see
-   below), the other is to add a ~drop=FALSE~ argument. This tells R to not
-   "drop the unused dimensions":
+    There are two ways around this. One is to treat the data frame as a list (see
+    below), the other is to add a ~drop=FALSE~ argument. This tells R to not
+    "drop the unused dimensions":
 
 #+begin_src R
-  class(mtcars[, "mpg", drop=FALSE])
+  class(mtcars[, "mpg", drop = FALSE])
   # [1] "data.frame"
 #+end_src
 
@@ -209,9 +222,9 @@
 
 *** Like a list
 
-   Data frames are essentially lists, i.e., they are a list of column vectors
-   (that all must have the same length). Lists can be subset using single
-   brackets ~[~ for a sub-list, or double brackets ~[[~ for a single element.
+    Data frames are essentially lists, i.e., they are a list of column vectors
+    (that all must have the same length). Lists can be subset using single
+    brackets ~[~ for a sub-list, or double brackets ~[[~ for a single element.
 
 **** With single brackets ~data[columns]~
    
@@ -269,22 +282,22 @@
   mtcars$mpg
 #+end_src
 
-    Columns accessed by ~$~ will always be vectors, not data frames.
+   Columns accessed by ~$~ will always be vectors, not data frames.
 
 **** Drawbacks of $ for accessing columns
 
      The ~$~ can be a convenient shortcut, especially if you are working in an
-     environment (such as RStudio) that will auto- complete the column name in
+     environment (such as RStudio) that will autocomplete the column name in
      this case. However, ~$~ has drawbacks as well: it uses non-standard evaluation
      to avoid the need for quotes, which means it will not work if your column
      name is stored in a variable.
 
 #+begin_src R
-  my_column <- "mpg"
   # the below will not work
+  my_column <- "mpg"
   mtcars$my_column
+  
   # but these will work
-
   mtcars[, my_column] # vector
   mtcars[my_column]   # one-column data frame
   mtcars[[my_column]] # vector
@@ -292,7 +305,7 @@
 
      Due to these concerns, ~$~ is best used in interactive R sessions when your
      column names are constant. For programmatic use, for example in writing a
-     generalizable function that will be used on diﬀerent data sets with different
+     generalizable function that will be used on different data sets with different
      column names, ~$~ should be avoided.
      
      Also note that the default behaviour is to use partial matching only when
@@ -318,13 +331,13 @@
 
  #+begin_src R
    mtcars[1, ]       # first row
-   mtcars[ -1, ]     # everything but the first row
+   mtcars[-1, ]      # everything but the first row
    mtcars[-(1:10), ] # everything except the first 10 rows
  #+end_src
 
 **** Logical vectors indicate specific elements to keep
 
-     We can use a condition such as < to generate a logical vector, and extract
+     We can use a condition such as ~<~ to generate a logical vector, and extract
      only the rows that meet the condition:
 
 #+begin_src R
@@ -357,7 +370,9 @@
     convenient way (subset also works with other classes):
 
 #+begin_src R
-  subset(mtcars, subset=cyl == 6, select=c("mpg", "hp"))
+  subset(mtcars,
+         subset = (cyl == 6),
+         select = c("mpg", "hp"))
                   mpg  hp
   Mazda RX4      21.0 110
   Mazda RX4 Wag  21.0 110
@@ -383,14 +398,14 @@
     ~mpg2~ with the result of ~mpg^2~ to the ~mtcars~ ~data.frame~:
 
 #+begin_src R
-  mtcars <- transform(mtcars, mpg2=mpg^2)
+  mtcars <- transform(mtcars, mpg2 = mpg^2)
 #+end_src
 
 *** with and within
 
     Both ~with()~ and ~within()~ let you to evaluate expressions inside the
-   ~data.frame~ environment, allowing a somewhat cleaner syntax, saving you the use
-   of some ~$~ or ~[]~.
+    ~data.frame~ environment, allowing a somewhat cleaner syntax, saving you the use
+    of some ~$~ or ~[]~. ~within()~ returns the ~data.frame~.
    
     For example, if you want to create, change and/or remove multiple columns in
     the ~airquality~ ~data.frame~:
@@ -408,14 +423,15 @@
 ** Section 18.4: Introduction
 
    Data frames are likely the data structure you will used most in your
-   analyses. A data frame is a special kind of list that stores same-length
-   vectors of diﬀerent classes. You create data frames using the ~data.frame~
+   analyses. A data frame is a special kind of list that stores same length
+   vectors of different classes. You create data frames using the ~data.frame~
    function. The example below shows this by combining a numeric and a character
    vector into a data frame. It uses the ~:~ operator, which will create a vector
    containing all integers from 1 to 3.
 
 #+begin_src R
-  df1 <- data.frame(x=1:3, y=c("a", "b", "c"))
+  df1 <- data.frame(x = 1:3,
+                    y = c("a", "b", "c"))
   df1
   ##   x y
   ## 1 1 a
@@ -430,7 +446,8 @@
    columns is not always obvious.
 
 #+begin_src R
-  df2 <- data.frame(x=c("1", "2", "3"), y=c("a", "b", "c"))
+  df2 <- data.frame(x = c("1", "2", "3"),
+                    y = c("a", "b", "c"))
   df2
   ##   x y
   ## 1 1 a
@@ -438,7 +455,7 @@
   ## 3 3 c
 #+end_src
 
-   Without further investigation, the ~x columns in ~df1~ and ~df2~ cannot be
+   Without further investigation, the x columns in ~df1~ and ~df2~ cannot be
    differentiated. The ~str~ function can be used to describe objects with more
    detail than class.
 
@@ -463,8 +480,10 @@
    ~stringsAsFactors~ parameter:
 
 #+begin_src R
-  df3 <- data.frame(x=1:3, y=c("a", "b", "c"), stringsAsFactors=FALSE)
-  
+  df3 <- data.frame(x = 1:3, 
+                    y = c("a", "b", "c"),
+                    stringsAsFactors = FALSE)
+
   str(df3)
   ## 'data.frame': 3 obs. of 2 variables:
   ## $ x: int 1 2 3
@@ -481,6 +500,7 @@
 
 #+begin_src R
   mydataframe <- iris
+
   str(mydataframe)
 #+end_src
 
@@ -488,10 +508,10 @@
 
    A common task is to convert all columns of a ~data.frame~ to character class
    for ease of manipulation, such as in the cases of sending ~data.frames~ to a
-   RDBMS or merging data.frames containing factors where levels may differ
+   RDBMS or merging ~data.frames~ containing factors where levels may differ
    between input ~data.frames~.
 
-   The best time to do this is when the data is read in - almost all input
+   The best time to do this is when the data is read in, almost all input
    methods that create data frames have an options ~stringsAsFactors~ which can
    be set to ~FALSE~.
 
@@ -499,7 +519,9 @@
    character columns as shown below.
 
 #+begin_src R
-  bob <- data.frame(jobs=c("scientist", "analyst"), pay=c(160000, 100000), age=c(30, 25))
+  bob <- data.frame(jobs = c("scientist", "analyst"),
+                    pay = c(160000, 100000),
+                    age = c(30, 25))
   str(bob)
 
   'data.frame': 2 obs. of 3 variables:
@@ -522,8 +544,10 @@
 #+begin_src R
   # Convert only factor columns to character
   bob[] <- lapply(bob, function(x) {
+
     if is.factor(x) x <- as.character(x)
 
     return(x)
+
   })
 #+end_src

@@ -17,7 +17,7 @@
 | ~qr~          | whether to store the QR decomposition in the fitted object                                                                                                                                                                                                                      |
 | ~singular.ok~ | whether to allow singular fits, models with collinear predictors (a subset of the coefficients will automatically be set to ~NA~ in this case                                                                                                                                   |
 | ~contrasts~   | a list of contrasts to be used for particular factors in the model; see the contrasts.arg argument of ~?model.matrix.default~. Contrasts can also be set with ~options()~ (see the ~contrasts~ argument) or by assigning the contrast attributes of a factor (see ~?contrasts)~ |
-| ~offset~      | used to specify an a priori known component in the model. May also be specified as part of the formula. See ?model.offset                                                                                                                                                       |
+| ~offset~      | used to specify an a priori known component in the model. May also be specified as part of the formula. See ~?model.offset~                                                                                                                                                     |
 | ~...~         | additional arguments to be passed to lower-level fitting functions (~lm.fit()~ or ~lm.wfit()~)                                                                                                                                                                                  |
 
 
@@ -31,7 +31,7 @@
    weight (~wt~) we may start plotting those variables with:
 
 #+begin_src R
-  plot(mpg ~ wt, data=mtcars, col=2)
+  plot(mpg ~ wt, data = mtcars, col = 2)
 #+end_src
 
    The plots shows a (linear) relationship!. Then if we want to perform linear
@@ -39,7 +39,7 @@
    ~lm~ function:
 
 #+begin_src R
-  fit <- lm(mpg ~ wt, data=mtcars)
+  fit <- lm(mpg ~ wt, data = mtcars)
 #+end_src
 
    The =~= here means "explained by", so the formula ~mpg ~ wt~ means we are
@@ -54,7 +54,7 @@
 
 #+begin_src R
   Call:
-  lm(formula=mpg ~ wt, data=mtcars)
+  lm(formula = mpg ~ wt, data = mtcars)
 
   Residuals:
       Min      1Q  Median     3Q    Max
@@ -74,7 +74,7 @@
 
    This provides information about:
 
-   * the estimated slope of each coeﬃcient (~wt~ and the ~y-intercept~), which
+   * the estimated slope of each coefficient (~wt~ and the ~y-intercept~), which
      suggests the best-fit prediction of ~mpg~ is ~37.2851 + (-5.3445) * wt~
 
    * The p-value of each coefficient, which suggests that the intercept and weight
@@ -86,21 +86,23 @@
    We could add a line to our first plot to show the predicted mpg:
 
 #+begin_src R
-  abline(fit, col=3, lwd=2)
+  abline(fit, col = 3, lwd = 2)
 #+end_src
 
    It is also possible to add the equation to that plot. First, get the
    coefficients with ~coef~. Then using ~paste0~ we collapse the coeﬃcients with
-   appropriate variables and ~+/-~, to built the equation. Finally, we add it to
+   appropriate variables and =+/-=, to built the equation. Finally, we add it to
    the plot using ~mtext~:
 
 #+begin_src R
   bs <- round(coef(fit), 3)
 
   lmlab <- paste0("mpg=", bs[1],
-                  ifelse(sign(bs[2])==1, " + ", " - "), abs(bs[2]), " wt ")
+                  ifelse(sign(bs[2]) == 1, " + ", " - "),
+                  abs(bs[2]),
+                  " wt ")
 
-  mtext(lmlab, 3, line=-2)
+  mtext(lmlab, 3, line = -2)
 #+end_src
 
    The result is:
@@ -114,11 +116,11 @@
   against displacement:
 
 #+begin_src R
-  my_mdl <- lm(mpg ~ disp, data=mtcars)
+  my_mdl <- lm(mpg ~ disp, data = mtcars)
   my_mdl
 
   Call:
-  lm(formula=mpg ~ disp, data=mtcars)
+  lm(formula = mpg ~ disp, data = mtcars)
 
   Coefficients:
   (Intercept)     disp
@@ -134,7 +136,7 @@
   newdata
   [1] 258.0 71.1 75.7 145.0 400.0
 
-  newdf <- data.frame(disp=newdata)
+  newdf <- data.frame(disp = newdata)
   predict(my_mdl, newdf)
          1        2        3        4        5
   18.96635 26.66946 26.47987 23.62366 13.11381
@@ -144,34 +146,35 @@
    same column names as the original data. In this case, the original data had a
    column labeled ~disp~, I was sure to call the new data that same name.
 
-   *Caution*
+*** Caution
 
-   Let's look at a few common pitfalls:
+    Let's look at a few common pitfalls:
 
-   1. not using a data.frame in the new object:
+    1. not using a data.frame in the new object:
 
 #+begin_src R
-  predict(my_mdl, newdata)
+  > predict(my_mdl, newdata)
   Error in eval(predvars, data, env):
            numeric 'envir' arg not of length one
 #+end_src
 
-   2. not using same names in new data frame:
+    2. not using same names in new data frame:
 
 #+begin_src R
   newdf2 <- data.frame(newdata)
-  predict(my_mdl, newdf2)
+  
+  > predict(my_mdl, newdf2)
   Error in eval(expr, envir, enclos) : object 'disp' not found
 #+end_src
 
-   *Accuracy*
+*** Accuracy
 
-   To check the accuracy of the prediction you will need the actual y values of
-   the new data. In this example, ~newdf~ will need a column for 'mpg' and
-   'disp'.
+    To check the accuracy of the prediction you will need the actual y values of
+    the new data. In this example, ~newdf~ will need a column for 'mpg' and
+    'disp'.
 
 #+begin_src R
-  newdf <- data.frame(mpg=mtcars$mpg[1:10], disp=mtcars$disp[1:10])
+  newdf <- data.frame(mpg = mtcars$mpg[1:10], disp = mtcars$disp[1:10])
   #    mpg  disp
   # 1 21.0 160.0
   # 2 21.0 160.0
@@ -187,7 +190,7 @@
   p <- predict(my_mdl, newdf)
 
   #root mean square error
-  sqrt(mean((p - newdf$mpg)^2, na.rm=TRUE))
+  sqrt(mean((p - newdf$mpg)^2, na.rm = TRUE))
   [1] 2.325148
 #+end_src
 
@@ -198,7 +201,7 @@
    data while learning the model. There are generally two kinds of scenarios
    where we might use non-uniform weights over the examples:
 
-   * Analytic Weights: Reﬂect the diﬀerent levels of precision of diﬀerent
+   * Analytic Weights: Reflect the different levels of precision of different
      observations. For example, if analyzing data where each observation is the
      average results from a geographic area, the analytic weight is proportional
      to the inverse of the estimated variance. Useful when dealing with averages
@@ -206,7 +209,7 @@
      observations. [[http://surveyanalysis.org/wiki/Different_Types_of_Weights][Source]]
 
    * Sampling Weights (Inverse Probability Weights - IPW): a statistical
-     technique for calculating statistics standardized to a population diﬀerent
+     technique for calculating statistics standardized to a population different
      from that in which the data was collected. Study designs with a disparate
      sampling population and population of target inference (target population)
      are common in application. Useful when dealing with data that have missing
@@ -219,32 +222,32 @@
    both solve for the coefficients by minimizing the weighted least squares. They
    differ in how standard errors are calculated.)
 
-   *Test Data*
+*** Test Data
 
 #+begin_src R
-  data <- structure(list(lexptot=c(9.1595012302023, 9.86330744180814, 8.92372556833205, 8.58202430280175, 10.1133857229336),
-                         progvillm=c(1L, 1L, 1L, 1L, 0L),
-                         sexhead=c(1L, 1L, 0L, 1L, 1L),
-                         agehead=c(79L, 43L, 52L, 48L, 35L),
-                         weight=c(1.04273509979248, 1.01139605045319, 1.01139605045319, 1.01139605045319, 0.76305216550827)),
-                    .Names=c("lexptot", "progvillm", "sexhead", "agehead", "weight"),
-                    class=c("tbl_df", "tbl", "data.frame"),
-                    row.names=c(NA, -5L))
+  data <- structure(list(lexptot = c(9.1595012302023, 9.86330744180814, 8.92372556833205, 8.58202430280175, 10.1133857229336),
+                         progvillm = c(1L, 1L, 1L, 1L, 0L),
+                         sexhead = c(1L, 1L, 0L, 1L, 1L),
+                         agehead = c(79L, 43L, 52L, 48L, 35L),
+                         weight = c(1.04273509979248, 1.01139605045319, 1.01139605045319, 1.01139605045319, 0.76305216550827)),
+                    .Names = c("lexptot", "progvillm", "sexhead", "agehead", "weight"),
+                    class = c("tbl_df", "tbl", "data.frame"),
+                    row.names = c(NA, -5L))
 #+end_src
 
-   *Analytic Weights*
+*** Analytic Weights
 
 #+begin_src R
-  lm.analytic <- lm(lexptot ~ progvillm + sexhead + agehead, data=data, weight=weight)
+  lm.analytic <- lm(lexptot ~ progvillm + sexhead + agehead, data = data, weight = weight)
 
   summary(lm.analytic)
 #+end_src
 
-   *Output*
+**** Output
 
 #+begin_src R
   Call:
-  lm(formula=lexptot ~ progvillm + sexhead + agehead, data=data, weights=weight)
+  lm(formula = lexptot ~ progvillm + sexhead + agehead, data = data, weights = weight)
 
   Weighted Residuals:
           1         2         3          4          5
@@ -262,27 +265,28 @@
   F-statistic: 0.2921 on 3 and 1 DF, p-value: 0.8386
 #+end_src
 
-   *Sampling Weights (IPW)*
+*** Sampling Weights (IPW)
 
 #+begin_src R
   library(survey)
+
   data$X <- 1:nrow(data) # Create unique id
 
   # Build survey design object with unique id, ipw, and data.frame
-  des1 <- svydesign(id=~X, weights=~weight, data=data)
+  des1 <- svydesign(id = ~X, weights = ~weight, data = data)
 
   # Run glm with survey design object
-  prog.lm <- svyglm(lexptot ~ progvillm + sexhead + agehead, design=des1)
+  prog.lm <- svyglm(lexptot ~ progvillm + sexhead + agehead, design = des1)
 #+end_src
 
-   *Output*
+**** Output
 
 #+begin_src R
   Call:
-  svyglm(formula=lexptot ~ progvillm + sexhead + agehead, design=des1)
+  svyglm(formula = lexptot ~ progvillm + sexhead + agehead, design = des1)
 
   Survey design:
-  svydesign(id=~X, weights=~weight, data=data)
+  svydesign(id=~X, weights=~weight, data = data)
 
   Coefficients:
                Estimate Std. Error t value Pr(>|t|)
@@ -317,6 +321,7 @@
 #+begin_src R
   plot(mtcars[, c("mpg", "disp", "wt")])
 #+end_src
+
   [[./images/chp22.4_poly.png]]
 
   A linear fit will show that ~disp~ is not significant.
@@ -364,7 +369,7 @@
    ~help(poly)~ for more information). We get the same result using:
 
 #+begin_src R
-  summary(lm(mpg ~ wt + poly(disp, 2, raw=TRUE), mtcars))
+  summary(lm(mpg ~ wt + poly(disp, 2, raw = TRUE), mtcars))
 #+end_src
 
    Finally, what if we need to show a plot of the estimated surface? Well there
@@ -374,8 +379,8 @@
 #+begin_src R
   library(p3d)
 
-  Init3d(family="serif", cex=1)
-  Plot3d(mpg ~ disp+wt, mtcars)
+  Init3d(family = "serif", cex = 1)
+  Plot3d(mpg ~ disp + wt, mtcars)
   Axes3d()
   Fit3d(fit1)
 #+end_src
@@ -388,16 +393,18 @@
    First fit the linear model and
 
 #+begin_src R
-  fit <- lm(mpg ~ wt, data=mtcars)
+  fit <- lm(mpg ~ wt, data = mtcars)
 #+end_src
 
    Then plot the two variables of interest and add the regression line within
    the definition domain:
 
 #+begin_src R
-  plot(mtcars$wt, mtcars$mpg, pch=18, xlab='wt', ylab='mpg')
+  plot(mtcars$wt, mtcars$mpg, pch = 18, xlab = 'wt', ylab = 'mpg')
 
-  lines(c(min(mtcars$wt), max(mtcars$wt)), as.numeric(predict(fit, data.frame(wt=c(min(mtcars$wt), max(mtcars$wt))))))
+  lines(c(min(mtcars$wt), max(mtcars$wt)),
+        as.numeric(predict(fit,
+                           data.frame(wt = c(min(mtcars$wt), max(mtcars$wt))))))
 #+end_src
 
    Almost there! The last step is to add to the plot, the regression equation,
@@ -407,13 +414,14 @@
 #+begin_src R
   rp = vector('expression', 3)
   rp[1] = substitute(expression(italic(y) == MYOTHERVALUE3 + MYOTHERVALUE4 %*% x), 
-                     list(MYOTHERVALUE3=format(fit$coefficients[1], digits=2), MYOTHERVALUE4=format(fit$coefficients[2], digits=2)))[2]
+                     list(MYOTHERVALUE3 = format(fit$coefficients[1], digits = 2),
+                          MYOTHERVALUE4 = format(fit$coefficients[2], digits = 2)))[2]
   rp[2] = substitute(expression(italic(R)^2 == MYVALUE),
-                     list(MYVALUE=format(summary(fit)$adj.r.squared,dig=3)))[2]
+                     list(MYVALUE = format(summary(fit)$adj.r.squared,dig = 3)))[2]
   rp[3] = substitute(expression(Pearson-R == MYOTHERVALUE2),
-                     list(MYOTHERVALUE2=format(cor(mtcars$wt,mtcars$mpg), digits=2)))[2]
+                     list(MYOTHERVALUE2 = format(cor(mtcars$wt,mtcars$mpg), digits = 2)))[2]
 
-  legend("topright", legend=rp, bty='n')
+  legend("topright", legend = rp, bty = 'n')
 #+end_src
 
    Note that you can add any other parameter such as the RMSE by adapting the
@@ -426,7 +434,6 @@
 
    and you will need to defined rp[1].... to rp[10]
 
-   Here is the output:
 [[./images/chp22.5_rp.png]]
 
 ** Section 22.6: Quality assessment
@@ -438,11 +445,11 @@
 
 #+begin_src R
   # fit the model
-  fit <- lm(mpg ~ wt, data=mtcars)
+  fit <- lm(mpg ~ wt, data = mtcars)
   
-  par(mfrow=c(2,1))
+  par(mfrow = c(2,1))
   # plot model object
-  plot(fit, which=1:2)
+  plot(fit, which = 1:2)
 #+end_src
 [[./images/chp22.6_quality.png]]
 

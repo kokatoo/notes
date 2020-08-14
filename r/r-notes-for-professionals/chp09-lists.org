@@ -9,7 +9,9 @@
    under a single object. You can use the ~list~ function to create a list:
 
 #+begin_src R
-  l1 <- list(c(1, 2, 3), c("a", "b", "c"))
+  l1 <- list(
+    c(1, 2, 3),
+    c("a", "b", "c"))
   l1
   ## [[1]]
   ## [1] 1 2 3
@@ -27,7 +29,9 @@
 #+begin_src R
   names(l1)
   ## NULL
+
   names(l1) <- c("vector1", "vector2")
+
   l1
   ## $vector1
   ## [1] 1 2 3
@@ -40,7 +44,10 @@
    object.
 
 #+begin_src R
-  l2 <- list(vec=c(1, 3, 5, 7, 9), mat=matrix(data=c(1, 2, 3), nrow=3))
+  l2 <- list(
+    vec = c(1, 3, 5, 7, 9),
+    mat = matrix(data = c(1, 2, 3),
+                 nrow = 3))
   l2
   ## $vec
   ## [1] 1 3 5 7 9
@@ -50,12 +57,13 @@
   ## [1,]    1
   ## [2,]    2
   ## [3,]    3
+
   names(l2)
   ## [1] "vec" "mat"
 #+end_src
 
    Above the list has two elements, named "vec" and "mat," a vector and matrix,
-   resepcively.
+   respectively.
 
 ** Section 9.2: Quick Introduction to Lists
 
@@ -154,7 +162,7 @@
   exampleVector2 <- c("a", "b", "c", "d", "e", "f")
 
   ## Matrix
-  exampleMatrix1 <- matrix(rnorm(4), ncol=2, nrow=2)
+  exampleMatrix1 <- matrix(rnorm(4), ncol = 2, nrow = 2)
 
   ## List
   exampleList3 <- list('a', 1, 2)
@@ -218,6 +226,7 @@
 #+begin_src R
   > paste(df$name[4], "is a", df3$team[4], "supporter.")
   [1] "Gioele is a Lazio supporter."
+
   > paste("The answer to THE question is", number)
   [1] "The answer to THE question is 42"
 #+end_src
@@ -227,8 +236,9 @@
    generic list and then put the list in a particular dataframe:
 
 #+begin_src R
-  l <- list(df,number)
-  dataframe_container <- data.frame(out2=as.integer(serialize(l, connection=NULL)))
+  l <- list(df, number)
+  dataframe_container <- 
+    data.frame(out2 = as.integer(serialize(l, connection = NULL)))
 #+end_src
 
   Once we have stored the information in the dataframe, we need to deserialize
@@ -237,6 +247,7 @@
 #+begin_src R
   #----- unserialize ----------------------------------------+
   unser_obj <- unserialize(as.raw(dataframe_container$out2))
+
   #----- taking back the elements----------------------------+
   df_mod     <- unser_obj[1][[1]]
   number_mod <- unser_obj[2][[1]]
@@ -247,6 +258,7 @@
 #+begin_src R
   > paste(df_mod$name[4],"is a",df_mod$team[4], "supporter." )
   [1] "Gioele is a Lazio supporter."
+
   > paste("The answer to THE question is", number_mod )
   [1] "The answer to THE question is 42"
 #+end_src

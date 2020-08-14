@@ -107,19 +107,21 @@
 
    Factor objects get printed in the same fashion as character variables which
    often creates ambiguity when console output is used to display objects in SO
-   question bodies. It is rare to use ~cat~ or ~print~ except in an interactive
-   context. Explicitly calling ~print()~ is particularly rare (unless you wanted
-   to suppress the appearance of the quotes or view an object that is returned
-   as ~invisible~ by a function), as entering foo at the console is a shortcut for
+   question bodies.
+
+   It is rare to use ~cat~ or ~print~ except in an interactive context.
+   Explicitly calling ~print()~ is particularly rare (unless you wanted to
+   suppress the appearance of the quotes or view an object that is returned as
+   ~invisible~ by a function), as entering foo at the console is a shortcut for
    ~print(foo)~. The interactive console of R is known as a REPL, a
    "read-eval-print-loop". The ~cat~ function is best saved for special purposes
    (like writing output to an open file connection). Sometimes it is used inside
-   functions (where calls to ~print()~ are suppressed), however using ~cat()~ inside
-   a function to generate output to the console is bad practice. The preferred
-   method is to ~message()~ or ~warning(~) for intermediate messages; they behave
-   similarly to ~cat~ but can be optionally suppressed by the end user. The final
-   result should simply returned so that the user can assign it to store it if
-   necessary.
+   functions (where calls to ~print()~ are suppressed), however using ~cat()~
+   inside a function to generate output to the console is bad practice. The
+   preferred method is to ~message()~ or ~warning(~) for intermediate messages;
+   they behave similarly to ~cat~ but can be optionally suppressed by the end
+   user. The final result should simply returned so that the user can assign it
+   to store it if necessary.
 
 #+begin_src R
   message("hello world")
@@ -129,17 +131,17 @@
 
 ** Section 6.2: Capture output of operating system command
 
-   *Functions which return a character vector*
+*** Functions which return a character vector
 
-   Base R has two functions for invoking a system command. Both require an
-   additional parameter to capture the output of the system command.
+    Base R has two functions for invoking a system command. Both require an
+    additional parameter to capture the output of the system command.
 
 #+begin_src R
-  system("top -b -n 1", intern=TRUE)
-  system2("top", "-b -n 1", stdout=TRUE)
+  system("top -b -n 1", intern = TRUE)
+  system2("top", "-b -n 1", stdout = TRUE)
 #+end_src
 
-   Both return a character vector.
+    Both return a character vector.
 
 #+begin_src R
   [1] "top - 08:52:03 up 70 days, 15:09, 0 users, load average: 0.00, 0.00, 0.00"
@@ -154,26 +156,19 @@
   [10] " 4949 user2 20 0 1917m 214m 1888 S 0.0 1.8 11:16.73 R "
 #+end_src
 
-   For illustration, the UNIX command top ~-b -n 1~ is used. This is OS
-   specific and may need to be amended to run the examples on your computer.   
+    For illustration, the UNIX command top ~-b -n 1~ is used. This is OS
+    specific and may need to be amended to run the examples on your computer.   
 
-   Package devtools has a function to run a system command and capture the
-   output without an additional parameter. It also returns a character vector.
+    Package ~processx~ can be used to run system calls as well.
 
-#+begin_src R
-  devtools::system_output("top", "-b -n 1")
-#+end_src
-
-#+RESULTS:
-
-   *Functions which return a data frame*
+*** Functions which return a data frame
 
    The ~fread~ function in package ~data.table~ allows to execute a shell command
    and to read the output like ~read.table~. It returns a ~data.table~ or a
    ~data.frame~.
 
 #+begin_src bash
-  fread("top -b -n 1", check.names=TRUE)
+  fread("top -b -n 1", check.names = TRUE)
        PID  USER PR NI  VIRT  RES  SHR S X.CPU X.MEM     TIME. COMMAND
   1: 11300  root 20  0 1278m 375m 3696 S     0   3.2 124:40.92   trala
   2:  6093 user1 20  0 1817m 269m 1888 S     0   2.3  12:18.56       R
@@ -189,7 +184,7 @@
 ** Section 6.3: Reading from or writing to a file connection
 
    Not always we have liberty to read from or write to a local system path. For
-   example if R code streaming map- reduce must need to read and write to file
+   example if R code streaming map-reduce must need to read and write to file
    connection. There can be other scenarios as well where one is going beyond
    local system and with advent of cloud and big data, this is becoming
    increasingly common. One of the way to do this is in logical sequence.
@@ -206,13 +201,13 @@
    file connections as follows:
 
 #+begin_src R
-  line <- readLines(conn, n=1, warn=FALSE)
+  line <- readLines(conn, n = 1, warn = FALSE)
 #+end_src
 
-   Here we are reading the data from file connection ~conn~ line by line as ~n=1~.
+   Here we are reading the data from file connection ~conn~ line by line as ~n = 1~.
    one can change value of ~n~ (say 10, 20 etc.) for reading data blocks for
    faster reading (10 or 20 lines block read in one go). To read complete file in
-   one go set ~n=-1~.
+   one go set ~n = -1~.
 
    After data processing or say model execution; one can write the results back
    to file connection using many diﬀerent commands like ~writeLines()~, ~cat()~
@@ -228,5 +223,5 @@
    Then write the data as follows:
 
 #+begin_src R
-  writeLines("text", conn2,  sep="\n")
+  writeLines("text", conn2,  sep = "\n")
 #+end_src

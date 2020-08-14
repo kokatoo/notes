@@ -1,4 +1,4 @@
-#+STARTUP: showeverything
+%#+STARTUP: showeverything
 #+title: R Notes for Professionals
 
 * Chapter 8: Classes
@@ -35,8 +35,8 @@
 
    We see that ~iris~ has the class ~data.frame~ and using ~str()~ allows us to
    examine the data inside. The variable ~Species~ in the ~iris~ data frame is
-   of class factor, in contrast to the other variables which are of class
-   numeric. The ~str()~ function also provides the length of the variables and
+   of class ~factor~, in contrast to the other variables which are of class
+   ~numeric~. The ~str()~ function also provides the length of the variables and
    shows the first couple of observations, while the ~class()~ function only
    provides the object's class.
 
@@ -57,11 +57,11 @@
   x <- as.Date("1970-01-01")
   class(x)
   #[1] "Date"
-  is(x,"Date")
+  is(x, "Date")
   #[1] TRUE
-  is(x,"integer")
+  is(x, "integer")
   #[1] FALSE
-  is(x,"numeric")
+  is(x, "numeric")
   #[1] FALSE
   mode(x)
   #[1] "numeric"
@@ -71,7 +71,9 @@
    another list, hence the R term for lists: "recursive vectors":
 
 #+begin_src R
-  mylist <- list(A=c(5,6,7,8), B=letters[1:10], CC=list( 5, "Z"))
+  mylist <- list(A = c(5,6,7,8),
+                 B = letters[1:10],
+                 CC = list( 5, "Z"))
 #+end_src
 
    Lists have two very important uses:
@@ -80,7 +82,7 @@
      complicated results in a list:
 
 #+begin_src R
-  f <- function(x) list(xplus=x + 10, xsq=x^2)
+  f <- function(x) list(xplus = x + 10, xsq = x^2)
 
   f(7)
   # $xplus
@@ -94,7 +96,7 @@
      hood, a data frame is a list of vectors all having the same length:
 
 #+begin_src R
-  L <- list(x=1:2, y=c("A","B"))
+  L <- list(x = 1:2, y = c("A","B"))
   DF <- data.frame(L)
   DF
   #   x y
@@ -104,8 +106,8 @@
   # [1] TRUE
 #+end_src
 
-   The other class of recursive vectors is R expressions, which are "language"-
-   objects
+   The other class of recursive vectors is R expressions, which are "language"
+   objects.
 
 ** Section 8.3: Vectors
 

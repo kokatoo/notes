@@ -23,7 +23,7 @@
     Boolean vector in return.
 
 #+begin_src R
-  grepl("fox", test_sentences)
+  > grepl("fox", test_sentences)
   #[1] TRUE FALSE
 #+end_src
 
@@ -34,7 +34,7 @@
     "fox" in it.
 
 #+begin_src R
-  grep("fox", test_sentences)
+  > grep("fox", test_sentences)
   #[1] 1
 #+end_src
 
@@ -43,11 +43,13 @@
     To select sentences that match a pattern:
 
 #+begin_src R
-  # each of the following lines does the job:
-  test_sentences[grep("fox", test_sentences)]
-  test_sentences[grepl("fox", test_sentences)]
+  > test_sentences[grep("fox", test_sentences)]
+  # [1] "The quick brown fox"
+  
+  > test_sentences[grepl("fox", test_sentences)]
+  # [1] "The quick brown fox"
 
-  grep("fox", test_sentences, value = TRUE)
+  > grep("fox", test_sentences, value = TRUE)
   # [1] "The quick brown fox"
 #+end_src
 
@@ -58,7 +60,7 @@
     specifying ~fixed=TRUE~.
 
 #+begin_src R
-  grep("fox", test_sentences, fixed=TRUE)
+  > grep("fox", test_sentences, fixed = TRUE)
   #[1] 1
 #+end_src
 
@@ -73,7 +75,7 @@
 *** Summary of matches
 
     After performing the ~grepl~ command, you might want to get an
-    overview about how many matches were TRUE or FALSE. This is useful
+    overview about how many matches were ~TRUE~ or ~FALSE~. This is useful
     especially for big data sets. In order to do so run the ~summary~ command:
 
 #+begin_src R
@@ -95,34 +97,28 @@
    In R matching and replacement functions have two version: first match and
    global match:
 
-   * ~sub(pattern, replacement, text)~ will replace the first occurrence of pattern
-     by replacement in text
-
-   * ~gsub(pattern, replacement, text)~ will do the same as sub but for each
-     occurrence of pattern
-
-   * ~regexpr(pattern, text)~ will return the position of match for the first
-     instance of pattern
-
-   * ~gregexpr(pattern, text)~ will return all matches.
+   | ~sub(pattern, replacement, text)~  | will replace the first occurrence of pattern by replacement in text |
+   | ~gsub(pattern, replacement, text)~ | will do the same as sub but for each occurrence of pattern          |
+   | ~regexpr(pattern, text)~           | will return the position of match for the first instance of pattern |
+   | ~gregexpr(pattern, text)~          | will return all matches.                                            |
 
    Some random data:
 
 #+begin_src R
   set.seed(123)
-  teststring <- paste0(sample(letters, 20), collapse="")
+  teststring <- paste0(sample(letters, 20), collapse = "")
 
-  # teststring
+  > teststring
   #[1] "htjuwakqxzpgrsbncvyo"
 #+end_src
 
    Let's see how this works if we want to replace vowels by something else:
 
 #+begin_src R
-  sub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
+  > sub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
   #[1] "htj ** HERE WAS A VOWEL** wakqxzpgrsbncvyo"
 
-  gsub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
+  > gsub("[aeiouy]", " ** HERE WAS A VOWEL** ", teststring)
   #[1] "htj ** HERE WAS A VOWEL** w ** HERE WAS A VOWEL** kqxzpgrsbncv ** HERE WAS A VOWEL** ** HERE WAS A VOWEL** "
 #+end_src
 
@@ -130,12 +126,14 @@
    vowel:
 
 #+begin_src R
-  regexpr("[^aeiou][aeiou]+", teststring)
-  #[1] 3
-  #attr(,"match.length")
-  #[1] 2
-  #attr(,"useBytes")
-  #[1] TRUE
+  > regexpr("[^aeiou][aeiou]+", teststring)
+  [1] 3
+  attr(,"match.length")
+  [1] 2
+  attr(,"index.type")
+  [1] "chars"
+  attr(,"useBytes")
+  [1] TRUE
 #+end_src
 
    We have a match on position 3 of the string of length 2, i.e: ju
@@ -143,13 +141,15 @@
    Now if we want to get all matches:
 
 #+begin_src R
-  gregexpr("[^aeiou][aeiou]+", teststring)
-  #[[1]]
-  #[1] 3 5 19
-  #attr(,"match.length")
-  #[1] 2 2 2
-  #attr(,"useBytes")
-  #[1] TRUE
+  > gregexpr("[^aeiou][aeiou]+", teststring)
+  [[1]]
+  [1]  3 5 19
+  attr(,"match.length")
+  [1] 2 2 2
+  attr(,"index.type")
+  [1] "chars"
+  attr(,"useBytes")
+  [1] TRUE
 #+end_src
 
    All this is really great, but this only give use positions of match and
@@ -161,9 +161,9 @@
    string:
 
 #+begin_src R
-  matches <- gregexpr("[^aeiou][aeiou]+",teststring)
+  matches <- gregexpr("[^aeiou][aeiou]+", teststring)
 
-  regmatches(teststring, matches)
+  > regmatches(teststring, matches)
   #[[1]]
   #[1] "ju" "wa" "yo"
 #+end_src
@@ -175,7 +175,8 @@
 
 #+begin_src R
   teststring2 <- "this is another string to match against"
-  regmatches(teststring2, matches)
+  
+  > regmatches(teststring2, matches)
   #[[1]]
   #[1] "is" " i" "ri"
 #+end_src
@@ -194,14 +195,14 @@
    Let's make the brown fox red:
 
 #+begin_src R
-  sub("brown","red", test_sentences)
+  > sub("brown", "red", test_sentences)
   #[1] "The quick red fox quickly" "jumps over the lazy dog"
 #+end_src
 
    Now, let's make the "fast" fox act "fastly". This won't do it:
 
 #+begin_src R
-  sub("quick", "fast", test_sentences)
+  > sub("quick", "fast", test_sentences)
   #[1] "The fast red fox quickly" "jumps over the lazy dog"
 #+end_src
 
@@ -209,7 +210,7 @@
    replacement:
 
 #+begin_src R
-  gsub("quick", "fast", test_sentences)
+  > gsub("quick", "fast", test_sentences)
   #[1] "The fast red fox fastly" "jumps over the lazy dog"
 #+end_src
 
@@ -228,7 +229,7 @@
   # example data
   test_sentences <- c("The quick brown fox", "jumps over the lazy dog")
 
-  grepl("fox", test_sentences, perl=TRUE)
+  > grepl("fox", test_sentences, perl = TRUE)
   #[1] TRUE FALSE
 #+end_src
 
@@ -236,8 +237,10 @@
    directly with ~grepl~. Therefore, consider this function:
 
 #+begin_src R
-  searchCorpus <- function(corpus, pattern) {
-    return(tm_index(corpus, FUN=function(x) {
-      grepl(pattern, x, ignore.case=TRUE, perl=TRUE)
-    }))}
+   searchCorpus <- function(corpus, pattern) {
+
+     return(tm_index(corpus, FUN = function(x) {
+       grepl(pattern, x, ignore.case = TRUE, perl = TRUE)
+
+     }))}
 #+end_src

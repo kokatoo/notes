@@ -5,7 +5,7 @@
 
 ** Section 13.1: Formatting Dates
 
-   To format Dates we use the ~format(date, format="%Y-%m-%d")~ function with
+   To format Dates we use the ~format(date, format = "%Y-%m-%d")~ function with
    either the POSIXct (given from ~as.POSIXct()~) or POSIXlt (given from
    ~as.POSIXlt()~)
 
@@ -46,13 +46,13 @@
 
    R contains a Date class, which is created with ~as.Date()~, which takes a
    string or vector of strings, and if the date is not in ISO 8601 date format
-   ~YYYY-MM-DD~, a formatting string of strptime-style tokens.
+   ~YYYY-MM-DD~, a formatting string of ~strptime~style tokens.
 
 #+begin_src R
   as.Date('2016-08-01') # in ISO format, so does not require formatting string
   ## [1] "2016-08-01"
 
-  as.Date('05/23/16', format='%m/%d/%y')
+  as.Date('05/23/16', format = '%m/%d/%y')
   ## [1] "2016-05-23"
 
   as.Date('March 23rd, 2016', '%B %drd, %Y') # add separators and literals to format
@@ -81,7 +81,7 @@
    is ~%Y-%m-%d~, which is Year-month- day.
 
 #+begin_src R
-  > as.Date("23-8-2016", format="%d-%m-%Y") # To read in an European-style date
+  > as.Date("23-8-2016", format = "%d-%m-%Y") # To read in an European-style date
   [1] "2016-08-23"
 #+end_src
 
@@ -129,7 +129,7 @@
    Consider the following example specifying the ~format~ parameter:
 
 #+begin_src R
-  > as.Date("9-6-1962",format="%d-%m-%Y")
+  > as.Date("9-6-1962", format = "%d-%m-%Y")
   [1] "1962-06-09"
 #+end_src
 
@@ -144,7 +144,7 @@
    used in the writing the dates. In which case we use the format specifier ~%b~.
 
 #+begin_src R
-  > as.Date("6Nov1962","%d%b%Y")
+  > as.Date("6Nov1962", "%d%b%Y")
   [1] "1962-11-06"
 #+end_src
 
@@ -153,7 +153,7 @@
    Consider the following example:
 
 #+begin_src R
-  > as.Date("6 Nov, 1962","%d %b, %Y")
+  > as.Date("6 Nov, 1962", "%d %b, %Y")
   [1] "1962-11-06"
 #+end_src
 

@@ -10,7 +10,7 @@
    using the ~matrix~ function as shown below.
 
 #+begin_src R
-  matrix(data=1:6, nrow=2, ncol=3)
+  matrix(data = 1:6, nrow = 2, ncol = 3)
   ##      [,1] [,2] [,3]
   ## [1,]    1    3    5
   ## [2,]    2    4    6
@@ -20,10 +20,10 @@
    rows and three columns. The ~data~ parameter takes a vector of values, ~nrow~
    specifies the number of rows in the matrix, and ~ncol~ specifies the number of
    columns. By convention the matrix is filled by column. The default behavior
-   can be changed with the byrow parameter as shown below:
+   can be changed with the ~byrow~ parameter as shown below:
 
 #+begin_src R
-  matrix(data=1:6, nrow=2, ncol=3, byrow=TRUE)
+  matrix(data = 1:6, nrow = 2, ncol = 3, byrow = TRUE)
   ##      [,1] [,2] [,3]
   ## [1,]    1    2    3
   ## [2,]    4    5    6
@@ -33,13 +33,17 @@
    matrix. For example:
 
 #+begin_src R
-  matrix(data = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE), nrow=3, ncol=2)
+  matrix(data = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE),
+         nrow = 3,
+         ncol = 2)
   ## [,1] [,2]
   ## [1,] TRUE FALSE
   ## [2,] TRUE FALSE
   ## [3,] TRUE FALSE
 
-  matrix(data = c("a", "b", "c", "d", "e", "f"), nrow=3, ncol=2)
+  matrix(data = c("a", "b", "c", "d", "e", "f"),
+         nrow = 3,
+         ncol = 2)
   ##     [,1] [,2]
   ## [1,] "a"  "d"
   ## [2,] "b"  "e"
@@ -53,7 +57,7 @@
    values to them.
 
 #+begin_src R
-  mat1 <- matrix(data=1:6, nrow=2, ncol=3, byrow=TRUE)
+  mat1 <- matrix(data = 1:6, nrow = 2, ncol = 3, byrow = TRUE)
   rownames(mat1)
   ## NULL
   colnames(mat1)

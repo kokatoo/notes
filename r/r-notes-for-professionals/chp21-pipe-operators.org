@@ -3,7 +3,7 @@
 
 * Chapter 21: Pipe operators (~%>%~ and others)
 
-| lhs                                  | rhs                                          |
+| LHS                                  | RHS                                          |
 |--------------------------------------+----------------------------------------------|
 | A value or the magrittr placeholder. | A function call using the magrittr semantics |
 
@@ -63,7 +63,7 @@
   grepl("Wo", substring("Hello World", 7, 11))
 
   # piping while naming other arguments
-  "Hello World" %>% substring(7, 11) %>% grepl(pattern="Wo")
+  "Hello World" %>% substring(7, 11) %>% grepl(pattern = "Wo")
 
   # piping with .
   "Hello World" %>% substring(7, 11) %>% grepl("Wo", .)
@@ -90,13 +90,12 @@
    As an example, suppose we have factor dates and want to extract the year:
 
 #+begin_src R
-  library(magrittr) # needed to include the pipe operators
+  library(magrittr)
   library(lubridate)
 
   read_year <- . %>% as.character %>% as.Date %>% year
 
-  # Creating a dataset
-  df <- data.frame(now="2015-11-11", before="2012-01-01")
+  df <- data.frame(now = "2015-11-11", before = "2012-01-01")
   #          now     before
   # 1 2015-11-11 2012-01-01
 
@@ -231,7 +230,7 @@
 #+begin_src R
   all_letters <- c(letters, LETTERS) %>%
     sort %T>%
-    write.csv(file="all_letters.csv")
+    write.csv(file = "all_letters.csv")
 
   read.csv("all_letters.csv") %>% head()
   #  x 
@@ -251,22 +250,22 @@
 #+begin_src R
   all_letters <- c(letters, LETTERS) %>%
     sort %T>%
-    save(file="all_letters.RData")
+    save(file = "all_letters.RData")
 
   load("all_letters.RData", e <- new.env())
 
-  get("all_letters", envir=e)
+  get("all_letters", envir = e)
   # Error in get("all_letters", envir=e) : object 'all_letters' not found
 
-  get(".", envir=e)
+  get(".", envir = e)
   # [1] "a" "A" "b" "B" "c" "C" "d" "D" "e" "E" "f" "F" "g" "G" "h" "H" "i" "I" "j" "J"
   # [21] "k" "K" "l" "L" "m" "M" "n" "N" "o" "O" "p" "P" "q" "Q" "r" "R" "s" "S" "t" "T"
   # [41] "u" "U" "v" "V" "w" "W" "x" "X" "y" "Y" "z" "Z"
 
   # Work-around
-  save2 <- function(.=., name, file=stop("'file' must be specified")) {
+  save2 <- function(.=., name, file = stop("'file' must be specified")) {
     assign(name, .)
-    call_save <- call("save", ...=name, file=file)
+    call_save <- call("save", ... = name, file = file)
     eval(call_save)
   }
 
@@ -290,6 +289,6 @@
   diamonds %>%
     filter(depth > 60) %>%
     group_by(cut) %>%
-    summarize(mean_price=mean(price)) %>%
-    ggplot(aes(x=cut, y=mean_price)) + geom_bar(stat="identity")
+    summarize(mean_price = mean(price)) %>%
+    ggplot(aes(x = cut, y = mean_price)) + geom_bar(stat = "identity")
 #+end_src

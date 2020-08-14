@@ -16,7 +16,8 @@
 
 #+begin_src R
   r <- rle(dat)
-  r
+  
+  > r
   # Run Length Encoding
   # lengths: int [1:6] 1 3 1 1 2 2
   # values : num [1:6] 1 2 3 1 4 1
@@ -25,7 +26,7 @@
    The values for each run are captured in ~r$values~:
 
 #+begin_src R
-  r$values
+  > r$values
   # [1] 1 2 3 1 4 1
 #+end_src
 
@@ -35,7 +36,7 @@
    The lengths of each run are captured in ~r$lengths~:
 
 #+begin_src R
-  r$lengths
+  > r$lengths
   # [1] 1 3 1 1 2 2
 #+end_src
 
@@ -48,8 +49,8 @@
    sort of analysis. Consider the following simple dataset:
 
 #+begin_src R
-  (dat <- data.frame(x = c(1, 1, 2, 2, 2, 1), y = 1:6))
-  # x y
+  > (dat <- data.frame(x = c(1, 1, 2, 2, 2, 1), y = 1:6))
+  #   x y
   # 1 1 1
   # 2 1 2
   # 3 2 3
@@ -67,7 +68,7 @@
    using ~rle~:
 
 #+begin_src R
-  (r <- rle(dat$x))
+  > (r <- rle(dat$x))
   # Run Length Encoding
   # lengths: int [1:3] 2 3 1
   # values : num [1:3] 1 2 1
@@ -79,7 +80,7 @@
    with ~rep~:
 
 #+begin_src R
-  (run.id <- rep(seq_along(r$lengths), r$lengths))
+  > (run.id <- rep(seq_along(r$lengths), r$lengths))
   # [1] 1 1 2 2 2 3
 #+end_src
 
@@ -87,11 +88,12 @@
    grouping on the run id:
 
 #+begin_src R
-  data.frame(x=r$values, meanY=tapply(dat$y, run.id, mean))
-  # x meanY
-  # 1 1 1.5
-  # 2 2 4.0
-  # 3 1 6.0
+  > data.frame(x = r$values,
+               meanY = tapply(dat$y, run.id, mean))
+  #   x meanY
+  # 1 1   1.5
+  # 2 2   4.0
+  # 3 1   6.0
 #+end_src
 
 ** Section 31.3: Run-length encoding to compress and decompress vectors
@@ -102,28 +104,31 @@
    length 10 million with a huge number of 1's and only a small number of 0's:
 
 #+begin_src R
-set.seed(144)
-dat <- sample(rep(0:1, c(1, 1e5)), 1e7, replace=TRUE)
-table(dat)
-#   0       1
-# 103 9999897
+  set.seed(144)
+  dat <- sample(rep(0:1, c(1, 1e5)), 1e7, replace = TRUE)
+
+  > table(dat)
+  #   0       1
+  # 103 9999897
 #+end_src
 
    Storing 10 million entries will require significant space, but we can instead
    create a data frame with the run-length encoding of this vector:
 
 #+begin_src R
-rle.df <- with(rle(dat), data.frame(values, lengths))
-dim(rle.df)
-# [1] 207 2
-head(rle.df)
-#   values lengths
-# 1      1   52818
-# 2      0       1
-# 3      1  219329
-# 4      0       1
-# 5      1  318306
-# 6      0       1
+  rle.df <- with(rle(dat), data.frame(values, lengths))
+  
+  > dim(rle.df)
+  # [1] 207 2
+  
+  > head(rle.df)
+  #   values lengths
+  # 1      1   52818
+  # 2      0       1
+  # 3      1  219329
+  # 4      0       1
+  # 5      1  318306
+  # 6      0       1
 #+end_src
 
    From the run-length encoding, we see that the first 52,818 values in the
@@ -133,7 +138,7 @@ head(rle.df)
    is a data frame, it can be stored using standard functions like write.csv.
 
    Decompressing a vector in run-length encoding can be accomplished in two
-   ways. The first method is to simply call rep, passing the values element of
+   ways. The first method is to simply call ~rep~, passing the values element of
    the run-length encoding as the first argument and the lengths element of the
    run-length encoding as the second argument:
 
@@ -144,8 +149,8 @@ head(rle.df)
    We can confirm that our decompressed data is identical to our original data:
 
 #+begin_src R
-identical(decompressed, dat)
-# [1] TRUE
+  > identical(decompressed, dat)
+  # [1] TRUE
 #+end_src
 
    The second method is to use R's built-in ~inverse.rle~ function on the ~rle~
@@ -153,7 +158,8 @@ identical(decompressed, dat)
 
 #+begin_src R
   rle.obj <- rle(dat) # create a rle object here
-  class(rle.obj)
+  
+  > class(rle.obj)
   # [1] "rle"
 
   dat.inv <- inverse.rle(rle.obj) # apply the inverse.rle on the rle object
@@ -162,7 +168,7 @@ identical(decompressed, dat)
    We can confirm again that this produces exactly the original ~dat~:
 
 #+begin_src R
-  identical(dat.inv, dat)
+  > identical(dat.inv, dat)
   # [1] TRUE
 #+end_src
 
@@ -174,7 +180,7 @@ identical(decompressed, dat)
 #+begin_src R
   library(data.table)
 
-  (DT <- data.table(x = c(1, 1, 2, 2, 2, 1), y = 1:6))
+  > (DT <- data.table(x = c(1, 1, 2, 2, 2, 1), y = 1:6))
   #    x y
   # 1: 1 1
   # 2: 1 2
@@ -200,9 +206,9 @@ identical(decompressed, dat)
    One can then easily group on this run ID and summarize the y data:
 
 #+begin_src R
-  DT[,mean(y),by=.(x, rleid(x))]
-  # x rleid V1
-  # 1: 1 1 1.5
-  # 2: 2 2 4.0
-  # 3: 1 3 6.0
+  DT[, mean(y), by = .(x, rleid(x))]
+  #    x rleid  V1
+  # 1: 1     1 1.5
+  # 2: 2     2 4.0
+  # 3: 1     3 6.0
 #+end_src

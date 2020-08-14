@@ -49,7 +49,9 @@
    extracts the cars with the best 2 mpg values from each of the list elements:
 
 #+begin_src R
-  (best2 <- lapply(spl, function(x) tail(x[order(x$mpg),], 2)))
+  (best2 <- lapply(spl, function(x) {
+    tail(x[order(x$mpg), ], 2)
+  }))
   # $`4`
   #                 mpg cyl disp hp drat    wt  qsec vs am gear carb
   # Fiat 128       32.4   4 78.7 66 4.08 2.200 19.47  1  1    4    1
@@ -88,16 +90,30 @@
    less readable!) to do the whole split-apply-combine in a single line of code:
 
 #+begin_src R
-   do.call(rbind, lapply(split(mtcars, mtcars$cyl), function(x) tail(x[order(x$mpg),], 2)))
+  do.call(rbind,
+          lapply(
+            split(mtcars, mtcars$cyl),
+            function(x) {
+              tail(x[order(x$mpg), ], 2)
+            }))
 #+end_src
 
    It is also worth noting that the ~lapply(split(x,f), FUN)~ combination can be
    alternatively framed using the ~?by~ function:
 
 #+begin_src R
-  by(mtcars, mtcars$cyl, function(x) tail(x[order(x$mpg),], 2))
+  by(mtcars,
+     mtcars$cyl,
+     function(x) {
+       tail(x[order(x$mpg),], 2)
+     })
 
-  do.call(rbind, by(mtcars, mtcars$cyl, function(x) tail(x[order(x$mpg),], 2)))
+  do.call(rbind,
+          by(mtcars,
+             mtcars$cyl,
+             function(x) {
+               tail(x[order(x$mpg),], 2)
+             }))
 #+end_src
 
 ** Section 19.2: Basic usage of split
@@ -115,14 +131,17 @@
   testdata <- c("e", "o", "r", "g", "a", "y", "w", "q", "i", "s", "b", "v", "x", "h", "u")
 #+end_src
 
-   Objective is to separate those letters into vowels and consonants, ie split
+   Objective is to separate those letters into vowels and consonants, i.e. split
    it accordingly to letter type.
 
    Let's first create a grouping vector:
 
 #+begin_src R
   vowels <- c('a','e','i','o','u','y')
-  letter_type <- ifelse(testdata %in% vowels, "vowels", "consonants")
+
+  letter_type <- ifelse(testdata %in% vowels,
+                        "vowels",
+                        "consonants")
 #+end_src
 
    Note that letter_type has the same length as our vector testdata. Now we
@@ -148,11 +167,11 @@
   data(iris)
 #+end_src
 
-   By using ~split~, one can create a list containing one data.frame per iris
-   specie (variable: Species):
+   By using ~split~, one can create a list containing one ~data.frame~ per iris
+   species (variable: Species):
 
 #+begin_src R
-  > liris <- split(iris, iris$Species)
+  liris <- split(iris, iris$Species)
 
   > names(liris)
   [1] "setosa" "versicolor" "virginica"
@@ -173,7 +192,7 @@
    one would then use ~lapply~:
 
 #+begin_src R
-  > (lcor <- lapply(liris, FUN=function(df) cor(df[,1:4])))
+  > (lcor <- lapply(liris, FUN = function(df) cor(df[,1:4])))
   $setosa
                Sepal.Length Sepal.Width Petal.Length Petal.Width
   Sepal.Length    1.0000000   0.7425467    0.2671758    0.2780984
@@ -200,7 +219,7 @@
 
 #+begin_src R
   > library(reshape)
-  > (topcor <- lapply(lcor, FUN=function(corrmatrix) {
+  > (topcor <- lapply(lcor, FUN = function(corrmatrix) {
       correlations <- melt(corrmatrix);
     
       filtered <- correlations[correlations$X1 != correlations$X2,];

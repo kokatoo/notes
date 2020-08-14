@@ -23,14 +23,15 @@
 
 #+begin_src R
   # get the file path of a CSV included in R's utils package
-  csv_path <- system.file("misc", "exDIF.csv", package="utils")
+  csv_path <- system.file("misc",
+                          "exDIF.csv",
+                          package = "utils")
 
   # path will vary based on installation location
   csv_path
   ## [1] "/Library/Frameworks/R.framework/Resources/library/utils/misc/exDIF.csv"
 
   df <- read.csv(csv_path)
-
   df
   ##    Var1 Var2
   ## 1  2.70    A
@@ -46,17 +47,17 @@
   df <- read.csv(file.choose())
 #+end_src
 
-   *Notes*
+**** Notes
 
-   * Unlike ~read.table~, ~read.csv~ defaults to ~header=TRUE~, and uses the
-     first row as column names.
+    * Unlike ~read.table~, ~read.csv~ defaults to ~header=TRUE~, and uses the
+      first row as column names.
 
-   * All these functions will convert strings to ~factor~ class by default
-     unless either ~as.is=TRUE~ or ~stringsAsFactors=FALSE~.
+    * All these functions will convert strings to ~factor~ class by default
+      unless either ~as.is=TRUE~ or ~stringsAsFactors=FALSE~.
 
-   * The ~read.csv2~ variant defaults to ~sep=“;”~ and ~dec=“,”~ for use on data
-     from countries where the comma is used as a decimal point and the semicolon
-     as a field separator.
+    * The ~read.csv2~ variant defaults to ~sep=“;”~ and ~dec=“,”~ for use on data
+      from countries where the comma is used as a decimal point and the semicolon
+      as a field separator.
 
 *** Importing using packages
 
@@ -81,19 +82,20 @@
 ** Section 20.2: Importing with ~data.table~
 
    The ~data.table~ package introduces the function ~fread~. While it is similar
-   to ~read.table~, ~fread~ is usually faster and more ﬂexible, guessing the
+   to ~read.table~, ~fread~ is usually faster and more flexible, guessing the
    file's delimiter automatically.
 
 #+begin_src R
   # get the file path of a CSV included in R's utils package
-  csv_path <- system.file("misc", "exDIF.csv", package="utils")
+  csv_path <- system.file("misc",
+                          "exDIF.csv",
+                          package = "utils")
 
   # path will vary based on R installation location
   csv_path
   ## [1] "/Library/Frameworks/R.framework/Resources/library/utils/misc/exDIF.csv"
 
   dt <- fread(csv_path)
-
   dt
   ##     Var1 Var2
   ## 1:  2.70    A
@@ -115,7 +117,7 @@
    an ordinary ~data.frame~, set the ~data.table~ parameter to ~FALSE~:
 
 #+begin_src R
-  df <- fread(csv_path, data.table=FALSE)
+  df <- fread(csv_path, data.table = FALSE)
 
   class(df)
   ## [1] "data.frame"
@@ -128,15 +130,15 @@
   ## 4 -7.00    A
 #+end_src
 
-   *Notes*
+**** Notes
 
-   * ~fread~ does not have all same options as ~read.table~. One missing argument is
-     ~na.comment~, which may lead in unwanted behaviors if the source file contains
-     ~#~.
+    * ~fread~ does not have all same options as ~read.table~. One missing argument is
+      ~na.comment~, which may lead in unwanted behaviors if the source file contains
+      ~#~.
 
-   * ~fread~ uses only " for ~quote~ parameter.
+    * ~fread~ uses only " for ~quote~ parameter.
 
-   * ~fread~ uses few (5) lines to guess variables types.
+    * ~fread~ uses few (5) lines to guess variables types.
 
 ** Section 20.3: Exporting .csv files
 
@@ -164,8 +166,9 @@
 ** Section 20.4: Import multiple csv files
 
 #+begin_src R
-  files = list.files(pattern="*.csv")
-  data_list = lapply(files, read.table, header=TRUE)
+  files = list.files(pattern = "*.csv")
+
+  data_list = lapply(files, read.table, header = TRUE)
 #+end_src
 
    This read every file and adds it to a list. Afterwards, if all ~data.frame~
@@ -178,7 +181,7 @@
 ** Section 20.5: Importing fixed-width files
 
    Fixed-width files are text files in which columns are not separated by any
-   character delimiter, like , or ;, but rather have a fixed character length
+   character delimiter, like ~,~ or ~;~, but rather have a fixed character length
    (width). Data is usually padded with white spaces.
 
    An example:
@@ -190,13 +193,16 @@
   1979     answer     'The Answer.' 42     42
 #+end_src
 
-   Let's assume this data table exists in the local file constants.txt in the
+   Let's assume this data table exists in the local file ~constants.txt~ in the
    working directory.
 
 *** Importing with base R
 
 #+begin_src R
-  df <- read.fwf('constants.txt', widths=c(8,10,18,7,8), header=FALSE, skip=1)
+  df <- read.fwf('constants.txt',
+                 widths = c(8, 10, 18, 7, 8),
+                 header = FALSE,
+                 skip = 1)
 
   df
   #>     V1    V2                 V3      V4      V5
@@ -205,20 +211,22 @@
   #> 3 1979 answer     'The Answer.'      42 42.0000
 #+end_src
 
-    *Note:*
+**** Note:
 
-    * Column titles don't need to be separated by a character (Column4Column5)
+     * Column titles don't need to be separated by a character (Column4Column5)
 
-    * The widths parameter defines the width of each column
+     * The widths parameter defines the width of each column
 
-    * Non-separated headers are not readable with ~read.fwf()~
+     * Non-separated headers are not readable with ~read.fwf()~
 
 *** Importing with readr
 
 #+begin_src R
   library(readr)
 
-  df <- read_fwf('constants.txt', fwf_cols(Year=8, Name=10, Importance=18, Value=7, Doubled=8), skip=1)
+  df <- read_fwf('constants.txt',
+                 fwf_cols(Year = 8, Name = 10, Importance = 18, Value = 7, Doubled = 8),
+                 skip = 1)
 
   df
   #> # A tibble: 3 x 5
@@ -229,11 +237,11 @@
   #> 3 1979 answer 'The Answer.' 42.00000 42.00000
 #+end_src
 
-    *Note:*
+**** Note:
 
-    * ~readr's~ ~fwf_*~ helper functions offer alternative ways of specifying column
-      lengths, including automatic guessing (~fwf_empty~)
+     * ~readr's~ ~fwf_*~ helper functions offer alternative ways of specifying column
+       lengths, including automatic guessing (~fwf_empty~)
 
-    * ~readr~ is faster than base R
+     * ~readr~ is faster than base R
 
-    * Column titles cannot be automatically imported from data file
+     * Column titles cannot be automatically imported from data file

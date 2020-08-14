@@ -5,15 +5,28 @@
 
 | Parameter | Details                                                                                                                                                                                                                                                |
 |-----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ~x~       | x-axis variable. May supply either ~data$variablex~ or ~data[,x]~                                                                                                                                                                                      |
-| ~y~       | y-axis variable. May supply either ~data$variabley~ or ~data[,y]~                                                                                                                                                                                      |
+| ~x~       | x-axis variable. May supply either ~data$variablex~ or ~data[, x]~                                                                                                                                                                                     |
+| ~y~       | y-axis variable. May supply either ~data$variabley~ or ~data[, y]~                                                                                                                                                                                     |
 | ~main~    | Main title of plot                                                                                                                                                                                                                                     |
 | ~sub~     | Optional subtitle of plot                                                                                                                                                                                                                              |
 | ~xlab~    | Label for x-axis                                                                                                                                                                                                                                       |
 | ~ylab~    | Label for y-axis                                                                                                                                                                                                                                       |
 | ~pch~     | Integer or character indicating plotting symbol                                                                                                                                                                                                        |
 | ~col~     | Integer or string indicating color                                                                                                                                                                                                                     |
-| ~type~    | Type of plot. ~p~ for points, ~l~ for lines, ~b~ for both, ~c~ for the lines part alone of ~b~, ~o~ for both ‘overplotted’, ~h~ for ‘histogram’-like (or ‘high-density’) vertical lines, ~s~ for stair steps, ~S~ for other steps, ~n~ for no plotting |
+
+   Parameter ~type~:
+
+| Type | Type of plot                                            |
+|------+---------------------------------------------------------|
+| ~p~  | points                                                  |
+| ~l~  | lines                                                   |
+| ~b~  | both                                                    |
+| ~c~  | lines part alone of ~b~                                 |
+| ~o~  | for both 'overplotted'                                  |
+| ~h~  | for 'histogram' like (or 'high-density') vertical lines |
+| ~s~  | stair steps                                             |
+| ~S~  | other steps                                             |
+| ~n~  | no plotting                                             |
 
 ** Section 26.1: Density plot
 
@@ -22,7 +35,7 @@
    command
 
 #+begin_src R
-  plot(density(rnorm(100)), main="Normal density", xlab="x")
+  plot(density(rnorm(100)), main = "Normal density", xlab = "x")
 #+end_src
 
    would look like
@@ -34,8 +47,8 @@
 #+begin_src R
   x = rnorm(100)
 
-  hist(x, prob=TRUE, main="Normal density + histogram")
-  lines(density(x), lty="dotted", col="red")
+  hist(x, prob = TRUE, main = "Normal density + histogram")
+  lines(density(x), lty = "dotted", col = "red")
 #+end_src
 
    which gives
@@ -52,18 +65,18 @@
   par()
 #+end_src
 
-   ~par~ uses the arguments ~mfrow~ or ~mfcol~ to create a matrix of nrows and ncols
+   ~par~ uses the arguments ~mfrow~ or ~mfcol~ to create a matrix of ~nrows~ and ~ncols~
    ~c(nrows, ncols)~ which will serve as a grid for your plots. The following
    example shows how to combine four plots in one graph:
 
 #+begin_src R
-  par(mfrow=c(2,2))
+  par(mfrow = c(2,2))
 
-  plot(cars, main="Speed vs. Distance")
-  hist(cars$speed, main="Histogram of Speed")
+  plot(cars, main = "Speed vs. Distance")
+  hist(cars$speed, main = "Histogram of Speed")
   
-  boxplot(cars$dist, main="Boxplot of Distance")
-  boxplot(cars$speed, main="Boxplot of Speed")
+  boxplot(cars$dist, main = "Boxplot of Distance")
+  boxplot(cars$speed, main = "Boxplot of Speed")
 #+end_src
 
 [[./images/chp26.2_plots.png]]
@@ -73,11 +86,11 @@
    a matrix object as an input:
 
 #+begin_src R
-  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow=T))
+  layout(matrix(c(1, 1, 2, 3), 2, 2, byrow = T))
 
-  hist(cars$speed, main="Histogram of Speed")
-  boxplot(cars$dist, main="Boxplot of Distance")
-  boxplot(cars$speed, main="Boxplot of Speed")
+  hist(cars$speed, main = "Histogram of Speed")
+  boxplot(cars$dist, main = "Boxplot of Distance")
+  boxplot(cars$speed, main = "Boxplot of Speed")
 #+end_src
 
 [[./images/chp26.2_plots2.png]]
@@ -90,17 +103,17 @@
     You have two vectors and you want to plot them.
 
 #+begin_src R
-  x_values <- rnorm(n=20, mean=5, sd=8)          # 20 values generated from Normal(5,8)
-  y_values <- rbeta(n=20, shape1=500, shape2=10) # 20 values generated from Beta(500,10)
+  x_values <- rnorm(n = 20, mean = 5, sd = 8)          # 20 values generated from Normal(5,8)
+  y_values <- rbeta(n = 20, shape1 = 500, shape2 = 10) # 20 values generated from Beta(500,10)
 #+end_src
 
     If you want to make a plot which has the ~y_values~ in vertical axis and the
     ~x_values~ in horizontal axis, you can use the following commands:
 
 #+begin_src R
-  plot(x=x_values, y=y_values, type="p") # standard scatter-plot
-  plot(x=x_values, y=y_values, type="l") # plot with lines
-  plot(x=x_values, y=y_values, type="n") # empty plot
+  plot(x = x_values, y = y_values, type = "p") # standard scatter-plot
+  plot(x = x_values, y = y_values, type = "l") # plot with lines
+  plot(x = x_values, y = y_values, type = "n") # empty plot
 #+end_src
 
     You can type ~?plot()~ in the console to read about more options.
@@ -114,6 +127,7 @@
 
   z<- rbeta(20, 500, 10)          # generating values from beta distribution
   z[c(19 , 20)] <- c(0.97 , 1.05) # replace the two last values with outliers
+
   boxplot(z)                      # the two points are the outliers of variable z.
 #+end_src
 
@@ -122,8 +136,8 @@
     Easy way to draw histograms
 
 #+begin_src R
-  hist(x=x_values)           # Histogram for x vector
-  hist(x=x_values, breaks=3) # use breaks to set the numbers of bars you want
+  hist(x = x_values)             # Histogram for x vector
+  hist(x = x_values, breaks = 3) # use breaks to set the numbers of bars you want
 #+end_src
 
 *** Pie_charts
@@ -133,9 +147,10 @@
     First we have to generate data with frequencies, for example :
 
 #+begin_src R
-  P <- c(rep('A', 3) , rep('B', 10) , rep('C', 7))
-  t <- table(P) # this is a frequency matrix of variable P
-  pie(t)        # and this is a visual version of the matrix above
+  P <- c(rep('A', 3),
+         rep('B', 10),
+         rep('C', 7))
+  pie(table(P))
 #+end_src
 
 [[./images/chp26.3_plots.png]]
@@ -147,10 +162,12 @@
    the 1920s. (To find out more about the dataset, use ~help(cars)~).
 
 #+begin_src R
-  plot(x=cars$speed, y=cars$dist,
-       pch=1, col=1,
-       main="Distance vs Speed of Cars",
-       xlab="Speed", ylab="Distance")
+  plot(x = cars$speed,
+       y = cars$dist,
+       pch = 1,
+       col = 1,
+       main = "Distance vs Speed of Cars",
+       xlab = "Speed", ylab = "Distance")
 #+end_src
 
 [[./images/chp26.4_plots.png]]
@@ -160,9 +177,11 @@
 
 #+begin_src R
   with(cars, plot(dist ~ speed,
-                  pch=2, col=3,
-                  main="Distance to stop vs Speed of Cars",
-                  xlab="Speed", ylab="Distance"))
+                  pch = 2,
+                  col = 3,
+                  main = "Distance to stop vs Speed of Cars",
+                  xlab = "Speed",
+                  ylab = "Distance"))
 #+end_src
 
 [[./images/chp26.4_plots2.png]]
@@ -171,13 +190,16 @@
    ~text()~, ~mtext()~, ~lines()~, ~grid()~, etc.
 
 #+begin_src R
-  plot(dist ~ speed, data=cars,
-       pch="*", col="magenta",
-       main="Distance to stop vs Speed of Cars",
-       xlab="Speed", ylab="Distance")
+  plot(dist ~ speed,
+       data = cars,
+       pch = "*",
+       col = "magenta",
+       xlab = "Speed",
+       ylab = "Distance",
+       main = "Distance to stop vs Speed of Cars")
 
   mtext("In the 1920s")
-  grid(, col="lightblue")
+  grid(, col = "lightblue")
 #+end_src
 
 [[./images/chp26.4_plots3.png]]
@@ -194,7 +216,7 @@
 [[./images/chp26.5_plots.png]]
 
 #+begin_src R
-  hist(ldeaths, breaks=20, freq=F, col=3)
+  hist(ldeaths, breaks = 20, freq = F, col = 3)
 #+end_src
 
 [[./images/chp26.5_plots2.png]]
@@ -208,7 +230,10 @@
    with a different mean.
 
 #+begin_src R
-  xmat <- cbind(rnorm(100, -3), rnorm(100, -1), rnorm(100, 1), rnorm(100, 3))
+  xmat <- cbind(rnorm(100, -3),
+                rnorm(100, -1),
+                rnorm(100, 1),
+                rnorm(100, 3))
   head(xmat)
   #           [,1]        [,2]       [,3]     [,4]
   # [1,] -3.072793 -2.53111494  0.6168063 3.780465
@@ -223,11 +248,11 @@
    ~plot~ call followed by three more ~points~ or ~lines~ calls.
 
 #+begin_src R
-  plot(xmat[,1], type='l')
+  plot(xmat[,1], type = 'l')
 
-  lines(xmat[,2], col='red')
-  lines(xmat[,3], col='green')
-  lines(xmat[,4], col='blue')
+  lines(xmat[,2], col = 'red')
+  lines(xmat[,3], col = 'green')
+  lines(xmat[,4], col = 'blue')
 #+end_src
 
 [[./images/chp26.6_plots.png]]
@@ -241,7 +266,7 @@
    changing the aesthetics for each column to make them distinguishable.
 
 #+begin_src R
-  matplot(xmat, type='l')
+  matplot(xmat, type = 'l')
 #+end_src
 
 [[./images/chp26.6_plots2.png]]
@@ -252,14 +277,16 @@
    a single value.
 
 #+begin_src R
-  matplot(xmat, type='l', col='black')
+  matplot(xmat, type = 'l', col = 'black')
 #+end_src
 
    ...or a custom vector (which will recycle to the number of columns, following
    standard R vector recycling rules).
 
 #+begin_src R
-  matplot(xmat, type='l', col=c('red', 'green', 'blue', 'orange'))
+  matplot(xmat,
+          type = 'l',
+          col = c('red', 'green', 'blue', 'orange'))
 #+end_src
 
 [[./images/chp26.6_plots3.png]]
@@ -271,16 +298,18 @@
    and uses the indices for ~x~. However, ~x~ and ~y~ can be specified explicitly.
 
 #+begin_src R
-  matplot(x=seq(0, 10, length.out=100), y=xmat, type='l')
+  matplot(x = seq(0, 10, length.out = 100),
+          y = xmat,
+          type = 'l')
 #+end_src
 
    In fact, both ~x~ and ~y~ can be matrices.
 
 #+begin_src R
-  xes <- cbind(seq(0, 10, length.out=100),
-               seq(2.5, 12.5, length.out=100),
-               seq(5, 15, length.out=100),
-               seq(7.5, 17.5, length.out=100))
+  xes <- cbind(seq(0, 10, length.out = 100),
+               seq(2.5, 12.5, length.out = 100),
+               seq(5, 15, length.out = 100),
+               seq(7.5, 17.5, length.out = 100))
 
   matplot(x = xes, y = xmat, type = 'l')
 #+end_src
@@ -294,7 +323,9 @@
    ~ecdf()~ for this purpose. A basic plot produced by the command
 
 #+begin_src R
-  plot(ecdf(rnorm(100)), main="Cumulative distribution", xlab="x")
+  plot(ecdf(rnorm(100)),
+       main = "Cumulative distribution",
+       xlab = "x")
 #+end_src
 
    would look like

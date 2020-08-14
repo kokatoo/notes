@@ -9,41 +9,41 @@
    interchangeably and refer to the [[https://en.wikipedia.org/wiki/Hash_table][same]] concept, namely, a data structure
    providing effcient key lookup through use of an internal hash function.
 
-   *Introduction*
+*** Introduction
 
-   Although R does not provide a native hash table structure, similar
-   functionality can be achieved by leveraging the fact that the ~environment~
-   object returned from ~new.env~ (by default) provides hashed key lookups. The
-   following two statements are equivalent, as the hash parameter defaults to
-   TRUE:
+    Although R does not provide a native hash table structure, similar
+    functionality can be achieved by leveraging the fact that the ~environment~
+    object returned from ~new.env~ (by default) provides hashed key lookups. The
+    following two statements are equivalent, as the hash parameter defaults to
+    ~TRUE~:
 
 #+begin_src R
-  H <- new.env(hash=TRUE)
+  H <- new.env(hash = TRUE)
   H <- new.env()
 #+end_src
 
-   Additionally, one may specify that the internal hash table is pre-allocated
-   with a particular size via the size parameter, which has a default value
-   of 29. Like all other R objects, ~environments~ manage their own memory and
-   will grow in capacity as needed, so while it is not necessary to request a
-   non-default value for size, there may be a slight performance advantage in
-   doing so if the object will (eventually) contain a very large number of
-   elements. It is worth noting that allocating extra space via size does not,
-   in itself, result in an object with a larger memory footprint:
-
+    Additionally, one may specify that the internal hash table is pre-allocated
+    with a particular size via the size parameter, which has a default value
+    of 29. Like all other R objects, ~environments~ manage their own memory and
+    will grow in capacity as needed, so while it is not necessary to request a
+    non-default value for size, there may be a slight performance advantage in
+    doing so if the object will (eventually) contain a very large number of
+    elements. It is worth noting that allocating extra space via size does not,
+    in itself, result in an object with a larger memory footprint:
+    
 #+begin_src R
   object.size(new.env())
   # 56 bytes
 
-  object.size(new.env(size=10e4))
+  object.size(new.env(size = 10e4))
   # 56 bytes
 #+end_src
 
-   *Insertion*
+*** Insertion
 
-   Insertion of elements may be done using either of the ~[[<-~ or ~$<-~ methods
-   provided for the ~environment~ class, but not by using "single bracket"
-   assignment ~([<-)~:
+    Insertion of elements may be done using either of the ~[[<-~ or ~$<-~ methods
+    provided for the ~environment~ class, but not by using "single bracket"
+    assignment ~([<-)~:
 
 #+begin_src R
   H <- new.env()
@@ -51,23 +51,23 @@
   H[["key"]] <- rnorm(1)
 
   key2 <- "xyz"
-  H[[key2]] <- data.frame(x=1:3, y=letters[1:3])
+  H[[key2]] <- data.frame(x = 1:3, y = letters[1:3])
 
-  H$another_key <- matrix(rbinom(9, 1, 0.5) > 0, nrow=3)
+  H$another_key <- matrix(rbinom(9, 1, 0.5) > 0, nrow = 3)
 
   H["error"] <- 42
   #Error in H["error"] <- 42 :
   # object of type 'environment' is not subsettable
 #+end_src
 
-   Like other facets of R, the first method (~object[[key]] <- value~) is
-   generally preferred to the second (~object$key <- value~) because in the
-   former case, a variable maybe be used instead of a literal value (e.g ~key2~
-   in the example above).
+    Like other facets of R, the first method (~object[[key]] <- value~) is
+    generally preferred to the second (~object$key <- value~) because in the
+    former case, a variable maybe be used instead of a literal value (e.g ~key2~
+    in the example above).
 
-   As is generally the case with hash map implementations, the ~environment~
-   object will not store duplicate keys. Attempting to insert a key-value pair
-   for an existing key will replace the previously stored value:
+    As is generally the case with hash map implementations, the ~environment~
+    object will not store duplicate keys. Attempting to insert a key-value pair
+    for an existing key will replace the previously stored value:
 
 #+begin_src R
   H[["key3"]] <- "original value"
@@ -78,15 +78,16 @@
   #[1] "new value"
 #+end_src
 
-   *Key Lookup*
+*** Key Lookup
 
-   Likewise, elements may be accessed with ~[[~ or ~$~, but not with ~[:~
+    Likewise, elements may be accessed with ~[[~ or ~$~, but not with ~[:~
 
 #+begin_src R
   H[["key"]]
   #[1] 1.630631
 
-  H[[key2]] ## assuming key2 <- "xyz"
+  key2 <- "xyz"
+  H[[key2]]
   #   x y
   # 1 1 a
   # 2 2 b
@@ -102,10 +103,10 @@
   #Error in H[1] : object of type 'environment' is not subsettable
 #+end_src
 
-   *Inspecting the Hash Map*
+*** Inspecting the Hash Map
 
-   Being just an ordinary ~environment~, the hash map can be inspected by
-   typical means:
+    Being just an ordinary ~environment~, the hash map can be inspected by
+    typical means:
 
 #+begin_src R
   names(H)
@@ -125,10 +126,11 @@
   # $ y: chr "a" "b" "c"
 #+end_src
 
-   Elements can be removed using ~rm~:
+    Elements can be removed using ~rm~:
 
 #+begin_src R
-  rm(list=c("key", "key3"), envir=H)
+  rm(list = c("key", "key3"),
+     envir = H)
 
   ls.str(H)
   # another_key : logi [1:3, 1:3] TRUE FALSE TRUE TRUE FALSE TRUE ...
@@ -137,26 +139,28 @@
   # $ y: chr "a" "b" "c"
 #+end_src
 
-   *Flexibility*
+*** Flexibility
 
-   One of the major benefits of using ~environment~ objects as hash tables is
-   their ability to store virtually any type of object as a value, even other
-   environments:
+    One of the major benefits of using ~environment~ objects as hash tables is
+    their ability to store virtually any type of object as a value, even other
+    environments:
 
 #+begin_src R
   H2 <- new.env()
 
   H2[["a"]] <- LETTERS
-  H2[["b"]] <- as.list(x=1:5, y=matrix(rnorm(10), 2))
+  H2[["b"]] <- as.list(x = 1:5, y = matrix(rnorm(10), 2))
   H2[["c"]] <- head(mtcars, 3)
   H2[["d"]] <- Sys.Date()
   H2[["e"]] <- Sys.time()
 
   H2[["f"]] <- (function() {
     H3 <- new.env()
+
     for (i in seq_along(names(H2))) {
       H3[[names(H2)[i]]] <- H2[[names(H2)[i]]]
     }
+
     H3
   })()
 
@@ -208,11 +212,11 @@
   # e : POSIXct[1:1], format: "2016-08-03 19:25:14"
 #+end_src
 
-   *Limitations*
+*** Limitations
 
-   One of the major limitations of using environment objects as hash maps is
-   that, unlike many aspects of R, vectorization is not supported for element
-   lookup / insertion:
+    One of the major limitations of using environment objects as hash maps is
+    that, unlike many aspects of R, vectorization is not supported for element
+    lookup / insertion:
 
 #+begin_src R
   names(H2)
@@ -232,11 +236,15 @@
 
 #+begin_src R
   E1 <- new.env()
+
   invisible({
-    vapply(letters, function(x) {
-      E1[[x]] <- rnorm(1)
-      logical(0)
-    }, FUN.VALUE=logical(0))
+    vapply(letters,
+           function(x) {
+             E1[[x]] <- rnorm(1)
+
+             logical(0)
+           },
+           FUN.VALUE = logical(0))
   })
 
   all.equal(sort(names(E1)), letters)
@@ -245,9 +253,9 @@
   Keys <- letters
   E2 <- list2env(
     setNames(
-      as.list(rnorm(26)), nm=Keys),
-    envir=NULL,
-    hash=TRUE
+      as.list(rnorm(26)), nm = Keys),
+    envir = NULL,
+    hash = TRUE
   )
 
   all.equal(sort(names(E2)), letters)
@@ -259,7 +267,7 @@
 
 ** Section 10.2: package:hash
 
-   The [[https://cran.r-project.org/package=hash][hash package]] offers a hash structure in R. However, it [[https://rpubs.com/rpierce/hashBenchmarks][terms of timing]]
+   The [[https://cran.r-project.org/package=hash][hash package]] offers a hash structure in R. However, in [[https://rpubs.com/rpierce/hashBenchmarks][terms of timing]]
    for both inserts and reads it compares unfavorably to using environments as a
    hash. This documentation simply acknowledges its existence and provides
    sample timing code below for the above stated reasons. There is no identified
@@ -274,7 +282,7 @@
     string_i <- 1
     string_len <- 1
     ans <- character(n)
-    chars <- c(letters,LETTERS)
+    chars <- c(letters, LETTERS)
 
     new_strings <- function(len,pfx) {
 
@@ -291,7 +299,7 @@
       }
     }
 
-    while(string_i <= n){
+    while(string_i <= n) {
       new_strings(string_len, '')
       string_len <- string_len + 1
     }
@@ -300,7 +308,7 @@
   }
 
   # Generate timings using an environment
-  timingsEnv <- plyr::adply(2^(10:15),.mar=1,.fun=function(i) {
+  timingsEnv <- plyr::adply(2^(10:15), .mar=1, .fun=function(i) {
 
     strings <- unique_strings(i)
 
@@ -325,8 +333,8 @@
 
     lapply(strings, function(s) ht[[s]] <<- 0L)
 
-    data.frame( size=c(i,i),
-               seconds=c(system.time(for (j in 1:i) ht[[strings[j]]]==0L)[3]),
+    data.frame(size=c(i,i),
+               seconds = c(system.time(for (j in 1:i) ht[[strings[j]]] == 0L)[3]),
                type=c('3_stringHash')
                )
   })
@@ -343,7 +351,7 @@
    conjunction with the example for ~package:hash~ for write timings.
 
 #+begin_src R
-  timingsListEnv <- plyr::adply(2^(10:15), .mar=1, .fun=function(i) {
+  timingsListEnv <- plyr::adply(2^(10:15), .mar = 1, .fun = function(i) {
 
     strings <- unique_strings(i)
     le <- listenv::listenv()
@@ -351,7 +359,7 @@
 
     data.frame(
       size=c(i,i),
-      seconds=c(system.time(for (k in 1:i) le[[k]]==0L)[3]),
+      seconds=c(system.time(for (k in 1:i) le[[k]] == 0L)[3]),
       type=c('2_numericListEnv')
     )
   })

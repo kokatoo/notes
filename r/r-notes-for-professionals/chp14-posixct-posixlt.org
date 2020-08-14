@@ -3,38 +3,38 @@
 
 * Chapter 14: Date-time classes (POSIXct and POSIXlt)
 
-  R includes two date-time classes POSIXct and POSIXlt -- see
-  ~?DateTimeClasses~.
+  R includes two date-time classes POSIXct and POSIXlt. See ~?DateTimeClasses~.
 
 ** Section 14.1: Formatting and printing date-time objects
 
 #+begin_src R
-  options(digits.secs=3)
+  options(digits.secs = 3)
 
-  d = as.POSIXct("2016-08-30 14:18:30.58", tz="UTC")
+  # use POSIXct or POSIXlt
+  d = as.POSIXct("2016-08-30 14:18:30.58", tz = "UTC")
 
-  format(d,"%S") # 00-61 Second as integer
+  format(d, "%S") # 00-61 Second as integer
   ## [1] "30"
 
-  format(d,"%OS") # 00-60.99… Second as fractional
+  format(d, "%OS") # 00-60.99… Second as fractional
   ## [1] "30.579"
 
-  format(d,"%M") # 00-59 Minute
+  format(d, "%M") # 00-59 Minute
   ## [1] "18"
 
-  format(d,"%H") # 00-23 Hours
+  format(d, "%H") # 00-23 Hours
   ## [1] "14"
 
-  format(d,"%I") # 01-12 Hours
+  format(d, "%I") # 01-12 Hours
   ## [1] "02"
 
-  format(d,"%p") # AM/PM Indicator
+  format(d, "%p") # AM/PM Indicator
   ## [1] "PM"
 
-  format(d,"%z") # Signed offset
+  format(d, "%z") # Signed offset
   ## [1] "+0000"
 
-  format(d,"%Z") # Time Zone Abbreviation
+  format(d, "%Z") # Time Zone Abbreviation
   ## [1] "UTC"
 #+end_src
 
@@ -43,7 +43,7 @@
 
 ** Section 14.2: Date-time arithmetic
 
-   To add/subtract time, use POSIXct, since it stores times in seconds
+   To add/subtract time, use ~POSIXct~, since it stores times in seconds
 
 #+begin_src R
   ## adding/subtracting times - 60 seconds
@@ -60,9 +60,9 @@
 
 #+begin_src R
   as.POSIXct("2016-01-01") +
-    as.difftime(3, units="hours") +
-    as.difftime(14, units="mins") +
-    as.difftime(15, units="secs")
+    as.difftime(3, units = "hours") +
+    as.difftime(14, units = "mins") +
+    as.difftime(15, units = "secs")
   # [1] "2016-01-01 03:14:15 AEDT"
 #+end_src
 
@@ -74,7 +74,7 @@
   difftime(
     as.POSIXct("2016-01-01 12:00:00"),
     as.POSIXct("2016-01-01 11:59:59"),
-    unit="secs")
+    unit = "secs")
   # Time difference of 1 secs
 #+end_src
 
@@ -82,48 +82,48 @@
 
 ** Section 14.3: Parsing strings into date-time objects
 
-   The functions for parsing a string into POSIXct and POSIXlt take similar
-   parameters and return a similar-looking result, but there are diﬀerences in
+   The functions for parsing a string into ~POSIXct~ and ~POSIXlt~ take similar
+   parameters and return a similar-looking result, but there are differences in
    how that date-time is stored; see "Remarks."
 
 #+begin_src R
-  as.POSIXct("11:38", # time string
-             format="%H:%M") # formatting string
+  as.POSIXct("11:38",          # time string
+             format = "%H:%M") # formatting string
   ## [1] "2016-07-21 11:38:00 CDT"
 
-  strptime("11:38", # identical, but makes a POSIXlt object
-           format="%H:%M")
+  strptime("11:38",            # identical, but makes a POSIXlt object
+           format = "%H:%M")
   ## [1] "2016-07-21 11:38:00 CDT"
 
   as.POSIXct("11 AM",
-             format="%I %p")
+             format = "%I %p")
   ## [1] "2016-07-21 11:00:00 CDT"
 #+end_src
 
    Note that date and timezone are imputed.
 
 #+begin_src R
-  as.POSIXct("11:38:22", # time string without timezone
-             format="%H:%M:%S",
-             tz="America/New_York") # set time zone
+  as.POSIXct("11:38:22",              # time string without timezone
+             format = "%H:%M:%S",
+             tz = "America/New_York") # set time zone
   ## [1] "2016-07-21 11:38:22 EDT"
 
   as.POSIXct("2016-07-21 00:00:00",
-             format="%F %T") # shortcut tokens for "%Y-%m-%d" and "%H:%M:%S"
+             format = "%F %T")        # shortcut tokens for "%Y-%m-%d" and "%H:%M:%S"
 #+end_src
 
    See ~?strptime~ for details on the format strings here.
 
-   *Notes*
+*** Notes
 
-   *Missing elements*
+**** Missing elements
    
    * If a date element is not supplied, then that from the current date is used.
    * If a time element is not supplied, then that from midnight is used, i.e. 0s.
    * If no timezone is supplied in either the string or the ~tz~ parameter, the
      local timezone is used.
 
-   *Time zones*
+**** Time zones
 
    * The accepted values of ~tz~ depend on the location.
      

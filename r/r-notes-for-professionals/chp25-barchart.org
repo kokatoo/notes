@@ -24,8 +24,9 @@
    To illustrate ~barplot()~, consider the following data preparation:
 
 #+begin_src R
-  > grades <- c("A+", "A-", "B+", "B", "C")
-  > Marks <- sample(grades, 40, replace=T, prob=c(.2, .3, .25, .15, .1))
+  grades <- c("A+", "A-", "B+", "B", "C")
+  Marks <- sample(grades, 40, replace = T, prob = c(.2, .3, .25, .15, .1))
+  
   > Marks
   [1] "A+" "A-" "B+" "A-" "A+" "B" "A+" "B+" "A-" "B" "A+" "A-"
   [13] "A-" "B+" "A-" "A-" "A-" "A-" "A+" "A-" "A+" "A+" "C" "C"
@@ -36,7 +37,7 @@
    A bar chart of the ~Marks~ vector is obtained from
 
 #+begin_src R
-  > barplot(table(Marks), main="Mid-Marks in Algorithms")
+  barplot(table(Marks), main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks.png]]
@@ -48,7 +49,7 @@
 
 #+begin_src R
   # plot to the desired horizontal axis labels
-  > barplot(table(Marks), names.arg=grades, main="Mid-Marks in Algorithms")
+  barplot(table(Marks), names.arg = grades, main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks2.png]]
@@ -56,9 +57,10 @@
    Colored bars can be drawn using the ~col=~ parameter.
 
 #+begin_src R
-  > barplot(table(Marks), names.arg=grades,
-            col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
-            main="Mid-Marks in Algorithms")
+  barplot(table(Marks),
+          names.arg = grades,
+          col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+          main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks3.png]]
@@ -66,9 +68,11 @@
    A bar chart with horizontal bars can be obtained as follows:
 
 #+begin_src R
-  > barplot(table(Marks), names.arg=grades, horiz=TRUE,
-            col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
-            main="Mid-Marks in Algorithms")
+  barplot(table(Marks),
+          names.arg = grades,
+          horiz = TRUE,
+          col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+          main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks4.png]]
@@ -76,9 +80,10 @@
    A bar chart with proportions on the y-axis can be obtained as follows:
 
 #+begin_src R
-  > barplot(prop.table(table(Marks)), names.arg=grades,
-            col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
-            main="Mid-Marks in Algorithms")
+  barplot(prop.table(table(Marks)),
+          names.arg = grades,
+          col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+          main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks5.png]]
@@ -86,9 +91,11 @@
    The sizes of the factor-level names on the x-axis can be increased using ~cex.names~ parameter.
 
 #+begin_src R
-  > barplot(prop.table(table(Marks)), names.arg=grades,
-            col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
-            main="Mid-Marks in Algorithms",cex.names=2)
+  barplot(prop.table(table(Marks)),
+          names.arg = grades,
+          col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+          main = "Mid-Marks in Algorithms",
+          cex.names = 2)
 #+end_src
 
    The ~heights~ parameter of the ~barplot()~ could be a matrix. For example it
@@ -109,13 +116,15 @@
    To draw a stacked bar, simply use the command:
 
 #+begin_src R
-  > gradTab = matrix(c(13, 10, 4, 8, 5, 10, 7, 2, 19, 2, 7, 2, 14, 12, 5), nrow=5,
-                     dimnames=list(c("A-", "A+", "B", "B+", "C"),
+  gradTab = matrix(c(13, 10, 4, 8, 5, 10, 7, 2, 19, 2, 7, 2, 14, 12, 5),
+                   nrow = 5,
+                   dimnames = list(c("A-", "A+", "B", "B+", "C"),
                                    c("Algorithms", "Operating Systems", "Discrete Math"))
 
-  > barplot(gradTab, col=c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
-            legend.text=grades,
-            main="Mid-Marks in Algorithms")
+  barplot(gradTab,
+          col = c("lightblue", "lightcyan", "lavender", "mistyrose", "cornsilk"),
+          legend.text = grades,
+          main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks6.png]]
@@ -123,8 +132,10 @@
    To draw a juxtaposed bars, use the ~besides~ parameter, as given under:
 
 #+begin_src R
-  > barplot(gradTab, beside=T, col=c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
-            legend.text=grades, main="Mid-Marks in Algorithms")
+  barplot(gradTab,
+          beside = T,
+          col = c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
+          legend.text = grades, main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks7.png]]
@@ -132,10 +143,11 @@
    A horizontal bar chart can be obtained using ~horiz=T~ parameter:
 
 #+begin_src R
-  > barplot(gradTab, beside=T, horiz=T,
-            col=c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
-            legend.text = grades, cex.names=.75,
-            main="Mid-Marks in Algorithms")
+  barplot(gradTab, beside = T, horiz = T,
+          col = c("lightblue","lightcyan", "lavender", "mistyrose", "cornsilk"),
+          legend.text = grades,
+          cex.names = .75,
+          main = "Mid-Marks in Algorithms")
 #+end_src
 
 [[./images/chp25.1_marks8.png]]

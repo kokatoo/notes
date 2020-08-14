@@ -3,16 +3,16 @@
 
 * Chapter 24: Pivot and unpivot with data.table
 
-| Parameter       | Details                                                                                                                   |
-|-----------------+---------------------------------------------------------------------------------------------------------------------------|
+| Parameter       | Details                                                                                                                     |
+|-----------------+-----------------------------------------------------------------------------------------------------------------------------|
 | ~id.vars~       | tell ~melt~ which columns to retain                                                                                         |
 | ~variable.name~ | tell ~melt~ what to call the column with category labels                                                                    |
 | ~value.name~    | tell ~melt~ what to call the column that has values associated with category labels                                         |
 | ~value.var~     | tell ~dcast~ where to find the values to cast in columns                                                                    |
 | ~formula~       | tell ~dcast~ which columns to retain to form a unique record identifier (LHS) and which one holds the category labels (RHS) |
-| ~fun.aggregate~ | specify the function to use when the casting operation generates a list of values in each cell                            |
+| ~fun.aggregate~ | specify the function to use when the casting operation generates a list of values in each cell                              |
 
-** Section 24.1: Pivot and unpivot tabular data with ~data.table~ I
+** Section 24.1: Pivot and unpivot tabular data with data.table I
 
    Convert from wide form to long form
 
@@ -37,7 +37,7 @@
 #+begin_src R
   library(data.table)
 
-  DT <- as.data.table(USArrests, keep.rownames=TRUE)
+  DT <- as.data.table(USArrests, keep.rownames = TRUE)
 #+end_src
 
    This is data in the wide form. It has a column for each variable. The data
@@ -75,8 +75,10 @@
    ~id.vars~ as follows.
 
 #+begin_src R
-  DTmu <- melt(DT, id.vars=c("rn", "UrbanPop" ),
-               variable.name='Crime', value.name="Rate")
+  DTmu <- melt(DT, id.vars = c("rn", "UrbanPop" ),
+               variable.name = 'Crime',
+               value.name = "Rate")
+  
   names(DTmu)[1] <- "State"
 #+end_src
 
@@ -97,7 +99,7 @@
    breeze. For example, to summarize violent crimes by state?
 
 #+begin_src R
-  DTmu[, .(ViolentCrime = sum(Rate)), by=State]
+  DTmu[, .(ViolentCrime = sum(Rate)), by = State]
 #+end_src
 
    This gives:
@@ -112,7 +114,7 @@
   6:   Colorado        250.6
 #+end_src
 
-** Section 24.2: Pivot and unpivot tabular data with ~data.table~ II
+** Section 24.2: Pivot and unpivot tabular data with data.table II
 
    Convert from long form to wide form
 
@@ -146,7 +148,10 @@
    ~Decile~ with computed information.
 
 #+begin_src R
-  DTmu[, Decile:=cut(UrbanPop, quantile(UrbanPop, probs=seq(0, 1, by=0.1)))]
+  DTmu[, Decile := cut(UrbanPop,
+                         quantile(UrbanPop,
+                                  probs = seq(0, 1, by = 0.1)))]
+
   levels(DTmu$Decile) <- paste0(1:10, "D")
 #+end_src
 
@@ -167,14 +172,20 @@
    values can be handle this way.
 
 #+begin_src R
-  dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=mean)
+  dcast(DTmu,
+        Decile ~ Crime,
+        value.var = "Rate",
+        fun.aggregate = mean)
 #+end_src
 
    There are multiple states in each decile of the urban population. Use
    ~fun.aggregate~ to specify how these should be handled.
 
 #+begin_src R
-  dcast(DTmu, Decile ~ Crime, value.var="Rate", fun.aggregate=sum)
+  dcast(DTmu,
+        Decile ~ Crime,
+        value.var = "Rate",
+        fun.aggregate = sum)
 #+end_src
 
    This sums over the data for like states, giving the following.

@@ -44,10 +44,13 @@
 #+begin_src R
   > x <- 2
   > z <- x > 4
+  
   > z
   [1] FALSE
+
   > class(x)
   [1] "numeric"
+
   > as.logical(2)
   [1] TRUE
 #+end_src

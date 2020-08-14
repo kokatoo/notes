@@ -39,7 +39,7 @@
    A base R solution:
 
 #+begin_src R
-  sapply(c("b","ba"), function(x) length(gregexpr(x,"babab")[[1]]))
+  sapply(c("b","ba"), function(x) length(gregexpr(x, "babab")[[1]]))
   # b ba
   # 3  2
 #+end_src
@@ -57,18 +57,17 @@
   # [1] 2
 #+end_src
 
-#+RESULTS:
-
 ** Section 7.2: Duplicating strings
 
 #+begin_src R
-  stri_dup("abc",3)
+  stri_dup("abc", 3)
   # [1] "abcabcabc"
 #+end_src
 
    A base R solution that does the same would look like this:
 
 #+begin_src R
+  # default sep="" for paste0
   paste0(rep("abc", 3), collapse = "")
   # [1] "abcabcabc"
 #+end_src
@@ -84,7 +83,7 @@
    Natively, we could do this in R via:
 
 #+begin_src R
-  > paste(LETTERS, 1:13, sep="-")
+  > paste(LETTERS, 1:13, sep = "-")
   #[1] "A-1" "B-2" "C-3" "D-4" "E-5" "F-6" "G-7" "H-8" "I-9" "J-10" "K-11" "L-12" "M-13"
   #[14] "N-1" "O-2" "P-3" "Q-4" "R-5" "S-6" "T-7" "U-8" "V-9" "W-10" "X-11" "Y-12" "Z-13"
 #+end_src

@@ -249,20 +249,21 @@
 
 *** 2.5 Useful functions for working with data objects
 
-| Function                   | Comment                                                                         |
-|----------------------------+---------------------------------------------------------------------------------|
-| ~length(obj)~              | Gives the number of elements.                                                   |
-| ~dim(obj)~                 | Gives the dimensions of an obj.                                                 |
-| ~str(obj)~                 | Gives the structure of an obj.                                                  |
-| ~class(obj)~               | Gives the class of an obj.                                                      |
-| ~mode(obj)~                | Determines how an obj is stored.                                                |
-| ~names(obj)~               | Gives the names of components in an obj.                                        |
-| ~attributes(obj)~          | Access an object's attributes                                                   |
-| ~c(obj, obj, ...)~         | Combines objs into a vector.                                                    |
-| ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                       |
-| ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                          |
-| ~head(obj)~                | Lists the first part of an obj.                                                 |
-| ~tail(obj)~                | Lists the last part of an obj.                                                  |
-| ~rm(obj, obj, ...)~        | The statement ~rm(list=ls())~ removes most objs from the working environment.   |
-| ~newobj <- edit(obj)~      | Edits obj.                                                                      |
-| ~fix(obj)~                 | Edits an obj in place.                                                          |
+| Function                   | Comment                                                                       |
+|----------------------------+-------------------------------------------------------------------------------|
+| ~length(obj)~              | Gives the number of elements.                                                 |
+| ~dim(obj)~                 | Gives the dimensions of an obj.                                               |
+| ~str(obj)~                 | Gives the structure of an obj.                                                |
+| ~class(obj)~               | Gives the class of an obj.                                                    |
+| ~mode(obj)~                | Determines how an obj is stored.                                              |
+| ~names(obj)~               | Gives the names of components in an obj.                                      |
+| ~attributes(obj)~          | Access an object's attributes                                                 |
+| ~typeof(obj)~              | Determines the R internal type. Ex ~double~ vs ~integer~                      |
+| ~c(obj, obj, ...)~         | Combines objs into a vector.                                                  |
+| ~cbind(obj, obj, ...)~     | Combines objs as columns.                                                     |
+| ~rbind(obj, object~, ...)~ | Combines objs as rows.                                                        |
+| ~head(obj)~                | Lists the first part of an obj.                                               |
+| ~tail(obj)~                | Lists the last part of an obj.                                                |
+| ~rm(obj, obj, ...)~        | The statement ~rm(list=ls())~ removes most objs from the working environment. |
+| ~newobj <- edit(obj)~      | Edits obj.                                                                    |
+| ~fix(obj)~                 | Edits an obj in place.                                                        |

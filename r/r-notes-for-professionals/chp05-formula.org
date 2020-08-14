@@ -17,7 +17,7 @@
   class(myformula1)
   # "formula"
 
-  mod1 <- lm(myformula1, data=mtcars)
+  mod1 <- lm(myformula1, data = mtcars)
   coef(mod1)
   # (Intercept)        wt
   #   37.285126 -5.344472
@@ -38,23 +38,23 @@
    environment for evaluation to be specified:
 
 #+begin_src R
-  form_mt <- formula(mpg ~ wt, env=mtcars)
+  form_mt <- formula(mpg ~ wt, env = mtcars)
 #+end_src
 
-   In this case, the output shows that a regression coeffcient for wt is
+   In this case, the output shows that a regression coeffcient for ~wt~ is
    estimated, as well as (per default) an intercept parameter. The intercept can
    be excluded / forced to be 0 by including ~0~ or ~-1~ in the ~formula~:
 
 #+begin_src R
-  coef(lm(mpg ~ 0 + wt, data=mtcars))
-  coef(lm(mpg ~ wt - 1, data=mtcars))
+  coef(lm(mpg ~ 0 + wt, data = mtcars))
+  coef(lm(mpg ~ wt - 1, data = mtcars))
 #+end_src
 
    Interactions between variables ~a~ and ~b~ can added by included ~a:b~ to the
    ~formula~:
 
 #+begin_src R
-  coef(lm(mpg ~ wt:vs, data=mtcars))
+  coef(lm(mpg ~ wt:vs, data = mtcars))
 #+end_src
 
    As it is (from a statistical point of view) generally advisable not have
@@ -65,14 +65,14 @@
    are 'numeric':
 
 #+begin_src R
-  coef(lm(mpg ~ wt*vs, data=mtcars))
+  coef(lm(mpg ~ wt*vs, data = mtcars))
 #+end_src
 
    Using the ~*~ notation expands a term to include all lower order effects,
    such that:
 
 #+begin_src R
-  coef(lm(mpg ~ wt*vs*hp, data=mtcars))
+  coef(lm(mpg ~ wt*vs*hp, data = mtcars))
 #+end_src
 
    will give, in addition to the intercept, 7 regression coefficients. 1 for the
@@ -84,14 +84,14 @@
    subtract any particular term:
 
 #+begin_src R
-  coef(lm(mpg ~ wt*vs*hp - wt:vs:hp, data=mtcars))
+  coef(lm(mpg ~ wt*vs*hp - wt:vs:hp, data = mtcars))
 #+end_src
 
    Or, we can use the ~^~ notation to specify which level of interaction we
    require:
 
 #+begin_src R
-  coef(lm(mpg ~ (wt + vs + hp) ^ 2, data=mtcars))
+  coef(lm(mpg ~ (wt + vs + hp) ^ 2, data = mtcars))
 #+end_src
 
    Those two formula specifications should create the same model matrix.
@@ -101,7 +101,7 @@
    (which are not on the LHS). Therefore:
 
 #+begin_src R
-  coef(lm(mpg ~ ., data=mtcars))
+  coef(lm(mpg ~ ., data = mtcars))
 #+end_src
 
    gives coefficients for the intercept and 10 independent variables. This

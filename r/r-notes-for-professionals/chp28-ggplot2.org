@@ -13,8 +13,9 @@
 *** Wrap charts line by line (attempts to create a square layout):
 
 #+begin_src R
-  ggplot(mpg, aes(x=displ, y=hwy)) +
-    geom_point() + facet_wrap(~class)
+  ggplot(mpg, aes(x = displ, y = hwy)) +
+    geom_point() +
+    facet_wrap(~class)
 #+end_src
 
 [[./images/chp28.1_plots.png]]
@@ -22,8 +23,9 @@
 *** Display multiple charts on one row, multiple columns:
 
 #+begin_src R
-  ggplot(mpg, aes(x=displ, y=hwy)) +
-    geom_point() + facet_grid(.~class)
+  ggplot(mpg, aes(x = displ, y = hwy)) +
+    geom_point() +
+    facet_grid(. ~ class)
 #+end_src
 
 [[./images/chp28.1_plots2.png]]
@@ -31,8 +33,9 @@
 *** Display multiple charts on one column, multiple rows:
 
 #+begin_src R
-  ggplot(mpg, aes(x=displ, y=hwy)) +
-    geom_point() + facet_grid(class~.)
+  ggplot(mpg, aes(x = displ, y = hwy)) +
+    geom_point() +
+    facet_grid(class ~ .)
 #+end_src
 
 [[./images/chp28.1_plots3.png]]
@@ -40,8 +43,9 @@
 *** Display multiple charts in a grid by 2 variables:
 
 #+begin_src R
-  ggplot(mpg, aes(x=displ, y=hwy)) + 
-    geom_point() + facet_grid(trans~class) # "row" parameter, then "column" parameter
+  ggplot(mpg, aes(x = displ, y = hwy)) + 
+    geom_point() +
+    facet_grid(trans ~ class) # "row" parameter, then "column" parameter
 #+end_src
 
 [[./images/chp28.1_plots4.png]]
@@ -54,10 +58,10 @@
 
 #+begin_src R
   set.seed(47)
-  sweetsWide <- data.frame(date=1:20,
-                           chocolate=runif(20, min=2, max=4),
-                           iceCream=runif(20, min=0.5, max=1),
-                           candy=runif(20, min=1, max=3))
+  sweetsWide <- data.frame(date = 1:20,
+                           chocolate = runif(20, min = 2, max = 4),
+                           iceCream = runif(20, min = 0.5, max = 1),
+                           candy = runif(20, min = 1, max = 3))
 
   head(sweetsWide)
   ##  date chocolate  iceCream    candy
@@ -75,18 +79,21 @@
 
 #+begin_src R
   # reshape from base R
-  sweetsLong <- reshape(sweetsWide, idvar='date', direction='long',
-                        varying=list(2:4), new.row.names=NULL, times=names(sweetsWide)[-1])
-
+  sweetsLong <- reshape(sweetsWide,
+                        idvar = 'date',
+                        direction = 'long',
+                        varying = list(2:4),
+                        new.row.names = NULL,
+                        times = names(sweetsWide)[-1])
   # melt from 'reshape2'
   library(reshape2)
 
-  sweetsLong <- melt(sweetsWide, id.vars='date')
+  sweetsLong <- melt(sweetsWide, id.vars = 'date')
 
   # melt from 'data.table'
   # which is an optimized & extended version of 'melt' from 'reshape2'
   library(data.table)
-  sweetsLong <- melt(setDT(sweetsWide), id.vars='date')
+  sweetsLong <- melt(setDT(sweetsWide), id.vars = 'date')
 
   # gather from 'tidyr'
   library(tidyr)
@@ -115,7 +122,7 @@
 #+begin_src R
   library(ggplot2)
 
-  ggplot(sweetsLong, aes(x=date, y=price, colour=sweet)) +
+  ggplot(sweetsLong, aes(x = date, y = price, colour = sweet)) +
     geom_line()
 #+end_src
 
@@ -127,13 +134,13 @@
 
 #+begin_src R
   # sample data
-  df <- data.frame(x=c('A', 'B'), y=c(3, 4))
+  df <- data.frame(x = c('A', 'B'), y = c(3, 4))
 
-  p1 <- ggplot(df, aes(x=x, y=y)) +
-    geom_bar(position="dodge", stat='identity') +
+  p1 <- ggplot(df, aes(x = x, y = y)) +
+    geom_bar(position = "dodge", stat = 'identity') +
     theme_bw()
 
-  p1 + geom_hline(aes(yintercept=5), colour="#990000", linetype="dashed")
+  p1 + geom_hline(aes(yintercept = 5), colour = "#990000", linetype = "dashed")
 #+end_src
 
 [[./images/chp28.3_plots.png]]
@@ -142,16 +149,16 @@
 
 #+begin_src R
   # sample dat
-  df <- data.frame(x=c('A', 'B'), y=c(3, 4))
+  df <- data.frame(x = c('A', 'B'), y = c(3, 4))
 
   # add horizontal levels for drawing lines
   df$hval <- df$y + 2
 
-  p1 <- ggplot(df, aes(x=x, y=y)) +
-    geom_bar(position="dodge", stat='identity') +
+  p1 <- ggplot(df, aes(x = x, y = y)) +
+    geom_bar(position = "dodge", stat = 'identity') +
     theme_bw()
 
-  p1 + geom_errorbar(aes(y=hval, ymax=hval, ymin=hval), colour="#990000", width=0.75)
+  p1 + geom_errorbar(aes(y = hval, ymax = hval, ymin = hval), colour = "#990000", width = 0.75)
 #+end_src
 
 [[./images/chp28.3_plots2.png]]
@@ -160,15 +167,15 @@
 
 #+begin_src R
   # sample data
-  df <- data.frame(x=rep(c('A', 'B'), times=2),
-                   group=rep(c('G1', 'G2'), each=2),
+  df <- data.frame(x = rep(c('A', 'B'), times = 2),
+                   group = rep(c('G1', 'G2'), each = 2),
                    y = c(3, 4, 5, 6),
                    hval = c(5, 6, 7, 8))
-  p1 <- ggplot(df, aes(x=x, y=y, fill=group)) +
-    geom_bar(position="dodge", stat="identity")
+  p1 <- ggplot(df, aes(x = x, y = y, fill = group)) +
+    geom_bar(position = "dodge", stat = "identity")
 
-  p1 + geom_errorbar(aes(y=hval, ymax=hval, ymin=hval),
-                     colour="#990000",
+  p1 + geom_errorbar(aes(y = hval, ymax = hval, ymin = hval),
+                     colour = "#990000",
                      position = "dodge",
                      linetype = "dashed")
 #+end_src
@@ -179,12 +186,12 @@
 
 #+begin_src R
   # sample data
-  df <- data.frame(group=rep(c('A', 'B'), each=20),
-                   x=rnorm(40, 5, 2),
-                   y=rnorm(40, 10, 2))
+  df <- data.frame(group = rep(c('A', 'B'), each = 20),
+                   x = rnorm(40, 5, 2),
+                   y = rnorm(40, 10, 2))
   
-  p1 <- ggplot(df, aes(x=x, y=y, colour=group)) + geom_point()
-  p1 + geom_vline(aes(xintercept=5), color="#990000", linetype="dashed")
+  p1 <- ggplot(df, aes(x = x, y = y, colour = group)) + geom_point()
+  p1 + geom_vline(aes(xintercept = 5), color = "#990000", linetype = "dashed")
 #+end_src
 
 [[./images/chp28.3_plots4.png]]
@@ -196,7 +203,10 @@
 #+begin_src R
   library(ggplot2)
 
-  ggplot(iris, aes(x=Petal.Width, y=Petal.Length, color=Species)) +
+  ggplot(iris,
+         aes(x = Petal.Width,
+             y = Petal.Length,
+             color = Species)) +
     geom_point()
 #+end_src
 
@@ -212,7 +222,9 @@
 *** basic qplot
 
 #+begin_src R
-  qplot(x=disp, y=mpg, data=mtcars)
+  qplot(x = disp,
+        y = mpg,
+        data = mtcars)
 #+end_src
 
 [[./images/chp28.5_plots.png]]
@@ -220,7 +232,10 @@
 *** adding colors
 
 #+begin_src R
-  qplot(x=disp, y=mpg, colour=cyl, data=mtcars)
+  qplot(x = disp,
+        y = mpg,
+        colour = cyl,
+        data = mtcars)
 #+end_src
 
 [[./images/chp28.5_plots2.png]]
@@ -228,7 +243,10 @@
 *** adding a smoother
 
 #+begin_src R
-  qplot(x=disp, y=mpg, geom=c("point", "smooth"), data=mtcars)
+  qplot(x = disp,
+        y = mpg,
+        geom = c("point", "smooth"),
+        data = mtcars)
 #+end_src
 
 [[./images/chp28.5_plots3.png]]
@@ -236,8 +254,8 @@
 ** Section 28.6: Vertical and Horizontal Bar Chart
 
 #+begin_src R
-  ggplot(data=diamonds, aes(x=cut, fill=color)) +
-    geom_bar(stat="count", position="dodge")
+  ggplot(data = diamonds, aes(x = cut, fill = color)) +
+    geom_bar(stat = "count", position = "dodge")
 #+end_src
 
 [[./images/chp28.5_plots4.png]]
@@ -246,8 +264,8 @@
    aesthetic to the ggplot object:
 
 #+begin_src R
-  ggplot(data = diamonds, aes(x=cut, fill=color)) + 
-    geom_bar(stat="count", position="dodge") +
+  ggplot(data = diamonds, aes(x = cut, fill = color)) + 
+    geom_bar(stat = "count", position = "dodge") +
     coord_flip()
 #+end_src
 
@@ -274,8 +292,8 @@
 #+begin_src R
   ggplot(diamonds, aes(cut, price)) + 
     geom_violin() + 
-    geom_boxplot(width=.1, fill="black", outlier.shape=NA) + 
-    stat_summary(fun.y="median", geom="point", col="white")
+    geom_boxplot(width = .1, fill = "black", outlier.shape = NA) + 
+    stat_summary(fun.y = "median", geom = "point", col = "white")
 #+end_src
 
 [[./images/chp28.5_plots7.png]]
