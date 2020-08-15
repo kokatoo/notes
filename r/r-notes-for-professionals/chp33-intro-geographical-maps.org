@@ -34,9 +34,10 @@
    To fill land masses with the color in ~col~ we can set ~fill = TRUE~:
 
 #+begin_src R
-require(maps) 
+  require(maps) 
 
-map(fill = TRUE, col = c("cornflowerblue"))
+  map(fill = TRUE,
+      col = c("cornflowerblue"))
 #+end_src
 
 [[./images/chp33-plot3.png]]
@@ -45,9 +46,10 @@ map(fill = TRUE, col = c("cornflowerblue"))
    set:
 
 #+begin_src R
-require(maps)
+  require(maps)
 
-map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
+  map(fill = TRUE,
+      col = c("cornflowerblue", "limegreen", "hotpink"))
 #+end_src
 
 [[./images/chp33-plot4.png]]
@@ -66,42 +68,62 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
    white:
 
 #+begin_src R
-    require(maps)
+  require(maps)
 
-    if(require(mapproj)) {
+  if(require(mapproj)) {
 
-      # mapproj is used for projection="polyconic"
-      # color US county map by 2009 unemployment rate
-      # match counties to map using FIPS county codes
-      # Based on J's solution to the "Choropleth Challenge"
-      # Code improvements by Hack-R (hack-r.github.io)
+    # mapproj is used for projection="polyconic"
+    # color US county map by 2009 unemployment rate
+    # match counties to map using FIPS county codes
+    # Based on J's solution to the "Choropleth Challenge"
+    # Code improvements by Hack-R (hack-r.github.io)
 
-      # load data
-      # unemp includes data for some counties not on the "lower 48 states" county
-      # map, such as those in Alaska, Hawaii, Puerto Rico, and some tiny Virginia
-      # cities
-      data(unemp)
-      data(county.fips)
+    # load data
+    # unemp includes data for some counties not on the "lower 48 states" county
+    # map, such as those in Alaska, Hawaii, Puerto Rico, and some tiny Virginia
+    # cities
+    data(unemp)
+    data(county.fips)
 
-      # define color buckets
-      colors = c("paleturquoise", "skyblue", "cornflowerblue", "blueviolet", "hotpink", "darkgrey")
-      unemp$colorBuckets <- as.numeric(cut(unemp$unemp, c(0, 2, 4, 6, 8, 10, 100)))
-      leg.txt <- c("<2%", "2-4%", "4-6%", "6-8%", "8-10%", ">10%")
+    # define color buckets
+    colors = c("paleturquoise", "skyblue", "cornflowerblue", "blueviolet", "hotpink", "darkgrey")
+    unemp$colorBuckets <- 
+      as.numeric(
+        cut(unemp$unemp,
+            c(0, 2, 4, 6, 8, 10, 100)))
+    leg.txt <- c("<2%", "2-4%", "4-6%", "6-8%", "8-10%", ">10%")
 
-      # align data with map definitions by (partial) matching state,county
-      # names, which include multiple polygons for some counties
-      cnty.fips <- county.fips$fips[match(map("county", plot=FALSE)$names,
-                                          county.fips$polyname)]
+    # align data with map definitions by (partial) matching state,county
+    # names, which include multiple polygons for some counties
+    cnty.fips <- county.fips$fips[match(map("county", plot=FALSE)$names,
+                                        county.fips$polyname)]
 
-      colorsmatched <- unemp$colorBuckets[match(cnty.fips, unemp$fips)]
+    colorsmatched <- unemp$colorBuckets[match(cnty.fips, unemp$fips)]
 
-       # draw map
-      par(mar=c(1, 1, 2, 1) + 0.1)
-      map("county", col = colors[colorsmatched], fill = TRUE, resolution = 0, lty = 0, projection = "polyconic")
-      map("state", col = "white", fill = FALSE, add = TRUE, lty = 1, lwd = 0.1, projection="polyconic")
-      title("unemployment by county, 2009")
-      legend("topright", leg.txt, horiz = TRUE, fill = colors, cex=0.6)
-    }
+     # draw map
+    par(mar=c(1, 1, 2, 1) + 0.1)
+    map("county",
+        col = colors[colorsmatched],
+        fill = TRUE,
+        resolution = 0,
+        lty = 0,
+        projection = "polyconic")
+
+    map("state",
+        col = "white",
+        fill = FALSE,
+        add = TRUE,
+        lty = 1,
+        lwd = 0.1,
+        projection = "polyconic")
+
+    title("unemployment by county, 2009")
+    legend("topright",
+           leg.txt,
+           horiz = TRUE,
+           fill = colors,
+           cex=0.6)
+  }
 #+end_src
 
 [[./images/chp33-plot5.png]]
@@ -120,25 +142,30 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
 #+begin_src R
   require(googleVis)
 
-  G4 <- gvisGeoChart(CityPopularity, locationvar='City', colorvar='Popularity',
-                     options=list(region='US', height=350, displayMode='markers',
-                                  colorAxis="{values:[200,400,600,800], colors:[\'red', \'pink\', \'orange',\'green']}") )
+  G4 <- gvisGeoChart(CityPopularity,
+                     locationvar = 'City',
+                     colorvar = 'Popularity',
+                     options = list(region='US',
+                                  height = 350,
+                                  displayMode = 'markers',
+                                  colorAxis = 
+                                    "{values:[200,400,600,800], colors:[\'red', \'pink\', \'orange',\'green']}"))
   plot(G4)
 #+end_src
 
    The function ~gvisGeoChart()~ requires far less coding to create a choropleth
    compared to older mapping methods, such as ~map()~ from the package maps. The
-   colorvar parameter allows easy coloring of a statistical variable, at a level
+   ~colorvar~ parameter allows easy coloring of a statistical variable, at a level
    specified by the ~locationvar~ parameter. The various options passed to options
-   as a list allow customization of the map's details such as size (height),
-   shape (markers), and color coding (colorAxis and colors).
+   as a list allow customization of the map's details such as size (~height~),
+   shape (~markers~), and color coding (~colorAxis~ and ~colors~).
 
 ** Section 33.3: Interactive plotly maps
 
    The ~plotly~ package allows many kind of interactive plots, including maps.
    There are a few ways to create a map in ~plotly~. Either supply the map data
-   yourself (via plot_ly() or ggplotly()), use plotly's "native" mapping
-   capabilities (via plot_geo() or plot_mapbox()), or even a combination of
+   yourself (via ~plot_ly()~ or ~ggplotly()~), use plotly's "native" mapping
+   capabilities (via ~plot_geo()~ or ~plot_mapbox()~), or even a combination of
    both. An example of supplying the map yourself would be:
 
 #+begin_src R
@@ -154,15 +181,15 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
     )
 #+end_src
 
-   For a combination of both approaches, swap plot_ly() for plot_geo() or
-   plot_mapbox() in the above example. See the plotly [[https://cpsievert.github.io/plotly_book/maps.html][book]] for more examples.
+   For a combination of both approaches, swap ~plot_ly()~ for ~plot_geo()~ or
+   ~plot_mapbox()~ in the above example. See the plotly [[https://cpsievert.github.io/plotly_book/maps.html][book]] for more examples.
 
    The next example is a "strictly native" approach that leverages the
    [[https://plot.ly/r/reference/#layout-geo][layout.geo]] attribute to set the aesthetics and zoom level of the map. It also
    uses the database world.cities from maps to filter the Brazilian cities and
    plot them on top of the "native" map.
 
-   The main variables: pophis a text with the city and its population (which is
+   The main variables: ~pophis~ a text with the city and its population (which is
    shown upon mouse hover); qis a ordered factor from the population's quantile.
    ge has information for the layout of the maps. See the package [[https://plot.ly/r/reference/#layout-geo][documentation]]
    for more information.
@@ -170,7 +197,7 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
 #+begin_src R
   library(maps)
 
-  dfb <- world.cities[world.cities$country.etc=="Brazil",]
+  dfb <- world.cities[world.cities$country.etc == "Brazil",]
 
   library(plotly)
 
@@ -190,17 +217,22 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
     countrycolor = toRGB("white")
   )
 
-  plot_geo(dfb, lon = ~long, lat = ~lat, text = ~poph,
-           marker = ~list(size = sqrt(pop/10000) + 1, line = list(width = 0)),
-           color = ~q, locationmode = 'country names') %>%
+  plot_geo(dfb,
+           lon = ~long,
+           lat = ~lat,
+           text = ~poph,
+           marker = ~list(size = sqrt(pop/10000) + 1,
+                          line = list(width = 0)),
+           color = ~q,
+           locationmode = 'country names') %>%
   layout(geo = ge, title = 'Populations<br>(Click legend to toggle)')
 #+end_src
 
 ** Section 33.4: Making Dynamic HTML Maps with Leaﬂet
 
    [[http://leafletjs.com/][Leaflet]] is an open-source JavaScript library for making dynamic maps for the
-   web. RStudio wrote R bindings for Leaﬂet, available through its [[http://rstudio.github.io/leaflet/][leaflet]]
-   package, built with [[htmlwidgets][htmlwidgets]]. Leaﬂet maps integrate well with the
+   web. RStudio wrote R bindings for Leaflet, available through its [[http://rstudio.github.io/leaflet/][leaflet]]
+   package, built with [[htmlwidgets][htmlwidgets]]. Leaflet maps integrate well with the
    [[http://rmarkdown.rstudio.com/][RMarkdown]] and [[http://shiny.rstudio.com/][Shiny]] ecosystems.
 
    The interface is piped, using a ~leaflet()~ function to initialize a map and
@@ -222,9 +254,9 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
                clusterOptions = markerClusterOptions())
 #+end_src
 
-** Section 33.5: Dynamic Leaﬂet maps in Shiny applications
+** Section 33.5: Dynamic Leaflet maps in Shiny applications
 
-   The Leaﬂet package is designed to integerate with Shiny
+   The Leaflet package is designed to integerate with Shiny
 
    In the ui you call ~leafletOutput()~ and in the server you call
    ~renderLeaflet()~
@@ -248,7 +280,7 @@ map(fill = TRUE, col = c("cornflowerblue", "limegreen", "hotpink"))
   shinyApp(ui, server)
 #+end_src
 
-   However, reactive inputs that aﬀect the renderLeaflet expression will cause
+   However, reactive inputs that affect the renderLeaflet expression will cause
    the entire map to be redrawn each time the reactive element is updated.
 
    Therefore, to modify a map that's already running you should use the

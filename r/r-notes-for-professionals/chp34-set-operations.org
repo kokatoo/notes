@@ -28,17 +28,17 @@
     The key functions have natural names:
 
 #+begin_src R
-x = c(1, 2, 3)
-y = c(2, 4)
+  x = c(1, 2, 3)
+  y = c(2, 4)
 
-union(x, y)
-# 1 2 3 4
+  > union(x, y)
+  # 1 2 3 4
 
-intersect(x, y)
-# 2
+  > intersect(x, y)
+  # 2
 
-setdiff(x, y)
-# 1 3
+  > setdiff(x, y)
+  # 1 3
 #+end_src
 
     These are all documented on the same page, ~?union~.
@@ -51,9 +51,8 @@ setdiff(x, y)
 #+begin_src R
   X = c(1, 1, 2)
   Y = c(4, 5)
-
-  expand.grid(X, Y)
-
+  
+  > expand.grid(X, Y)
   #   Var1 Var2 
   # 1    1    4 
   # 2    1    4 
@@ -63,12 +62,14 @@ setdiff(x, y)
   # 6    2    5
 #+end_src
 
-   The result is a data.frame with one column for each vector passed to it.
+   The result is a ~data.frame~ with one column for each vector passed to it.
    Often, we want to take the Cartesian product of sets rather than to expand a
    "grid" of vectors. We can use ~unique~, ~lapply~ and ~do.call~:
 
 #+begin_src R
   m = do.call(expand.grid, lapply(list(X, Y), unique))
+
+  > m
   #   Var1 Var2 
   # 1    1    4 
   # 2    2    4 
@@ -82,12 +83,14 @@ setdiff(x, y)
     it can be added as another column:
 
 #+begin_src R
-  m$p = with(m, Var1*Var2)
-  # Var1 Var2 p 
-  # 1 1 4 4 
-  # 2 2 4 8 
-  # 3 1 5 5 
-  # 4 2 5 10
+  m$p <- with(m, Var1 * Var2)
+
+  > m
+  #   Var1 Var2  p 
+  # 1    1    4  4 
+  # 2    2    4  8 
+  # 3    1    5  5 
+  # 4    2    5 10
 #+end_src
 
     This approach works for as many vectors as we need, but in the special case
@@ -98,9 +101,9 @@ setdiff(x, y)
   uX = unique(X)
   uY = unique(Y)
 
-  outer(setNames(uX, uX), setNames(uY, uY), `*`)
-  #   4 5
-  # 1 4 5
+  > outer(setNames(uX, uX), setNames(uY, uY), `*`)
+  #   4  5
+  # 1 4  5
   # 2 8 10 
 #+end_src
 
@@ -114,10 +117,10 @@ setdiff(x, y)
   v = "A"
   w = c("A", "A")
 
-  w %in% v
+  > w %in% v
   # TRUE TRUE
 
-  v %in% w
+  > v %in% w
   # TRUE
 #+end_src
 
@@ -128,7 +131,7 @@ setdiff(x, y)
    Unlike equality tests, ~%in%~ always returns ~TRUE~ or ~FALSE~:
 
 #+begin_src R
-  c(1, NA) %in% c(1, 2, 3, 4)
+  > c(1, NA) %in% c(1, 2, 3, 4)
   # TRUE FALSE
 #+end_src
 
@@ -142,7 +145,7 @@ setdiff(x, y)
 #+begin_src R
   x = c(2, 1, 1, 2, 1)
 
-  unique(x)
+  > unique(x)
   # 2 1
 #+end_src
 
@@ -151,7 +154,7 @@ setdiff(x, y)
    ~duplicated~ tags each duplicated element:
 
 #+begin_src R
-  duplicated(x)
+  > duplicated(x)
   # FALSE FALSE TRUE TRUE TRUE
 #+end_src
 
@@ -175,12 +178,11 @@ setdiff(x, y)
   A = 1:20
   B = 10:30
 
-  xtab_set(A, B)
-
-  # inB 
-  # inA   FALSE TRUE 
-  # FALSE     0   10 
-  # TRUE      9   11
+  > xtab_set(A, B)
+  #         inB 
+  # inA     FALSE TRUE 
+  #   FALSE     0   10 
+  #   TRUE      9   11
 #+end_src
 
    A Venn diagram, offered by various packages, can be used to visualize overlap
