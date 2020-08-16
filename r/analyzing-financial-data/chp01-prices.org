@@ -1,0 +1,1023 @@
+#+STARTUP: showeverything
+#+title: Analyzing Financial Data and Implementing Financial Models Using R
+
+* Chapter 1: Prices
+
+** 1.1 Importing Daily Stock Price Data
+
+#+begin_src R
+  library(quantmod)
+
+  getSymbols.yahoo(Symbols = "AMZN",
+                   env = ".GlobalEnv",
+                   from = "2010-12-31",
+                   to = "2013-12-31")
+
+  data_amzn <- AMZN
+  > names(data_amzn)
+  [1] "AMZN.Open"     "AMZN.High"     "AMZN.Low"      "AMZN.Close"   
+  [5] "AMZN.Volume"   "AMZN.Adjusted"
+#+end_src
+
+** 1.3 Checking the Data
+
+*** 1.3.1 Plotting the Data
+
+#+begin_src R
+  plot(data_amzn$AMZN.Close)
+#+end_src
+
+[[./images/chp01-plot1.png]]
+
+   Notice that weekends and holidays are automatically excluded in the dataset.
+   If not you will see missing observations like below.
+
+[[./images/chp01-plot2.png]]
+
+*** 1.3.2 Checking the Dimension
+    
+    Sanity check the dimensions. 252 * 3 ~= 756 rows.
+
+#+begin_src R
+  > dim(data_amzn)
+  [1] 754   6
+#+end_src
+
+*** 1.3.3 Outputting Summary Statistics
+
+    Also do a summary check to see whether prices are in ballpark.
+
+#+begin_src R
+  > summary(data_amzn)
+       Index              AMZN.Open       AMZN.High        AMZN.Low    
+   Min.   :2010-12-31   Min.   :161.2   Min.   :163.5   Min.   :160.6  
+  1st Qu.:2011-09-29   1st Qu.:192.8   1st Qu.:195.3   1st Qu.:190.2  
+   Median :2012-06-28   Median :226.5   Median :230.6   Median :224.6  
+   Mean   :2012-06-30   Mean   :238.0   Mean   :240.8   Mean   :235.0  
+   3rd Qu.:2013-04-02   3rd Qu.:266.6   3rd Qu.:269.3   3rd Qu.:263.7  
+   Max.   :2013-12-30   Max.   :404.6   Max.   :405.6   Max.   :399.2  
+     AMZN.Close     AMZN.Volume       AMZN.Adjusted  
+   Min.   :161.0   Min.   :  984400   Min.   :161.0  
+   1st Qu.:193.3   1st Qu.: 2662775   1st Qu.:193.3  
+   Median :227.2   Median : 3707050   Median :227.2  
+   Mean   :238.1   Mean   : 4322605   Mean   :238.1  
+   3rd Qu.:266.4   3rd Qu.: 5162025   3rd Qu.:266.4  
+   Max.   :404.4   Max.   :24134200   Max.   :404.4 
+#+end_src
+
+**  1.4 Basic Data Manipulation Techniques
+
+*** 1.4.1 Keeping and Deleting One Row
+
+#+begin_src R
+  amzn_only_first <- data_amzn[1, ]
+
+  > head(amzn_only_first)
+              AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96     182.3   179.51        180     3451900           180
+#+end_src
+
+#+begin_src R
+  amzn_del_first <- data_amzn[-1, ]
+
+  > head(amzn_del_first)
+              AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2011-01-05    184.10    187.45   184.07     187.42     3418800        187.42
+  2011-01-06    186.50    187.41   185.25     185.86     3179700        185.86
+  2011-01-07    187.88    188.45   183.74     185.49     5221700        185.49
+  2011-01-10    185.04    185.29   182.51     184.68     3375900        184.68
+#+end_src
+
+*** 1.4.2 Keeping First and Last Rows
+
+#+begin_src R
+  > data_amzn[c(1, nrow(data_amzn)), ]
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2013-12-30    399.41    399.92   392.45     393.37     2487100        393.37
+#+end_src
+
+*** 1.4.3 Keeping Contiguous Rows
+
+#+begin_src R
+  amzn_first_week <- data_amzn[2:6, ]
+
+  > amzn_first_week 
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2011-01-05    184.10    187.45   184.07     187.42     3418800        187.42
+  2011-01-06    186.50    187.41   185.25     185.86     3179700        185.86
+  2011-01-07    187.88    188.45   183.74     185.49     5221700        185.49
+
+  amzn_last30 <- data_amzn[((nrow(data_amzn) - 29)):nrow(data_amzn), ]
+  > amzn_last30
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2013-11-15    367.63    372.90   365.55     369.17     4491600        369.17
+  2013-11-18    370.28    373.49   364.67     366.18     2737400        366.18
+  2013-11-19    365.82    368.78   362.50     364.94     1904800        364.94
+  2013-11-20    367.56    367.56   360.45     362.57     1771500        362.57
+  2013-11-21    364.05    369.25   363.30     368.92     1964600        368.92
+  2013-11-22    370.00    374.50   366.31     372.31     2965500        372.31
+  2013-11-25    373.82    377.79   373.18     376.64     2972300        376.64
+  2013-11-26    377.61    382.50   374.82     381.37     2724400        381.37
+  2013-11-27    383.50    387.00   382.61     386.71     2269700        386.71
+  2013-11-29    389.10    394.10   388.62     393.62     2406000        393.62
+  2013-12-02    399.00    399.00   389.10     392.30     4714000        392.30
+  2013-12-03    390.11    390.95   383.10     384.66     3702900        384.66
+  2013-12-04    383.50    389.69   381.49     385.96     2355300        385.96
+  2013-12-05    386.65    386.65   381.37     384.49     1906500        384.49
+  2013-12-06    388.35    388.35   383.83     386.95     1984700        386.95
+  2013-12-09    388.11    388.21   382.57     384.89     2761800        384.89
+  2013-12-10    383.74    389.06   383.02     387.78     2736800        387.78
+  2013-12-11    387.34    388.98   382.00     382.19     2451300        382.19
+  2013-12-12    381.26    385.00   379.50     381.25     2123700        381.25
+  2013-12-13    385.32    389.42   383.80     384.24     3025000        384.24
+  2013-12-16    385.03    391.70   385.00     388.97     2251700        388.97
+  2013-12-17    390.65    391.36   386.50     387.65     2343900        387.65
+  2013-12-18    389.23    396.30   383.10     395.96     3489100        395.96
+  2013-12-19    394.27    397.29   392.60     395.19     2427200        395.19
+  2013-12-20    396.55    404.72   395.78     402.20     5033900        402.20
+  2013-12-23    403.69    405.00   399.20     402.92     2659500        402.92
+  2013-12-24    402.52    403.72   396.37     399.20     1380400        399.20
+  2013-12-26    401.79    404.52   396.81     404.39     1868500        404.39
+  2013-12-27    404.65    405.63   396.25     398.08     1986900        398.08
+  2013-12-30    399.41    399.92   392.45     393.37     2487100        393.37
+#+end_src
+
+*** 1.4.4 Keeping First Three Rows and Last Row
+
+    Showing the first 3 rows and last row is a good summary and snapshot of
+    time series data as it shows the range.
+
+#+begin_src R
+  > data_amzn[c(1:3, nrow(data_amzn)), ]
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2013-12-30    399.41    399.92   392.45     393.37     2487100        393.37
+#+end_src
+
+*** 1.4.5 Keeping and Deleting One Column
+
+    Suppose we want view the closing price and to create a OHLC dataset by deleting last row.
+#+begin_src R
+  > names(data_amzn)
+  [1] "AMZN.Open"     "AMZN.High"     "AMZN.Low"      "AMZN.Close"   
+  [5] "AMZN.Volume"   "AMZN.Adjusted"
+
+  amzn_only_price <- data_amzn$AMZN.Close
+  > amzn_only_price2[c(1:3, nrow(amzn_only_price2)), ]
+              AMZN.Close
+  2010-12-31     180.00
+  2011-01-03     184.22
+  2011-01-04     185.01
+  2013-12-30     393.37
+
+  amzn_del_adj_price <- data_amzn[, -6]
+  > amzn_del_adj_price[c(1:3, nrow(amzn_del_adj_price)), ]
+              AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume
+  2010-12-31    181.96    182.30   179.51     180.00     3451900
+  2011-01-03    181.37    186.00   181.21     184.22     5331400
+  2011-01-04    186.15    187.70   183.78     185.01     5031800
+  2013-12-30    399.41    399.92   392.45     393.37     2487100
+#+end_src
+
+*** 1.4.6 Keeping Non-Contiguous Columns
+
+    Suppose we are interested to compare the opening and closing price.
+
+#+begin_src R
+  amzn_price_vol <- data_amzn[, 4:5]
+
+  > amzn_price_vol[c(1:3, nrow(amzn_price_vol)), ]
+  AMZN.Open AMZN.Close
+  2010-12-31    181.96     180.00
+  2011-01-03    181.37     184.22
+  2011-01-04    186.15     185.01
+  2013-12-30    399.41     393.37
+#+end_src
+
+*** 1.4.8 Keeping Contiguous and Non-Contiguous Columns
+
+    Suppose we want to compare keep open, close and volume. We can include or
+    delete columns.
+
+#+begin_src R
+  amzn_open_close_vol <- data_amzn[, c(1, 4:5)]
+  > amzn_open_close_vol[c(1:3, nrow(amzn_open_close_vol)), ]
+             AMZN.Open AMZN.Close AMZN.Volume
+  2010-12-31    181.96     180.00     3451900
+  2011-01-03    181.37     184.22     5331400
+  2011-01-04    186.15     185.01     5031800
+  2013-12-30    399.41     393.37     248710
+
+  amzn_open_close_vol <- data_amzn[, c(-2:-3, -6)]
+  > amzn_open_close_vol[c(1:3, nrow(amzn_open_close_vol)), ]
+             AMZN.Open AMZN.Close AMZN.Volume
+  2010-12-31    181.96     180.00     3451900
+  2011-01-03    181.37     184.22     5331400
+  2011-01-04    186.15     185.01     5031800
+  2013-12-30    399.41     393.37     248710
+#+end_src
+
+*** 1.4.9 Subsetting Rows and Columns
+
+    Last 30 days close price and volume for VWAP calculations.
+
+#+begin_src R
+  data_vwap <- data_amzn[((nrow(data_amzn) - 29)):nrow(data_amzn),
+                         c(4, 5)]
+
+  > data_vwap[c(1:3, nrow(data_vwap)), ]
+             AMZN.Close AMZN.Volume
+  2013-11-15     369.17     4491600
+  2013-11-18     366.18     2737400
+  2013-11-19     364.94     1904800
+  2013-12-30     393.37     2487100
+#+end_src
+
+*** 1.4.10 Subsetting Using Dates
+
+    Rather than hardcoding the rows, we should subset using dates. 
+
+#+begin_src R
+  > class(data_amzn)
+  [1] "xts" "zoo"
+
+  xts_2012 <- subset(data_amzn[, 4],
+                     index(data_amzn) >= "2012-01-01" &
+                     index(data_amzn) <= "2012-12-31")
+  > xts_2012[c(1:3, nrow(xts_2012))]
+              AMZN.Close
+  2012-01-03     179.03
+  2012-01-04     177.51
+  2012-01-05     177.61
+  2012-12-31     250.87
+#+end_src
+
+    One of the reason why we might want to convert to data frame is because we
+    have a workable column of dates. Note ~row.names()~ doesn't work on ~xts~
+    object.
+    
+
+#+begin_src R
+  amzn_2012 <- cbind(index(data_amzn), data.frame(data_amzn[, 4]))
+  > amzn_2012[c(1:3, nrow(amzn_2012)), ]
+             index(data_amzn) AMZN.Close
+  2010-12-31       2010-12-31     180.00
+  2011-01-03       2011-01-03     184.22
+  2011-01-04       2011-01-04     185.01
+  2013-12-30       2013-12-30     393.37
+
+  > class(amzn_2012)
+  [1] "data.frame"
+
+  names(amzn_2012)[1] <- paste("date")
+  rownames(amzn_2012) <- seq(1, nrow(amzn_2012))
+
+  > amzn_2012[c(1:3, nrow(amzn_2012)), ]
+            date AMZN.Close
+  1   2012-01-03     179.03
+  2   2012-01-04     177.51
+  3   2012-01-05     177.61
+  250 2012-12-31     250.87
+
+  amzn_2012 <- subset(amzn_2012, 
+                      amzn_2012$date >= "2012-01-01" &
+                      amzn_2012$date <= "2012-12-31")
+
+  > amzn_2012[c(1:3, nrow(amzn_2012)), ]
+            date AMZN.Close
+  1   2012-01-03     179.03
+  2   2012-01-04     177.51
+  3   2012-01-05     177.61
+  250 2012-12-31     250.87
+#+end_src
+
+***  1.4.11 Converting Daily Prices to Weekly and Monthly Prices
+
+    Converting from daily to weekly prices:
+
+#+begin_src R
+  wk <- data_amzn
+  data_weekly <- to.weekly(wk)
+
+  > data_weekly[c(1:3, nrow(data_weekly)), ]
+             wk.Open wk.High wk.Low wk.Close wk.Volume wk.Adjusted
+  2010-12-31  181.96  182.30 179.51   180.00   3451900      180.00
+  2011-01-07  181.37  188.45 181.21   185.49  22183400      185.49
+  2011-01-14  185.04  188.94 182.51   188.75  15899000      188.75
+  2013-12-30  399.41  399.92 392.45   393.37   2487100      393.37
+#+end_src
+
+    Check that the sum of first week's weekly volume correspond to ~wk.Volume~:
+
+#+begin_src R
+  > data_weekly[2, "wk.Volume"]
+             wk.Volume
+  2011-01-07  22183400
+
+  > sum(data_amzn[2:6, "AMZN.Volume"])
+  [1] 22183400
+#+end_src
+
+    Convert to monthly prices:
+
+#+begin_src R
+  mo <- data_amzn
+  data_monthly <- to.monthly(mo)
+
+  > data_monthly[c(1:3, nrow(data_monthly)), ]
+           mo.Open mo.High mo.Low mo.Close mo.Volume mo.Adjusted
+  Dec 2010  181.96  182.30 179.51   180.00   3451900      180.00
+  Jan 2011  181.37  191.60 166.90   169.64 113611300      169.64
+  Feb 2011  170.52  191.40 169.51   173.29  95776400      173.29
+  Dec 2013  399.00  405.63 379.50   393.37  53690200      393.37
+#+end_src
+
+**** Note:
+     
+     Yahoo Finance Weekly and Monthly Volume is the Average Volume for the
+     Period and Not the Total Volume for the Period There is an option to
+     download weekly or monthly data from Yahoo Finance. However, the weekly and
+     monthly volume data reported on Yahoo Finance is the average volume for the
+     period. That is, Yahoo Finance reports the average weekly volume or average
+     monthly volume when we choose to download Yahoo Finance data of a lesser
+     frequency. Unfortunately, we cannot simply scale up the average volume by a
+     fixed number as the number of trading days is not constant for each week or
+     each month due to holidays.
+
+*** Plotting a Candlestick Chart Using Monthly Data
+    
+    Dropping 2010 Dec and Adjusted Close so the graph stars on Jan.
+
+#+begin_src R
+  ohlc <- data_monthly[-1, -6]
+  amzn_ohlc <- as.quantmod.OHLC(ohlc,
+    col.names = c("Open", "High", "Low", "Close", "Volume")
+  )
+  class(amzn_ohlc)
+  amzn_ohlc[c(1:3, nrow(amzn_ohlc)), ]
+  > chartSeries(amzn_ohlc, theme = "white.mono", name = "amzn OHLC")
+           ohlc.Open ohlc.High ohlc.Low ohlc.Close ohlc.Volume
+  Jan 2011    181.37    191.60   166.90     169.64   113611300
+  Feb 2011    170.52    191.40   169.51     173.29    95776400
+  Mar 2011    173.53    181.57   160.59     180.13   118979100
+  Dec 2013    399.00    405.63   379.50     393.37    53690200
+#+end_src
+
+[[./images/chp01-plot3.png]]
+
+** 1.5 Comparing Capital Gains of Multiple Securities Over Time
+
+   Let's clear the R memory by removing all the data.
+
+#+begin_src R
+  > ls()
+   [1] "AMZN"                "amzn_2012"           "amzn_del_adj_price" 
+   [4] "amzn_del_first"      "amzn_first_week"     "amzn_last30"        
+   [7] "amzn_ohlc"           "amzn_only_first"     "amzn_only_price"    
+  [10] "amzn_only_price2"    "amzn_open_close"     "amzn_open_close_vol"
+  [13] "data_amzn"           "data_missing"        "data_monthly"       
+  [16] "data_vwap"           "data_weekly"         "mo"                 
+  [19] "ohlc"                "wk"                  "xts_2012"
+
+  rm(list = ls())
+  > ls()
+   character(0)
+#+end_src
+
+*** Step 1: Import Data for Each of the Four Securities
+
+#+begin_src R
+  getSymbols.yahoo(Symbols = c("AMZN", "IBM", "^GSPC"),
+                   env = ".GlobalEnv",
+                   from = "2010-12-31",
+                   to = "2013-12-31")
+
+  data_amzn <- AMZN
+  data_ibm <- IBM
+  data_gspc <- GSPC
+
+  > data_amzn[c(1:3, nrow(data_amzn)), ]
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2013-12-30    399.41    399.92   392.45     393.37     2487100        393.37
+
+  > data_ibm[c(1:3, nrow(data_ibm)), ]
+              IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+  2010-12-31   146.73   147.07  145.96    146.76    2969800     105.5844
+  2011-01-03   147.21   148.20  147.14    147.48    4603800     106.1024
+  2011-01-04   147.56   148.22  146.64    147.64    5060100     106.2175
+  2013-12-30   185.32   186.70  184.67    186.41    3018600     141.3649
+  > data_ibm[c(1:3, nrow(data_gspc)), ]
+              IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+  2010-12-31   146.73   147.07  145.96    146.76    2969800     105.5844
+  2011-01-03   147.21   148.20  147.14    147.48    4603800     106.1024
+  2011-01-04   147.56   148.22  146.64    147.64    5060100     106.2175
+  2013-12-30   185.32   186.70  184.67    186.41    3018600     141.3649
+#+end_src
+
+*** Step 2: Combine Data into One Data Object
+
+#+begin_src R
+  close_prices <- data_amzn$AMZN.Close
+  close_prices <- cbind(close_prices,
+                        data_gspc$GSPC.Close,
+                        data_ibm$IBM.Close)
+  > close_prices[c(1:3, nrow(close_prices)), ]
+             GSPC.Close IBM.Close
+  2010-12-31    1257.64    146.76
+  2011-01-03    1271.87    147.48
+  2011-01-04    1270.20    147.64
+  2013-12-30    1841.07    186.41
+#+end_src
+
+*** Step 3: Convert Data into a data.frame
+
+#+begin_src R
+  multi_df <- cbind(index(close_prices), data.frame(close_prices))
+  names(multi_df) <- paste(c("date", "AMZN", "GSPC", "IBM"))
+  rownames(multi_df) <- seq(1, nrow(multi_df), 1)
+
+  > multi_df[c(1:3, nrow(multi_df)), ]
+            date   AMZN    GSPC    IBM
+  1   2010-12-31 180.00 1257.64 146.76
+  2   2011-01-03 184.22 1271.87 147.48
+  3   2011-01-04 185.01 1270.20 147.64
+  754 2013-12-30 393.37 1841.07 186.41
+#+end_src
+
+*** Step 4: Calculate Normalized Values for Each Security
+
+#+begin_src R
+  multi_df$amzn_idx <- multi_df$AMZN / multi_df$AMZN[1]
+  multi_df$gspc_idx <- multi_df$GSPC / multi_df$GSPC[1]
+  multi_df$ibm_idx <- multi_df$IBM / multi_df$IBM[1]
+
+  options(digits = 5)
+  > multi_df[c(1:3, nrow(multi_df)), ]
+            date   AMZN   GSPC    IBM amzn_idx gspc_idx ibm_idx
+  1   2010-12-31 180.00 1257.6 146.76   1.0000   1.0000  1.0000
+  2   2011-01-03 184.22 1271.9 147.48   1.0234   1.0113  1.0049
+  3   2011-01-04 185.01 1270.2 147.64   1.0278   1.0100  1.0060
+  754 2013-12-30 393.37 1841.1 186.41   2.1854   1.4639  1.2702
+  options(digits = 7)
+#+end_src
+
+*** Step 5: Plot the Capital Appreciation of Each Security
+
+#+begin_src R
+  plot(
+    x = multi_df$date,
+    y = multi_df$gspc_idx,
+    type = "l",
+    xlab = "Date",
+    ylab = "Value of Investment ($)",
+    col = "black",
+    lty = 1,
+    lwd = 2,
+    main = paste("Value of $1 Investment in AMZN, IBM, and the \n",
+               "GSPC December 31, 2010 - December 31, 2013")
+    )
+  lines(x = multi_df$date, y = multi_df$amzn_idx, col = "black", lty = 2, lwd = 1)
+  lines(x = multi_df$date, y = multi_df$ibm_idx, col = "gray", lty = 2, lwd = 1)
+  abline(h = 1, lty = 1, col = "black")
+  legend("topleft",
+         c("AMZN", "IBM", "S&P 500 Index"),
+         col = c("black", "gray", "black"),
+         lty = c(2, 2, 1),
+         lwd = c(1, 1, 2))
+#+end_src
+
+[[./images/chp01-plot4.png]]
+
+*** Step 6: Fix the y-axis to Encompass Range of Normalized Values for All Securities
+
+#+begin_src R
+  y_range <- range(multi_df[, c("gspc_idx", "ibm_idx", "amzn_idx")])
+  > y_range
+  [1] 0.8740418 2.2466112
+
+  plot(
+    x = multi_df$date,
+    y = multi_df$gspc_idx,
+    type = "l", xlab = "Date",
+    ylim = y_range,
+    ylab = "Value of Investment ($)",
+    col = "black",
+    lty = 1,
+    lwd = 2,
+    main = paste(
+      "Value of $1 Investment in amzn, IBM, YHOO, and the \n",
+      "S&P 500 Index December 31, 2010 - December 31, 2013"
+    )
+  )
+  lines(x = multi_df$date, y = multi_df$amzn_idx, col = "black", lty = 2, lwd = 1)
+  lines(x = multi_df$date, y = multi_df$ibm_idx, col = "gray", lty = 2, lwd = 1)
+  abline(h  =  1, lty  =  1, col  =  "black")
+  legend("topleft",
+         c("amzn", "IBM", "S&P 500 Index"),
+         col  =  c("black", "gray", "black"),
+         lty  =  c(2, 2, 1),
+         lwd  =  c(1, 1, 2))
+#+end_src
+
+[[./images/chp01-plot5.png]]
+
+*** 1.5.1 Alternative Presentation of Normalized Price Chart
+
+#+begin_src R
+  par(oma  =  c(0, 0, 3, 0))
+  par(mfrow  =  c(2, 2))
+
+  plot(x = multi_df$date,
+       xlab = "",
+       y = multi_df$gspc_idx,
+       ylim = y_range,
+       ylab = "",
+       type = "l",
+       col = "gray",
+       main = "Amazon Stock")
+  lines(x = multi_df$date, y = multi_df$ibm_idx, col = "gray")
+  lines(x = multi_df$date, y = multi_df$amzn_idx, col = "black", lwd = 2)
+  abline(h = 1)
+
+  plot(
+    x = multi_df$date,
+    xlab = "",
+    y = multi_df$gspc_idx,
+    ylim = y_range,
+    ylab = "",
+    type = "l",
+    col = "gray",
+    main = "IBM Stock"
+  )
+
+  lines(x = multi_df$date, y = multi_df$amzn_idx, col = "gray")
+  lines(x = multi_df$date, y = multi_df$ibm_idx, col = "black", lwd = 2)
+  abline(h = 1)
+
+  plot(
+    x = multi_df$date,
+    xlab = "",
+    y = multi_df$ibm_idx,
+    ylim = y_range,
+    ylab = "",
+    type = "l",
+    col = "gray",
+    main = "S&P 500 Index"
+  )
+  lines(x = multi_df$date, y = multi_df$amzn_idx, col = "gray")
+  lines(x = multi_df$date, y = multi_df$gspc_idx, col = "black", lwd = 2)
+  abline(h = 1)
+
+  title1 <-  "Value of $1 Invested in Amazon, IBM, and the Market"
+  title2 <- "December 31, 2010 - December 31, 2013"
+  title(main = paste(title1, "\n", title2), outer = T)
+#+end_src
+
+[[./images/chp01-plot6.png]]
+
+** 1.6 Technical Analysis Examples
+
+*** 1.6.1 Trend: Simple Moving Average Crossover
+
+**** Step 1: Obtain Closing Prices for Amazon.com Stock
+
+#+begin_src R
+  amzn_sma <- data_amzn[, 4]
+
+  > amzn_sma[c(1:3, nrow(amzn_sma)), ]
+             AMZN.Close
+  2010-12-31     180.00
+  2011-01-03     184.22
+  2011-01-04     185.01
+  2013-12-30     393.37
+#+end_src
+
+**** Step 2: Calculate the Rolling 50-Day and 200-Day Average Price
+
+#+begin_src R
+  amzn_sma$sma50 <- rollmeanr(amzn_sma$AMZN.Close, k = 50)
+  amzn_sma$sma200 <- rollmeanr(amzn_sma$AMZN.Close, k = 200)
+
+  > amzn_sma[c(1:3, nrow(amzn_sma)), ]
+              AMZN.Close    sma50   sma200
+  2010-12-31     180.00       NA       NA
+  2011-01-03     184.22       NA       NA
+  2011-01-04     185.01       NA       NA
+  2013-12-30     393.37 371.5104 305.3731
+#+end_src
+
+**** Step 3: Subset to Only Show 2012 and 2013 Data
+
+#+begin_src R
+  amzn_sma[48:52, ]
+  >            AMZN.Close    sma50 sma200
+  2011-03-10     166.14       NA     NA
+  2011-03-11     168.07       NA     NA
+  2011-03-14     166.73 179.2034     NA
+  2011-03-15     165.08 178.9050     NA
+  2011-03-16     164.70 178.5146     NA
+
+  amzn_sma[198:202, ]
+  >            AMZN.Close    sma50   sma200
+  2011-10-12     236.81 212.7294       NA
+  2011-10-13     236.15 213.2532       NA
+  2011-10-14     246.71 214.1578 195.3837
+  2011-10-17     242.33 214.9504 195.6953
+  2011-10-18     243.88 215.9540 195.9936
+#+end_src
+
+     Let's just start from 2012-01-01:
+
+#+begin_src R
+  amzn_sma2012 <- subset(amzn_sma, index(amzn_sma) >= "2012-01-01")
+
+  > amzn_sma2012[c(1:3, nrow(amzn_sma2012)), ]
+             AMZN.Close    sma50   sma200
+  2012-01-03     179.03 197.8458 201.5382
+  2012-01-04     177.51 196.7004 201.6032
+  2012-01-05     177.61 195.5004 201.6782
+  2013-12-30     393.37 371.5104 305.3731
+#+end_src
+
+**** Step 4: Plot the SMA
+
+#+begin_src R
+  y_range <- range(amzn_sma2012, na.rm = TRUE)
+  > y_range
+  [1] 175.93 404.39
+
+  par(mfrow = c(1,1))
+  plot(
+    x = index(amzn_sma2012),
+    xlab = "Date",
+    y = amzn_sma2012$AMZN.Close,
+    ylim = y_range,
+    ylab = "Price ($)",
+    type = "l",
+    main = "Amazon - SMA January 1, 2012 - December 31, 2013"
+  )
+  lines(x = index(amzn_sma2012),y = amzn_sma2012$sma50)
+  lines(x = index(amzn_sma2012), y = amzn_sma2012$sma200, lty = 2)
+  legend("topleft",
+         c("Amazon Price", "50-Day Moving Average", "200-Day Moving Average"),
+         lty = c(1, 1, 2))
+#+end_src
+
+[[./images/chp01-plot7.png]]
+
+*** 1.6.2 Volatility: Bollinger Bands
+
+**** Step 1: Obtain Closing Prices for Amazon.com Stock
+
+#+begin_src R
+  amzn.bb <- data_amzn[, 4]
+
+  > amzn.bb[c(1:3, nrow(amzn.bb)), ]
+             AMZN.Close
+  2010-12-31     180.00
+  2011-01-03     184.22
+  2011-01-04     185.01
+  2013-12-30     393.37
+#+end_src
+
+**** Step 2: Calculate Rolling 20-Day Mean and Standard Deviation
+
+#+begin_src R
+  amzn_bb$avg <- rollmeanr(amzn_bb$AMZN.Close, k = 20)
+  amzn_bb$sd <- rollapply(amzn_bb$AMZN.Close, width = 20, FUN = sd, fill = NA)
+  > amzn_bb[c(1:3, nrow(amzn_bb)), ]
+              AMZN.Close     avg       sd
+  2010-12-31     180.00      NA       NA
+  2011-01-03     184.22      NA       NA
+  2011-01-04     185.01      NA       NA
+  2013-12-30     393.37 391.132 7.323724
+
+  > amzn_bb[18:22, ]
+              AMZN.Close      avg       sd
+  2011-01-26     175.39       NA       NA
+  2011-01-27     184.45       NA       NA
+  2011-01-28     171.14 182.8705 5.061730
+  2011-01-31     169.64 182.3525 5.841057
+  2011-02-01     172.11 181.7470 6.250598
+#+end_src
+
+**** Step 3: Subset to Only Show 2013 Data
+
+#+begin_src R
+  amzn_bb2013 <- subset(amzn_bb, index(amzn_bb) >= "2013-01-01")
+
+  > amzn_bb2013[c(1:3, nrow(amzn_bb2013)), ]
+  AMZN.Close      avg       sd
+  2013-01-02     257.31 253.1670 4.457978
+  2013-01-03     258.48 253.4665 4.608764
+  2013-01-04     259.15 253.7260 4.780912
+  2013-12-30     393.37 391.1320 7.323724
+#+end_src
+
+**** Step 4: Calculate the Bollinger Bands
+
+#+begin_src R
+  amzn_bb2013$sd2up <- amzn_bb2013$avg + 2 * amzn_bb2013$sd
+  amzn_bb2013$sd2down <- amzn_bb2013$avg - 2 * amzn_bb2013$sd
+
+  > amzn_bb2013[c(1:3, nrow(amzn_bb2013)), ]
+             AMZN.Close      avg       sd    sd2up  sd2down
+  2013-01-02     257.31 253.1670 4.457978 262.0830 244.2510
+  2013-01-03     258.48 253.4665 4.608764 262.6840 244.2490
+  2013-01-04     259.15 253.7260 4.780912 263.2878 244.1642
+  2013-12-30     393.37 391.1320 7.323724 405.7794 376.4846
+#+end_src
+
+**** Step 5: Plot the Bollinger Bands
+
+#+begin_src R
+  y_range <- range(amzn_bb2013[, -3], na.rm = TRUE)
+  > y_range 
+  [1] 242.3923 405.8004
+
+  plot(
+    x = index(amzn_bb2013),
+    xlab = "Date",
+    y = amzn_bb2013$AMZN.Close,
+    ylim = y_range, ylab = "Price ($)",
+    type = "l",
+    lwd = 3,
+    main = paste(
+      "Amazon - Bollinger Bands (20 days, 2 deviations) \n",
+      " January 1, 2013 - December 31, 2013"
+    )
+  )
+  lines(x = index(amzn_bb2013), y = amzn_bb2013$avg, lty = 2)
+  lines(x = index(amzn_bb2013), y = amzn_bb2013$sd2up, col = "gray40")
+  lines(x = index(amzn_bb2013), y = amzn_bb2013$sd2down, col = "gray40")
+  legend("topleft",
+    c("Amazon Price", "20-Day Moving Average", "Upper Band", "Lower Band"),
+    lty = c(1, 2, 1, 1),
+    lwd = c(3, 1, 1, 1),
+    col = c("black", "black", "gray40", "gray40")
+  )
+#+end_src
+
+[[./images/chp01-plot8.png]]
+
+*** 1.6.3 Momentum: Relative Strength Index
+
+    RSI = 100 − 100 / (1 + RS)
+
+**** Step 1: Obtain Closing Prices for Amazon.com Stock
+
+#+begin_src R
+  amzn_rsi <- data_amzn[, 4]
+  amzn_rsi$delta <- diff(amzn_rsi$AMZN.Close)
+
+  > amzn_rsi[c(1:3, nrow(amzn_rsi)), ]
+             AMZN.Close     delta
+  2010-12-31     180.00        NA
+  2011-01-03     184.22  4.220001
+  2011-01-04     185.01  0.789994
+  2013-12-30     393.37 -4.709992
+#+end_src
+
+**** Step 2: Create Dummy Variables to Indicate Whether Price Went Up or Price Went Down
+
+#+begin_src R
+  amzn_rsi$up <- ifelse(amzn_rsi$delta > 0, 1, 0)
+  amzn_rsi$down <- ifelse(amzn_rsi$delta < 0, 1, 0)
+  > amzn_rsi[c(1:3, nrow(amzn_rsi)), ]
+  AMZN.Close     delta up down
+  2010-12-31     180.00        NA NA   NA
+  2011-01-03     184.22  4.220001  1    0
+  2011-01-04     185.01  0.789994  1    0
+  2013-12-30     393.37 -4.709992  0    1
+#+end_src
+
+**** Step 3: Calculate Prices for Up Days and Prices for Down Days
+
+#+begin_src R
+  amzn_rsi$up_val <- amzn_rsi$delta * amzn_rsi$up
+  amzn_rsi$down_val <- -amzn_rsi$delta * amzn_rsi$down
+  amzn_rsi <- amzn_rsi[-1, ]
+
+  > amzn_rsi[c(1:3, nrow(amzn_rsi)), ]
+             AMZN.Close     delta up down   up_val down_val
+  2011-01-03     184.22  4.220001  1    0 4.220001 0.000000
+  2011-01-04     185.01  0.789994  1    0 0.789994 0.000000
+  2011-01-05     187.42  2.410003  1    0 2.410003 0.000000
+  2013-12-30     393.37 -4.709992  0    1 0.000000 4.709992
+#+end_src
+
+**** Step 4: Calculate Initial Up and Down 14-Day Averages
+
+#+begin_src R
+  amzn_rsi$up.first.avg <- rollapply(amzn_rsi$up_val,
+    width = 14,
+    FUN = mean,
+    fill = NA,
+    na.rm = TRUE
+  )
+  amzn_rsi$down.first.avg <- rollapply(amzn_rsi$down_val,
+    width = 14,
+    FUN = mean,
+    fill = NA,
+    na.rm = TRUE
+  )
+  > amzn_rsi[c(1:15, nrow(amzn_rsi)), ]
+              AMZN.Close     delta up down   up_val down_val up.first.avg
+  2011-01-03     184.22  4.220001  1    0 4.220001 0.000000           NA
+  2011-01-04     185.01  0.789994  1    0 0.789994 0.000000           NA
+  2011-01-05     187.42  2.410003  1    0 2.410003 0.000000           NA
+  2011-01-06     185.86 -1.559997  0    1 0.000000 1.559997           NA
+  2011-01-07     185.49 -0.369996  0    1 0.000000 0.369996           NA
+  2011-01-10     184.68 -0.810012  0    1 0.000000 0.810012           NA
+  2011-01-11     184.34 -0.339997  0    1 0.000000 0.339997           NA
+  2011-01-12     184.08 -0.259994  0    1 0.000000 0.259994           NA
+  2011-01-13     185.53  1.449997  1    0 1.449997 0.000000           NA
+  2011-01-14     188.75  3.220001  1    0 3.220001 0.000000           NA
+  2011-01-18     191.25  2.500000  1    0 2.500000 0.000000           NA
+  2011-01-19     186.87 -4.380005  0    1 0.000000 4.380005           NA
+  2011-01-20     181.96 -4.909988  0    1 0.000000 4.909988           NA
+  2011-01-21     177.42 -4.540009  0    1 0.000000 4.540009    1.0421426
+  2011-01-24     176.85 -0.569992  0    1 0.000000 0.569992    0.7407139
+  2013-12-30     393.37 -4.709992  0    1 0.000000 4.709992    2.2742854
+             down.first.avg
+  2011-01-03             NA
+  2011-01-04             NA
+  2011-01-05             NA
+  2011-01-06             NA
+  2011-01-07             NA
+  2011-01-10             NA
+  2011-01-11             NA
+  2011-01-12             NA
+  2011-01-13             NA
+  2011-01-14             NA
+  2011-01-18             NA
+  2011-01-19             NA
+  2011-01-20             NA
+  2011-01-21       1.226428
+  2011-01-24       1.267142
+  2013-12-30       1.668573
+#+end_src
+
+**** Step 5: Calculate the Wilder Exponential Moving Average to Calculate Final Up and Down 14-Day Averages
+
+     The Wilder Exponential Moving Average calculation assumes that the initial
+     average the day before would have a weight of 13 out of 14 days and the
+     current average will have a weight of one out of 14 days. We apply this
+     same logic for the up average and down average.
+
+#+begin_src R
+  up_val <- as.numeric(amzn_rsi$up_val)
+  down_val <-  as.numeric(amzn_rsi$down_val)
+  amzn_rsi$up.avg <- amzn_rsi$up.first.avg
+  for (i in 15:nrow(amzn_rsi)){
+    amzn_rsi$up.avg[i] <- ((amzn_rsi$up.avg[i-1] * 13 + up_val[i]) / 14)
+  }
+  amzn_rsi$down.avg <- amzn_rsi$down.first.avg
+  for (i in 15:nrow(amzn_rsi)){
+    amzn_rsi$down.avg[i] <- ((amzn_rsi$down.avg[i-1] * 13 + down_val[i]) / 14)
+  }
+
+  > amzn_rsi[c(1:20, nrow(amzn_rsi)), ]
+              AMZN.Close      delta up down   up_val  down_val up.first.avg
+  2011-01-03     184.22   4.220001  1    0 4.220001  0.000000           NA
+  2011-01-04     185.01   0.789994  1    0 0.789994  0.000000           NA
+  2011-01-05     187.42   2.410003  1    0 2.410003  0.000000           NA
+  2011-01-06     185.86  -1.559997  0    1 0.000000  1.559997           NA
+  2011-01-07     185.49  -0.369996  0    1 0.000000  0.369996           NA
+  2011-01-10     184.68  -0.810012  0    1 0.000000  0.810012           NA
+  2011-01-11     184.34  -0.339997  0    1 0.000000  0.339997           NA
+  2011-01-12     184.08  -0.259994  0    1 0.000000  0.259994           NA
+  2011-01-13     185.53   1.449997  1    0 1.449997  0.000000           NA
+  2011-01-14     188.75   3.220001  1    0 3.220001  0.000000           NA
+  2011-01-18     191.25   2.500000  1    0 2.500000  0.000000           NA
+  2011-01-19     186.87  -4.380005  0    1 0.000000  4.380005           NA
+  2011-01-20     181.96  -4.909988  0    1 0.000000  4.909988           NA
+  2011-01-21     177.42  -4.540009  0    1 0.000000  4.540009    1.0421426
+  2011-01-24     176.85  -0.569992  0    1 0.000000  0.569992    0.7407139
+  2011-01-25     176.70  -0.150009  0    1 0.000000  0.150009    0.6842858
+  2011-01-26     175.39  -1.309998  0    1 0.000000  1.309998    0.5121427
+  2011-01-27     184.45   9.059998  1    0 9.059998  0.000000    1.1592854
+  2011-01-28     171.14 -13.309998  0    1 0.000000 13.309998    1.1592854
+  2011-01-31     169.64  -1.500000  0    1 0.000000  1.500000    1.1592854
+  2013-12-30     393.37  -4.709992  0    1 0.000000  4.709992    2.2742854
+             down.first.avg
+  2011-01-03             NA
+  2011-01-04             NA
+  2011-01-05             NA
+  2011-01-06             NA
+  2011-01-07             NA
+  2011-01-10             NA
+  2011-01-11             NA
+  2011-01-12             NA
+  2011-01-13             NA
+  2011-01-14             NA
+  2011-01-18             NA
+  2011-01-19             NA
+  2011-01-20             NA
+  2011-01-21       1.226428
+  2011-01-24       1.267142
+  2011-01-25       1.277857
+  2011-01-26       1.371428
+  2011-01-27       1.260000
+  2011-01-28       2.184286
+  2011-01-31       2.233571
+  2013-12-30       1.668573
+#+end_src
+
+**** Step 6: Calculate the RSI
+
+#+begin_src R
+  amzn_rsi$RS <- amzn_rsi$up.avg / amzn_rsi$down.avg
+  amzn_rsi$RSI <- 100 - (100 / (1 + amzn_rsi$RS))
+
+  > amzn_rsi[c(14:20, nrow(amzn_rsi)), ]
+              AMZN.Close      delta up down   up_val  down_val up.first.avg
+  2011-01-21     177.42  -4.540009  0    1 0.000000  4.540009    1.0421426
+  2011-01-24     176.85  -0.569992  0    1 0.000000  0.569992    0.7407139
+  2011-01-25     176.70  -0.150009  0    1 0.000000  0.150009    0.6842858
+  2011-01-26     175.39  -1.309998  0    1 0.000000  1.309998    0.5121427
+  2011-01-27     184.45   9.059998  1    0 9.059998  0.000000    1.1592854
+  2011-01-28     171.14 -13.309998  0    1 0.000000 13.309998    1.1592854
+  2011-01-31     169.64  -1.500000  0    1 0.000000  1.500000    1.1592854
+  2013-12-30     393.37  -4.709992  0    1 0.000000  4.709992    2.2742854
+             down.first.avg
+  2011-01-21       1.226428
+  2011-01-24       1.267142
+  2011-01-25       1.277857
+  2011-01-26       1.371428
+  2011-01-27       1.260000
+  2011-01-28       2.184286
+  2011-01-31       2.233571
+  2013-12-30       1.668573
+#+end_src
+
+**** Step 7: Subset to Show Only 2012 and 2013 Data
+
+#+begin_src R
+  amzn_rsi2012 <- subset(amzn_rsi[,ncol(amzn_rsi)],
+                         index(amzn_rsi) >= "2012-01-01")
+  > amzn_rsi2012[c(1:3, nrow(amzn_rsi2012)), ]
+             down.first.avg
+  2012-01-03       1.809999
+  2012-01-04       1.274998
+  2012-01-05       1.253571
+  2013-12-30       1.668573
+#+end_src
+
+**** Step 8: Plot the RSI
+
+#+begin_src R
+  title1 <- "Amazon - Relative Strength Index"
+  title2 <- "January 2012 - December 2013"
+  plot(
+    x = index(amzn_rsi2012),
+    xlab = "Date",
+    y = amzn_rsi2012$RSI,
+    ylab = "RSI (14-Day Moving Average)",
+    ylim = c(0, 100),
+    type = "l",
+    main = paste(title1, "\n", title2)
+  )
+  abline(h = c(30,70),lty = 2)
+#+end_src
+
+[[./images/chp01-plot9.png]]
+
+*** Further Reading
+
+    Using ~chartSeries()~ TA functions:
+
+#+begin_src R
+  chartSeries(data_amzn[, 4], TA = c(addSMA(n = c(50, 200))))
+  zoomChart("2012::2013")
+#+end_src
+
+[[./images/chp01-plot10.png]]
+
+#+begin_src R
+  chartSeries(data_amzn[, 4],
+    TA = c(addBBands(n = 20, sd = 2, maType = "SMA", draw = "bands"))
+  )
+  zoomChart("2012::2013")
+#+end_src
+
+[[./images/chp01-plot11.png]]
+
+#+begin_src R
+  chartSeries(data_amzn[, 4],
+    TA = c(addRSI(n = 14, maType = "EMA", wilder = TRUE))
+  )
+  zoomChart("2012::2013")
+#+end_src
+
+[[./images/chp01-plot11.png]]

@@ -42,41 +42,41 @@
 
     The commonly known and widely used packages:
 
-| ggplot2  | advanced data visualisation SO_documentation                                                                                                                                                    |
-| dplyr    | fast (Rcpp) and coherent approach to data manipulation SO_doc                                                                                                                                   |
-| tidyr    | tools for data tidying SO_doc                                                                                                                                                                   |
-| readr    | for data import.                                                                                                                                                                                |
-| purrr    | makes your pure functions purr by completing R's functional programming tools with important features from other languages, in the style of the JS packages underscore.js, lodash and lazy.js.  |
-| tibble   | a modern re-imagining of data frames.                                                                                                                                                           |
-| magrittr | piping to make code more readable SO_doc                                                                                                                                                        |
+| ~ggplot2~  | advanced data visualisation SO_documentation                                                                                                                                                   |
+| ~dplyr~    | fast (Rcpp) and coherent approach to data manipulation SO_doc                                                                                                                                  |
+| ~tidyr~    | tools for data tidying SO_doc                                                                                                                                                                  |
+| ~readr~    | for data import.                                                                                                                                                                               |
+| ~purrr~    | makes your pure functions purr by completing R's functional programming tools with important features from other languages, in the style of the JS packages underscore.js, lodash and lazy.js. |
+| ~tibble~   | a modern re-imagining of data frames.                                                                                                                                                          |
+| ~magrittr~ | piping to make code more readable SO_doc                                                                                                                                                       |
 
 
      Packages for manipulating specific data formats:
 
-| hms       | easily read times                                                                              |
-| stringr   | provide a cohesive set of functions designed to make working with strings as easy as possible  |
-| lubridate | advanced date/times manipulations SO_doc                                                       |
-| forcats   | advanced work with factors.                                                                    |
+| ~hms~       | easily read times                                                                              |
+| ~stringr~   | provide a cohesive set of functions designed to make working with strings as easy as possible  |
+| ~lubridate~ | advanced date/times manipulations SO_doc                                                       |
+| ~forcats~   | advanced work with factors.                                                                    |
 
     Data import:
 
-| DBI      | defines a common interface between the R and database management systems (DBMS)                              |
-| haven    | easily import SPSS, SAS and Stata files SO_doc                                                               |
-| httr     | the aim of ~httr~ is to provide a wrapper for the curl package, customised to the demands of modern web APIs |
-| jsonlite | a fast JSON parser and generator optimized for statistical data and the web                                  |
-| readxl   | read.xls and .xlsx files without need for dependency packages SO_doc                                         |
-| rvest    | rvest helps you scrape information from web pages SO_doc                                                     |
-| xml2     | for XML                                                                                                      |
+| ~DBI~      | defines a common interface between the R and database management systems (DBMS)                              |
+| ~haven~    | easily import SPSS, SAS and Stata files SO_doc                                                               |
+| ~httr~     | the aim of ~httr~ is to provide a wrapper for the curl package, customised to the demands of modern web APIs |
+| ~jsonlite~ | a fast JSON parser and generator optimized for statistical data and the web                                  |
+| ~readxl~   | read.xls and .xlsx files without need for dependency packages SO_doc                                         |
+| ~rvest~    | rvest helps you scrape information from web pages SO_doc                                                     |
+| ~xml2~     | for XML                                                                                                      |
 
     And modelling:
 
-| modelr | provides functions that help you create elegant pipelines when modelling  |
-| broom  | easily extract the models into tidy data                                  |
+| ~modelr~ | provides functions that help you create elegant pipelines when modelling |
+| ~broom~  | easily extract the models into tidy data                                 |
 
      Finally, tidyverse suggest the use of:
 
-| knitr     | the amazing general-purpose literate programming engine, with lightweight API's designed to give users full control of the output without heavy coding work. SO_docs: one, two  |
-| rmarkdown | Rstudio's package for reproducible programming. SO_docs: one, two, three, four                                                                                                  |
+| ~knitr     | the amazing general-purpose literate programming engine, with lightweight API's designed to give users full control of the output without heavy coding work. SO_docs: one, two  |
+| ~rmarkdown | Rstudio's package for reproducible programming. SO_docs: one, two, three, four                                                                                                  |
 
 ** Section 35.2: Creating tbl_df’s
 

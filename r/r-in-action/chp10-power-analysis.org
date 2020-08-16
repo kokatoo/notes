@@ -1,0 +1,259 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 10: Power analysis
+
+** 10.2 Implementing power analysis with the pwr package
+
+| Function         | Power calculations for …                  |
+|------------------+-------------------------------------------|
+| ~pwr.2p.test~    | Two proportions (equal n)                 |
+| ~pwr.2p2n.test~  | Two proportions (unequal n)               |
+| ~pwr.anova.test~ | Balanced one-way ANOVA                    |
+| ~pwr.chisq.test~ | Chi-square test                           |
+| ~pwr.f2.test~    | General linear model                      |
+| ~pwr.p.test~     | Proportion (one sample)                   |
+| ~pwr.r.test~     | Correlation                               |
+| ~pwr.t.test~     | t-tests (one sample, two samples, paired) |
+| ~pwr.t2n.test~   | t-test (two samples with unequal n)       |
+
+*** 10.2.1 t-tests
+
+#+begin_src R
+pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
+#+end_src
+
+| ~n~           | is the sample size.                                                                                                                                    |
+| ~d~           | is the effect size defined as the standardized mean difference.                                                                                        |
+| ~sig.level~   | is the significance level (0.05 is the default).                                                                                                       |
+| ~power~       | is the power level.                                                                                                                                    |
+| ~type~        | is a two-sample t-test ("two.sample"), a one-sample t-test ("one.sample"), or a dependent sample t-test ( "paired"). A two-sample test is the default. |
+| ~alternative~ | indicates whether the statistical test is two-sided ("two.sided") or one-sided ("less" or "greater"). A two-sided test is the default.                 |
+
+#+begin_src R
+  library(pwr)
+
+  > pwr.t.test(d=.8,
+             sig.level=.05,
+             power=.9,
+             type="two.sample",
+             alternative="two.sided")
+
+  Two-sample t test power calculation 
+
+  n = 33.82555
+  d = 0.8
+  sig.level = 0.05
+  power = 0.9
+  alternative = two.sided
+
+  NOTE: n is number in *each* group
+
+  > pwr.t.test(n=20,
+               d=.5,
+               sig.level=.01,
+               type="two.sample",
+               alternative="two.sided")
+
+  Two-sample t test power calculation 
+
+  n = 20
+  d = 0.5
+  sig.level = 0.01
+  power = 0.1439551
+  alternative = two.sided
+
+  NOTE: n is number in *each* group
+#+end_src
+
+#+begin_src R
+pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
+#+end_src
+
+*** 10.2.2 ANOVA
+
+#+begin_src R
+  > pwr.anova.test(k=5, f=.25, sig.level=.05, power=.8)
+
+  Balanced one-way analysis of variance power calculation 
+
+  k = 5
+  n = 39.1534
+  f = 0.25
+  sig.level = 0.05
+  power = 0.8
+
+  NOTE: n is number in each group
+#+end_src
+
+*** 10.2.3 Correlations
+
+#+begin_src R
+  > pwr.r.test(r=.25, sig.level=.05, power=.90, alternative="greater")
+
+  approximate correlation power calculation (arctangh transformation) 
+
+  n = 133.2803
+  r = 0.25
+  sig.level = 0.05
+  power = 0.9
+  alternative = greater
+#+end_src
+
+*** 10.2.4 Linear models
+
+#+begin_src R
+  > pwr.f2.test(u=3, f2=0.0769, sig.level=0.05, power=0.90)
+
+  Multiple regression power calculation 
+
+  u = 3
+  v = 184.2426
+  f2 = 0.0769
+  sig.level = 0.05
+  power = 0.9
+#+end_src
+
+*** 10.2.5 Tests of proportions
+
+#+begin_src R
+  > pwr.2p.test(h=ES.h(.65, .6), sig.level=.05, power=.9, alternative="greater")
+
+  Difference of proportion power calculation for binomial distribution (arcsine transformation) 
+
+  h = 0.1033347
+  n = 1604.007
+  sig.level = 0.05
+  power = 0.9
+  alternative = greater
+
+  NOTE: same sample sizes
+#+end_src
+
+*** 10.2.6 Chi-square tests
+
+| Ethnicity        | Promoted | Not promoted |
+|------------------+----------+--------------|
+| Caucasian        |     0.42 |         0.28 |
+| African-American |     0.03 |         0.07 |
+| Hispanic         |     0.10 |         0.10 |
+
+#+begin_src R
+  prob <- matrix(c(.42, .28, .03, .07, .10, .10), byrow=TRUE, nrow=3)
+
+  > ES.w2(prob)
+  [1] 0.1853198
+
+  > pwr.chisq.test(w=.1853, df=2, sig.level=.05, power=.9)
+
+  Chi squared power calculation 
+
+  w = 0.1853
+  N = 368.5317
+  df = 2
+  sig.level = 0.05
+  power = 0.9
+
+  NOTE: N is the number of observations
+#+end_src
+
+*** 10.2.7 Choosing an appropriate effect size in novel situations
+
+**** Cohen’s effect size benchmarks
+
+| Statistical method  | Effect size measures | Small | Medium | Large |
+|---------------------+----------------------+-------+--------+-------|
+| t-test              | d                    |  0.20 |   0.50 |  0.80 |
+| ANOVA               | f                    |  0.10 |   0.25 |  0.40 |
+| Linear models       | f2                   |  0.02 |   0.15 |  0.35 |
+| Test of proportions | h                    |  0.20 |   0.50 |  0.80 |
+| Chi-square          | w                    |  0.10 |   0.30 |  0.50 |
+
+#+begin_src R
+  library(pwr)
+
+  es <- seq(.1, .5, .01)
+  nes <- length(es)
+  samsize <- NULL
+
+  for (i in 1:nes) {
+    result <- pwr.anova.test(k=5,
+                             f=es[i],
+                             sig.level=.05,
+                             power=.9)
+    samsize[i] <- ceiling(result$n)
+  }
+
+  plot(samsize,es,
+       type="l",
+       lwd=2,
+       col="red",
+       ylab="Effect Size",
+       xlab="Sample Size (per cell)",
+       main="One Way ANOVA with Power=.90 and Alpha=.05")
+#+end_src
+
+[[./images/chp10-plot1.png]]
+
+** 10.3 Creating power analysis plots
+
+#+begin_src R
+  library(pwr)
+
+  r <- seq(.1,.5,.01)
+  nr <- length(r)
+
+  p <- seq(.4,.9,.1)
+  np <- length(p)
+
+  samsize <- array(numeric(nr*np), dim=c(nr,np))
+  for (i in 1:np){
+    for (j in 1:nr) {
+      result <- pwr.r.test(n = NULL,
+                           r = r[j],
+                           sig.level = .05,
+                           power = p[i],
+                           alternative = "two.sided")
+      samsize[j,i] <- ceiling(result$n)
+    }
+  }
+
+  xrange <- range(r)
+  yrange <- round(range(samsize))
+  colors <- rainbow(length(p))
+
+  plot(xrange,
+       yrange,
+       type="n",
+       xlab="Correlation Coefficient (r)",
+       ylab="Sample Size (n)")
+
+  for (i in 1:np){
+    lines(r, samsize[,i], type="l", lwd=2, col=colors[i])
+  }
+
+  abline(v=0, h=seq(0,yrange[2],50), lty=2, col="grey89")
+  abline(h=0, v=seq(xrange[1],xrange[2],.02), lty=2, col="gray89")
+
+  title("Sample Size Estimation for Correlation Studies\n Sig=0.05 (Two-tailed)")
+  legend("topright", title="Power", as.character(p), fill=colors)
+#+end_src
+
+[[./images/chp10-plot2.png]]
+
+** 10.4 Other packages
+
+| Package                | Purpose                                                                                                   |
+|------------------------+-----------------------------------------------------------------------------------------------------------|
+| ~asypow~               | Power calculations via asymptotic likelihood ratio methods                                                |
+| ~longpower~            | Sample-size calculations for longitudinal data                                                            |
+| ~PwrGSD~               | Power analysis for group sequential designs                                                               |
+| ~pamm~                 | Power analysis for random effects in mixed models                                                         |
+| ~powerSurvEpi~         | Power and sample-size calculations for survival analysis in epidemiological studies                       |
+| ~powerMediation~       | Power and sample-size calculations for mediation effects in linear, logistic, Poisson, and cox regression |
+| ~powerpkg~             | Power analyses for the affected sib pair and the TDT (transmission disequilibrium test) design            |
+| ~powerGWASinteraction~ | Power calculations for interactions for GWAS                                                              |
+| ~pedantics~            | Functions to facilitate power analyses for genetic studies of natural populations                         |
+| ~gap~                  | Functions for power and sample-size calculations in case-cohort designs                                   |
+| ~ssize.fdr~            | Sample-size calculations for microarray experiments                                                       |
+
