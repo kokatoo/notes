@@ -13,12 +13,12 @@ names(data_amzn)
 ## ---- 1.3 Checking the Data
 ## --- 1.3.1 Plotting the Data
 
-png(file = "./images/chp01-plot1.png")
+png(file = "./images/chp01-plot1.png", width = 1000)
 plot(data_amzn$AMZN.Close)
 dev.off()
 
 data_missing <- data_amzn[-400:-500, ]
-png(file = "./images/chp01-plot2.png")
+png(file = "./images/chp01-plot2.png", width = 1000)
 plot(data_missing$AMZN.Close)
 dev.off()
 
@@ -119,7 +119,7 @@ amzn_ohlc <- as.quantmod.OHLC(ohlc,
 )
 class(amzn_ohlc)
 amzn_ohlc[c(1:3, nrow(amzn_ohlc)), ]
-png(file = "./images/chp01-plot3.png")
+png(file = "./images/chp01-plot3.png", width = 1000)
 chartSeries(amzn_ohlc, theme = chartTheme("black"), name = "amzn OHLC")
 dev.off()
 
@@ -128,7 +128,7 @@ ls()
 rm(list = ls())
 ls()
 
-data_amzn <- read.csv("amzn Yahoo.csv", header=TRUE)
+data_amzn <- read.csv("amzn Yahoo.csv", header = TRUE)
 
 date <- as.Date(data_amzn$Date, format = "%Y-%m-%d")
 
@@ -211,7 +211,7 @@ dev.off()
 
 y_range <- range(multi_df[, c("gspc_idx", "ibm_idx", "amzn_idx")])
 y_range
-png(file = "./images/chp01-plot5.png", width = 700)
+png(file = "./images/chp01-plot5.png", width = 1000)
 plot(
   x = multi_df$date,
   y = multi_df$gspc_idx,
@@ -237,7 +237,7 @@ legend("topleft",
 dev.off()
 
 ## --- 1.5.1 Alternative Presentation of Normalized Price Chart
-png(file = "./images/chp01-plot6.png", width = 700)
+png(file = "./images/chp01-plot6.png", width = 1000)
 par(oma  =  c(0, 0, 3, 0))
 par(mfrow  =  c(2, 2))
 
@@ -306,7 +306,7 @@ amzn_sma2012[c(1:3, nrow(amzn_sma2012)), ]
 y_range <- range(amzn_sma2012, na.rm = TRUE)
 y_range
 
-png(file = "./images/chp01-plot7.png", width = 700)
+png(file = "./images/chp01-plot7.png", width = 1000)
 par(mfrow = c(1, 1))
 plot(
   x = index(amzn_sma2012),
@@ -345,7 +345,7 @@ amzn_bb2013[c(1:3, nrow(amzn_bb2013)), ]
 y_range <- range(amzn_bb2013[, -3], na.rm = TRUE)
 y_range
 
-png(file = "./images/chp01-plot8.png", width = 700)
+png(file = "./images/chp01-plot8.png", width = 1000)
 plot(
   x = index(amzn_bb2013),
   xlab = "Date",
@@ -418,7 +418,7 @@ amzn_rsi2012 <- subset(amzn_rsi[,ncol(amzn_rsi)],
                        index(amzn_rsi) >= "2012-01-01")
 amzn_rsi2012[c(1:3, nrow(amzn_rsi2012)), ]
 
-png(file = "./images/chp01-plot9.png")
+png(file = "./images/chp01-plot9.png", width = 1000)
 title1 <- "Amazon - Relative Strength Index"
 title2 <- "January 2012 - December 2013"
 plot(
@@ -435,19 +435,19 @@ dev.off()
 
 
 ## ---- Further Reading
-png(file = "./images/chp01-plot10.png")
+png(file = "./images/chp01-plot10.png", width = 1000)
 chartSeries(data_amzn[, 4], TA = c(addSMA(n = c(50, 200))))
 zoomChart("2012::2013")
 dev.off()
 
-png(file = "./images/chp01-plot11.png")
+png(file = "./images/chp01-plot11.png", width = 1000)
 chartSeries(data_amzn[, 4],
   TA = c(addBBands(n = 20, sd = 2, maType = "SMA", draw = "bands"))
 )
 zoomChart("2012::2013")
 dev.off()
 
-png(file = "./images/chp01-plot12.png")
+png(file = "./images/chp01-plot12.png", width = 1000)
 chartSeries(data_amzn[, 4],
   TA = c(addRSI(n = 14, maType = "EMA", wilder = TRUE))
 )
