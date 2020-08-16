@@ -23,3 +23,7 @@ Compile brief notes from various sources in orgmode.
 ## [Workshop Statistics (Discovery with Data, A Bayesian Approach) (1st Edition)](https://www.amazon.com/Workshop-Statistics-James-H-Albert/dp/1930190123)
 
   * James H. Albert, Allan J. Rossman (Mar 2001)
+
+## [Analyzing Financial Data and Implementing Financial Models Using R (2015 Edition)](https://www.amazon.sg/Analyzing-Financial-Implementing-Models-Using/dp/331935731X)
+
+  * Clifford S. Ang (Oct 2016))
