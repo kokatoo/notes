@@ -1,0 +1,696 @@
+#+STARTUP: showeverything
+#+title: Analyzing Financial Data and Implementing Financial Models Using R
+
+* Chapter 2: Individual Security Returns
+
+** 2.1 Price Returns
+
+*** Step 1: Import Data
+
+#+begin_src R
+  library(quantmod)
+  library(xts)
+
+  getSymbols.yahoo(
+    Symbols = c("AMZN", "IBM", "^GSPC"),
+    env = ".GlobalEnv",
+    from = "2010-12-31",
+    to = "2013-12-31"
+  )
+
+  data_amzn  <-  AMZN
+  data_ibm  <-  IBM
+  data_gspc  <-  GSPC
+
+  saveRDS(data_amzn, file = "./data/amzn.rds")
+  saveRDS(data_ibm, file = "./data/ibm.rds")
+  saveRDS(data_gspc, file = "./data/gspc.rds")
+#+end_src
+
+*** Step 2: Subset the Data to Only Include the Closing Price
+
+#+begin_src R
+  ibm_prc_ret <- data_ibm[, "IBM.Close"]
+
+  > ibm_prc_ret[c(1:3, nrow(ibm_prc_ret)), ]
+             IBM.Close
+  2010-12-31    146.76
+  2011-01-03    147.48
+  2011-01-04    147.64
+  2013-12-31    187.57
+#+end_src
+
+*** Step 3: Calculate IBM’s Price Return
+
+#+begin_src R
+  ibm_prc_ret$ibm_prc_ret <- Delt(ibm_prc_ret$IBM.Close)
+
+  > ibm_prc_ret[c(1:3, nrow(ibm_prc_ret)), ]
+             IBM.Close ibm_prc_ret
+  2010-12-31    146.76          NA
+  2011-01-03    147.48 0.004905976
+  2011-01-04    147.64 0.001084913
+  2013-12-31    187.57 0.006222858
+#+end_src
+
+*** Step 4: Clean up Data Object
+
+    Deleting first ~NA~ observation and ~IBM.Close~ column.
+
+#+begin_src R
+  options(digits = 3)
+  ibm_prc_ret <- ibm_prc_ret[-1, 2]
+
+  > ibm_prc_ret[c(1:3, nrow(ibm_prc_ret)), ]
+             ibm_prc_ret
+  2011-01-03     0.00491
+  2011-01-04     0.00108
+  2011-01-05    -0.00400
+  2013-12-31     0.00622
+  options(digits = 7)
+#+end_src
+
+** 2.2 Total Returns
+
+   Yahoo Finance data provides us with an adjusted closing price variable. Not
+   only does the adjusted closing price incorporate adjustments for dividend
+   payments, it also incorporates adjustments for stock splits.
+
+   The adjusted close price for prior periods changes every time a stock split
+   or dividend is paid. As such, the adjusted close price values we observe from
+   a later data pull of IBM data may be different from what we report in this
+   text.
+
+   However we still need the closing price. First, we might be interested in
+   knowing the capital appreciation or price return, such as for the
+   decomposition of total returns between capital appreciation and dividend
+   yield. Second, if we were to use any sort of calculation based off the
+   closing price, the adjusted close price may not reflect the appropriate price
+   that is compatible with those securities. For example, option prices have
+   strike prices that are compared to the closing price. Therefore, any analyses
+   that requires the use of historical close prices that cross an ex-dividend
+   date would have an adjusted closing price that is not consistent with the
+   option strike prices.
+
+   IBM declared dividend on Oct 29, 2013 payable on Dec 10, 2013. Ex dividend
+   date is on Nov 6th 2013. We can see that the close price on the 5th is larger
+   than the adjusted price. This is because the total return is higher than the
+   price return.
+
+#+begin_src R
+  > data_ibm[715:720, ]
+              IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+  2013-11-01   179.81   180.34  178.88    179.23    3644500     135.1939
+  2013-11-04   179.90   180.80  179.34    180.27    3483300     135.9783
+  2013-11-05   179.54   179.80  177.71    177.85    6096800     134.1529
+  2013-11-06   177.91   179.75  177.78    179.19    4560700     135.8895
+  2013-11-07   179.60   181.39  179.60    180.00    5219500     136.5038
+  2013-11-08   178.83   180.08  177.35    179.99    6275000     136.4963
+#+end_src
+
+*** Step 1: Import Adjusted Closing Price Data
+
+#+begin_src R
+  ibm_ret <- data_ibm[, 6]
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+             IBM.Adjusted
+  2010-12-31     105.5844
+  2011-01-03     106.1024
+  2011-01-04     106.2175
+  2013-12-31     142.2446
+#+end_src
+
+*** Step 2: Calculate Total Return
+
+#+begin_src R
+  ibm_ret$ibm_tot_ret <- Delt(ibm_ret$IBM.Adjusted)
+
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+             IBM.Adjusted ibm_tot_ret
+  2010-12-31     105.5844          NA
+  2011-01-03     106.1024 0.004906152
+  2011-01-04     106.2175 0.001084914
+  2013-12-31     142.2446 0.006222904
+#+end_src
+
+*** Step 3: Clean up the Data
+
+#+begin_src R
+  options(digits = 3)
+  ibm_tot_ret <- ibm_ret[, "ibm_tot_ret"]
+
+  > ibm_tot_ret[c(1:3, nrow(ibm_tot_ret)), ]
+             ibm_tot_ret
+  2010-12-31          NA
+  2011-01-03     0.00491
+  2011-01-04     0.00108
+  2013-12-31     0.00622
+
+  options(digits = 7)
+#+end_src
+
+** 2.3 Logarithmic Total Returns
+
+   r(t) = ln(P(t) / P(t-1)) = ln(P(t)) - ln(P(t-1))
+
+*** Step 1: Import Adjusted Closing Price Data
+
+#+begin_src R
+  ibm_log_ret <- data_ibm[, "IBM.Adjusted"]
+
+  > ibm_log_ret[c(1:3, nrow(ibm_log_ret)), ]
+             IBM.Adjusted
+  2010-12-31     105.5844
+  2011-01-03     106.1024
+  2011-01-04     106.2175
+  2013-12-31     142.2446
+#+end_src
+
+*** Step 2: Calculate Log Returns
+
+#+begin_src R
+  ibm_log_ret$ibm_log_ret <- diff(log(ibm_ret$IBM.Adjusted))
+
+  > ibm_log_ret[c(1:3, nrow(ibm_log_ret)), ]
+             IBM.Adjusted ibm_log_ret
+  2010-12-31     105.5844          NA
+  2011-01-03     106.1024 0.004894157
+  2011-01-04     106.2175 0.001084326
+  2013-12-31     142.2446 0.006203622
+#+end_src
+
+*** Step 3: Clean up the Data
+
+#+begin_src R
+  options(digits = 3)
+
+  ibm_log_ret <- ibm_log_ret[, 2]
+
+  > ibm_log_ret[c(1:3, nrow(ibm_log_ret)), ]
+             ibm_log_ret
+  2010-12-31          NA
+  2011-01-03     0.00489
+  2011-01-04     0.00108
+  2013-12-31     0.00620
+
+  options(digits = 7)
+#+end_src
+
+**** Compare Log Returns with Arithmetic Returns
+
+     Note we used the ~scipen=100~ option to increase the threshold before R
+     converts the output into scientific notation. This allows us to read the
+     minimum difference above in decimals rather than having to interpret the
+     results in scientific notation, which may be harder to understand.
+
+#+begin_src R
+  options(digits = 3, scipen = 100)
+
+  tot_rets <- cbind(ibm_tot_ret, ibm_log_ret)
+  > tot_rets[c(1:3, nrow(tot_rets)), ]
+             ibm_tot_ret ibm_log_ret
+  2010-12-31          NA          NA
+  2011-01-03     0.00491     0.00489
+  2011-01-04     0.00108     0.00108
+  2013-12-31     0.00622     0.00620
+
+  > max(abs(tot_rets$ibm_tot_ret - tot_rets$ibm_log_ret), na.rm = TRUE)
+  [1] 0.00363
+
+  > min(abs(tot_rets$ibm_tot_ret - tot_rets$ibm_log_ret), na.rm = TRUE)
+  [1] 0.00000000118
+
+  options(digits = 7, scipen = 0)
+#+end_src
+
+** 2.4 Cumulating Multi-Day Returns
+
+*** 2.4.1 Cumulating Arithmetic Returns
+
+**** Step 1: Import Data and Calculate Arithmetic Returns
+
+#+begin_src R
+  ibm_acum <- ibm_ret[, "ibm_tot_ret"]
+
+  > ibm_acum[c(1:3, nrow(ibm_acum)), ]
+             ibm_tot_ret
+  2010-12-31          NA
+  2011-01-03 0.004906152
+  2011-01-04 0.001084914
+  2013-12-31 0.006222904
+#+end_src
+
+**** Step 2: Set First Day Total Return Value to Zero
+
+     Assuming we are making the investment on 31st Dec 2013.
+
+#+begin_src R
+  ibm_acum[1, 1] <- 0
+
+  > ibm_acum[c(1:3, nrow(ibm_acum)), ]
+             ibm_tot_ret
+  2010-12-31 0.000000000
+  2011-01-03 0.004906152
+  2011-01-04 0.001084914
+  2013-12-31 0.006222904
+#+end_src
+
+**** Step 3: Calculate Gross Daily Returns
+
+#+begin_src R
+  ibm_acum$gross_ret <- 1 + ibm_acum$ibm_tot_ret
+
+  > ibm_acum[c(1:3, nrow(ibm_acum)), ]
+             ibm_tot_ret gross_ret
+  2010-12-31 0.000000000  1.000000
+  2011-01-03 0.004906152  1.004906
+  2011-01-04 0.001084914  1.001085
+  2013-12-31 0.006222904  1.006223
+#+end_src
+
+**** Step 4: Calculate Cumulative Gross Returns
+
+     Cumulative gross returns is just the product of gross returns.
+
+#+begin_src R
+  ibm_acum$gross_cum <- cumprod(ibm_acum$gross_ret)
+
+  > ibm_acum[c(1:3, nrow(ibm_acum)), ]
+             ibm_tot_ret gross_ret gross_cum
+  2010-12-31 0.000000000  1.000000  1.000000
+  2011-01-03 0.004906152  1.004906  1.004906
+  2011-01-04 0.001084914  1.001085  1.005996
+  2013-12-31 0.006222904  1.006223  1.347212
+#+end_src
+
+**** Step 5: Convert Cumulative Gross Returns to Cumulative Net Returns
+
+#+begin_src R
+  ibm_acum$net_cum <- ibm_acum$gross_cum - 1
+
+  >ibm_acum[c(1:3, nrow(ibm_acum)), ]
+             ibm_tot_ret gross_ret gross_cum     net_cum
+  2010-12-31 0.000000000  1.000000  1.000000 0.000000000
+  2011-01-03 0.004906152  1.004906  1.004906 0.004906152
+  2011-01-04 0.001084914  1.001085  1.005996 0.005996390
+  2013-12-31 0.006222904  1.006223  1.347212 0.347212408
+#+end_src
+
+*** 2.4.2 Cumulating Logarithmic Returns
+
+**** Step 1: Import Data and Calculate Logarithmic Returns
+
+#+begin_src R
+  ibm_logcum <- ibm_log_ret
+
+  > ibm_logcum[c(1:3, nrow(ibm_logcum)), ]
+             ibm_log_ret
+  2010-12-31          NA
+  2011-01-03 0.004894157
+  2011-01-04 0.001084326
+  2013-12-31 0.006203622
+#+end_src
+
+**** Step 2: Set the First Log Return to Zero
+
+#+begin_src R
+  ibm_logcum[1, 1] <- 0
+
+  > ibm_logcum[c(1:3, nrow(ibm_logcum)), ]
+             ibm_log_ret
+  2010-12-31 0.000000000
+  2011-01-03 0.004894157
+  2011-01-04 0.001084326
+  2013-12-31 0.006203622
+#+end_src
+
+**** Step 3: Take the Sum of all Log Rets During the Investment Period
+
+#+begin_src R
+  logcumret <- sum(ibm_logcum$ibm_log_ret)
+
+  > logcumret  
+  [1] 0.2980376
+#+end_src
+
+**** Step 4: Convert Log Return Back to Arithmetic Return
+
+     Unlike the arithmetic cumulative return, the logarithmic cumulative return
+     may not have any practical interpretation. Therefore, we would need to
+     convert the cumulative logarithmic re- turn to a cumulative arithmetic
+     return.
+
+     Note that the cumulative returns calculated is identical to the arithmetic
+     calculation.
+
+#+begin_src R
+  cumret <- exp(logcumret) - 1
+
+  > cumret
+  [1] 0.3472124
+#+end_src
+
+*** 2.4.3 Comparing Price Return and Total Return
+
+**** Step 1: Import Data and Calculate Price and Total Returns
+
+#+begin_src R
+  ibm_ret <- cbind(ibm_prc_ret, ibm_ret[, "ibm_tot_ret"])
+  names(ibm_ret) <- c("prc.ret", "tot.ret")
+
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+                 prc.ret     tot.ret
+  2010-12-31          NA          NA
+  2011-01-03 0.004905976 0.004906152
+  2011-01-04 0.001084913 0.001084914
+  2013-12-31 0.006222858 0.006222904
+#+end_src
+
+**** Step 2: Set First Returns to Zero
+
+#+begin_src R
+  ibm_ret$prc.ret[1] <- 0
+  ibm_ret$tot.ret[1] <- 0
+
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+                 prc.ret     tot.ret
+  2010-12-31 0.000000000 0.000000000
+  2011-01-03 0.004905976 0.004906152
+  2011-01-04 0.001084913 0.001084914
+  2013-12-31 0.006222858 0.006222904
+#+end_src
+
+**** Step 3: Calculate Gross Returns
+
+#+begin_src R
+  ibm_ret$gross_prc <- 1 + ibm_ret$prc.ret
+  ibm_ret$gross_tot <- 1 + ibm_ret$tot.ret
+
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+                 prc.ret     tot.ret gross_prc gross_tot
+  2010-12-31 0.000000000 0.000000000  1.000000  1.000000
+  2011-01-03 0.004905976 0.004906152  1.004906  1.004906
+  2011-01-04 0.001084913 0.001084914  1.001085  1.001085
+  2013-12-31 0.006222858 0.006222904  1.006223  1.006223
+#+end_src
+
+**** Step 4: Cumulate the Gross Returns
+
+#+begin_src R
+  ibm_ret$cum_prc <- cumprod(ibm_ret$gross_prc)
+  ibm_ret$cum_tot <- cumprod(ibm_ret$gross_tot)
+
+  > ibm_ret[c(1:3, nrow(ibm_ret)), ]
+                 prc.ret     tot.ret gross_prc gross_tot  cum_prc  cum_tot
+  2010-12-31 0.000000000 0.000000000  1.000000  1.000000 1.000000 1.000000
+  2011-01-03 0.004905976 0.004906152  1.004906  1.004906 1.004906 1.004906
+  2011-01-04 0.001084913 0.001084914  1.001085  1.001085 1.005996 1.005996
+  2013-12-31 0.006222858 0.006222904  1.006223  1.006223 1.278073 1.347212
+#+end_src
+
+**** Step 5: Plot the Two Return Series
+
+#+begin_src R
+  y_range <- range(ibm_ret[, 5:6])
+
+  > y_range
+  [1] 1.000000 1.526869
+
+  plot(
+    ibm_ret$cum_tot,
+    type = "l",
+    auto_grid = FALSE,
+    xlab = "Date",
+    ylab = "Value of Investment ($)",
+    ylim = y_range,
+    minor_ticks = FALSE,
+    main = paste(
+      "IBM Stock Performance Based On Total Returns and Price Returns ",
+      "\n",
+      "December 31, 2010 - December 31, 2013"
+    )
+  )
+  lines(ibm_ret$cum_prc, type = "l", lty = 3)
+  abline(h = 1, col = "black")
+  legend(
+    "topleft",
+    col = c("black", "black"),
+    lty = c(1, 3),
+    c(
+      "Value Based on Total Return",
+      "Value Based on Price Return"
+    )
+  )
+#+end_src
+
+[[./images/chp02-plot1.png]]
+
+** 2.5 Weekly Returns
+
+#+begin_src R
+  > class(data_amzn)
+  [1] "xts" "zoo"
+#+end_src
+
+*** Step 1: Import Data into R
+
+#+begin_src R
+  wk <- data_amzn
+
+  > wk[c(1:3, nrow(data_amzn)), ]
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2013-12-31    394.58    398.83   393.80     398.79     1996500        398.79
+#+end_src
+
+*** Step 2: Convert to Daily Data Data to Weekly Data
+
+#+begin_src R
+  amzn_weekly <- to.weekly(wk)
+
+  > amzn_weekly[c(1:3, nrow(amzn_weekly)), ]
+             wk.Open wk.High wk.Low wk.Close wk.Volume wk.Adjusted
+  2010-12-31  181.96  182.30 179.51   180.00   3451900      180.00
+  2011-01-07  181.37  188.45 181.21   185.49  22183400      185.49
+  2011-01-14  185.04  188.94 182.51   188.75  15899000      188.75
+  2013-12-31  399.41  399.92 392.45   398.79   4483600      398.79
+#+end_src
+
+*** Step 3: Clean up Weekly Data to Keep Only the Adjusted Closing Prices at the End of Each Weekly
+
+#+begin_src R
+  amzn_weekly <- amzn_weekly[, "wk.Adjusted"]
+
+  > amzn_weekly[c(1:3, nrow(amzn_weekly)), ]
+             wk.Adjusted
+  2010-12-31      180.00
+  2011-01-07      185.49
+  2011-01-14      188.75
+  2013-12-31      398.79
+#+end_src
+
+*** Step 4: Calculate Weekly Returns
+
+#+begin_src R
+  amzn_weekly$ret <- Delt(amzn_weekly$wk.Adjusted)
+
+  > amzn_weekly[c(1:3, nrow(amzn_weekly)), ]
+             wk.Adjusted         ret
+  2010-12-31      180.00          NA
+  2011-01-07      185.49  0.03050003
+  2011-01-14      188.75  0.01757504
+  2013-12-31      398.79 0.001783616
+#+end_src
+
+*** Step 5: Cleanup Weekly Returns Data by Deleting the First Observation
+
+#+begin_src R
+  amzn_weekly <- amzn_weekly[-1, 2]
+
+  > amzn_weekly[c(1:3, nrow(amzn_weekly)), ]
+                     ret
+  2011-01-07  0.03050003
+  2011-01-14  0.01757504
+  2011-01-21 -0.06002650
+  2013-12-31  0.001783616
+#+end_src
+
+** 2.6 Monthly Returns
+
+*** Step 1: Import Data into R
+
+#+begin_src R
+  mo <- data_amzn
+
+  > mo[c(1:3, nrow(data_amzn)), ]
+             AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2013-12-31    394.58    398.83   393.80     398.79     1996500        398.79
+#+end_src
+
+*** Step 2: Convert Daily Data to Monthly Data
+
+#+begin_src R
+  amzn_monthly <- to.monthly(mo)
+
+  > amzn_monthly[c(1:3, nrow(amzn_monthly)), ]
+           mo.Open mo.High mo.Low mo.Close mo.Volume mo.Adjusted
+  Dec 2010  181.96  182.30 179.51   180.00   3451900      180.00
+  Jan 2011  181.37  191.60 166.90   169.64 113611300      169.64
+  Feb 2011  170.52  191.40 169.51   173.29  95776400      173.29
+  Dec 2013  399.00  405.63 379.50   398.79  55686700      398.79
+#+end_src
+
+*** Step 3: Clean up Data to Include Only Adjusted Closing Prices for the End of Each Month
+
+#+begin_src R
+  amzn_monthly <- amzn_monthly[, "mo.Adjusted"]
+
+  > amzn_monthly[c(1:3, nrow(amzn_monthly)), ]
+            mo.Adjusted
+  Dec 2010      180.00
+  Jan 2011      169.64
+  Feb 2011      173.29
+  Dec 2013      398.79
+#+end_src
+
+*** Step 4: Calculate Monthly Returns
+
+#+begin_src R
+  amzn_monthly$ret <- Delt(amzn_monthly$mo.Adjusted)
+
+  > amzn_monthly[c(1:3, nrow(amzn_monthly)), ]
+           mo.Adjusted         ret
+  Dec 2010      180.00          NA
+  Jan 2011      169.64 -0.05755556
+  Feb 2011      173.29  0.02151612
+  Dec 2013      398.79  0.01313453
+#+end_src
+
+*** Step 5: Cleanup Monthly Data Object
+
+#+begin_src R
+  amzn_monthly <- amzn_monthly[-1, 2]
+
+  > amzn_monthly[c(1:3, nrow(amzn_monthly)), ]
+                   ret
+  Jan 2011 -0.05755556
+  Feb 2011  0.02151612
+  Mar 2011  0.03947148
+  Dec 2013  0.01313453
+#+end_src
+
+** 2.7 Comparing Performance of Multiple Securities: Total Returns
+
+*** Step 1: Importing Price Data
+
+#+begin_src R
+  > data_amzn[c(1:3, nrow(data_amzn)), ]
+  AMZN.Open AMZN.High AMZN.Low AMZN.Close AMZN.Volume AMZN.Adjusted
+  2010-12-31    181.96    182.30   179.51     180.00     3451900        180.00
+  2011-01-03    181.37    186.00   181.21     184.22     5331400        184.22
+  2011-01-04    186.15    187.70   183.78     185.01     5031800        185.01
+  2013-12-31    394.58    398.83   393.80     398.79     1996500        398.79
+
+  > data_ibm[c(1:3, nrow(data_ibm)), ]
+              IBM.Open IBM.High IBM.Low IBM.Close IBM.Volume IBM.Adjusted
+  2010-12-31   146.73   147.07  145.96    146.76    2969800     105.5844
+  2011-01-03   147.21   148.20  147.14    147.48    4603800     106.1024
+  2011-01-04   147.56   148.22  146.64    147.64    5060100     106.2175
+  2013-12-31   186.49   187.79  186.30    187.57    3619700     142.2446
+#+end_src
+
+*** Step 2: Combine Data
+
+#+begin_src R
+  multi <- data_amzn[, "AMZN.Adjusted"]
+  multi <- merge(multi, data_gspc[, "GSPC.Adjusted"])
+  multi <- merge(multi, data_ibm[, "IBM.Adjusted"])
+
+  > multi[c(1:3, nrow(multi)), ]
+             AMZN.Adjusted GSPC.Adjusted IBM.Adjusted
+  2010-12-31        180.00       1257.64     105.5844
+  2011-01-03        184.22       1271.87     106.1024
+  2011-01-04        185.01       1270.20     106.2175
+  2013-12-31        398.79       1848.36     142.2446
+#+end_src
+
+*** Step 3: Converting Data into a data.frame Object
+
+#+begin_src R
+  multi_df <- cbind(data.frame(index(multi)), data.frame(multi))
+  names(multi_df) <- paste(c("date", "AMZN", "GSPC", "IBM"))
+
+  > multi_df[c(1:3, nrow(multi_df)), ]
+                   date   AMZN    GSPC      IBM
+  2010-12-31 2010-12-31 180.00 1257.64 105.5844
+  2011-01-03 2011-01-03 184.22 1271.87 106.1024
+  2011-01-04 2011-01-04 185.01 1270.20 106.2175
+  2013-12-31 2013-12-31 398.79 1848.36 142.2446
+#+end_src
+
+*** Step 4: Constructing Normalized Values for Each Security
+
+#+begin_src R
+multi_df$amzn_idx <- multi_df$AMZN / multi_df$AMZN[1]
+multi_df$gspc_idx <- multi_df$GSPC / multi_df$GSPC[1]
+multi_df$ibm_idx <- multi_df$IBM / multi_df$IBM[1]
+
+> multi_df[c(1:3, nrow(multi_df)), c("amzn_idx", "ibm_idx", "gspc_idx")]
+           amzn_idx  ibm_idx gspc_idx
+2010-12-31 1.000000 1.000000 1.000000
+2011-01-03 1.023444 1.004906 1.011315
+2011-01-04 1.027833 1.005996 1.009987
+2013-12-31 2.215500 1.347212 1.469705
+#+end_src
+
+*** Step 5: Plotting the Index Values of Each Security
+
+#+begin_src R
+  y_range <- range(multi_df[, c("amzn_idx", "ibm_idx", "gspc_idx")])
+
+  > y_range
+  [1] 0.8740418 2.2466112
+
+  par(mfrow = c(1, 1))
+  plot(
+    x = multi_df$date,
+    xlab = "Date",
+    y = multi_df$gspc_idx,
+    ylim = y_range,
+    ylab = "Value of $1 Investment ($)",
+    type = "l",
+    col = "black",
+    lty = 1,
+    lwd = 2,
+    main = paste("Value of $1 Invested in AMZN, IBM, YHOO, And the S&P 500 ",
+                 "\n",
+                 " Index Based on Total Returns ",
+                 " December 31, 2010 - December 31, 2013")
+  )
+
+  lines(x = multi_df$date,
+        y = multi_df$amzn_idx,
+        col = "black",
+        lty = 2,
+        lwd = 1)
+  lines(x = multi_df$date,
+        y = multi_df$ibm_idx,
+        col = "gray40",
+        lty = 1,
+        lwd = 2)
+  abline(h  =  1, lty  =  1, col  =  "black")
+  legend("topleft",
+         c("AMZN", "IBM", "S&P 500 Index"),
+         col  =  c("black", "gray40", "gray60", "black"),
+         lty  =  c(2, 1, 1, 1),
+         lwd  =  c(1, 2, 1, 2))
+#+end_src
+
+[[./images/chp02-plot2.png]]
+
+
