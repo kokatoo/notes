@@ -15,7 +15,7 @@
     Symbols = c("AMZN", "IBM", "^GSPC"),
     env = ".GlobalEnv",
     from = "2010-12-31",
-    to = "2013-12-31"
+    to = "2014-01-01"
   )
 
   data_amzn  <-  AMZN
@@ -111,7 +111,7 @@
 *** Step 1: Import Adjusted Closing Price Data
 
 #+begin_src R
-  ibm_ret <- data_ibm[, 6]
+  ibm_ret <- data_ibm[, "IBM.Adjusted"]
   > ibm_ret[c(1:3, nrow(ibm_ret)), ]
              IBM.Adjusted
   2010-12-31     105.5844
@@ -660,6 +660,7 @@ multi_df$ibm_idx <- multi_df$IBM / multi_df$IBM[1]
   plot(
     x = multi_df$date,
     xlab = "Date",
+
     y = multi_df$gspc_idx,
     ylim = y_range,
     ylab = "Value of $1 Investment ($)",
