@@ -1,0 +1,598 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 12: Resampling statistics and bootstrapping
+
+** 12.1 Permutation tests
+
+   In a parametric approach, you might assume that the data are sampled from
+   normal populations with equal variances and apply a two-tailed
+   independent-groups t-test. The null hypothesis is that the popu- lation mean
+   for Treatment A is equal to the population mean for Treatment B. You would
+   calculate a t-statistic from the data and compare it to the theoretical
+   distribution. If the observed t-statistic is sufficiently extreme, say
+   outside the middle 95% of values in the theoretical distribution, you’d
+   reject the null hypothesis and declare that the pop- ulation means for the
+   two groups are unequal at the 0.05 level of significance.
+
+   A permutation test takes a different approach. If the two treatments are truly equivalent, the label (Treatment A or Treatment B) assigned to an observed score is
+
+   1. Calculate the observed t-statistic, as in the parametric approach; call
+      this t0.
+   2. Place all 10 scores in a single group.
+   3. Randomly assign five scores to Treatment A and five scores to Treatment B.
+   4. Calculate and record the new observed t-statistic.
+   5. Repeat steps 3–4 for every possible way of assigning five scores to
+      Treatment A and five scores to Treatment B. There are 252 such possible
+      arrangements.
+   6. Arrange the 252 t-statistics in ascending order. This is the empirical
+      distribution, based on (or conditioned on) the sample data.
+   7. If t0 falls outside the middle 95% of the empirical distribution, reject the
+      null hypothesis that the population means for the two treatment groups are
+      equal at the 0.05 level of significance.
+
+    The coin package and the lmPerm package. The coin package provides a com-
+      prehensive framework for permutation tests applied to independence
+      problems, whereas the lmPerm package provides permutation tests for ANOVA
+      and regression designs.
+
+| Treatment A | Treatment B |
+|-------------+-------------|
+|          40 |          57 |
+|          57 |          64 |
+|          45 |          55 |
+|          55 |          62 |
+|          58 |          65 |
+
+| Test                                | ~coin~ function              |
+|-------------------------------------+------------------------------|
+| Two- and K-sample permutation test  | =oneway_test( y ~ A)=        |
+| Wilcoxon–Mann–Whitney rank-sum test | =wilcox_test( y ~ A )=       |
+| Kruskal–Wallis test                 | =kruskal_test( y ~ A )=      |
+| Pearson’s chi-square test           | =chisq_test( A ~ B )=        |
+| Cochran–Mantel–Haenszel test        | =cmh_test( A ~ B ¦ C )=      |
+| Linear-by-linear association test   | =lbl_test( D ~ E)=           |
+| Spearman’s test                     | =spearman_test( y ~ x )=     |
+| Friedman test                       | =friedman_test( y ~ A ¦ C )= |
+| Wilcoxon signed-rank test           | =wilcoxsign_test( y1 ~ y2 )= |
+
+    Each of the functions listed in table 12.2 takes the form:
+
+#+begin_src R
+function_name( formula, data, distribution= )
+#+end_src
+
+    Possible values for ~distribution~ are ~exact~, ~asymptotic~, and
+    ~approximate~.
+
+*** 12.2.1 Independent two-sample and k-sample tests
+
+#+begin_src R
+library(coin)
+
+score <- c(40, 57, 45, 55, 58, 57, 64, 55, 62, 65)
+treatment <- factor(c(rep("A", 5), rep("B", 5)))
+mydata <- data.frame(treatment, score)
+
+> t.test(score ~ treatment, data = mydata, var.equal = TRUE)
+
+	Two Sample t-test
+
+data:  score by treatment
+t = -2, df = 8, p-value = 0.05
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -19.04  -0.16
+sample estimates:
+mean in group A mean in group B 
+             51              61
+#+end_src
+
+#+begin_src R
+>  oneway_test(score~treatment, data=mydata, distribution="exact")
+
+	Exact Two-Sample Fisher-Pitman Permutation Test
+
+data:  score by treatment (A, B)
+Z = -2, p-value = 0.07
+alternative hypothesis: true mu is not equal to 0
+#+end_src
+
+    In chapter 7, we examined the difference in the probability of imprisonment
+    in Southern versus non-Southern US states using the wilcox.test() function.
+    Using an exact Wilcoxon rank-sum test:
+
+#+begin_src R
+library(MASS)
+
+UScrime <- transform(UScrime, So = factor(So))
+
+> wilcox_test(Prob ~ So, data = UScrime, distribution = "exact")
+
+	Exact Wilcoxon-Mann-Whitney Test
+
+data:  Prob by So (0, 1)
+Z = -4, p-value = 8e-05
+alternative hypothesis: true mu is not equal to 0
+#+end_src
+
+    Finally, consider a k-sample test. In chapter 9, you used a one-way ANOVA to
+    evaluate the impact of five drug regimens on cholesterol reduction in a
+    sample of 50 patients. An approximate k-sample permutation test can be
+    performed instead, using this code:
+
+#+begin_src R
+  library(multcomp)
+  set.seed(1234)
+
+  > oneway_test(
+      response ~ trt,
+      data = cholesterol,
+      distribution = approximate(B = 9999)
+    )
+
+  Approximative K-Sample Fisher-Pitman Permutation Test
+
+  data:  response by
+     trt (1time, 2times, 4times, drugD, drugE)
+  chi-squared = 36, p-value <1e-04
+
+  Warning message:
+  In approximate(B = 9999) : ‘B’ is deprecated; use ‘nresample’ instead
+#+end_src
+
+*** 12.2.2 Independence in contingency tables
+
+    You can use permutation tests to assess the independence of two categorical
+    variables using either the chisq_test() or cmh_test() function. The latter
+    function is used when data is stratified on a third categorical variable. If
+    both variables are ordinal, you can use the lbl_test() function to test for
+    a linear trend. 
+
+    In chapter 7, you applied a chi-square test to assess the relationship
+    between arthritis treatment and improvement. Treatment had two levels
+    (Placebo and Treated), and Improved had three levels (None, Some, and
+    Marked). The Improved variable was encoded as an ordered factor.
+
+#+begin_src R
+  library(coin)
+  library(vcd)
+
+  Arthritis <- transform(
+    Arthritis,
+    Improved = as.factor(as.numeric(Improved))
+  )
+
+  set.seed(1234)
+
+  > chisq_test(
+      Treatment ~ Improved,
+      data = Arthritis,
+      distribution = approximate(B = 9999)
+    )
+
+  	Approximative Pearson Chi-Squared Test
+
+  data:  Treatment by Improved (1, 2, 3)
+  chi-squared = 13, p-value = 0.002
+
+  Warning message:
+  In approximate(B = 9999) : ‘B’ is deprecated; use ‘nresample’ instead
+#+end_src
+
+*** 12.2.3 Independence between numeric variables
+
+    The spearman_test() function provides a permutation test of the independence
+    of two numeric variables. In chapter 7, we examined the correlation between
+    illiteracy rates and murder rates for US states. You can test the
+    association via permutation, using the following code:
+
+#+begin_src R
+states <- as.data.frame(state.x77)
+set.seed(1234)
+
+> spearman_test(
+    Illiteracy ~ Murder,
+    data = states,
+    distribution = approximate(B = 9999)
+  )
+
+	Approximative Spearman Correlation Test
+
+data:  Illiteracy by Murder
+Z = 5, p-value <1e-04
+alternative hypothesis: true rho is not equal to 0
+
+Warning message:
+In approximate(B = 9999) : ‘B’ is deprecated; use ‘nresample’ instead
+#+end_src
+
+*** 12.2.4 Dependent two-sample and k-sample tests
+
+    Dependent sample tests are used when observations in different groups have
+    been matched or when repeated measures are used. For permutation tests with
+    two paired groups, the wilcoxsign_test() function can be used. For more than
+    two groups, use the friedman_test() function.
+
+    In chapter 7, we compared the unemployment rate for urban males age 14–24
+    (U1) with urban males age 35–39 (U2). Because the two variables are reported
+    for each of the 50 US states, you have a two-dependent groups design (state
+    is the match- ing variable). You can use an exact Wilcoxon signed-rank test
+    to see if unemployment rates for the two age groups are equal:
+
+#+begin_src R
+library(coin)
+library(MASS)
+
+> wilcoxsign_test(U1 ~ U2, data = UScrime, distribution = "exact")
+ 
+	Exact Wilcoxon-Pratt Signed-Rank Test
+
+data:  y by x (pos, neg) 
+	 stratified by block
+Z = 6, p-value = 1e-14
+alternative hypothesis: true mu is not equal to 0
+#+end_src
+
+*** 12.2.5 Going further
+
+** 12.3 Permutation tests with the lmPerm package
+
+   The ~perm=~ option can take the value ~Exact~, ~Prob~, or ~SPR~. Exact
+   produces an exact test, based on all possible permutations. ~Prob~ samples from
+   all possible permutations. Sampling continues until the estimated standard
+   deviation falls below 0.1 of the estimated p-value. The stopping rule is
+   controlled by an optional ~Ca~ parameter. Finally, ~SPR~ uses a sequential
+   probability ratio test to decide when to stop sampling. Note that if the
+   number of observations is greater than 10, ~perm="Exact"~ will automatically
+   default to ~perm="Prob"~; exact tests are only available for small problems.
+
+*** 12.3.1 Simple and polynomial regression
+
+#+begin_src R
+library(lmPerm)
+set.seed(1234)
+
+fit <- lmp(weight ~ height, data = women, perm = "Prob")
+
+> summary(fit)
+ 
+Call:
+lm(formula = mpg ~ wt + disp)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.409 -2.324 -0.768  1.772  6.348 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 34.96055    2.16454   16.15  4.9e-16 ***
+wt          -3.35083    1.16413   -2.88   0.0074 ** 
+disp        -0.01772    0.00919   -1.93   0.0636 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.9 on 29 degrees of freedom
+Multiple R-squared:  0.781,	Adjusted R-squared:  0.766 
+F-statistic: 51.7 on 2 and 29 DF,  p-value: 2.74e-10
+#+end_src
+
+#+begin_src R
+library(lmPerm)
+set.seed(1234)
+
+fit <- lmp(
+  weight ~ height + I(height^2),
+  data = women,
+  perm = "Prob"
+)
+
+> summary(fit)
+ 
+Call:
+lm(formula = mpg ~ wt + disp)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.409 -2.324 -0.768  1.772  6.348 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 34.96055    2.16454   16.15  4.9e-16 ***
+wt          -3.35083    1.16413   -2.88   0.0074 ** 
+disp        -0.01772    0.00919   -1.93   0.0636 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.9 on 29 degrees of freedom
+Multiple R-squared:  0.781,	Adjusted R-squared:  0.766 
+F-statistic: 51.7 on 2 and 29 DF,  p-value: 2.74e-10
+#+end_src
+
+*** 12.3.2 Multiple regression
+
+#+begin_src R
+library(lmPerm)
+set.seed(1234)
+
+states <- as.data.frame(state.x77)
+fit <- lmp(
+  Murder ~ Population + Illiteracy + Income + Frost,
+  data = states,
+  perm = "Prob"
+)
+
+> summary(fit)
+
+Call:
+lmp(formula = Murder ~ Population + Illiteracy + Income + Frost, 
+    data = states, perm = "Prob")
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7960 -1.6495 -0.0811  1.4815  7.6210 
+
+Coefficients:
+           Estimate Iter Pr(Prob)    
+Population 2.24e-04   51   1.0000    
+Illiteracy 4.14e+00 5000   0.0004 ***
+Income     6.44e-05   51   1.0000    
+Frost      5.81e-04   51   0.8627    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.5 on 45 degrees of freedom
+Multiple R-Squared: 0.567,	Adjusted R-squared: 0.528 
+F-statistic: 14.7 on 4 and 45 DF,  p-value: 9.13e-08 
+#+end_src
+
+*** 12.3.3 One-way ANOVA and ANCOVA
+
+    It’s important to note that when aovp() is applied to ANOVA designs, it
+    defaults to unique sums of squares (also called SAS Type III sums of
+    squares). Each effect is adjusted for every other effect. 
+
+**** Permutation test for one-way ANOVA
+
+#+begin_src R
+library(lmPerm)
+library(multcomp)
+
+set.seed(1234)
+fit <- aovp(response ~ trt, data = cholesterol, perm = "Prob")
+
+> anova(fit)
+ Analysis of Variance Table
+
+Response: response
+          Df R Sum Sq R Mean Sq Iter Pr(Prob)    
+trt        4     1351       338 5000   <2e-16 ***
+Residuals 45      469        10                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#+end_src
+
+**** Permutation test for one-way ANCOVA
+
+#+begin_src R
+library(lmPerm)
+set.seed(1234)
+
+fit <- aovp(
+  weight ~ gesttime + dose,
+  data = litter,
+  perm = "Prob"
+)
+
+> anova(fit)
+ Analysis of Variance Table
+
+Response: weight
+          Df R Sum Sq R Mean Sq Iter Pr(Prob)    
+gesttime   1      161     161.5 5000   0.0006 ***
+dose       3      137      45.7 5000   0.0392 *  
+Residuals 69     1151      16.7                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#+end_src
+
+*** 12.3.4 Two-way ANOVA
+
+#+begin_src R
+library(lmPerm)
+set.seed(1234)
+
+fit <- aovp(len ~ supp * dose,
+  data = ToothGrowth,
+  perm = "Prob"
+)
+
+> anova(fit)
+> Analysis of Variance Table
+
+Response: len
+          Df R Sum Sq R Mean Sq Iter Pr(Prob)    
+supp       1      205       205 5000   <2e-16 ***
+dose       1     2224      2224 5000   <2e-16 ***
+supp:dose  1       89        89 2032    0.047 *  
+Residuals 56      934        17                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#+end_src
+
+** 12.5 Bootstrapping
+
+   Bootstrapping generates an empirical distribution of a test statistic or set
+   of test statistics by repeated random sampling with replacement from the
+   original sample. It allows you to generate confidence intervals and test
+   statistical hypotheses without having to assume a specific underlying
+   theoretical distribution.
+
+** 12.6 Bootstrapping with the boot package
+
+#+begin_src R
+bootobject <- boot(data=, statistic=, R=, ...)
+#+end_src
+
+| Parameter | Description                                                                                                                                                                                                                                                         |
+|-----------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ~data~     | A vector, matrix, or data frame.                                                                                                                                                                                                                                    |
+| ~statistic~ | A function that produces the k statistics to be bootstrapped (k=1 if bootstrap- ping a single statistic). The function should include an indices parameter that the ~boot()~ function can use to select cases for each replication (see the examples in the text).  |
+| ~R~         | Number of bootstrap replicates.                                                                                                                                                                                                                                     |
+| ~...~       | Additional parameters to be passed to the function that produces the statistic of interest.                                                                                                                                                                         |
+
+   The statistics are calculated on the sample, and the results are accumulated
+   in bootobject. You can access these elements as ~bootobject$t0~ and
+   ~bootobject$t~.
+
+   The ~bootobject~ structure:
+
+| Element | Description                                                                  |
+|---------+------------------------------------------------------------------------------|
+| ~t0~    | The observed values of k statistics applied to the original data             |
+| ~t~     | An R × k matrix, where each row is a bootstrap replicate of the k statistics |
+
+   You can use the ~boot.ci()~ function to obtain confidence intervals for the
+   statistic(s).
+
+#+begin_src R
+boot.ci(bootobject, conf=, type= )
+#+end_src
+
+| Parameter    | Description                                                                                                               |
+|--------------+---------------------------------------------------------------------------------------------------------------------------|
+| ~bootobject~ | The object returned by the ~boot()~ function.                                                                             |
+| ~conf~       | The desired confidence interval (default: conf=0.95).                                                                     |
+| ~type~       | The type of confidence interval returned. Possible values are norm, basic, stud, perc, bca, and all (default: type="all") |
+
+*** 12.6.1 Bootstrapping a single statistic
+
+#+begin_src R
+rsq <- function(formula, data, indices) {
+  d <- data[indices, ]
+  fit <- lm(formula, data = d)
+  return(summary(fit)$r.square)
+}
+
+library(boot)
+set.seed(1234)
+results <- boot(
+  data = mtcars,
+  statistic = rsq,
+  R = 1000,
+  formula = mpg ~ wt + disp
+)
+
+> print(results)
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = mtcars, statistic = rsq, R = 1000, formula = mpg ~ 
+    wt + disp)
+
+
+Bootstrap Statistics :
+    original  bias    std. error
+t1*     0.78   0.014       0.051
+
+> plot(results)
+#+end_src
+
+[[./images/chp12-plot1.png]]
+
+#+begin_src R
+> boot.ci(results, type = c("perc", "bca"))
+ BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = results, type = c("perc", "bca"))
+
+Intervals : 
+Level     Percentile            BCa          
+95%   ( 0.68,  0.88 )   ( 0.63,  0.86 )  
+Calculations and Intervals on Original Scale
+Some BCa intervals may be unstable
+#+end_src
+
+*** 12.6.2 Bootstrapping several statistics
+
+#+begin_src R
+bs <- function(formula, data, indices) {
+  d <- data[indices, ]
+  fit <- lm(formula, data = d)
+  return(coef(fit))
+}
+
+library(boot)
+set.seed(1234)
+results <- boot(
+  data = mtcars,
+  statistic = bs,
+  R = 1000,
+  formula = mpg ~ wt + disp
+)
+
+> print(results)
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = mtcars, statistic = bs, R = 1000, formula = mpg ~ 
+    wt + disp)
+
+
+Bootstrap Statistics :
+    original   bias    std. error
+t1*   34.961  4.7e-02      2.5461
+t2*   -3.351 -4.9e-02      1.1548
+t3*   -0.018  6.2e-05      0.0085
+#+end_src
+
+[[./images/chp12-plot2.png]]
+
+[[./images/chp12-plot3.png]]
+
+[[./images/chp12-plot4.png]]
+
+#+begin_src R
+> boot.ci(results, type = "bca", index = 1)
+ BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = results, type = "bca", index = 1)
+
+Intervals : 
+Level       BCa          
+"95%"   (30, 40 )  
+Calculations and Intervals on Original Scale
+
+> boot.ci(results, type = "bca", index = 2)
+> BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = results, type = "bca", index = 2)
+
+Intervals : 
+Level       BCa          
+95%   (-5.48, -0.94 )  
+Calculations and Intervals on Original Scale
+
+> boot.ci(results, type = "bca", index = 3)
+ BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = results, type = "bca", index = 3)
+
+Intervals : 
+Level       BCa          
+95%   (-0.0334, -0.0011 )  
+Calculations and Intervals on Original Scale
+#+end_src

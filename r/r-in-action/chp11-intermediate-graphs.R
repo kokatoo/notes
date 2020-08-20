@@ -183,6 +183,24 @@ plot(
 dev.off()
 par(opar)
 
+opar <- par(no.readonly = TRUE)
+png(file = "./images/chp11-plot23.png")
+types <- c("p", "l", "o", "b",
+           "c", "s", "S", "h")
+par(mfrow = c(2, 4))
+for (t in types) {
+  plot(
+    t1$age,
+    t1$circumference,
+    xlab = "Age (days)",
+    ylab = "Circumference (mm)",
+    main = "Orange Tree 1 Growth",
+    type = t
+  )
+}
+dev.off()
+par(opar)
+
 Orange$Tree <- as.numeric(Orange$Tree)
 ntrees <- max(Orange$Tree)
 xrange <- range(Orange$age)
