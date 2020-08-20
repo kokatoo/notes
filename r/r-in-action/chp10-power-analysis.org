@@ -3,6 +3,72 @@
 
 * Chapter 10: Power analysis
 
+** 10.1 A quick review of hypothesis testing
+
+   In statistical hypothesis testing, you specify a hypothesis about a
+   population parameter (your null hypothesis, or H0). You then draw a sample
+   from this population and calculate a statistic that’s used to make
+   inferences about the population parameter. Assuming that the null hypothesis
+   is true, you calculate the probability of obtaining the observed sample
+   statistic or one more extreme. If the probability is sufficiently small, you
+   reject the null hypothesis in favor of its opposite (referred to as the
+   alternative or research hypothesis, H1).
+
+   There are four possible outcomes from your decision:
+
+   * If the null hypothesis is false and the statistical test leads you to
+     reject it, you’ve made a correct decision. (Power)
+   * If the null hypothesis is true and you don't reject it, again you’ve made a
+     correct decision. (No effect)
+   * If the null hypothesis is true but you reject it, you’ve committed a Type I
+     error. (Alpha) (Find an effect when there is none)
+   * If the null hypothesis is false and you fail to reject it, you’ve committed
+     a Type II error. (Fail to find an effect where there is one)
+
+|          | Reject H0            | Fail to Reject H0             |
+|----------+----------------------+-------------------------------|
+| H0 True  | Type I Error (Alpha) | Correct (Fail to find effect) |
+| H0 False | Power                | Type II Error                 |
+
+   *Sample size*
+    
+   Sample size refers to the number of observa- tions in each condition/group
+   of the experimental design.
+
+   *Significance level*
+
+   The significance level (also referred to as alpha) is defined as the
+   probability of making a Type I error. The significance level can also be
+   thought of as the probability of finding an effect that is not there.
+
+   *Power*
+    
+   Power is defined as one minus the probabil- ity of making a Type II error.
+   Power can be thought of as the probability of finding an effect that is
+   there.
+
+   *Effect size*
+
+   Effect size is the magnitude of the effect under the alternate or research
+   hypothesis. The formula for effect size depends on the statistical
+   methodology employed in the hypothesis testing.
+
+   Although the sample size and significance level are under the direct control
+   of the researcher, power and effect size are affected more indirectly. For
+   example, as you relax the significance level (in other words, make it easier
+   to reject the null hypothesis), power increases. Similarly, increasing the
+   sample size increases power. 
+
+   Your research goal is typically to maximize the power of your statistical
+   tests while maintaining an acceptable significance level and employing as
+   small a sample size as possible. That is, you want to maximize the chances of
+   finding a real effect and minimize the chances of finding an effect that
+   isn’t really there, while keeping study costs within reason. The four
+   quantities (sample size, significance level, power, and effect size) have an
+   intimate relationship.
+
+   Given any three, you can determine the fourth.
+
 ** 10.2 Implementing power analysis with the pwr package
 
 | Function         | Power calculations for …                  |
@@ -19,8 +85,16 @@
 
 *** 10.2.1 t-tests
 
+    The ~pwr.t.test()~ function provides power analysis options for a t-test.
+
 #+begin_src R
-pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
+  pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
+#+end_src
+
+    *Effect size:*
+
+#+begin_src
+d = (mu(1) - mu(2)) / sigma
 #+end_src
 
 | ~n~           | is the sample size.                                                                                                                                    |
@@ -30,14 +104,25 @@ pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
 | ~type~        | is a two-sample t-test ("two.sample"), a one-sample t-test ("one.sample"), or a dependent sample t-test ( "paired"). A two-sample test is the default. |
 | ~alternative~ | indicates whether the statistical test is two-sided ("two.sided") or one-sided ("less" or "greater"). A two-sided test is the default.                 |
 
+    Assume that you’ll be using a two-tailed independent sample t-test to
+    compare the mean reaction time for participants in the cell phone condition
+    with the mean reaction time for participants driving unencumbered. Let’s
+    assume that you know from past experience that reaction time has a sd of
+    1.25 seconds. Also suppose that a 1-sec difference in reaction time is
+    considered an important difference. You’d therefore like to conduct a study
+    in which you’re able to detect an effect size of d = 1/1.25 = 0.8 or larger.
+    Additionally, you want to be 90% sure to detect such a difference if it
+    exists, and 95% sure that you won’t declare a difference to be significant
+    when it’s actually due to random variability.
+
 #+begin_src R
   library(pwr)
 
   > pwr.t.test(d=.8,
-             sig.level=.05,
-             power=.9,
-             type="two.sample",
-             alternative="two.sided")
+               sig.level=.05,
+               power=.9,
+               type="two.sample",
+               alternative="two.sided")
 
   Two-sample t test power calculation 
 
@@ -48,6 +133,15 @@ pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
   alternative = two.sided
 
   NOTE: n is number in *each* group
+
+#+end_src
+
+    The results suggest that you need 34 participants in each group (for a total
+    of 68 participants) in order to detect an effect size of 0.8 with 90%
+    certainty and no more than a 5% chance of erroneously concluding that a
+    difference exists when, in fact, it doesn’t.
+
+#+begin_src R
 
   > pwr.t.test(n=20,
                d=.5,
@@ -66,11 +160,24 @@ pwr.t.test(n=, d=, sig.level=, power=, type=, alternative=)
   NOTE: n is number in *each* group
 #+end_src
 
+    When there are unequal sample size n1 and n2:
+    
 #+begin_src R
-pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
+  pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 #+end_src
 
 *** 10.2.2 ANOVA
+
+    The ~pwr.anova.test()~ function provides power analysis options for a balanced one-way analysis of variance.
+
+    *Effect size:*
+
+#+begin_src 
+f = sqrt(sum(p(i) * (mu(i) - mean)^2) / sigma^2)
+#+end_src
+
+
+    ~sigma^2~ is the error variance within group. ~p(i) = n(i)/N~
 
 #+begin_src R
   > pwr.anova.test(k=5, f=.25, sig.level=.05, power=.8)
@@ -88,6 +195,11 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 
 *** 10.2.3 Correlations
 
+    The ~pwr.r.test()~ function provides a power analysis for tests of
+    correlation coefficients.
+
+    ~r~ the linear correlation coefficient is the effect size here.
+
 #+begin_src R
   > pwr.r.test(r=.25, sig.level=.05, power=.90, alternative="greater")
 
@@ -102,6 +214,29 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 
 *** 10.2.4 Linear models
 
+    For linear models (such as multiple regression), the ~pwr.f2.test()~ function
+    can be used to carry out a power analysis.
+
+    f2 or ~f^2~ is the effect size and ~u~ and ~v~ are the numerator and
+    denominator degrees of freedom.
+
+#+begin_src 
+f^2 = R^2 / (1 - R^2)
+
+f^2 = (R(A,B)^2 - R(A)^2) / (1 - R(A,B)^2)
+#+end_src
+    
+
+    The first formula for f2 is appropriate when you’re evaluating the impact of
+    a set of predictors on an outcome. The second formula is appropriate when
+    you’re evaluating the impact of one set of predictors above and beyond a
+    second set of predictors (or covariates).
+
+    In multiple regression, the denominator degrees of freedom equals ~N – k – 1~,
+    where ~N~ is the number of observations and k is the number of predictors. In
+    this case, ~N – 7 – 1 = 185~, which means the required sample size is ~N =
+    185 + 7 + 1 = 193~.
+
 #+begin_src R
   > pwr.f2.test(u=3, f2=0.0769, sig.level=0.05, power=0.90)
 
@@ -115,6 +250,15 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 #+end_src
 
 *** 10.2.5 Tests of proportions
+
+    The ~pwr.2p.test()~ function can be used to perform a power analysis when
+    comparing two proportions.
+
+    ~h~ is the effect size and ~n~ is the common sample size in each group.
+
+#+begin_src 
+h <- 2*arcsin(sqrt(p1)) - 2*arcsin(sqrt(p2))
+#+end_src
 
 #+begin_src R
   > pwr.2p.test(h=ES.h(.65, .6), sig.level=.05, power=.9, alternative="greater")
@@ -132,11 +276,37 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 
 *** 10.2.6 Chi-square tests
 
+    Chi-square tests are often used to assess the relationship between two
+    categorical variables. The null hypothesis is typically that the variables
+    are independent versus a research hypothesis that they aren’t.
+
+    ~w~ is the effect size, ~N~ is the total sample size, and ~df~ is the
+    degrees of freedom.
+
+#+begin_src
+w = sqrt(sum(p0(i) - p1(i))^2 / p0(i))
+#+end_src
+
+    As a simple example, let’s assume that you’re looking at the relationship
+    between ethnicity and promotion. You anticipate that 70% of your sample will
+    be Caucasian, 10% will be African-American, and 20% will be Hispanic.
+    Further, you believe that 60% of Caucasians tend to be promoted, compared
+    with 30% for African-Americans and 50% for Hispanics. Your research
+    hypothesis is that the probability of promotion follows the values:
+
 | Ethnicity        | Promoted | Not promoted |
 |------------------+----------+--------------|
 | Caucasian        |     0.42 |         0.28 |
 | African-American |     0.03 |         0.07 |
 | Hispanic         |     0.10 |         0.10 |
+
+    For example, you expect that 42% of the population will be promoted
+    Caucasians ~(.42 = .70 × .60)~ and 7% of the population will be nonpromoted
+    African-Americans ~(.07 = .10 × .70)~. Let’s assume a significance level of
+    0.05 and that the desired power level is 0.90. The degrees of freedom in a
+    two-way contingency table are ~(r– 1)×(c – 1)~, where ~r~ is the number of rows
+    and ~c~ is the number of columns. You can calculate the hypothesized effect
+    size with the following code:
 
 #+begin_src R
   prob <- matrix(c(.42, .28, .03, .07, .10, .10), byrow=TRUE, nrow=3)
@@ -151,7 +321,8 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
   w = 0.1853
   N = 368.5317
   df = 2
-  sig.level = 0.05
+  sig.lev
+el = 0.05
   power = 0.9
 
   NOTE: N is the number of observations
@@ -161,6 +332,16 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 
 **** Cohen’s effect size benchmarks
 
+     In power analysis, the expected effect size is the most difficult parameter
+     to determine. It typically requires that you have experience with the
+     subject matter and the measures employed. For example, the data from past
+     studies can be used to calculate effect sizes, which can then be used to
+     plan future studies.
+
+     In the area of behavioral sciences, Cohen (1988) attempted to provide
+     benchmarks for “small,” “medium,” and “large” effect sizes for various
+     statistical tests.
+     
 | Statistical method  | Effect size measures | Small | Medium | Large |
 |---------------------+----------------------+-------+--------+-------|
 | t-test              | d                    |  0.20 |   0.50 |  0.80 |
@@ -184,7 +365,8 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
     samsize[i] <- ceiling(result$n)
   }
 
-  plot(samsize,es,
+  plot(samsize,
+       es,
        type="l",
        lwd=2,
        col="red",
@@ -197,51 +379,73 @@ pwr.t2n.test(n1=, n2=, d=, sig.level=, power=, alternative=)
 
 ** 10.3 Creating power analysis plots
 
+   Suppose you’d like to see the sample size necessary to declare a correlation
+   coefficient statistically significant for a range of effect sizes and power
+   levels.
+
 #+begin_src R
-  library(pwr)
+library(pwr)
 
-  r <- seq(.1,.5,.01)
-  nr <- length(r)
+r <- seq(0.1, 0.5, 0.01)
 
-  p <- seq(.4,.9,.1)
-  np <- length(p)
+nr <- length(r)
 
-  samsize <- array(numeric(nr*np), dim=c(nr,np))
-  for (i in 1:np){
-    for (j in 1:nr) {
-      result <- pwr.r.test(n = NULL,
-                           r = r[j],
-                           sig.level = .05,
-                           power = p[i],
-                           alternative = "two.sided")
-      samsize[j,i] <- ceiling(result$n)
-    }
+p <- seq(0.4, 0.9, 0.1)
+np <- length(p)
+
+samsize <- array(numeric(nr * np), dim = c(nr, np))
+
+for (i in 1:np) {
+
+  for (j in 1:nr) {
+    result <- pwr.r.test(
+      n = NULL,
+      r = r[j],
+      sig.level = 0.05,
+      power = p[i],
+      alternative = "two.sided"
+    )
+
+    samsize[j, i] <- ceiling(result$n)
   }
+}
 
-  xrange <- range(r)
-  yrange <- round(range(samsize))
-  colors <- rainbow(length(p))
+xrange <- range(r)
+yrange <- round(range(samsize))
+colors <- rainbow(length(p))
 
-  plot(xrange,
-       yrange,
-       type="n",
-       xlab="Correlation Coefficient (r)",
-       ylab="Sample Size (n)")
+plot(xrange,
+  yrange,
+  type = "n",
+  xlab = "Correlation Coefficient (r)",
+  ylab = "Sample Size (n)"
+)
 
-  for (i in 1:np){
-    lines(r, samsize[,i], type="l", lwd=2, col=colors[i])
-  }
+for (i in 1:np) {
+  lines(r, samsize[, i], type = "l", lwd = 2, col = colors[i])
+}
 
-  abline(v=0, h=seq(0,yrange[2],50), lty=2, col="grey89")
-  abline(h=0, v=seq(xrange[1],xrange[2],.02), lty=2, col="gray89")
+abline(v = 0, h = seq(0, yrange[2], 50), lty = 2, col = "grey89")
+abline(h = 0, v = seq(xrange[1], xrange[2], 0.02), lty = 2, col = "gray89")
 
-  title("Sample Size Estimation for Correlation Studies\n Sig=0.05 (Two-tailed)")
-  legend("topright", title="Power", as.character(p), fill=colors)
+title("Sample Size Estimation for Correlation Studies\n Sig=0.05 (Two-tailed)")
+legend("topright", title = "Power", as.character(p), fill = colors)
 #+end_src
 
 [[./images/chp10-plot2.png]]
 
 ** 10.4 Other packages
+
+   The last five in the table are particularly focused on power analysis in
+   genetic studies. Genome-wide association studies (GWAS) are studies used to
+   identify genetic associations with observable traits. For example, these
+   studies would focus on why some people get a specific type of heart disease.
+
+   The MBESS package contains a wide range of functions that can be used for
+   var- ious forms of power analysis and sample size determination. The
+   functions are particularly relevant for researchers in the behavioral,
+   educational, and social sciences.
+
 
 | Package                | Purpose                                                                                                   |
 |------------------------+-----------------------------------------------------------------------------------------------------------|

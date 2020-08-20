@@ -256,7 +256,7 @@ multi_df[c(1:3, nrow(multi_df)), c("amzn_idx", "ibm_idx", "gspc_idx")]
 y_range <- range(multi_df[, c("amzn_idx", "ibm_idx", "gspc_idx")])
 y_range
 
-png(file="./images/chp02-plot2.png", width = 1000)
+png(file = "./images/chp02-plot2.png", width = 1000)
 par(mfrow = c(1, 1))
 plot(
   x = multi_df$date,
