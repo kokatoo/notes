@@ -1,0 +1,483 @@
+#+STARTUP: showeverything
+#+title: R in Action
+
+* Chapter 11: Intermediate graphs
+
+** 11.1 Scatter plots
+
+   R has two functions for producing lowess fits: ~lowess()~ and ~loess()~. The
+   ~loess()~ function is a newer, formula-based version of ~lowess()~ and is more
+   powerful.
+
+#+begin_src R
+attach(mtcars)
+plot(wt,
+  mpg,
+  main = "Basic Scatter plot of MPG vs. Weight",
+  xlab = "Car Weight (lbs/1000)",
+  ylab = "Miles Per Gallon ",
+  pch = 19
+)
+
+abline(lm(mpg ~ wt), col = "red", lwd = 2, lty = 1)
+lines(lowess(wt, mpg), col = "blue", lwd = 2, lty = 2)
+#+end_src
+
+[[./images/chp11-plot1.png]]
+
+#+begin_src R
+scatterplot(
+  mpg ~ wt | cyl,
+  data = mtcars,
+  lwd = 2,
+  main = "Scatter Plot of MPG vs. Weight by # Cylinders",
+  xlab = "Weight of Car (lbs/1000)",
+  ylab = "Miles Per Gallon",  
+  boxplots = "xy"
+)
+#+end_src
+
+[[./images/chp11-plot2.png]]
+
+*** 11.1.1 Scatter-plot matrices
+
+#+begin_src R
+pairs(
+  ~ mpg + disp + drat + wt,
+  data = mtcars,
+  main = "Basic Scatter Plot Matrix"
+)
+#+end_src
+
+[[./images/chp11-plot3.png]]
+
+#+begin_src R
+pairs(
+  ~ mpg + disp + drat + wt,
+  data = mtcars,
+  upper.panel = NULL,
+  main = "Basic Scatter Plot Matrix"
+)
+#+end_src
+
+[[./images/chp11-plot22.png]]
+
+#+begin_src R
+library(car)
+
+scatterplotMatrix(
+  ~ mpg + disp + drat + wt,
+  data = mtcars,
+  col = palette()[1],
+  smooth = list(col.smooth = palette()[2], col.spread = palette()[4]),
+  regLine = list(col = palette()[3]),
+  main = "Scatter Plot Matrix via car Package"
+)
+#+end_src
+
+
+[[./images/chp11-plot4.png]]
+
+    You may want to explore the ~cpars()~ function in the ~glus~ package, the
+    ~pairs2()~ function in the ~TeachingDemos~ package, the ~xysplom()~ function in
+    the ~HH~ package, the ~kepairs()~ function in the ~ResourceSelection~ package, and
+    ~pairs.mod()~ in the ~SMPracticals~ package. Each adds its own unique twist.
+
+*** 11.1.2 High-density scatter plots
+
+#+begin_src R
+set.seed(1234)
+n <- 10000
+c1 <- matrix(rnorm(n, mean = 0, sd = .5), ncol = 2)
+c2 <- matrix(rnorm(n, mean = 3, sd = 2), ncol = 2)
+mydata <- rbind(c1, c2)
+mydata <- as.data.frame(mydata)
+names(mydata) <- c("x", "y")
+
+with(
+  mydata,
+  plot(x, y, pch = 19, main = "Scatter Plot with 10,000 Observations")
+)
+#+end_src
+
+[[./images/chp11-plot5.png]]
+
+#+begin_src R
+with(
+  mydata,
+  smoothScatter(x, y, main = "Scatter Plot Colored by Smoothed Densities")
+)
+#+end_src
+
+[[./images/chp11-plot6.png]]
+
+#+begin_src R
+library(hexbin)
+
+with(mydata, {
+  bin <- hexbin(x, y, xbins = 50)
+  plot(bin, main = "Hexagonal Binning with 10,000 Observations")
+})
+#+end_src
+
+[[./images/chp11-plot7.png]]
+
+    It’s useful to note that the ~smoothScatter()~ function in the base package,
+    along with the ~ipairs()~ function in the IDPmisc package, can be used to
+    create readable scatter plot matrices for large datasets as well.
+
+*** 11.1.3 3D scatter plots
+
+#+begin_src R
+library(scatterplot3d)
+
+attach(mtcars)
+scatterplot3d(
+  wt,
+  disp,
+  mpg,
+  main = "Basic 3D Scatter Plot"
+)
+#+end_src
+
+[[./images/chp11-plot8.png]]
+
+#+begin_src R
+scatterplot3d(wt,
+  disp,
+  mpg,
+  pch = 16,
+  highlight.3d = TRUE,
+  type = "h",
+  main = "3D Scatter Plot with Vertical Lines"
+)
+#+end_src
+
+[[./images/chp11-plot9.png]]
+#+begin_src R
+library(scatterplot3d)
+attach(mtcars)
+
+s3d <- scatterplot3d(
+  wt,
+  disp,
+  mpg,
+  pch = 16,
+  highlight.3d = TRUE,
+  type = "h",
+  main = "3D Scatter Plot with Vertical Lines and Regression Plane"
+)
+
+fit <- lm(mpg ~ wt + disp)
+s3d$plane3d(fit)
+#+end_src
+
+[[./images/chp11-plot10.png]]
+
+*** 11.1.4 Spinning 3D scatter plots
+
+#+begin_src R
+library(rgl)
+attach(mtcars)
+
+plot3d(wt, disp, mpg, col = "red", size = 5)
+#+end_src
+
+[[./images/chp11-plot11.png]]
+
+#+begin_src R
+library(car)
+
+with(mtcars,
+     scatter3d(wt, disp, mpg))
+#+end_src
+
+[[./images/chp11-plot12.png]]
+
+*** 11.1.5 Bubble plots
+
+#+begin_src R
+attach(mtcars)
+
+r <- sqrt(disp / pi)
+
+symbols(
+  wt,
+  mpg,
+  circle = r,
+  inches = 0.30,
+  fg = "white",
+  bg = "lightblue",
+  main = "Bubble Plot with point size proportional to displacement",
+  ylab = "Miles Per Gallon",
+  xlab = "Weight of Car (lbs/1000)"
+)
+text(wt, mpg, rownames(mtcars), cex = 0.6)
+
+detach(mtcars)
+#+end_src
+
+[[./images/chp11-plot13.png]]
+
+*** 11.2 Line charts
+
+#+begin_src R
+opar <- par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+t1 <- subset(Orange, Tree == 1)
+
+plot(
+  t1$age,
+  t1$circumference,
+  xlab = "Age (days)",
+  ylab = "Circumference (mm)",
+  main = "Orange Tree 1 Growth"
+)
+
+plot(
+  t1$age,
+  t1$circumference,
+  xlab = "Age (days)",
+  ylab = "Circumference (mm)",
+  main = "Orange Tree 1 Growth",
+  type = "b"
+)
+
+par(opar)
+#+end_src
+
+[[./images/chp11-plot14.png]]
+
+| Type     | What is plotted                                                                  |
+|----------+----------------------------------------------------------------------------------|
+| ~p~      | Points only                                                                      |
+| ~l~      | Lines only                                                                       |
+| ~o~      | Over-plotted points (that is, lines overlaid on top of points)                   |
+| ~b~, ~c~ | Points (empty if c) joined by lines                                              |
+| ~s~, ~S~ | Stair steps                                                                      |
+| ~h~      | Histogram-line vertical lines                                                    |
+| ~n~      | Doesn’t produce any points or lines (used to set up the axes for later commands) |
+
+#+begin_src R
+opar <- par(no.readonly = TRUE)
+
+types <- c("p", "l", "o", "b",
+           "c", "s", "S", "h")
+
+par(mfrow = c(2, 4))
+
+for (t in types) {
+  plot(
+    t1$age,
+    t1$circumference,
+    xlab = "Age (days)",
+    ylab = "Circumference (mm)",
+    main = "Orange Tree 1 Growth",
+    type = t
+  )
+}
+
+par(opar)
+#+end_src
+
+[[./images/chp11-plot23.png]]
+
+    The ~plot()~ function creates a new graph when invoked. The ~lines()~
+    function adds information to an existing graph but can’t produce a graph on
+    its own. You can use the ~type="n"~ option in the ~plot()~ function to set
+    up the axes, titles, and other graph features, and then use the ~lines()~
+    function to add various lines to the plot.
+
+#+begin_src R
+Orange$Tree <- as.numeric(Orange$Tree)
+ntrees <- max(Orange$Tree)
+xrange <- range(Orange$age)
+yrange <- range(Orange$circumference)
+
+
+plot(
+  xrange,
+  yrange,
+  type = "n",
+  xlab = "Age (days)",
+  ylab = "Circumference (mm)"
+)
+
+colors <- rainbow(ntrees)
+linetype <- c(1:ntrees)
+plotchar <- seq(18, 18 + ntrees, 1)
+
+for (i in 1:ntrees) {
+  tree <- subset(Orange, Tree == i)
+
+  lines(
+    tree$age,
+    tree$circumference,
+    type = "b",
+    lwd = 2,
+    lty = linetype[i],
+    col = colors[i],
+    pch = plotchar[i]
+  )
+}
+
+title("Tree Growth", "example of line plot")
+legend(
+  xrange[1],
+  yrange[2],
+  1:ntrees,
+  cex = 0.8,
+  col = colors,
+  pch = plotchar,
+  lty = linetype,
+  title = "Tree"
+)
+#+end_src
+
+[[./images/chp11-plot15.png]]
+
+** 11.3 Corrgrams
+
+#+begin_src R
+options(digits = 2)
+
+> cor(mtcars)
+       mpg   cyl  disp    hp   drat    wt   qsec    vs     am  gear   carb
+mpg   1.00 -0.85 -0.85 -0.78  0.681 -0.87  0.419  0.66  0.600  0.48 -0.551
+cyl  -0.85  1.00  0.90  0.83 -0.700  0.78 -0.591 -0.81 -0.523 -0.49  0.527
+disp -0.85  0.90  1.00  0.79 -0.710  0.89 -0.434 -0.71 -0.591 -0.56  0.395
+hp   -0.78  0.83  0.79  1.00 -0.449  0.66 -0.708 -0.72 -0.243 -0.13  0.750
+drat  0.68 -0.70 -0.71 -0.45  1.000 -0.71  0.091  0.44  0.713  0.70 -0.091
+wt   -0.87  0.78  0.89  0.66 -0.712  1.00 -0.175 -0.55 -0.692 -0.58  0.428
+qsec  0.42 -0.59 -0.43 -0.71  0.091 -0.17  1.000  0.74 -0.230 -0.21 -0.656
+vs    0.66 -0.81 -0.71 -0.72  0.440 -0.55  0.745  1.00  0.168  0.21 -0.570
+am    0.60 -0.52 -0.59 -0.24  0.713 -0.69 -0.230  0.17  1.000  0.79  0.058
+gear  0.48 -0.49 -0.56 -0.13  0.700 -0.58 -0.213  0.21  0.794  1.00  0.274
+carb -0.55  0.53  0.39  0.75 -0.091  0.43 -0.656 -0.57  0.058  0.27  1.000
+
+library(corrgram)
+corrgram(
+  mtcars,
+  order = TRUE,
+  lower.panel = panel.shade,
+  upper.panel = panel.pie,
+  text.panel = panel.txt,
+  main = "Corrgram of mtcars intercorrelations"
+)
+#+end_src
+
+[[./images/chp11-plot16.png]]
+
+| Placement     | Panel Option    | Description                                                               |
+|---------------+-----------------+---------------------------------------------------------------------------|
+| Off diagonal  | ~panel.pie~     | The filled portion of the pie indicates the magnitude of the correlation. |
+|               | ~panel.shade~   | The depth of the shading indicates the magnitude of the correlation.      |
+|               | ~panel.ellipse~ | Plots a confidence ellipse and smoothed line.                             |
+|               | ~panel.pts~     | Plots a scatter plot.                                                     |
+|               | ~panel.conf~    | Prints correlations and their confidence intervals.                       |
+| Main diagonal | ~panel.txt~     | Prints the variable name.                                                 |
+|               | ~panel.minmax~  | Prints the minimum and maximum value and variable name.                   |
+|               | ~panel.density~ | Prints the kernel density plot and variable name.                         |
+
+#+begin_src R
+library(corrgram)
+
+corrgram(
+  mtcars,
+  order = TRUE,
+  lower.panel = panel.ellipse,
+  upper.panel = panel.pts,
+  text.panel = panel.txt,
+  diag.panel = panel.minmax,
+  main = "Corrgram of mtcars data using scatter plots and ellipses"
+)
+#+end_src
+
+[[./images/chp11-plot17.png]]
+
+#+begin_src R
+library(corrgram)
+
+corrgram(
+  mtcars,
+  lower.panel = panel.shade,
+  upper.panel = NULL,
+  text.panel = panel.txt,
+  main = "Car Mileage Data (unsorted)"
+)
+#+end_src
+
+[[./images/chp11-plot18.png]]
+
+#+begin_src R
+library(corrgram)
+cols <- colorRampPalette(
+  c(
+    "darkgoldenrod4",
+    "burlywood1",
+    "darkkhaki",
+    "darkgreen"
+  )
+)
+corrgram(
+  mtcars,
+  order = TRUE,
+  col.regions = cols,
+  lower.panel = panel.shade,
+  upper.panel = panel.conf,
+  text.panel = panel.txt,
+  main = "A Corrgram (or Horse) of a Different Color"
+)
+#+end_src
+
+[[./images/chp11-plot19.png]]
+
+** 11.4 Mosaic plots
+
+   When you’re looking at a single categorical variable, you can use a bar or
+   pie chart. But what do you do if there are more than one categorical
+   variables? One approach is to use mosaic plots. In a mosaic plot, the
+   frequencies in a multidimensional contingency table are represented by nested
+   rectangular regions that are proportional to their cell frequency. Color
+   and/or shading can be used to represent residuals from a fitted model.
+
+#+begin_src R
+> ftable(Titanic)
+                   Survived  No Yes
+Class Sex    Age                   
+1st   Male   Child            0   5
+             Adult          118  57
+      Female Child            0   1
+             Adult            4 140
+2nd   Male   Child            0  11
+             Adult          154  14
+      Female Child            0  13
+             Adult           13  80
+3rd   Male   Child           35  13
+             Adult          387  75
+      Female Child           17  14
+             Adult           89  76
+Crew  Male   Child            0   0
+             Adult          670 192
+      Female Child            0   0
+             Adult            3  20
+#+end_src
+
+#+begin_src R
+library(vcd)
+
+mosaic(Titanic, shade=TRUE, legend=TRUE)
+#+end_src
+
+[[./images/chp11-plot20.png]]
+
+#+begin_src R
+library(vcd)
+
+mosaic(
+  ~ Class + Sex + Age + Survived,
+  data = Titanic, shade = TRUE,
+  legend = TRUE)
+#+end_src
+
+[[./images/chp11-plot21.png]]

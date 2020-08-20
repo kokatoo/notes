@@ -322,7 +322,7 @@ w = sqrt(sum(p0(i) - p1(i))^2 / p0(i))
   N = 368.5317
   df = 2
   sig.lev
-el = 0.05
+  el = 0.05
   power = 0.9
 
   NOTE: N is the number of observations
