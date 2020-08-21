@@ -1,0 +1,950 @@
+#+STARTUP: showeverything
+#+title: Analyzing Financial Data and Implementing Financial Models Using R
+
+* Chapter 5: Factor Models
+
+  Factor models are used in many financial applications, such as identifying
+  the deter minants of a security’s return as well as in cost of capital
+  calculations. Factors help explain the variation in a security’s return. CAPM
+  does not perform well in empirical testing, but, to its defense, it is
+  unclear whether such poor performance is really a failure of the CAPM or the
+  failure to use the “true” market portfolio of all available assets in these
+  tests (i.e., this is known as Roll’s Critique).
+
+  An alternative to the CAPM, which is a single factor model, are multi-factor
+  models. These models including additional factors that help explain more of
+  the variation in expected stock returns. The most common multi-factor model in
+  finance is the Three Factor Model developed by Eugene Fama and Kenneth French
+  (FF Model). In addition to the market’s return, the FF Model also includes as
+  a factor the difference in returns between small and large capitalization
+  stocks and the difference in returns of high and low book-to-market (i.e.,
+  value and growth stocks) stocks. The FF Model is based on statistical results,
+  but is now becoming the prevalent factor model used in academia.
+
+** 5.1 CAPM
+
+   To perform the CAPM regression, we need to choose 
+   (i) the length of the estimation period 
+   (ii) the frequency of the returns data
+   (iii) the risk-free rate used in the calculation. 
+
+   Technically, this gives us a large number of possibilities and could
+   potentially lead to a large number of variations in the results. In our
+   implementation, for (i) and (ii), we follow the methodology described on the
+   Morningstar and Yahoo Finance websites, which is to use 3 years of monthly
+   returns or 36 monthly return observations for both the subject security’s
+   return and market return.1 For (iii), we use the 3-Month Treasury Bill rate
+   following Morningstar’s description.
+
+*** Step 1: Import Portfolio Returns and Convert to a data.frame Object
+
+#+begin_src R
+port <- read.csv("./data/HypotheticalPortfolioMonthly.csv")
+
+> port[c(1:3, nrow(port)), ]
+    X     date    AMZN.ret     TSLA.ret     IBM.ret
+1   1 Dec 2010          NA           NA          NA
+2   2 Jan 2011 -0.05755556 -0.095005599 0.103842978
+3   3 Feb 2011  0.02151612 -0.008713734 0.003215707
+37 37 Dec 2013  0.01313453  0.181882418 0.043911838
+
+> class(port$date)
+[1] "character"
+port$date <- as.yearmon(as.character(port$date), "%b %Y")
+
+> port[c(1:3, nrow(port)), ]
+    X     date    AMZN.ret     TSLA.ret     IBM.ret
+1   1 Dec 2010          NA           NA          NA
+2   2 Jan 2011 -0.05755556 -0.095005599 0.103842978
+3   3 Feb 2011  0.02151612 -0.008713734 0.003215707
+37 37 Dec 2013  0.01313453  0.181882418 0.043911838
+
+> class(port$date)
+[1] "yearmon"
+
+port.df <- data.frame(port)
+
+> port.df[c(1:3, nrow(port.df)), ]
+    X     date    AMZN.ret     TSLA.ret     IBM.ret
+1   1 Dec 2010          NA           NA          NA
+2   2 Jan 2011 -0.05755556 -0.095005599 0.103842978
+3   3 Feb 2011  0.02151612 -0.008713734 0.003215707
+37 37 Dec 2013  0.01313453  0.181882418 0.043911838
+#+end_src
+
+*** Step 2: Import S&P 500 Index Data from Yahoo Finance and Calculate Monthly Market Returns
+
+#+begin_src R
+data.mkt <- readRDS("./data/gspc.rds")
+
+> data.mkt[c(1:3, nrow(data.mkt)), ]
+           GSPC.Open GSPC.High GSPC.Low GSPC.Close GSPC.Volume GSPC.Adjusted
+2010-12-31   1256.76   1259.34  1254.19    1257.64  1799770000       1257.64
+2011-01-03   1257.62   1276.17  1257.62    1271.87  4286670000       1271.87
+2011-01-04   1272.95   1274.12  1262.66    1270.20  4796420000       1270.20
+2013-12-31   1842.61   1849.44  1842.41    1848.36  2312840000       1848.36
+
+mkt.monthly <- to.monthly(data.mkt)
+
+> mkt.monthly[c(1:3, nrow(mkt.monthly)), ]
+         data.mkt.Open data.mkt.High data.mkt.Low data.mkt.Close
+Dec 2010       1256.76       1259.34      1254.19        1257.64
+Jan 2011       1257.62       1302.67      1257.62        1286.12
+Feb 2011       1289.14       1344.07      1289.14        1327.22
+Dec 2013       1806.55       1849.44      1767.99        1848.36
+         data.mkt.Volume data.mkt.Adjusted
+Dec 2010      1799770000           1257.64
+Jan 2011     92164940000           1286.12
+Feb 2011     59223660000           1327.22
+Dec 2013     64958820000           1848.36
+
+mkt.monthly <- mkt.monthly[, 6]
+mkt.ret <- Delt(mkt.monthly$data.mkt.Adjusted)
+names(mkt.ret) <- paste("mkt.ret")
+
+> mkt.ret[c(1:3, nrow(mkt.ret)), ]
+            mkt.ret
+Dec 2010         NA
+Jan 2011 0.02264557
+Feb 2011 0.03195656
+Dec 2013 0.02356279
+
+mkt.ret <- mkt.ret[-1, ]
+
+> mkt.ret[c(1:3, nrow(mkt.ret)), ]
+              mkt.ret
+Jan 2011  0.022645574
+Feb 2011  0.031956564
+Mar 2011 -0.001047313
+Dec 2013  0.023562792
+
+market.df <- data.frame(mkt.ret)
+
+> head(market.df)
+              mkt.ret
+Jan 2011  0.022645574
+Feb 2011  0.031956564
+Mar 2011 -0.001047313
+Apr 2011  0.028495380
+May 2011 -0.013500953
+Jun 2011 -0.018257461
+#+end_src
+
+*** Step 3: Import Risk-Free Rate Data from FRED and Setup Data to Contain Monthly Risk-Free Returns
+
+#+begin_src R
+library(Quandl)
+rf <- Quandl("FRED/DGS3MO")
+
+saveRDS(rf, "./data/DGS3MO_FRED.rds")
+
+rf <- rf[order(rf$Date), ]
+rf <- rf[rf$Date > as.Date("1982-01-03"), ]
+
+> rf[c(1:3, nrow(rf)), ]
+           Date Value
+9659 1982-01-04 11.87
+9658 1982-01-05 12.20
+9657 1982-01-06 12.16
+1    2020-08-17  0.10
+
+> str(rf)
+'data.frame':	9659 obs. of  2 variables:
+ $ Date : Date, format: "1982-01-04" "1982-01-05" ...
+ $ Value: num  11.9 12.2 12.2 12.2 12 ...
+ - attr(*, "freq")= chr "daily"
+#+end_src
+
+*** Step 3a: Convert to xts Object
+
+#+begin_src R
+rf <- xts(rf$Value, order.by = rf$Date)
+> rf[1:3, ]
+            [,1]
+1982-01-04 11.87
+1982-01-05 12.20
+1982-01-06 12.16
+
+names(rf) <- paste("DGS3MO")
+> rf[1:3, ]
+           DGS3MO
+1982-01-04  11.87
+1982-01-05  12.20
+1982-01-06  12.16
+#+end_src
+
+*** Step 3b: Apply to.monthly Command to Identify First Yield for Each Month
+
+#+begin_src R
+rf.monthly <- to.monthly(rf)
+
+> rf.monthly[1:3, ]
+         rf.Open rf.High rf.Low rf.Close
+Jan 1982   11.87   14.06  11.87    13.08
+Feb 1982   14.77   15.49  12.79    13.00
+Mar 1982   12.81   14.16  12.68    13.99
+#+end_src
+
+*** Step 3c: Convert Opening Annualized Yield for Each Month Into a Monthly Yield
+
+#+begin_src R
+options(scipen = "100")
+rf.monthly <- (1 + rf.monthly[, 1] / 100)^(1 / 12) - 1
+
+> rf.monthly[c(1:3, nrow(rf.monthly)), ]
+               rf.Open
+Jan 1982 0.00939109694
+Feb 1982 0.01154614300
+Mar 1982 0.01009518279
+Aug 2020 0.00008329516
+#+end_src
+
+*** Step 3d: Subset Data to January 2011 Through December 2013
+
+#+begin_src R
+rf.sub <- subset(
+  rf.monthly,
+  index(rf.monthly) >= as.yearmon("Jan 2011") &
+    index(rf.monthly) <= as.yearmon("Dec 2013")
+)
+
+> rf.sub[c(1:3, nrow(rf.sub)), ]
+               rf.Open
+Jan 2011 0.00012491414
+Feb 2011 0.00012491414
+Mar 2011 0.00011659187
+Dec 2013 0.00004165712
+#+end_src
+
+*** Step 4: Combine Firm, Market, and Risk-Free Data Into One Data Object
+
+#+begin_src R
+combo <- cbind(market.df, data.frame(rf.sub), port.df$port.ret)
+
+> combo[c(1:3, nrow(combo)), ]
+              mkt.ret       rf.Open port.df$port.ret
+Jan 2011  0.022645574 0.00012491414     -0.016239394
+Feb 2011  0.031956564 0.00012491414      0.005339363
+Mar 2011 -0.001047313 0.00011659187      0.069465538
+Dec 2013  0.023562792 0.00004165712      0.079642929
+
+names(combo) <- paste(c("mkt.ret", "rf", "port.ret"))
+
+> combo[c(1:3, nrow(combo)), ]
+              mkt.ret            rf     port.ret
+Jan 2011  0.022645574 0.00012491414 -0.016239394
+Feb 2011  0.031956564 0.00012491414  0.005339363
+Mar 2011 -0.001047313 0.00011659187  0.069465538
+Dec 2013  0.023562792 0.00004165712  0.079642929
+#+end_src
+
+*** Step 5: Calculate Excess Firm Return and Excess Market Return
+
+#+begin_src R
+combo$exret <- combo$port.ret - combo$rf
+combo$exmkt <- combo$mkt.ret - combo$rf
+
+> combo[c(1:3, nrow(combo)), ]
+              mkt.ret            rf     port.ret        exret        exmkt
+Jan 2011  0.022645574 0.00012491414 -0.016239394 -0.016364308  0.022520660
+Feb 2011  0.031956564 0.00012491414  0.005339363  0.005214449  0.031831650
+Mar 2011 -0.001047313 0.00011659187  0.069465538  0.069348947 -0.001163905
+Dec 2013  0.023562792 0.00004165712  0.079642929  0.079601272  0.023521134
+#+end_src
+
+*** Step 6: Run Regression of Excess Firm Return on Excess Market Return
+
+    A beta less than one is consistent with betas of defensive stocks as these
+    stocks are less affected by adverse market movements.
+
+#+begin_src R
+options(digits = 3)
+CAPM <- lm(combo$exret ~ combo$exmkt)
+
+> summary(CAPM)
+Call:
+lm(formula = combo$exret ~ combo$exmkt)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.11320 -0.04386 -0.00447  0.03767  0.26074 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept)   0.0229     0.0114    2.01    0.053 .
+combo$exmkt   0.8381     0.3143    2.67    0.012 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.0652 on 34 degrees of freedom
+Multiple R-squared:  0.173,	Adjusted R-squared:  0.149 
+F-statistic: 7.11 on 1 and 34 DF,  p-value: 0.0117
+#+end_src
+
+#+begin_src R
+beta <- summary(CAPM)$coefficients[2]
+> beta
+[1] 0.838
+
+beta.pval <- summary(CAPM)$coefficients[8]
+> beta.pval
+[1] 0.0117
+#+end_src
+
+*** Using Calculated Beta to Estimate Cost of Equity Using CAPM   
+    
+    Using Calculated Beta to Estimate Cost of Equity Using CAPM To calculate the
+    cost of equity using the CAPM, we need to find an Equity Risk Premium (ERP)
+    that is compatible. For our example, we should use an ERP that is calculated
+    using a 3-Month Treasury security. 
+
+    One such source for the historical ERP is Professor Damodaran’s [[http://pages.stern.nyu.edu/adamodar/New_Home_Page/datafile/histretSP.html][website]].
+    Professor Damodaran’s calculations show an ERP of 5.38 % based on an
+    arithmetic average of returns from 1928 to 2012 and 7.19 % based on an
+    arithmetic average of returns from 1962 to 2012. This range of ERPs is
+    consistent with the general range of ERPs of around 5–8 %. Assuming
+    beta=0.76 and given that the 3-Month Treasury as of December 31, 2013 was
+    approximately 0.07 %, we estimate the cost of equity of our portfolio is
+    4.16 % [= 0.07 % + 0.76 * 5.38 %] based on the ERP from 1926 to 2012 and
+    5.53 % [= 0.07 % + 0.76 * 7.19 %] based on the ERP from 1962 to 2012. The
+    low cost of equity is due to the low beta of 0.76 we estimated for our
+    portfolio.
+
+*** Calculate Adjusted Beta
+
+    There have been studies that show betas that are above the market beta of
+    one tend to go down in the long-term, while betas that are below the market
+    beta of one tend to go up in the long-term. Since valuations take a
+    long-term view, some believe betas used in calculating the cost of equity
+    need to be adjusted to reflect this reversion to the market beta. One common
+    adjustment is to apply 2/3 weight to the raw beta, which is the beta we
+    calculated above, and 1/3 weight to the market beta of one.
+
+#+begin_src R
+adj.beta <- (2 / 3) * beta + (1 / 3) * 1
+> adj.beta
+[1] 0.892
+
+options(digits = 7)
+#+end_src
+
+** 5.2 Market Model
+
+   The market model does not require the use of a risk-free rate.
+
+#+begin_src R
+options(digits = 3)
+reg <- lm(combo$port.ret ~ combo$mkt.ret)
+> summary(reg)
+
+
+beta.mktmod <- summary(reg)$coefficients[2]
+> beta.mktmod
+
+
+adj.beta.mktmod <- (2 / 3) * beta.mktmod + (1 / 3) * 1
+> adj.beta.mktmod
+
+
+options(digits = 7)
+#+end_src
+
+** 5.3 Rolling Window Regressions
+
+   We will run regressions over a rolling window, so we can calculate the alphas
+   and betas for Amazon.com over multiple periods to analyze the variation of
+   the alpha and beta through time. In our example, we will calculate alphas and
+   betas using regressions on 252 trading day periods from 2012 to 2013. Since
+   our first return starts in 2011, the 252 trading day window, which is
+   approximately one calendar year in length, will use virtually all of the
+   returns in 2011 to generate the first estimate of alpha and beta on December
+   31, 2011.
+
+*** Step 1: Import Amazon.com and S&P 500 Index Data
+
+#+begin_src R
+data.AMZN <- readRDS("./data/amzn.rds")
+data.mkt <- readRDS("./data/gspc.rds")
+#+end_src
+
+*** Step 2: Calculate the Amazon.com and Market Returns
+
+#+begin_src R
+rets <- diff(log(data.AMZN$AMZN.Adjusted))
+rets$GSPC <- diff(log(data.mkt$GSPC.Adjusted))
+names(rets)[1] <- "AMZN"
+
+> rets[c(1:3, nrow(rets)), ]
+                 AMZN         GSPC
+2010-12-31         NA           NA
+2011-01-03 0.02317385  0.011251294
+2011-01-04 0.00427915 -0.001313925
+2013-12-31 0.01368435  0.003951856
+
+rets <- rets[-1, ]
+> rets[c(1:3, nrow(rets)), ]
+                 AMZN         GSPC
+2011-01-03 0.02317385  0.011251294
+2011-01-04 0.00427915 -0.001313925
+2011-01-05 0.01294223  0.004994677
+2013-12-31 0.01368435  0.003951856
+#+end_src
+
+*** Step 3: Create the Rolling Window Regression Function
+
+#+begin_src R
+require(zoo)
+
+coeffs <- rollapply(
+  rets,
+  width = 252,
+  FUN = function(X) {
+    roll.reg <- lm(
+      AMZN ~ GSPC,
+      data = as.data.frame(X)
+    )
+
+    return(roll.reg$coef)
+  }, by.column = FALSE
+)
+
+> coeffs[c(1, 251:253, nrow(coeffs)), ]
++ >             X.Intercept.      GSPC
+2011-01-03            NA        NA
+2011-12-29            NA        NA
+2011-12-30 -0.0001549875 0.9577849
+2012-01-03 -0.0001289252 0.9605853
+2013-12-31  0.0005404547 1.2623036
+#+end_src
+
+*** Step 4: Remove NAs From the Data
+
+#+begin_src R
+coeffs <- na.omit(coeffs)
+
+> coeffs[c(1:3, nrow(coeffs)), ]
+            X.Intercept.      GSPC
+2011-12-30 -0.0001549875 0.9577849
+2012-01-03 -0.0001289252 0.9605853
+2012-01-04 -0.0001854684 0.9606983
+2013-12-31  0.0005404547 1.2623036
+#+end_src
+
+*** Step 5: Clean-Up Data
+
+#+begin_src R
+coeffs <- coeffs[-1, ]
+names(coeffs) <- c("Alpha", "Beta")
+options(digits = 3)
+
+> coeffs[c(1:3, nrow(coeffs)), ]
+               Alpha  Beta
+2012-01-03 -0.000129 0.961
+2012-01-04 -0.000185 0.961
+2012-01-05 -0.000227 0.960
+2013-12-31  0.000540 1.262
+#+end_src
+
+#+begin_src R
+par(oma = c(0, 0, 4, 0))
+par(mfrow = c(2, 1))
+plot(
+  x = index(coeffs),
+  xlab = "Date",
+  y = coeffs$Alpha,
+  ylab = "alpha",
+  type = "l"
+)
+plot(
+  x = index(coeffs),
+  xlab = "Date",
+  y = coeffs$Beta,
+  ylab = "beta",
+  type = "l"
+)
+title(
+  main = "Amazon.com Inc. Alpha and Beta Using Rolling 252-Day Windowns and Daily Returns From 2012 to 2013",
+  outer = TRUE
+)
+par(mfrow = c(1, 1))
+#+end_src
+
+[[./images/chp05-plot1.png]]
+
+** 5.4 Fama-French Three Factor Model
+
+*** Step 1: Import Portfolio Returns Data
+
+#+begin_src R
+> port[c(1:3, nrow(port)), ]
+
+    X     date AMZN.ret TSLA.ret IBM.ret port.ret
+1   1 Jan 2011  -0.0576 -0.09501 0.10384 -0.01624
+2   2 Feb 2011   0.0215 -0.00871 0.00322  0.00534
+3   3 Mar 2011   0.0395  0.16157 0.00735  0.06947
+36 36 Dec 2013   0.0131  0.18188 0.04391  0.07964
+#+end_src
+
+*** Step 2: Import Fama-French Data Retrieved From Ken French’s Website
+
+#+begin_src R
+FF.raw <- read.fwf(
+  file = "./data/F-F_Research_Data_Factors.txt",
+  widths = c(6, 8, 8, 8, 8),
+  skip = 4
+)
+
+> head(FF.raw)
++ >       V1       V2       V3       V4       V5
+1 192607     2.96    -2.30    -2.87     0.22
+2 192608     2.64    -1.40     4.19     0.25
+3 192609     0.36    -1.32     0.01     0.23
+4 192610    -3.24     0.04     0.51     0.32
+5 192611     2.53    -0.20    -0.35     0.31
+6 192612     2.62    -0.04    -0.02     0.28
+
+> tail(FF.raw)
+         V1       V2       V3       V4       V5
+1221   2016    13.30     6.62    22.90     0.20
+1222   2017    21.50    -4.80   -13.91     0.80
+1223   2018    -6.93    -3.55    -9.20     1.81
+1224   2019    28.28    -5.93   -12.14     2.14
+1225   <NA>     <NA>     <NA>     <NA>     <NA>
+1226 Copyri ght 2020  Kenneth  R. Fren       ch
+
+FF.raw <- FF.raw[-1051:-1226, ]
+names(FF.raw) <- paste(c("text.date", "RmxRf", "SMB", "HML", "Rf"))
+
+> head(FF.raw)
+  text.date    RmxRf      SMB      HML       Rf
+1    192607     2.96    -2.30    -2.87     0.22
+2    192608     2.64    -1.40     4.19     0.25
+3    192609     0.36    -1.32     0.01     0.23
+4    192610    -3.24     0.04     0.51     0.32
+5    192611     2.53    -0.20    -0.35     0.31
+6    192612     2.62    -0.04    -0.02     0.28
+
+> tail(FF.raw)
+>      text.date    RmxRf      SMB      HML       Rf
+1045    201307     5.65     1.86     0.56     0.00
+1046    201308    -2.71     0.31    -2.78     0.00
+1047    201309     3.77     2.92    -1.19     0.00
+1048    201310     4.18    -1.51     1.14     0.00
+1049    201311     3.12     1.22     0.24     0.00
+1050    201312     2.81    -0.50    -0.31     0.00
+#+end_src
+
+#+begin_src R
+FF.raw <- FF.raw[, -1]
+
+FF.raw$RmxRf <- as.numeric(as.character(FF.raw$RmxRf)) / 100
+FF.raw$Rf <- as.numeric(as.character(FF.raw$Rf)) / 100
+FF.raw$SMB <- as.numeric(as.character(FF.raw$SMB)) / 100
+FF.raw$HML <- as.numeric(as.character(FF.raw$HML)) / 100
+
+FF.raw$FF.date <- seq(
+  as.Date("1926-07-01"),
+  as.Date("2013-12-31"),
+  by = "months"
+)
+FF.raw$FF.date <- as.yearmon(FF.raw$FF.date, "%Y-%m-%d")
+
+> FF.raw[c(1:3, nrow(FF.raw)), ]
+      RmxRf     SMB     HML     Rf  FF.date
+1    0.0296 -0.0230 -0.0287 0.0022 Jul 1926
+2    0.0264 -0.0140  0.0419 0.0025 Aug 1926
+3    0.0036 -0.0132  0.0001 0.0023 Sep 1926
+1050 0.0281 -0.0050 -0.0031 0.0000 Dec 2013
+#+end_src
+
+*** Step 3: Subset Fama-French Data to Relevant Time Period
+
+#+begin_src R
+FF.data <- subset(
+  FF.raw,
+  FF.raw$FF.date >= "2011-01-01" &
+    FF.raw$FF.date <= "2013-12-31"
+)
+
+> FF.data[c(1:3, nrow(FF.data)), ]
+      RmxRf     SMB     HML     Rf  FF.date
+1015 0.0199 -0.0247  0.0082 0.0001 Jan 2011
+1016 0.0349  0.0153  0.0110 0.0001 Feb 2011
+1017 0.0045  0.0260 -0.0158 0.0001 Mar 2011
+1050 0.0281 -0.0050 -0.0031 0.0000 Dec 2013
+#+end_src
+
+*** Step 4: Combine Portfolio Returns Data and Fama-French Data
+
+#+begin_src R
+options(digits = 3)
+FF.data <- cbind(FF.data, data.frame(port))
+
+> FF.data[c(1:3, nrow(FF.data)), ]
+      RmxRf     SMB     HML     Rf  FF.date  X     date AMZN.ret TSLA.ret
+1015 0.0199 -0.0247  0.0082 0.0001 Jan 2011  1 Jan 2011  -0.0576 -0.09501
+1016 0.0349  0.0153  0.0110 0.0001 Feb 2011  2 Feb 2011   0.0215 -0.00871
+1017 0.0045  0.0260 -0.0158 0.0001 Mar 2011  3 Mar 2011   0.0395  0.16157
+1050 0.0281 -0.0050 -0.0031 0.0000 Dec 2013 36 Dec 2013   0.0131  0.18188
+     IBM.ret port.ret
+1015 0.10384 -0.01624
+1016 0.00322  0.00534
+1017 0.00735  0.06947
+1050 0.04391  0.07964
+
+rownames(FF.data) <- seq(1, nrow(FF.data))
+FF.data$date <- format(FF.data$date, "%Y-%m")
+FF.data$exret <- FF.data$port.ret - FF.data$Rf
+
+> FF.data[c(1:3, nrow(FF.data)), ]
+    RmxRf     SMB     HML     Rf  FF.date  X    date AMZN.ret TSLA.ret IBM.ret
+1  0.0199 -0.0247  0.0082 0.0001 Jan 2011  1 2011-01  -0.0576 -0.09501 0.10384
+2  0.0349  0.0153  0.0110 0.0001 Feb 2011  2 2011-02   0.0215 -0.00871 0.00322
+3  0.0045  0.0260 -0.0158 0.0001 Mar 2011  3 2011-03   0.0395  0.16157 0.00735
+36 0.0281 -0.0050 -0.0031 0.0000 Dec 2013 36 2013-12   0.0131  0.18188 0.04391
+   port.ret    exret
+1  -0.01624 -0.01634
+2   0.00534  0.00524
+3   0.06947  0.06937
+36  0.07964  0.07964
+#+end_src
+
+*** Step 5: Run Regression Using Fama-French Factors
+
+#+begin_src R
+FF.reg <- lm(FF.data$exret ~ RmxRf + SMB + HML, data = FF.data)
+
+> summary(FF.reg)
+Call:
+lm(formula = FF.data$exret ~ RmxRf + SMB + HML, data = FF.data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.09930 -0.03496 -0.00592  0.01788  0.24996 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept)   0.0240     0.0118    2.04    0.050 *
+RmxRf         0.6398     0.3700    1.73    0.093 .
+SMB           1.0289     0.7761    1.33    0.194  
+HML          -0.3034     0.7419   -0.41    0.685  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.0641 on 32 degrees of freedom
+Multiple R-squared:  0.248,	Adjusted R-squared:  0.178 
+F-statistic: 3.52 on 3 and 32 DF,  p-value: 0.0259
+#+end_src
+
+*** Compare Fama-French Results with CAPM Results
+
+#+begin_src R
+CAPM.reg <- lm(exret ~ RmxRf, data = FF.data)
+
+> summary(CAPM.reg)
+Call:
+lm(formula = exret ~ RmxRf, data = FF.data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.11037 -0.03967 -0.00387  0.03766  0.25607 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)   
+(Intercept)   0.0209     0.0114    1.83   0.0760 . 
+RmxRf         0.8624     0.2954    2.92   0.0062 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.0641 on 34 degrees of freedom
+Multiple R-squared:   0.2,	Adjusted R-squared:  0.177 
+F-statistic: 8.52 on 1 and 34 DF,  p-value: 0.00618
+
+betas <- rbind(
+  cbind(
+    summary(FF.reg)$coefficient[2],
+    summary(FF.reg)$coefficient[14],
+    summary(FF.reg)$adj.r.squared
+  ),
+  cbind(
+    summary(CAPM.reg)$coefficient[2],
+    summary(CAPM.reg)$coefficient[8],
+    summary(CAPM.reg)$adj.r.squared
+  )
+)
+
+> betas
+      [,1]    [,2]  [,3]
+[1,] 0.640 0.09346 0.178
+[2,] 0.862 0.00618 0.177
+
+colnames(betas) <- paste(c("Beta", "p-Value", "Adj. R-Squared"))
+rownames(betas) <- paste(c("Fama-French", "CAPM"))
+
+> betas
+             Beta p-Value Adj. R-Squared
+Fama-French 0.640 0.09346          0.178
+CAPM        0.862 0.00618          0.177
+
+options(digits = 7)
+#+end_src
+
+    The betas and p-values suggest that the returns of our portfolio is
+    sensitive to the changes in the market. The CAPM beta was low at 0.739, but
+    the FF beta is even lower at 0.663. Since FF is a three-factor model, the
+    calculation of the cost of equity has to be with all three factors. We
+    cannot simply use the 0.663 beta with the ERP to calculate a cost of equity.
+    In addition, the output shows that FF regression is a slightly better model
+    than the CAPM in explaining the variation in our portfolio’s returns based
+    on having a higher Adjusted R-Squared.
+
+** 5.5 Event Studies
+
+   An event study estimates the impact of a specific event on a company or a
+   group of companies by looking at the firm’s stock price performance. The
+   event study uses the historical relationship between the firm’s stock return
+   and one or more ndependent variables. Based on this historical relationship,
+   an event study predicts a return for the company on the event date. An
+   abnormal return is then calculated as the difference between the firm’s
+   actual return on the event date and he predicted return on the event date.
+
+*** 5.5.1 Example: Netflix July 2013 Earnings Announcement
+
+**** Step 1: Identify the Event and the Event Window
+
+     The event is the July 22, 2013 Netflix earnings announcement that was made
+     after markets closed. As such, the first full trading day investors could
+     react to this news would be on July 23, 2013. We therefore use a one-day
+     Event Window of July 23, 2013.
+
+**** Step 2: Identify the Estimation Period
+
+     We use a one calendar year period ending the day before the Event Window as
+     our Estimation Period. That is, our Estimation Period uses returns from
+     July 23, 2012 to July 22, 2013.
+
+**** Step 3: Import Netflix Data From Yahoo Finance From July 20, 2012 to July 23, 2013
+
+#+begin_src R
+getSymbols.yahoo(
+  Symbols = c("NFLX", "SPY"),
+  env = ".GlobalEnv",
+  from = "2012-07-01",
+  to = "2013-07-24"
+)
+
+data.NFLX <- NFLX
+data.SPY <- SPY
+
+firm <- data.NFLX
+firm[c(1:3, nrow(firm)), ]
+
+names(firm) <- paste(
+  c(
+    "Firm.Open",
+    "Firm.High",
+    "Firm.Low",
+    "Firm.Close",
+    "Firm.Volume",
+    "Firm.Adjusted"
+  )
+)
+
+> firm[c(1:3, nrow(firm)), ]
+           Firm.Open Firm.High  Firm.Low Firm.Close Firm.Volume Firm.Adjusted
+2012-07-02  9.824286  9.842857  9.607142   9.692857    12992700      9.692857
+2012-07-03  9.784286 10.397142  9.672857  10.291429    25261600     10.291429
+2012-07-05 10.618571 11.842857 10.608571  11.674286   104498100     11.674286
+2013-07-23 35.914288 37.461430 35.171429  35.751427    76829200     35.751427
+#+end_src
+
+**** Step 4: Import SPDR S&P 500 Index ETF Data From Yahoo Finance From July 22, 2012 to July 23, 2013
+
+#+begin_src R
+market <- data.SPY
+names(market) <- paste(
+  c(
+    "Mkt.Open",
+    "Mkt.High",
+    "Mkt.Low",
+    "Mkt.Close",
+    "Mkt.Volume",
+    "Mkt.Adjusted"
+  )
+)
+
+> market[c(1:3, nrow(market)), ]
+           Mkt.Open Mkt.High Mkt.Low Mkt.Close Mkt.Volume Mkt.Adjusted
+2012-07-02   136.48   136.65  135.52    136.51  129524500     116.2690
+2012-07-03   136.48   137.51  136.34    137.41   80450000     117.0355
+2012-07-05   136.90   137.80  136.29    136.79  126177500     116.5075
+2013-07-23   169.80   169.83  169.05    169.14   80829700     147.2809
+#+end_src
+
+**** Step 5: Combine the Two Data Objects
+
+#+begin_src R
+data.all <- merge(firm[, 6], market[, 6])
+
+> data.all[c(1:3, nrow(data.all)), ]
+           Firm.Adjusted Mkt.Adjusted
+2012-07-02      9.692857     116.2690
+2012-07-03     10.291429     117.0355
+2012-07-05     11.674286     116.5075
+2013-07-23     35.751427     147.2809
+#+end_src
+
+**** Step 6: Calculate NFLX and SPY Returns
+
+#+begin_src R
+library(quantmod)
+data.all$Firm.Ret <- diff(log(data.all$Firm.Adjusted)) * 100
+data.all$Mkt.Ret <- diff(log(data.all$Mkt.Adjusted)) * 100
+
+> data.all[c(1:3, nrow(data.all)), ]
+           Firm.Adjusted Mkt.Adjusted  Firm.Ret    Mkt.Ret
+2012-07-02      9.692857     116.2690        NA         NA
+2012-07-03     10.291429     117.0355  5.992219  0.6571117
+2012-07-05     11.674286     116.5075 12.607723 -0.4522370
+2013-07-23     35.751427     147.2809 -4.569143 -0.2126269
+#+end_src
+
+**** Step 7: Perform Market Model Regression During the Estimation Period
+
+#+begin_src R
+est.per <- data.all[c(-1, -nrow(data.all)), 3:4]
+
+> est.per[c(1:3, nrow(est.per)), ]
+             Firm.Ret    Mkt.Ret
+2012-07-03  5.9922190  0.6571117
+2012-07-05 12.6077232 -0.4522370
+2012-07-06  0.2078052 -0.9548637
+2013-07-22 -0.9951877  0.1948916
+
+mkt.model <- lm(est.per$Firm.Ret ~ est.per$Mkt.Ret)
+
+> summary(mkt.model)
+
+Call:
+lm(formula = est.per$Firm.Ret ~ est.per$Mkt.Ret)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-29.239  -1.926  -0.506   1.441  34.769 
+
+Coefficients:
+                Estimate Std. Error t value Pr(>|t|)  
+(Intercept)       0.4288     0.2829   1.516   0.1308  
+est.per$Mkt.Ret   0.9352     0.3723   2.512   0.0126 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.555 on 261 degrees of freedom
+Multiple R-squared:  0.02361,	Adjusted R-squared:  0.01986 
+F-statistic:  6.31 on 1 and 261 DF,  p-value: 0.01261
+#+end_src
+
+**** Step 8: Calculate Abnormal Return, t-Statistic, and p-Value for Dates in Event Window
+
+#+begin_src R
+  event.window <- data.all[nrow(data.all), 3:4]
+  event.window
+
+  event.window$Pred.Ret <-
+    summary(mkt.model)$coefficients[1] +
+    summary(mkt.model)$coefficients[2] *
+                     event.window$Mkt.Ret
+  event.window$Ab.Ret <- event.window$Firm.Ret - event.window$Pred.Ret
+  event.window$tStat <- event.window$Ab.Ret / summary(mkt.model)$sigma
+  event.window$pval <-
+    2 * (1 - pt(abs(event.window$tStat), df = nrow(est.per) - 2))
+  options(digits = 3)
+
+  > event.window
+             Firm.Ret Mkt.Ret Pred.Ret Ab.Ret tStat  pval
+  2013-07-23    -4.57  -0.213     0.23   -4.8 -1.05 0.293
+
+  title1 <- "Netflix Stock Price"
+  title2 <- "July 20, 2012 to July 23, 2013"
+  plot(data.all$Firm.Adjusted,
+    auto.grid = FALSE,
+    xlab = "Date",
+    ylab = "Price ($)",
+    minor.ticks = "FALSE",
+    main = paste(title1, "\n", title2)
+  )
+#+end_src
+
+[[./images/chp05-plot2.png]]
+
+**** Step 9: Identify the Date of the Jump in January 2013
+
+#+begin_src R
+subset(est.per,
+       index(est.per) >= "2013-01-01" &
+       index(est.per) <= "2013-01-31")
+#+end_src
+
+**** Step 10: Construct Series for Estimation Period Beginning January 28, 2013
+
+#+begin_src R
+est.per2 <- subset(est.per, index(est.per) >= "2013-01-28")
+
+> est.per2[c(1, 3, nrow(est.per2)), ]
+           Firm.Ret Mkt.Ret
+2013-01-28   -4.493  -0.120
+2013-01-30   -0.843  -0.392
+2013-07-22   -0.995   0.195
+#+end_src
+
+**** Step 11: Calculate the Market Model Parameters of this Alternative Estimation Period Using the lm command, we run an OLS regression of the Netflix returns on
+
+#+begin_src R
+mkt.model2 <- lm(est.per2$Firm.Ret ~ est.per2$Mkt.Ret)
+
+> summary(mkt.model2)
+Call:
+lm(formula = est.per2$Firm.Ret ~ est.per2$Mkt.Ret)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-7.416 -1.738 -0.433  1.028 20.599 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(>|t|)  
+(Intercept)         0.251      0.296    0.85    0.399  
+est.per2$Mkt.Ret    0.993      0.384    2.59    0.011 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 3.24 on 120 degrees of freedom
+Multiple R-squared:  0.0528,	Adjusted R-squared:  0.0449 
+F-statistic: 6.69 on 1 and 120 DF,  p-value: 0.0109
+#+end_src
+
+**** Step 12: Calculate Abnormal Return and Statistical Significance of the Event Date
+
+#+begin_src R
+event.window2 <- data.all[nrow(data.all), 3:4]
+
+> event.window2
+           Firm.Ret Mkt.Ret
+2013-07-23    -4.57  -0.213
+
+event.window2$Pred.Ret <-
+  summary(mkt.model2)$coefficients[1] +
+  summary(mkt.model2)$coefficients[2] *
+    event.window2$Mkt.Ret
+event.window2$Ab.Ret <- event.window2$Firm.Ret - event.window2$Pred.Ret
+event.window2$tStat <- event.window2$Ab.Ret / summary(mkt.model2)$sigma
+event.window2$pval <- 2 * (1 - pt(abs(event.window2$tStat), df = nrow(est.per2) - 2))
+
+options(digits = 3)
+
+> event.window2
+           Firm.Ret Mkt.Ret Pred.Ret Ab.Ret tStat  pval
+2013-07-23    -4.57  -0.213   0.0395  -4.61 -1.42 0.157
+
+options(digits = 7)
+#+end_src
+

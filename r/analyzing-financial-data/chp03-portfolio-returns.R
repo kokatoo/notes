@@ -318,14 +318,14 @@ q1_pie_values <- as.numeric(q1_vw_wgt[, -1])
 q1_pie_labels <- names(q1_vw_wgt[, -1])
 pie(q1_pie_values,
     labels = q1_pie_labels,
-    col = rainbow(length(q4_pie_labels)),
+    col = rainbow(length(q1_pie_labels)),
     main = "Q1 Value Weighting")
 
 q2_pie_values <- as.numeric(q2_vw_wgt[, -1])
 q2_pie_labels <- names(q1_vw_wgt[, -1])
 pie(q2_pie_values,
     labels = q2_pie_labels,
-    col = rainbow(length(q4_pie_labels)),
+    col = rainbow(length(q2_pie_labels)),
     main = "Q2 Value Weighting")
 
 q3_pie_values <- as.numeric(q3_vw_wgt[, -1])
@@ -335,11 +335,11 @@ q3_pie_labels <- paste(q3_pie_labels, pct) # Add Pct to Labels
 q3_pie_labels <- paste(q3_pie_labels, "%", sep = "") # Add % Sign
 pie(q3_pie_values,
     labels = q3_pie_labels,
-    col = rainbow(length(q4_pie_labels)),
+    col = rainbow(length(q3_pie_labels)),
     main = "Q3 Value Weighting")
 
 q4_pie_values <- as.numeric(q4_vw_wgt[, -1])
-q4_pie_labels <- c("Amazon", "Yahoo", "IBM")
+q4_pie_labels <- c("Amazon", "IBM")
 pct <- round(q4_pie_values * 100)
 q4_pie_labels <- paste(q4_pie_labels, pct) # Add Pct to Labels
 q4_pie_labels <- paste(q4_pie_labels, "%", sep = "") # Add % Sign
@@ -454,12 +454,12 @@ q4_vw_val[c(1:3, nrow(q4_vw_val)), ]
 
 ## --- Step 11: Combining Quarterly VW Portfolio Values into One Data Object
 vw_portval <- rbind(q1_vw_val, q2_vw_val, q3_vw_val, q4_vw_val)
-vw_portval[c(1:3, nrow(vw.portval)), ]
+vw_portval[c(1:3, nrow(vw_portval)), ]
 
 
 ## --- 3.3.3 Normalized EW and VW Portfolio Price Chart
 ## -- Step 1: Combine the Data
-port_val <- merge(vw.portval, ew_portval, by = "date")
+port_val <- merge(vw_portval, ew_portval, by = "date")
 port_val[c(1:3, nrow(port_val)), ]
 
 ## -- Step 2: Rename the Variables
@@ -521,4 +521,4 @@ rownames(csv_port) <- seq_len(nrow(csv_port))
 csv_port[c(1:3, nrow(csv_port)), ]
 
 ## -- Step 6: Save the Data to a CSV File
-write.csv(csv_port, "Hypothetical Portfolio (Daily).csv")
+write.csv(csv_port, "./data/HypotheticalPortfolioDaily.csv")

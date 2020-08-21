@@ -6,7 +6,7 @@ library(quantmod)
 library(xts)
 
 getSymbols.yahoo(
-  Symbols = c("AMZN", "IBM", "^GSPC"),
+  Symbols = c("AMZN", "IBM", "^GSPC", "TSLA"),
   env = ".GlobalEnv",
   from = "2010-12-31",
   to = "2014-01-01"
@@ -15,10 +15,13 @@ getSymbols.yahoo(
 data_amzn  <-  AMZN
 data_ibm  <-  IBM
 data_gspc  <-  GSPC
+data_tsla <- TSLA
 
 saveRDS(data_amzn, file = "./data/amzn.rds")
 saveRDS(data_ibm, file = "./data/ibm.rds")
 saveRDS(data_gspc, file = "./data/gspc.rds")
+saveRDS(data_tsla, file = "./data/tsla.rds")
+
 
 ## --- Step 2: Subset the Data to Only Include the Closing Price
 

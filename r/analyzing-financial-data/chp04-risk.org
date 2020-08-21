@@ -1,0 +1,1411 @@
+#+STARTUP: showeverything
+#+title: Analyzing Financial Data and Implementing Financial Models Using R
+
+* Chapter 4: Risk
+
+** 4.1 Risk-Return Trade-Off
+
+*** Step 1: Import Fama-French Data from Professor Kenneth French’s Website
+
+    [[http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html][Fama-French website]]
+
+#+begin_src R
+  ff_raw <- read.fwf(
+    file = "./data/F-F_Research_Data_Factors.txt",
+    widths = c(6, 8, 8, 8, 8),
+    skip = 4
+  )
+
+  > head(ff_raw)
+        V1       V2       V3       V4       V5
+  1 192607     2.96    -2.30    -2.87     0.22
+  2 192608     2.64    -1.40     4.19     0.25
+  3 192609     0.36    -1.32     0.01     0.23
+  4 192610    -3.24     0.04     0.51     0.32
+  5 192611     2.53    -0.20    -0.35     0.31
+  6 192612     2.62    -0.04    -0.02     0.28
+
+  > tail(ff_raw)
+           V1       V2       V3       V4       V5
+  1221   2016    13.30     6.62    22.90     0.20
+  1222   2017    21.50    -4.80   -13.91     0.80
+  1223   2018    -6.93    -3.55    -9.20     1.81
+  1224   2019    28.28    -5.93   -12.14     2.14
+  1225   <NA>     <NA>     <NA>     <NA>     <NA>
+  1226 Copyri ght 2020  Kenneth  R. Fren       ch
+#+end_src
+
+*** Step 2: Clean up Data
+
+#+begin_src R
+  ff_raw <- ff_raw[-1051:-1226, ]
+  names(ff_raw) <- paste(c("text.date", "RmxRf", "SMB", "HML", "Rf"))
+  > head(ff_raw)
+    text.date    RmxRf      SMB      HML       Rf
+  1    192607     2.96    -2.30    -2.87     0.22
+  2    192608     2.64    -1.40     4.19     0.25
+  3    192609     0.36    -1.32     0.01     0.23
+  4    192610    -3.24     0.04     0.51     0.32
+  5    192611     2.53    -0.20    -0.35     0.31
+  6    192612     2.62    -0.04    -0.02     0.28
+
+  > tail(ff_raw)
+  >      text.date    RmxRf      SMB      HML     Rf
+  1045    201307     5.65     1.86     0.56     0.00
+  1046    201308    -2.71     0.31    -2.78     0.00
+  1047    201309     3.77     2.92    -1.19     0.00
+  1048    201310     4.18    -1.51     1.14     0.00
+  1049    201311     3.12     1.22     0.24     0.00
+  1050    201312     2.81    -0.50    -0.31     0.00
+
+  > str(ff_raw)
+   'data.frame':	1050 obs. of  5 variables:
+   $ text.date: chr  "192607" "192608" "192609" "192610" ...
+   $ RmxRf    : chr  "    2.96" "    2.64" "    0.36" "   -3.24" ...
+   $ SMB      : chr  "   -2.30" "   -1.40" "   -1.32" "    0.04" ...
+   $ HML      : chr  "   -2.87" "    4.19" "    0.01" "    0.51" ...
+   $ Rf       : chr  "    0.22" "    0.25" "    0.23" "    0.32" ...
+
+  ff_raw <- ff_raw[, c(-1, -3, -4)]
+  ff_raw$RmxRf <- as.numeric(ff_raw$RmxRf) / 100
+  ff_raw$Rf <- as.numeric(ff_raw$Rf) / 100
+  ff_raw$date <- seq(as.Date("1926-07-01"), as.Date("2013-12-31"), by = "months")
+  ff_raw$date <- as.yearmon(ff_raw$date, "%Y-%m-%d")
+
+  > ff_raw[c(1:3, nrow(ff_raw)), ]
+        RmxRf     Rf     date
+  1    0.0296 0.0022 Jul 1926
+  2    0.0264 0.0025 Aug 1926
+  3    0.0036 0.0023 Sep 1926
+  1050 0.0281 0.0000 Dec 2013
+
+  > str(ff_raw)
+   'data.frame':	1050 obs. of  3 variables:
+   $ RmxRf: num  0.0296 0.0264 0.0036 -0.0324 0.0253 0.0262 -0.0006 0.0418 0.0013 0.0046 ...
+   $ Rf   : num  0.0022 0.0025 0.0023 0.0032 0.0031 0.0028 0.0025 0.0026 0.003 0.0025 ...
+   $ date : 'yearmon' num  Jul 1926 Aug 1926 Sep 1926 Oct 1926 ...
+#+end_src
+
+*** Step 3: Calculate Raw Market Return Variable
+
+    Adding risk-free rate to excess returns.
+
+#+begin_src R
+  ff_raw$Rm <- ff_raw$RmxRf + ff_raw$Rf
+
+  > ff_raw[c(1:3, nrow(ff_raw)), ]
+        RmxRf     Rf     date     Rm
+  1    0.0296 0.0022 Jul 1926 0.0318
+  2    0.0264 0.0025 Aug 1926 0.0289
+  3    0.0036 0.0023 Sep 1926 0.0059
+  1050 0.0281 0.0000 Dec 2013 0.0281
+#+end_src
+
+*** Step 4: Subset Data from December 1963 to December 2013
+
+    We are assuming we start the investment at the end of Dec 1963.
+
+#+begin_src R
+  ff <- subset(ff_raw, ff_raw$date >= "1963-12-01" & ff_raw$date <= "2013-12-31")
+
+  > ff[c(1:3, nrow(ff)), ]
+        RmxRf     Rf     date     Rm
+  450  0.0183 0.0029 Dec 1963 0.0212
+  451  0.0224 0.0030 Jan 1964 0.0254
+  452  0.0154 0.0026 Feb 1964 0.0180
+  1050 0.0281 0.0000 Dec 2013 0.0281
+#+end_src
+
+*** Step 5: Calculate Gross Returns for the Market and Risk-free Rate
+
+#+begin_src R
+  ff$Gross.Rm <- 1 + ff$Rm
+  ff[1, "Gross.Rm"] <- 1
+  ff$GrossRf <- 1 + ff$Rf
+  ff[1, "GrossRf"] <- 1
+
+  > ff[c(1:3, nrow(ff)), ]
+        RmxRf     Rf     date     Rm Gross.Rm GrossRf
+  450  0.0183 0.0029 Dec 1963 0.0212   1.0000  1.0000
+  451  0.0224 0.0030 Jan 1964 0.0254   1.0254  1.0030
+  452  0.0154 0.0026 Feb 1964 0.0180   1.0180  1.0026
+  1050 0.0281 0.0000 Dec 2013 0.0281   1.0281  1.0000
+#+end_src
+
+*** Step 6: Calculate Cumulative Returns for the Market and Risk-free Rate
+
+#+begin_src R
+ff$cum.Rm <- cumprod(ff$Gross.Rm)
+ff$cum.Rf <- cumprod(ff$GrossRf)
+
+> ff[c(1:3, nrow(ff)), ]
+      RmxRf     Rf     date     Rm Gross.Rm GrossRf     cum.Rm    cum.Rf
+450  0.0183 0.0029 Dec 1963 0.0212   1.0000  1.0000   1.000000  1.000000
+451  0.0224 0.0030 Jan 1964 0.0254   1.0254  1.0030   1.025400  1.003000
+452  0.0154 0.0026 Feb 1964 0.0180   1.0180  1.0026   1.043857  1.005608
+1050 0.0281 0.0000 Dec 2013 0.0281   1.0281  1.0000 124.758994 12.099660
+#+end_src
+
+*** Step 7: Plot the Data
+
+#+begin_src R
+  y_range <- range(ff$cum_rm, ff$cum_rf)
+
+  > y_range
+  [1]   1.000 124.759
+
+  title1 <- "Stock vs. Bond Returns"
+  title2 <- "1964 to 2013"
+  plot(
+    x = ff$date,
+    y = ff[, "cum.Rm"],
+    type = "l",
+    xlab = "Date",
+    ylab = "Value of $1 Investment ($)",
+    ylim = y_range,
+    main = paste(title1, "\n", title2)
+  )
+  lines(x = ff$date, y = ff[,"cum.Rf"], lty = 2)
+  legend(
+    "topleft",
+    c("Stocks (2013 Ending Value: $124.89)", "Bonds (2013 Ending Value: $12.10)"),
+    lty = c(1, 2)
+  )
+#+end_src
+
+[[./images/chp04-plot1.png]]
+
+*** Step 8: Plot Stock and Bond Returns
+
+#+begin_src R
+y_range <- range(ff$Rm, ff$Rf)
+> y_range
+[1] -0.2264  0.1661
+
+title1 <- "Volatility of Stock vs. Bond Returns"
+title2 <- "1964 to 2013"
+plot(
+  x = ff$date,
+  ff[, "Rm"],
+  type = "l",
+  xlab = "Date",
+  ylab = "Returns (%)",
+  ylim = y_range,
+  col = "gray50",
+  main = paste(title1, "\n", title2)
+)
+lines(x = ff$date, y = ff[, "Rf"])
+abline(h = 0)
+legend("topleft", c("Stocks", "Bonds"), lty = c(1, 2))
+#+end_src
+
+[[./images/chp04-plot2.png]]
+
+** 4.2 Individual Security Risk
+
+*** Step 1: Import AMZN Data from Yahoo Finance
+
+#+begin_src R
+data_amzn <- readRDS("./data/amzn.rds")
+#+end_src
+
+*** Step 2: Calculate Returns
+
+#+begin_src R
+amzn_ret <- data_amzn$AMZN.Adjusted
+amzn_ret$Return <- Delt(amzn_ret$AMZN.Adjusted)
+amzn_ret <- amzn_ret[-1, 2]
+
+> amzn_ret[c(1:3, nrow(amzn_ret))]
+                Return
+2011-01-03 0.023444450
+2011-01-04 0.004288318
+2011-01-05 0.013026339
+2013-12-31 0.013778412
+#+end_src
+
+*** Step 3: Calculate Full Period (2011–2013) Variance and Standard Deviation
+
+#+begin_src R
+amzn_var_full <- var(amzn_ret$Return)
+> amzn_var_full
+             Return
+Return 0.0004250951
+
+amzn_sd_full <- sd(amzn_ret$Return)
+> amzn_sd_full
+[1] 0.02061783
+#+end_src
+
+*** Step 4: Calculate Variance and Standard Deviation for 2011
+
+#+begin_src R
+amzn_2011 <- subset(amzn_ret,
+                    index(amzn_ret) >= "2011-01-01" &
+                    index(amzn_ret) <= "2011-12-31")
+> amzn_2011[c(1:3, nrow(amzn_2011)), ]
+                 Return
+2011-01-03  0.023444450
+2011-01-04  0.004288318
+2011-01-05  0.013026339
+2011-12-30 -0.004371304
+
+amzn_var_2011 <- var(amzn_2011)
+> amzn_var_2011
+             Return
+Return 0.0005852693
+
+amzn_sd_2011 <- sd(amzn_2011)
+> amzn_sd_2011
+[1] 0.02419234
+#+end_src
+
+*** Step 5: Calculate Variance and Standard Deviation for 2012 and 2013
+
+#+begin_src R
+amzn_2012 <- subset(amzn_ret,
+                    index(amzn_ret) >= "2012-01-01" &
+                    index(amzn_ret) <= "2012-12-31")
+
+> amzn_2012[c(1:3, nrow(amzn_2012)), ]
+                  Return
+2012-01-03  0.0342576129
+2012-01-04 -0.0084902196
+2012-01-05  0.0005633824
+2012-12-31  0.0232074483
+
+amzn_var_2012 <- var(amzn_2012)
+
+> amzn_var_2012
+             Return
+Return 0.0004015231
+
+amzn_sd_2012 <- sd(amzn_2012)
+
+> amzn_sd_2012
+[1] 0.02003804
+
+amzn_2013 <- subset(amzn_ret,
+                    index(amzn_ret) >= "2013-01-01" &
+                    index(amzn_ret) <= "2013-12-31")
+
+> amzn_2013[c(1:3, nrow(amzn_2013)), ]
+                Return
+2013-01-02 0.025670679
+2013-01-03 0.004547095
+2013-01-04 0.002592011
+2013-12-31 0.013778412
+
+amzn_var_2013 <- var(amzn_2013)
+> amzn_var_2013
+             Return
+Return 0.0002897268
+
+amzn_sd_2013 <- sd(amzn_2013)
+
+> amzn_sd_2013
+[1] 0.01702136
+#+end_src
+
+*** Step 6: Calculate Average Return for the Full Period and Each of the Subperiods
+
+#+begin_src R
+mean_ret_full <- mean(amzn_ret)
+> mean_ret_full
+[1] 0.001266679
+
+mean_ret_2011 <- mean(amzn_2011)
+> mean_ret_2011
+[1] 0.0001385633
+
+mean_ret_2012 <- mean(amzn_2012)
+> mean_ret_2012
+[1] 0.001680247
+
+mean_ret_2013 <- mean(amzn_2013)
+> mean_ret_2013
+[1] 0.00198451
+#+end_src
+
+*** Step 7: Combine All Data
+
+#+begin_src R
+amzn_risk <- rbind(
+  cbind(amzn_var_full, amzn_var_2011, amzn_var_2012, amzn_var_2013),
+  cbind(amzn_sd_full, amzn_sd_2011, amzn_sd_2012, amzn_sd_2013),
+  cbind(mean_ret_full, mean_ret_2011, mean_ret_2012, mean_ret_2013)
+)
+
+> amzn_risk
+             Return       Return       Return       Return
+Return 0.0004250951 0.0005852693 0.0004015231 0.0002897268
+       0.0206178342 0.0241923402 0.0200380419 0.0170213628
+       0.0012666793 0.0001385633 0.0016802468 0.0019845099
+#+end_src
+
+*** Step 8: Cleanup Data
+
+#+begin_src R
+options(digits = 3)
+rownames(amzn_risk) <- c("Variance", "Std Dev", "Mean")
+colnames(amzn_risk) <- c("2011-2013", "2011", "2012", "2013")
+
+> amzn_risk
+         2011-2013     2011     2012    2013
+Variance  0.000425 0.000585 0.000402 0.00029
+Std Dev   0.020618 0.024192 0.020038 0.01702
+Mean      0.001267 0.000139 0.001680 0.00198
+
+annual_vol <- amzn_risk
+annual_vol[1, ] <- annual_vol[1, ] * 252
+annual_vol[2, ] <- annual_vol[2, ] * sqrt(252)
+annual_vol[3, ] <- annual_vol[3, ] * 252
+
+> annual_vol
+         2011-2013   2011  2012  2013
+Variance     0.107 0.1475 0.101 0.073
+Std Dev      0.327 0.3840 0.318 0.270
+Mean         0.319 0.0349 0.423 0.500
+
+
+options(digits = 7)
+#+end_src
+
+** 4.3 Portfolio Risk
+
+*** 4.3.1 Two Assets (Manual Approach)
+
+**** Step 1: Calculate Weights of Securities in the Portfolio
+
+#+begin_src R
+wgt_amzn <- 0.25
+wgt_ibm <- 0.75
+#+end_src
+
+**** Step 2: Import AMZN and IBM Data from Yahoo Finance and Calculate Total Returns
+
+#+begin_src R
+data_amzn <- readRDS("./data/amzn.rds")
+data_amzn[c(1:3, nrow(data_amzn)), ]
+
+amzn_ret <- Delt(data_amzn$AMZN.Adjusted)
+
+> amzn_ret[c(1:3, nrow(amzn_ret)), ]
+           Delt.1.arithmetic
+2010-12-31                NA
+2011-01-03       0.023444450
+2011-01-04       0.004288318
+2013-12-31       0.013778412
+
+data_ibm <- readRDS("./data/ibm.rds")
+ibm_ret <- Delt(data_ibm$IBM.Adjusted)
+> ibm_ret[c(1:3, nrow(ibm_ret)), ]
+           Delt.1.arithmetic
+2010-12-31                NA
+2011-01-03       0.004906152
+2011-01-04       0.001084914
+2013-12-31       0.006222904
+#+end_src
+
+**** Step 3: Combine the Two Return Series
+
+#+begin_src R
+returns <- cbind(amzn_ret, ibm_ret)
+
+> returns[c(1:3, nrow(returns)), ]
+           Delt.1.arithmetic Delt.1.arithmetic.1
+2010-12-31                NA                  NA
+2011-01-03       0.023444450         0.004906152
+2011-01-04       0.004288318         0.001084914
+2013-12-31       0.013778412         0.006222904
+
+names(returns) <- paste(c("amzn_ret", "ibm_ret"))
+
+> returns[c(1:3, nrow(returns)), ]
+              amzn_ret     ibm_ret
+2010-12-31          NA          NA
+2011-01-03 0.023444450 0.004906152
+2011-01-04 0.004288318 0.001084914
+2013-12-31 0.013778412 0.006222904
+returns <- returns[-1, ]
+
+> returns[c(1:3, nrow(returns)), ]
+              amzn_ret      ibm_ret
+2011-01-03 0.023444450  0.004906152
+2011-01-04 0.004288318  0.001084914
+2011-01-05 0.013026339 -0.003996508
+2013-12-31 0.013778412  0.006222904
+#+end_src
+
+**** Step 4: Calculate Standard Deviation and Covariance of the Securities
+
+#+begin_src R
+sd_amzn <- sd(returns$amzn_ret) * sqrt(252)
+> sd_amzn
+[1] 0.327298
+
+sd_ibm <- sd(returns$ibm_ret) * sqrt(252)
+> sd_ibm
+[1] 0.1923476
+
+ret_cov <- cov(returns$amzn_ret, returns$ibm_ret) * 252
+> ret_cov
+            ibm_ret
+amzn_ret 0.02326948
+
+ret_correl <- cor(returns$amzn_ret, returns$ibm_ret)
+> ret_correl
+          ibm_ret
+amzn_ret 0.369621
+
+> ret_correl * sd_amzn * sd_ibm
+            ibm_ret
+amzn_ret 0.02326948
+#+end_src
+
+**** Step 5: Calculate Portfolio Risk
+
+     Note that the weighted standard deviation is larger than the portfolio
+     standard deviation.
+
+#+begin_src R
+port_var <- wgt_amzn^2 * sd_amzn^2 + wgt_ibm^2 * sd_ibm^2 + 2 * ret_cov * wgt_amzn * wgt_ibm
+> port_var
+            ibm_ret
+amzn_ret 0.03623245
+
+port_sd <- sqrt(port_var)
+> port_sd
+           ibm_ret
+amzn_ret 0.1903482
+
+wgtd_sd <- wgt_amzn * sd_amzn + wgt_ibm * sd_ibm
+> wgtd_sd
+[1] 0.2260852
+#+end_src
+
+*** 4.3.2 Two Assets (Matrix Algebra)
+
+**** Step 1: Create Vector of Weights
+
+#+begin_src R
+wgt_2asset <- c(0.25, 0.75)
+> wgt_2asset
+[1] 0.25 0.75
+
+wgt_2asset <- matrix(wgt_2asset, 1)
+> wgt_2asset
+     [,1] [,2]
+[1,] 0.25 0.75
+#+end_src
+
+**** Step 2: Create Transposed Vector of Weights
+
+#+begin_src R
+twgt_2asset <- t(wgt_2asset)
+
+> twgt_2asset
+     [,1]
+[1,] 0.25
+[2,] 0.75
+#+end_src
+
+**** Step 3: Construct Variance–Covariance Matrix
+
+#+begin_src R
+mat_ret <- as.matrix(returns)
+
+> head(mat_ret)
+               amzn_ret      ibm_ret
+2011-01-03  0.023444450  0.004906152
+2011-01-04  0.004288318  0.001084914
+2011-01-05  0.013026339 -0.003996508
+2011-01-06 -0.008323535  0.010948901
+2011-01-07 -0.001990724 -0.004910861
+2011-01-10 -0.004366877 -0.001959999
+
+options(scipen <- "100")
+
+> cov(mat_ret)
+             amzn_ret      ibm_ret
+amzn_ret 4.250951e-04 9.233921e-05
+ibm_ret  9.233921e-05 1.468158e-04
+
+vcov_2asset <- cov(mat_ret) * 252
+
+> vcov_2asset
+           amzn_ret    ibm_ret
+amzn_ret 0.10712396 0.02326948
+ibm_ret  0.02326948 0.03699759
+#+end_src
+
+**** Step 4: Calculate Portfolio Risk
+
+#+begin_src R
+  mat_var2asset <- wgt_2asset %*% vcov_2asset %*% twgt_2asset
+
+  > mat_var2asset
+             [,1]
+  [1,] 0.03623245
+
+  mat_sd2asset <- sqrt(mat_var2asset)
+
+  > mat_sd2asset
+            [,1]
+  [1,] 0.1903482
+#+end_src
+
+*** 4.3.3 Multiple Assets
+
+    We assume we invested $2,000 in AMZN, $3,000 in IBM, $2,000 in TSLA and
+    $3,000 in GSPC.
+
+**** Step 1: Import Data for AMZN, IBM, TSLA, and GSPC
+
+#+begin_src R
+  data_amzn <- readRDS("./data/amzn.rds")
+  data_ibm <- readRDS("./data/ibm.rds")
+  data_tsla <- readRDS("./data/tsla.rds")
+  data_gspc <- readRDS("./data/gspc.rds")
+#+end_src
+
+**** Step 2: Extract Adjusted Prices of Each Security
+
+#+begin_src R
+  multi <- data_amzn[, "AMZN.Adjusted"]
+  multi <- merge(multi, data_ibm[, "IBM.Adjusted"])
+  multi <- merge(multi, data_tsla[, "TSLA.Adjusted"])
+  multi <- merge(multi, data_gspc[, "GSPC.Adjusted"])
+
+  > multi[c(1:3,nrow(multi)),]
+             AMZN.Adjusted IBM.Adjusted TSLA.Adjusted GSPC.Adjusted
+  2010-12-31        180.00     105.5844         26.63       1257.64
+  2011-01-03        184.22     106.1024         26.62       1271.87
+  2011-01-04        185.01     106.2175         26.67       1270.20
+  2013-12-31        398.79     142.2446        150.43       1848.36
+#+end_src
+
+**** Step 3: Calculate Returns for Each Security
+
+#+begin_src R
+  mat.price <- matrix(multi, nrow(multi))
+
+  prc2ret <- function(x) Delt(x)
+
+  mat.ret <- apply(mat.price, 2, function(x) {
+    prc2ret(c(x))
+  })
+
+  > mat.ret[1:4, ]
+              [,1]         [,2]          [,3]         [,4]
+  [1,]          NA           NA            NA           NA
+  [2,] 0.023444450  0.004906152 -0.0003754412  0.011314828
+  [3,] 0.004288318  0.001084914  0.0018782494 -0.001313062
+  [4,] 0.013026339 -0.003996508  0.0059992501  0.005007171
+#+end_src
+
+**** Step 4: Clean up Returns Data
+
+#+begin_src R
+  mat.ret <- mat.ret[-1, ]
+  > mat.ret[1:4, ]
+               [,1]         [,2]          [,3]         [,4]
+  [1,]  0.023444450  0.004906152 -0.0003754412  0.011314828
+  [2,]  0.004288318  0.001084914  0.0018782494 -0.001313062
+  [3,]  0.013026339 -0.003996508  0.0059992501  0.005007171
+  [4,] -0.008323535  0.010948901  0.0391352590 -0.
+
+  colnames(mat.ret) <- c("AMZN", "IBM", "TSLA", "GSPC")
+  > mat.ret[1:4, ]
+               AMZN          IBM          TSLA         GSPC
+  [1,]  0.023444450  0.004906152 -0.0003754412  0.011314828
+  [2,]  0.004288318  0.001084914  0.0018782494 -0.001313062
+  [3,]  0.013026339 -0.003996508  0.0059992501  0.005007171
+  [4,] -0.008323535  0.010948901  0.0391352590 -0.002122958
+#+end_src
+
+**** Step 5: Calculate Annualized Variance–Covariance Matrix
+
+#+begin_src R
+  VCOV <- cov(mat.ret)
+  > VCOV
+               AMZN          IBM         TSLA         GSPC
+  AMZN 4.250951e-04 9.233921e-05 1.849802e-04 1.137258e-04
+  IBM  9.233921e-05 1.468158e-04 9.618948e-05 8.410147e-05
+  TSLA 1.849802e-04 9.618948e-05 1.333745e-03 1.381005e-04
+  GSPC 1.137258e-04 8.410147e-05 1.381005e-04 1.093947e-04
+
+  VCOV.annual <- 252 * VCOV
+  > VCOV.annual
+             AMZN        IBM       TSLA       GSPC
+  AMZN 0.10712396 0.02326948 0.04661501 0.02865891
+  IBM  0.02326948 0.03699759 0.02423975 0.02119357
+  TSLA 0.04661501 0.02423975 0.33610371 0.03480134
+  GSPC 0.02865891 0.02119357 0.03480134 0.02756746
+#+end_src
+
+**** Step 6: Create a Row vector of Weights
+
+#+begin_src R
+wgt = c(0.2, 0.2, 0.3, 0.3)
+
+mat_wgt <- matrix(wgt, 1)
+
+> mat_wgt
+     [,1] [,2] [,3] [,4]
+[1,]  0.2  0.2  0.3  0.3
+#+end_src
+
+**** Step 7: Create a Column Vector of Weights by Transposing the Row Vector of Weights
+
+#+begin_src R
+tmat_wgt <- t(mat_wgt)
+
+> tmat_wgt
+     [,1]
+[1,]  0.2
+[2,]  0.2
+[3,]  0.3
+[4,]  0.3
+#+end_src
+
+**** Step 8: Calculate the Portfolio Variance
+
+#+begin_src R
+port.var <- mat_wgt %*% VCOV.annual %*% tmat_wgt
+
+> port.var[1, 1]
+[1] 0.06110593
+#+end_src
+
+**** Step 9: Calculate the Portfolio Standard Deviation
+
+#+begin_src R
+port.sd <- sqrt(port.var)
+
+> port.sd[1, 1]
+[1] 0.2471961
+#+end_src
+
+** 4.4 Value-at-Risk
+
+*** 4.4.1 Gaussian VaR
+
+    Assuming we are placing $1 mio at the start of the period and it has grown
+    to $1.21 mio at the end of the period.
+
+**** Step 1: Import Daily Portfolio Returns for the Last Year
+
+#+begin_src R
+port.ret <- read.csv("./data/HypotheticalPortfolioDaily.csv")
+port.vw_cum <- port.ret$vw_cum[nrow(port.ret)]
+
+> port.vw_cum * 1000000
+[1] 1209090
+
+> port.ret[c(1:3, nrow(port.ret)), ]
+      X       date   vw_cum   ew_cum       vw_ret        ew_ret
+1     1 2012-12-31 1.000000 1.000000           NA            NA
+2     2 2013-01-02 1.025271 1.025365  0.025271367  0.0253647775
+3     3 2013-01-03 1.023211 1.024877 -0.002009500 -0.0004752596
+253 253 2013-12-31 1.209090 1.274840  0.009770864  0.0104102915
+
+port.ret <- port.ret$vw_ret[-1]
+> port.ret[1:5]
+[1]  0.025271367 -0.002009500 -0.003355881  0.009799242 -0.003689760
+#+end_src
+
+**** Step 2: Calculate Mean and Standard Deviation of Historical Daily Portfolio Returns
+
+#+begin_src R
+port.mean <- mean(port.ret)
+> port.mean
+[1] 0.0008107497
+
+port.risk <- sd(port.ret)
+> port.risk
+[1] 0.01068474
+#+end_src
+
+**** Step 3: Calculate 1 and 5 % VaR
+
+#+begin_src R
+VaR01.Gaussian <- -(port.mean + port.risk * qnorm(0.01)) * port.vw_cum * 1000000
+VaR01.Gaussian <- format(VaR01.Gaussian, big.mark = ',')
+> VaR01.Gaussian
+[1] "29,073.39"
+
+VaR05.Gaussian <- -(port.mean + port.risk * qnorm(0.05)) * port.vw_cum * 1000000
+VaR05.Gaussian<-format(VaR05.Gaussian, big.mark = ',')
+> VaR05.Gaussian
+[1] "20,269.29"
+#+end_src
+
+*** 4.4.2 Historical VaR
+
+**** Step 1: Import Three Years of Daily Returns Data for Each Security in the Portfolio
+
+#+begin_src R
+AMZN.Ret <- Delt(data_amzn$AMZN.Adjusted)
+> AMZN.Ret[c(1:3, nrow(AMZN.Ret)), ]
+           Delt.1.arithmetic
+2010-12-31                NA
+2011-01-03       0.023444450
+2011-01-04       0.004288318
+2013-12-31       0.013778412
+
+IBM.Ret <- Delt(data_ibm$IBM.Adjusted)
+> IBM.Ret[c(1:3, nrow(IBM.Ret)), ]
+           Delt.1.arithmetic
+2010-12-31                NA
+2011-01-03       0.004906152
+2011-01-04       0.001084914
+2013-12-31       0.006222904
+
+GSPC.Ret <- Delt(data_gspc$GSPC.Adjusted)
+> GSPC.Ret[c(1:3, nrow(GSPC.Ret)), ]
+           Delt.1.arithmetic
+2010-12-31                NA
+2011-01-03       0.011314828
+2011-01-04      -0.001313062
+2013-12-31       0.003959675
+#+end_src
+
+**** Step 2: Combine Returns Data into One Data Object
+
+#+begin_src R
+ret.data <- cbind(AMZN.Ret[-1, ], IBM.Ret[-1, ], GSPC.Ret[-1, ])
+> ret.data[c(1:3, nrow(ret.data)), ]
+           Delt.1.arithmetic Delt.1.arithmetic.1 Delt.1.arithmetic.2
+2011-01-03       0.023444450         0.004906152         0.011314828
+2011-01-04       0.004288318         0.001084914        -0.001313062
+2011-01-05       0.013026339        -0.003996508         0.005007171
+2013-12-31       0.013778412         0.006222904         0.003959675
+
+names(ret.data) <- paste(c("AMZN.Ret", "GSPC.Ret", "IBM.Ret"))
+> ret.data[c(1:3, nrow(ret.data)), ]
+              AMZN.Ret     GSPC.Ret      IBM.Ret
+2011-01-03 0.023444450  0.004906152  0.011314828
+2011-01-04 0.004288318  0.001084914 -0.001313062
+2011-01-05 0.013026339 -0.003996508  0.005007171
+2013-12-31 0.013778412  0.006222904  0.003959675
+#+end_src
+
+**** Step 3: Identify the Value of Each Security in the Portfolio as of December 31, 2013
+
+     Assuming the amount of the portfolio in AMZN was $537,000, IBM was $602,
+     200 and GSPC was $120,500.
+
+#+begin_src R
+last.idx <- c(0.5370, 0.6022, 0.1205) * 1000000
+> last.idx
+[1] 537000 602200 120500
+
+port.val <- sum(last.idx)
+> port.val
+[1] 1259700
+#+end_src
+
+**** Step 4: Calculate Simulated Portfolio Returns Applying Current Portfolio Weights to Historical Security Returns
+
+     We simulate portfolio returns using the three years of historical returns
+     data of each security in the portfolio. We assume that the current value of
+     each security in the portfolio remains frozen over our VaR time horizon
+     (e.g., pone day). Therefore, each simulated return observation is applied to
+     the above value of the security.
+     
+#+begin_src R
+sim.portPnL <-
+  last.idx[1] * ret.data$AMZN.Ret +
+  last.idx[2] * ret.data$GSPC.Ret +
+  last.idx[3] * ret.data$IBM.Ret
+> sim.portPnL[c(1:3, nrow(sim.portPnL)), ]
+            AMZN.Ret
+2011-01-03 19994.650
+2011-01-04  1642.833
+2011-01-05  9528.883
+2013-12-31 10533.384
+
+names(sim.portPnL) <- paste("Port.PnL")
+> sim.portPnL[c(1:3, nrow(sim.portPnL)), ]
+            Port.PnL
+2011-01-03 19994.650
+2011-01-04  1642.833
+2011-01-05  9528.883
+2013-12-31 10533.384
+#+end_src
+
+**** Step 5: Calculate Appropriate Quantile for the 1 and 5 % VaR
+
+#+begin_src R
+VaR01.Historical <- quantile(-sim.portPnL$Port.PnL, 0.99)
+VaR01.Historical <- format(VaR01.Historical, big.mark = ',')
+> VaR01.Historical
+      "99%" 
+"41,221.47" 
+
+VaR05.Historical <- quantile(-sim.portPnL$Port.PnL, 0.95)
+VaR05.Historical <- format(VaR05.Historical, big.mark = ',')
+> VaR05.Historical
+      "95%" 
+"23,944.56" 
+#+end_src
+
+**** Step 6: Plot the VaR in Relation to P&L Density
+
+#+begin_src R
+  ret.d <- density(sim.portPnL$Port.PnL)
+  > ret.d
+  Call:
+    density.default(x = sim.portPnL$Port.PnL)
+
+  Data: sim.portPnL$Port.PnL (754 obs.);	Bandwidth 'bw' = 3099
+
+         x                y            
+   Min.   :-78279   Min.   :1.959e-09  
+   1st Qu.:-34703   1st Qu.:2.025e-07  
+   Median :  8873   Median :6.410e-07  
+   Mean   :  8873   Mean   :5.731e-06  
+   3rd Qu.: 52449   3rd Qu.:7.370e-06  
+   Max.   : 96025   Max.   :3.020e-05  
+
+  plot(
+    ret.d,
+    xlab = "Profit & Loss",
+    ylab = "",
+    yaxt = "n",
+    main = "Density of Simulated Portfolio P&L Over Three Years And 1% and 5% 1-Day Historical Value-at-Risk (VaR)"
+  )
+  abline(
+    v = -quantile(-sim.portPnL$Port.PnL, 0.99),
+    col = "gray",
+    lty = 1
+  )
+  abline(
+    v = -quantile(-sim.portPnL$Port.PnL, 0.95), 
+    col = "black", 
+    lty = 2
+  )
+#+end_src
+
+[[./images/chp04-plot3.png]]
+
+#+begin_src R
+x <- seq(min(sim.portPnL$Port.PnL),
+  max(sim.portPnL$Port.PnL),
+  length = 1000
+)
+> head(x)
+[1] -68983.80 -68827.93 -68672.06 -68516.19 -68360.32 -68204.46
+
+> tail(x)
+[1] 85949.93 86105.80 86261.67 86417.54 86573.41 86729.28
+#+end_src
+
+#+begin_src R
+y <- dnorm(x,
+  mean = mean(sim.portPnL$Port.PnL),
+  sd = sd(sim.portPnL$Port.PnL)
+)
+
+> head(y)
+[1] 2.113183e-09 2.202987e-09 2.296395e-09 2.393541e-09 2.494566e-09
+[6] 2.599614e-09 
+
+> tail(y)
+[1] 2.652787e-11 2.522097e-11 2.397624e-11 2.279082e-11 2.166200e-11
+[6] 2.058719e-11
+#+end_src
+
+#+begin_src R
+lines(x, y, type = "l", col = "black", lwd = 1, lty = 3)
+legend(
+  "topright",
+  c("Simulated P&L Distribution", "Normal Distribution", "1% 1-Day VaR", "5% 1-Day VaR"),
+  col = c("black", "black", "gray", "black"),
+  lty = c(1, 3, 1, 2)
+)
+#+end_src
+
+[[./images/chp04-plot4.png]]
+
+    Using the Square Root of T rule to Scale 1-Day VaR To a T -Day VaR Assuming
+    the returns are independent and identically distributed (i.i.d), we can
+    calculate a T -Day VaR by multiplying the 1-Day VaR by T . For example, our
+    1 % 1-Day Historical VaR was $ 39,744. Assuming returns are i.i.d., the 1 %
+    10-Day Historical VaR is equal to $ 125,682.
+
+#+begin_src R
+VaR01.10day <- quantile(-sim.portPnL$Port.PnL, 0.99) * sqrt(10)
+> VaR01.10day
+   "99%"
+130353.7 
+#+end_src
+
+** 4.5 Expected Shortfall
+
+*** 4.5.1 Gaussian ES
+
+#+begin_src R
+ES01.Gaussian <- 1259700 * (port.mean + port.risk * (dnorm(qnorm(.01)) / .01))
+ES01.Gaussian <- format(ES01.Gaussian, big.mark = ",")
+> ES01.Gaussian
+[1] "36,893.94"
+
+ES05.Gaussian <- 1259700 * (port.mean + port.risk * (dnorm(qnorm(.05)) / .05))
+ES05.Gaussian <- format(ES05.Gaussian, big.mark = ",")
+> ES05.Gaussian
+[1] "28,784.53"
+#+end_src
+
+*** 4.5.2 Historical ES
+
+**** Step 1: Identify Historical VaR Limit for Portfolio
+
+#+begin_src R
+VaR01.hist <- -quantile(-sim.portPnL$Port.PnL, 0.99)
+> VaR01.hist
+    "99%" 
+-41221.47 
+
+VaR05.hist <- -quantile(-sim.portPnL$Port.PnL, 0.95)
+> VaR05.hist
+    "95%" 
+-23944.56 
+#+end_src
+
+**** Step 2: Identify Simulated Portfolio Losses in Excess of VaR
+
+#+begin_src R
+ES.PnL <- sim.portPnL$Port.PnL
+> ES.PnL[c(1:3, nrow(ES.PnL)), ]
+            Port.PnL
+2011-01-03 19994.650
+2011-01-04  1642.833
+2011-01-05  9528.883
+2013-12-31 10533.384
+
+ES.PnL$dummy01 <- ifelse(ES.PnL$Port.PnL < VaR01.hist, 1, 0)
+ES.PnL$dummy05 <- ifelse(ES.PnL$Port.PnL < VaR05.hist, 1, 0)
+> ES.PnL[c(1:3, nrow(ES.PnL)), ]
+            Port.PnL dummy01 dummy05
+2011-01-03 19994.650       0       0
+2011-01-04  1642.833       0       0
+2011-01-05  9528.883       0       0
+2013-12-31 10533.384       0       0
+#+end_src
+
+**** Step 3: Extract Portfolio Losses in Excess of VaR
+
+#+begin_src R
+shortfall01 <- subset(ES.PnL, ES.PnL$dummy01 == 1)
+> head(shortfall01)
+            Port.PnL dummy01 dummy05
+2011-01-28 -50892.46       1       1
+2011-08-04 -55438.83       1       1
+2011-08-08 -68175.21       1       1
+2011-08-10 -60985.51       1       1
+2011-08-18 -68983.80       1       1
+2011-09-22 -42274.22       1       1
+
+shortfall05 <- subset(ES.PnL, ES.PnL$dummy05 == 1)
+> head(shortfall05)
+2011-01-28 -50892.46       1       1
+2011-02-22 -31981.43       0       1
+2011-05-16 -31131.25       0       1
+2011-06-01 -27123.96       0       1
+2011-07-11 -26014.90       0       1
+2011-08-02 -40531.75       0       1
+#+end_src
+
+**** Step 4: Compute Average of Losses in Excess of VaR
+
+#+begin_src R
+avg.ES01 <- -mean(shortfall01$Port.PnL)
+> avg.ES01
+[1] 56161.96
+
+ES01.Historical <- format(avg.ES01, big.mark = ",")
+> ES01.Historical
+[1] "56,161.96"
+
+avg.ES05 <- -mean(shortfall05$Port.PnL)
+> avg.ES05
+[1] 35243.14
+
+ES05.Historical <- format(avg.ES05, big.mark = ",")
+> ES05.Historical
+[1] "35,243.14"
+#+end_src
+
+*** 4.5.3 Comparing VaR and ES
+
+#+begin_src R
+  VaR.ES.Combined <-
+    data.frame(rbind(
+      cbind(VaR01.Historical, ES01.Historical[1], VaR01.Gaussian, ES01.Gaussian[1]),
+      cbind(VaR05.Historical, ES05.Historical[1], VaR05.Gaussian, ES05.Gaussian[1])
+    ))
+  > VaR.ES.Combined
+        VaR01.Historical        V2 VaR01.Gaussian        V4
+  "99%"        41,221.47 56,161.96      29,073.39 36,893.94
+  "95%"        23,944.56 35,243.14      20,269.29 28,784.53
+
+  names(VaR.ES.Combined) <- paste(c("VaR Historical", "ES Historical", "VaR Gaussian", "ES Gaussian"))
+  rownames(VaR.ES.Combined) <- paste(c("1% 1-Day", "5% 1-Day"))
+  > VaR.ES.Combined
+               VaR Historical ES Historical VaR Gaussian ES Gaussian
+  "1%" 1-Day        41,221.47     56,161.96    29,073.39   36,893.94
+  "5%" 1-Day        23,944.56     35,243.14    20,269.29   28,784.53
+#+end_src
+
+** 4.6 Alternative Risk Measures
+
+       In this section, we will discuss alternative risk measures beyond
+    close-to-close volatility. The advantage of using close-to-close volatility
+    is that it only requires you to look at closing prices, but you have to use
+    many observations to get a good estimate of volatility. Using a large number
+    of observations entails getting a long historical series. The earlier part
+    of such long historical data may be less relevant to measure volatility
+    today. Therefore, we may want to consider alternative measures of volatility
+    that are more efficient than close-to-close volatility by utilizing the
+    open, high, and low prices of the day in addition to the closing price. The
+    measures we will discuss are the Parkinson, Garmann-Klass,
+    Rogers-Satchell-Yoon, and Yang-Zhou. Parkinson uses high and low prices,
+    while the remaining alternative volatility measures all use open, high, low,
+    and close data.
+
+*** 4.6.1 Parkinson
+
+    The Parkinson volatility measure uses the stock’s high and low price of the
+    day.
+
+**** Step 1: Import Amazon Data from Yahoo Finance
+
+#+begin_src R
+data.AMZN <- readRDS("./data/amzn.rds")
+#+end_src
+
+**** Step 2: Keep the High and Low Price
+
+#+begin_src R
+parkinson <- data.AMZN[-1, c("AMZN.High", "AMZN.Low")]
+> parkinson[c(1:3, nrow(parkinson)), ]
+           AMZN.High AMZN.Low
+2011-01-03    186.00   181.21
+2011-01-04    187.70   183.78
+2011-01-05    187.45   184.07
+2013-12-31    398.83   393.80
+#+end_src
+
+**** Step 3: Calculate the Terms in the Parkinson Formula
+
+#+begin_src R
+parkinson$log.hi.low <- log(parkinson$AMZN.High / parkinson$AMZN.Low)
+parkinson$log.square <- (parkinson$log.hi.low)**2
+
+> parkinson[c(1:3, nrow(parkinson)), ]
+           AMZN.High AMZN.Low log.hi.low   log.square
+2011-01-03    186.00   181.21 0.02609006 0.0006806910
+2011-01-04    187.70   183.78 0.02110554 0.0004454439
+2011-01-05    187.45   184.07 0.01819597 0.0003310933
+2013-12-31    398.83   393.80 0.01269209 0.0001610892
+#+end_src
+
+**** Step 4: Calculate the Sum of the Values Under the log.square Column
+
+#+begin_src R
+parkinson.sum <- sum(parkinson$log.square)
+> parkinson.sum
+[1] 0.5612609
+#+end_src
+
+**** Step 5: Calculate the Daily Parkinson Volatility Measure
+
+#+begin_src R
+parkinson.vol <- sqrt(1 / (4 * nrow(parkinson) * log(2)) * parkinson.sum)
+> parkinson.vol
+[1] 0.01638528
+#+end_src
+
+**** Step 6: Calculate the Annualized Parkinson Volatility
+
+#+begin_src R
+annual.parkinson.vol <- parkinson.vol * sqrt(252)
+> annual.parkinson.vol
+[1] 0.2601083
+#+end_src
+
+*** 4.6.2 Garman-Klass
+
+    The Garman-Klass volatility measure can be viewed as an extension of the
+    Parkinson volatility measure that includes opening and closing prices.
+
+**** Step 1: Import Amazon Open, High, Low, and Close Price Data
+
+#+begin_src R
+garman.klass <- data.AMZN[-1, 1:4]
+> garman.klass[c(1:3, nrow(garman.klass)), ]
+           AMZN.Open AMZN.High AMZN.Low AMZN.Close
+2011-01-03    181.37    186.00   181.21     184.22
+2011-01-04    186.15    187.70   183.78     185.01
+2011-01-05    184.10    187.45   184.07     187.42
+2013-12-31    394.58    398.83   393.80     398.79
+#+end_src
+
+**** Step 2: Calculate the First Term
+
+#+begin_src R
+garman.klass.one <- (1 / (2 * nrow(garman.klass))) * parkinson.sum
+> garman.klass.one
+[1] 0.0003721889
+#+end_src
+
+**** Step 3: Calculate the Second Term
+
+#+begin_src R
+garman.klass.two <- ((2 * log(2) - 1) / nrow(garman.klass)) *
+  sum(log(garman.klass$AMZN.Close / garman.klass$AMZN.Open)**2)
+
+> garman.klass.two
+[1] 0.0001009639
+#+end_src
+
+**** Step 4: Calculate the Daily Garman-Klass Volatility
+
+#+begin_src R
+garman.klass.vol <- sqrt(garman.klass.one - garman.klass.two)
+> garman.klass.vol
+[1] 0.0003721889
+#+end_src
+
+**** Step 5: Annualize the Volatility
+
+#+begin_src R
+annual.garman.klass.vol <- garman.klass.vol * sqrt(252)
+> annual.garman.klass.vol
+[1] 0.2614358
+#+end_src
+
+*** 4.6.3 Rogers, Satchell, and Yoon
+
+    The prior risk measures we have discussed all assume that the mean return is
+    zero. In contrast, the Rogers, Satchell, and Yoon (RSY) volatility properly
+    measures the volatility of securities with an average return that is not
+    zero.
+
+**** Step 1: Obtain Open, High, Low, and Close Data
+
+#+begin_src R
+rsy.vol <- data.AMZN[-1, 1:4]
+> rsy.vol[c(1:3, nrow(rsy.vol)), ]
+           AMZN.Open AMZN.High AMZN.Low AMZN.Close
+2011-01-03    181.37    186.00   181.21     184.22
+2011-01-04    186.15    187.70   183.78     185.01
+2011-01-05    184.10    187.45   184.07     187.42
+2013-12-31    394.58    398.83   393.80     398.79
+#+end_src
+
+**** Step 2: Calculate the Product of First Two Log Terms
+
+#+begin_src R
+rsy.one <- log(rsy.vol$AMZN.High / rsy.vol$AMZN.Close)
+> rsy.one[c(1:3, nrow(rsy.one)), ]
+              AMZN.High
+2011-01-03 0.0096159727
+2011-01-04 0.0144350770
+2011-01-05 0.0001600502
+2013-12-31 0.0001002432
+
+rsy.two <- log(rsy.vol$AMZN.High / rsy.vol$AMZN.Open)
+> rsy.two[c(1:3, nrow(rsy.two)), ]
+            AMZN.High
+2011-01-03 0.02520756
+2011-01-04 0.00829216
+2011-01-05 0.01803301
+2013-12-31 0.01071335
+
+rsy.one.two <- rsy.one * rsy.two
+> rsy.one.two[c(1:3, nrow(rsy.one.two)), ]
+              AMZN.High
+2011-01-03 2.423952e-04
+2011-01-04 1.196980e-04
+2011-01-05 2.886185e-06
+2013-12-31 1.073941e-06
+#+end_src
+
+**** Step 3: Calculate the Product of Last Two Log Terms
+
+#+begin_src R
+rsy.three <- log(rsy.vol$AMZN.Low / rsy.vol$AMZN.Close)
+> rsy.three[c(1:3, nrow(rsy.three)), ]
+               AMZN.Low
+2011-01-03 -0.016474083
+2011-01-04 -0.006670466
+2011-01-05 -0.018035919
+2013-12-31 -0.012591849
+
+rsy.four <- log(rsy.vol$AMZN.Low / rsy.vol$AMZN.Open)
+> rsy.four[c(1:3, nrow(rsy.four)), ]
+                AMZN.Low
+2011-01-03 -0.0008824977
+2011-01-04 -0.0128133835
+2011-01-05 -0.0001629628
+2013-12-31 -0.0019787394
+
+rsy.three.four <- rsy.three * rsy.four
+> rsy.three.four[c(1:3, nrow(rsy.three.four)), ]
+               AMZN.Low
+2011-01-03 1.453834e-05
+2011-01-04 8.547124e-05
+2011-01-05 2.939183e-06
+2013-12-31 2.491599e-05
+#+end_src
+
+**** Step 4: Calculate the RSY Volatility Measure
+
+#+begin_src R
+rsy.vol <- sqrt((1 / nrow(rsy.vol)) * sum((rsy.one.two + rsy.three.four)))
+> rsy.vol
+[1] 0.01642272
+#+end_src
+
+**** Step 5: Annualize the RSY Volatility Measure
+
+#+begin_src R
+annual.rsy.vol <- rsy.vol * sqrt(252)
+> annual.rsy.vol
+[1] 0.2607026
+#+end_src
+
+*** 4.6.4 Yang and Zhang
+
+    Yang and Zhang developed a volatility measure that handles both opening
+    jumps and drift. We can think of the Yang-Zhang volatility as the sum of the
+    overnight (i.e., volatility from the prior day’s close to today’s open) and
+    a weighted average of the RSY Volatility and the day’s open-to-close
+    volatility.
+
+**** Step 1: Import Amazon Open, High, Low, and Close Data and Create Variable for Yesterday’s Closing Price
+
+#+begin_src R
+yz.vol <- data.AMZN[, 1:4]
+yz.vol$Lag.Close <- Lag(yz.vol$AMZN.Close, k = 1)
+
+> yz.vol[c(1:3, nrow(yz.vol)), ]
+           AMZN.Open AMZN.High AMZN.Low AMZN.Close Lag.Close
+2010-12-31    181.96    182.30   179.51     180.00        NA
+2011-01-03    181.37    186.00   181.21     184.22    180.00
+2011-01-04    186.15    187.70   183.78     185.01    184.22
+2013-12-31    394.58    398.83   393.80     398.79    393.37
+#+end_src
+
+**** Step 2: Delete December 31, 2010 Data
+
+#+begin_src R
+yz.vol <- yz.vol[-1, ]
+> yz.vol[c(1:3, nrow(yz.vol)), ]
+           AMZN.Open AMZN.High AMZN.Low AMZN.Close Lag.Close
+2011-01-03    181.37    186.00   181.21     184.22    180.00
+2011-01-04    186.15    187.70   183.78     185.01    184.22
+2011-01-05    184.10    187.45   184.07     187.42    185.01
+2013-12-31    394.58    398.83   393.80     398.79    393.37
+#+end_src
+
+**** Step 3: Calculate the First Term in the Yang-Zhang Equation
+
+#+begin_src R
+yz.one.mean <- mean(log(yz.vol$AMZN.Open / yz.vol$Lag.Close))
+> yz.one.mean
+[1] 0.0003968047
+
+yz.one <- 1 / (nrow(yz.vol) - 1) * sum((log(yz.vol$AMZN.Open / yz.vol$Lag.Close) - yz.one.mean)**2)
+> yz.one
+[1] 0.0001483809
+#+end_src
+
+**** Step 4: Calculate the Second Term in the Yang-Zhang Equation
+
+#+begin_src R
+yz.two.mean <- mean(log(yz.vol$AMZN.Close / yz.vol$AMZN.Open))
+> yz.two.mean
+[1] 0.000658206
+
+yz.two <- 1 / (nrow(yz.vol) - 1) * sum((log(yz.vol$AMZN.Close / yz.vol$AMZN.Open) - yz.two.mean)**2)
+> yz.two
+[1] 0.0002612785
+#+end_src
+
+**** Step 5: Calculate k
+
+     alpha is suggested to be 1.34
+
+#+begin_src R
+k = 0.34 / (1.34 + (nrow(yz.vol) + 1) / (nrow(yz.vol) - 1))
+> k
+[1] 0.1451344
+#+end_src
+
+**** Step 6: Calculate the Annualized Yang-Zhang Volatility
+
+#+begin_src R
+annual.yz.vol <- sqrt(yz.one + k * yz.two + (1 - k) * rsy.vol^2) * sqrt(252)
+> annual.yz.vol
+[1] 0.3241136
+#+end_src
+
+*** 4.6.5 Comparing the Risk Measures
+
+**** Step 1: Calculate Amazon Returns Data
+
+#+begin_src R
+data_amzn <- readRDS("./data/amzn.rds")
+AMZN.ret <- Delt(data_amzn$AMZN.Adjusted)
+#+end_src
+
+**** Step 2: Calculate Log Returns
+
+#+begin_src R
+cl2cl.ret <- AMZN.ret[-1]
+names(cl2cl.ret) <- "Return"
+cl2cl.ret$logret <- log(1 + cl2cl.ret$Return)
+
+> cl2cl.ret[c(1:3, nrow(cl2cl.ret)), ]
+                Return     logret
+2011-01-03 0.023444450 0.02317385
+2011-01-04 0.004288318 0.00427915
+2011-01-05 0.013026339 0.01294223
+2013-12-31 0.013778412 0.01368435
+#+end_src
+
+**** Step 3: Calculate Standard Deviation of the Returns
+
+#+begin_src R
+cl2cl.vol <- sd(cl2cl.ret$logret)
+> cl2cl.vol
+[1] 0.02053516
+#+end_src
+
+**** Step 4: Annualize the Close-to-Close Volatility
+
+#+begin_src R
+annual.cl2cl.vol <- cl2cl.vol * sqrt(252)
+> annual.cl2cl.vol
+[1] 0.3259855
+#+end_src
+
+**** Step 5: Create Table of the Different Volatility Measures
+
+#+begin_src R
+vol.measures <- rbind(annual.cl2cl.vol, annual.parkinson.vol, annual.garman.klass.vol, annual.rsy.vol, annual.yz.vol)
+rownames(vol.measures) <- c("Close-to-Close", "Parkinson", "Garman-Klass", "Rogers et al", "Yang-Zhang")
+colnames(vol.measures) <- c("Volatility")
+
+> vol.measures
+               Volatility
+Close-to-Close  0.3259855
+Parkinson       0.2601083
+Garman-Klass    0.2614358
+Rogers et al    0.2607026
+Yang-Zhang      0.3241136
+#+end_src
