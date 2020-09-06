@@ -31,11 +31,6 @@
       null hypothesis that the population means for the two treatment groups are
       equal at the 0.05 level of significance.
 
-    The coin package and the lmPerm package. The coin package provides a com-
-      prehensive framework for permutation tests applied to independence
-      problems, whereas the lmPerm package provides permutation tests for ANOVA
-      and regression designs.
-
 | Treatment A | Treatment B |
 |-------------+-------------|
 |          40 |          57 |
@@ -43,6 +38,11 @@
 |          45 |          55 |
 |          55 |          62 |
 |          58 |          65 |
+
+   The ~coin~ package and the ~lmPerm~ package. The ~coin~ package provides a
+   comprehensive framework for permutation tests applied to independence
+   problems, whereas the lmPerm package provides permutation tests for ANOVA and
+   regression designs.
 
 | Test                                | ~coin~ function              |
 |-------------------------------------+------------------------------|

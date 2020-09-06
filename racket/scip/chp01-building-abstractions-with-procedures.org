@@ -1,0 +1,605 @@
+#+STARTUP: showeverything
+#+title: Structure and Interpretation of Computer Programs
+
+* Chapter 1: Building Abstractions with Procedures
+
+** Exercise 1.1
+
+   Below is a sequence of expressions. What is the result printed by the
+   interpreter in response to each expression? Assume that the sequence is to be
+   evaluated in the order in which it is presented.
+
+#+begin_src racket
+10
+(+ 5 3 4)
+(- 9 1)
+(/ 6 2)
+(+ (* 2 4) (- 4 6))
+(define a 3)
+(define b (+ a 1))
+(+ a b (* a b)) (= a b)
+(if (and (> b a) (< b (* a b)))
+    b
+    a)
+
+(cond ((= a 4) 6)
+      ((= b 4) (+ 6 7 a))
+      (else 25))
+(+ 2 (if (> b a) b a))
+
+(* (cond ((> a b) a)
+         ((< a b) b)
+         (else -1))
+   (+ a 1))
+#+end_src
+
+** Exercise 1.2:
+
+   Translate the following expression into prefix form:
+
+   5 + 4 + (2 − (3 − (6 + 4 / 5 ))) / 3(6 − 2)(2 − 7)
+
+#+begin_src racket
+> (/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
+     (* 3 (- 6 2) (- 2 7)))
+-37/150
+#+end_src
+
+** Exercise 1.3:
+   
+   Define a procedure that takes three numbers as arguments and returns the sum
+   of the squares of the two larger numbers.
+
+#+begin_src racket
+(define (square x) (* x x))
+(define (larger x y) (if (> x y) x y))
+(define (f x y z)
+  (cond [(> x y) (+ (square x) (square (larger y z)))]
+        [else (+ (square y) (square (larger x z)))]))
+
+> (f 1 2 3)
+13
+#+end_src
+
+** Exercise 1.4:
+
+   Observe that our model of evaluation allows for combinations whose operators
+   are compound expressions. Use this observation to describe the behavior of
+   the following procedure:
+
+#+begin_src racket
+(define (a-plus-abs-b a b)
+  ((if (> b 0) + -) a b))
+#+end_src
+
+** Exercise 1.5:
+
+   Ben Bitdiddle has invented a test to determine whether the interpreter he is
+   faced with is using applicative-order evaluation or normal-order evaluation.
+   He defines the following two procedures:
+
+#+begin_src racket
+(define (p) (p))
+(define (test x y) (if (= x 0) 0 y))
+(test 0 (p))
+#+end_src
+
+   Applicative-order evaluation will evaluate ~(p)~ which will cause an infinite
+   loop. Whereas normal-order will fully expand and not evaluate ~(p)~ at the end.
+
+** 1.1.7 Example: Square Roots by Newton's Method
+
+#+begin_src racket
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.001))
+
+(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x) x)))
+#+end_src
+
+
+** Exercise 1.6: 
+
+   Alyssa P. Hacker doesn’t see why if needs to be provided as a special form.
+   "Why can't I just define it as an ordinary procedure in terms of cond?" she
+   asks. Alyssa’s friend Eva Lu Ator claims this can indeed be done, and she
+   defines a new version of if:
+
+#+begin_src racket
+(define (sqrt-iter guess x)
+  (new-if (good-enough? guess x)
+          guess
+          (sqrt-iter (improve guess x) x)))
+#+end_src
+
+   It will go into an infinite loop because ~new-if~ is a function and not a
+   special form. It will evaluate each parameter before the entering the
+   function, thereby running an infinite recursion.
+
+** Exercise 1.7:
+
+   The ~good-enough?~ test used in computing square roots will not be very
+   effective for finding the square roots of very small numbers. Also, in real
+   computers, arithmetic operations are almost always performed with limited
+   precision. This makes our test inadequate for very large numbers. Explain
+   these statements, with examples showing how the test fails for small and
+   large numbers. An alternative strategy for implementing ~good-enough?~ is to
+   watch how guess changes from one iteration to the next and to stop when the
+   change is a very small fraction of the guess. Design a square-root procedure
+   that uses this kind of end test. Does this work beer for small and large
+   numbers?
+
+#+begin_src racket
+(define (good-enough-improved? previous-guess guess)
+  (< (abs (/ (- guess previous-guess) guess)) 0.000001))
+(define (sqrt-iter-improved guess x)
+  (if (good-enough-improved? guess (improve guess x))
+      guess
+      (sqrt-iter-improved (improve guess x) x)))
+(define (sqrt x)
+  (sqrt-iter-improved 1.0 x))
+#+end_src
+
+   For very large numbers, ~(improve guess x)~ cannot improve the guess when the
+   smallest possible difference between ~guess^2~ and ~x~ is larger than
+   ~0.001~ due to computer precision rounding errors.
+
+   For very small numbers, we can't get an accurate answer if ~x~ is smaller
+   than the precision of ~0.001~.
+
+** Lexical scoping
+
+   Lexical scoping dictates that free variables in a procedure are taken to
+   refer to bindings made by enclosing procedure definitions; that is, they are
+   looked up in the environment in which the procedure was defined. In the below
+   example, ~x~ gets its value from the arugment with which the enclosing
+   procedure ~sqrt~ is called.
+
+#+begin_src racket
+(define (sqrt x)
+
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) 0.001))
+
+  (define (improve guess)
+    (average guess (/ x guess)))
+
+  (define (sqrt-iter guess)
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+
+  (sqrt-iter 1.0))
+#+end_src
+
+** Exercise 1.9:
+
+   Each of the following two procedures deﬁnes a method for adding two positive
+   integers in terms of the procedures inc, which increments its argument by 1,
+   and dec, which decrements its argument by 1.
+
+#+begin_src racket
+(define (+ a b)
+  (if (= a 0)
+      b
+      (inc (+ (dec a) b))))
+
+(+ 2 3)
+(inc (+ 1 3))
+(inc (inc (+ 0 3)))
+(inc (inc 3))
+(inc 4)
+5
+
+(define (+ a b)
+  (if (= a 0)
+      b
+      (+ (dec a) (inc b))))
+(+ 2 3)
+(+ 1 4)
+(+ 0 5)
+5
+#+end_src
+
+** Exercise 1.10:
+
+    The following procedure computes a mathematical function called Ackermann’s
+    function.
+
+#+begin_src racket
+(define (A x y)
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1) (A x (- y 1))))))
+> (A 1 10)
+1024
+> (A 2 4)
+65536
+> (A 3 3)
+65536
+#+end_src
+
+#+begin_src racket
+(define (f n) (A 0 n))
+(define (g n) (A 1 n))
+(define (h n) (A 2 n))
+(define (k n) (* 5 n n))
+
+(require racket/trace)
+(trace A)
+
+;; f(n) = 2n
+> (A 0 3)
+<6
+6
+
+;; g(n) = 2^n
+> (A 1 3)
+> (A 1 2)
+> >(A 1 1)
+< <2
+> (A 0 2)
+< 4
+>(A 0 4)
+<8
+8
+
+;; h(n) = 2^(2(n-1))
+>(A 2 3)
+> (A 2 2)
+> >(A 2 1)
+< <2
+> (A 1 2)
+> >(A 1 1)
+< <2
+> (A 0 2)
+< 4
+>(A 1 4)
+> (A 1 3)
+> >(A 1 2)
+> > (A 1 1)
+< < 2
+> >(A 0 2)
+< <4
+> (A 0 4)
+< 8
+>(A 0 8)
+<16
+16
+#+end_src
+
+** 1.2.2 Tree Recursion
+
+   In general, the number of steps required by a tree-recursive process will be
+   proportional to the number of nodes in the tree, while the space required
+   will be proportional to the maximum depth of the tree.
+
+#+begin_src racket
+(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib (- n 1)) (fib (- n 2))))))
+#+end_src
+
+#+begin_src racket
+(define (fib n)
+  (fib-iter 1 0 n))
+
+(define (fib-iter a b count)
+  (if (= count 0)
+      b
+      (fib-iter (+ a b) a (- count 1))))
+#+end_src
+
+** Example: Counting change
+
+   The total number of ways to make change for some amount is equal to the
+   number of ways to make change for the amount without using any of the first
+   kind of coin, plus the number of ways to make change assuming that we do use
+   the first kind of coin. But the latter number is equal to the number of ways to
+   make change for the amount that remains after using a coin of the first kind.
+
+#+begin_src racket
+    (define (count-change amount)
+      (cc amount 5))
+
+    (define (cc amount kinds-of-coins)
+      (cond ((= amount 0) 1)
+            ((or (< amount 0) 
+                 (= kinds-of-coins 0)) 0)
+            (else (+ (cc amount 
+                         (- kinds-of-coins 1))
+                     (cc (- amount (first-denomination kinds-of-coins))
+                         kinds-of-coins)))))
+
+    (define (first-denomination kinds-of-coins)
+      (cond ((= kinds-of-coins 1) 1)
+            ((= kinds-of-coins 2) 5)
+            ((= kinds-of-coins 3) 10)
+            ((= kinds-of-coins 4) 25)
+            ((= kinds-of-coins 5) 50)))
+#+end_src
+
+** Exercise 1.11:
+   
+   Write a procedure that computes f by means of a recursive process. Write a
+   procedure that computes f by means of an iterative process.
+
+#+begin_src racket
+(define (f n)
+  (cond [(< n 3) n]
+        [else (+ (f (- n 1))
+                 (* 2 (f (- n 2)))
+                 (* 3 (f (- n 3))))]))
+#+end_src
+
+#+begin_src 
+f(0) = 0  |
+f(1) = 1  | all known values
+f(2) = 2  |
+
+f(3) = f(2) + 2f(1) + 3f(0)
+f(4) = f(3) + 2f(2) + 3f(1)
+f(5) = f(4) + 2f(3) + 3f(2)
+f(6) = f(5) + 2f(4) + 3f(3)
+#+end_src
+
+#+begin_src racket
+(define (f n)
+  (define (f-iter a b c count)
+    (cond [(< n 3) n]
+          [(> count n) a]
+          [else (f-iter (+ a (* 2 b) (* 3 c)) a b (+ count 1))]))
+
+  (f-iter 2 1 0 3))
+#+end_src
+
+** Exercise 1.12:
+
+    The numbers at the edge of the Pascal's triangle are all 1, and each number inside the
+    triangle is the sum of the two numbers above it. Write a procedure that
+    computes elements of Pascal’s triangle by means of a recursive process.
+
+#+begin_src racket
+(define (pascal r c)
+  (cond [(or (= c 1) (= c r)) 1]
+        [else (+ (pascal (- r 1) (- c 1)) (pascal (- r 1) c))]))
+#+end_src
+
+** Exercise 1.13:
+
+[[https://codology.net/post/sicp-solution-exercise-1-13/][codology solution]]
+
+** Exercise 1.14: 
+
+   Draw the tree illustrating the process generated by the count-change
+   procedure of Section 1.2.2 in making change for 11 cents. What are the orders
+   of growth of the space and number of steps used by this process as the amount
+   to be changed increases?
+
+[[https://codology.net/post/sicp-solution-exercise-1-14/][codology solution]]
+
+#+begin_src racket
+>(cc 11 5)
+> (cc 11 4)
+> >(cc 11 3)
+> > (cc 11 2)
+> > >(cc 11 1)
+> > > (cc 11 0)
+< < < 0
+> > > (cc 10 1)
+> > > >(cc 10 0)
+< < < <0
+> > > >(cc 9 1)
+> > > > (cc 9 0)
+< < < < 0
+> > > > (cc 8 1)
+> > > > >(cc 8 0)
+< < < < <0
+> > > > >(cc 7 1)
+> > > > > (cc 7 0)
+< < < < < 0
+> > > > > (cc 6 1)
+> > > >[10] (cc 6 0)
+< < < <[10] 0
+> > > >[10] (cc 5 1)
+> > > >[11] (cc 5 0)
+< < < <[11] 0
+> > > >[11] (cc 4 1)
+> > > >[12] (cc 4 0)
+< < < <[12] 0
+> > > >[12] (cc 3 1)
+> > > >[13] (cc 3 0)
+< < < <[13] 0
+> > > >[13] (cc 2 1)
+> > > >[14] (cc 2 0)
+< < < <[14] 0
+> > > >[14] (cc 1 1)
+> > > >[15] (cc 1 0)
+< < < <[15] 0
+> > > >[15] (cc 0 1)
+< < < <[15] 1
+< < < <[14] 1
+< < < <[13] 1
+< < < <[12] 1
+< < < <[11] 1
+< < < <[10] 1
+< < < < < 1
+< < < < <1
+< < < < 1
+< < < <1
+< < < 1
+< < <1
+> > >(cc 6 2)
+> > > (cc 6 1)
+> > > >(cc 6 0)
+< < < <0
+> > > >(cc 5 1)
+> > > > (cc 5 0)
+< < < < 0
+> > > > (cc 4 1)
+> > > > >(cc 4 0)
+< < < < <0
+> > > > >(cc 3 1)
+> > > > > (cc 3 0)
+< < < < < 0
+> > > > > (cc 2 1)
+> > > >[10] (cc 2 0)
+< < < <[10] 0
+> > > >[10] (cc 1 1)
+> > > >[11] (cc 1 0)
+< < < <[11] 0
+> > > >[11] (cc 0 1)
+< < < <[11] 1
+< < < <[10] 1
+< < < < < 1
+< < < < <1
+< < < < 1
+< < < <1
+< < < 1
+> > > (cc 1 2)
+> > > >(cc 1 1)
+> > > > (cc 1 0)
+< < < < 0
+> > > > (cc 0 1)
+< < < < 1
+< < < <1
+> > > >(cc -4 2)
+< < < <0
+< < < 1
+< < <2
+< < 3
+> > (cc 1 3)
+> > >(cc 1 2)
+> > > (cc 1 1)
+> > > >(cc 1 0)
+< < < <0
+> > > >(cc 0 1)
+< < < <1
+< < < 1
+> > > (cc -4 2)
+< < < 0
+< < <1
+> > >(cc -9 3)
+< < <0
+< < 1
+< <4
+> >(cc -14 4)
+< <0
+< 4
+> (cc -39 5)
+< 0
+<4
+4
+#+end_src
+
+** Exercise 1.15:
+
+   The sine of an angle (specified in radians) can be computed by making use of
+   the approximation sin x ≈ x if x is suffiiently small, and the trigonometric
+   identity:
+
+#+begin_src 
+sin x = 3 sin(x/3) - 4 sin(x/3)^3
+#+end_src
+
+   to reduce the size of the argument of sin. (For purposes of this exercise an
+   angle is considered “sufficiently small” if its magnitude is not greater than
+   0.1 radians.) These ideas are incorporated in the following procedures:
+
+#+begin_src racket
+(define (cube x)
+  (* x x x))
+
+(define (p x)
+  (- (* 3 x) (* 4 (cube x))))
+
+(define (sine angle)
+  (if (not (> (abs angle) 0.1))
+      angle
+      (p (sine (/ angle 3.0)))))
+
+(sine 12.15)
+#+end_src
+
+#+begin_src racket
+> (sine 12.15)
+>(p 0.049999999999999996)
+<0.1495
+>(p 0.1495)
+<0.4351345505
+>(p 0.4351345505)
+<0.9758465331678772
+>(p 0.9758465331678772)
+<-0.7895631144708228
+>(p -0.7895631144708228)
+<-0.39980345741334
+-0.39980345741334
+#+end_src
+
+    The angle is divided by 3 each time. Therefore the number of steps grow by
+    (log n)/(log 3) i.e. O(log n).
+
+** Exercise 1.16:
+
+   Design a procedure that evolves an iterative exponentiation process that
+   uses successive squaring and uses a logarithmic number of steps, as does
+   ~fast-expt~. (Hint: Using the observation that (b^n/2)^2 = (b^2)^(n/2), keep,
+   along with the exponent n and the base b, an additional state variable a, and
+   deﬁne the state transformation in such a way that the product ab n is
+   unchanged from state to state. At the beginning of the process a is taken to
+   be 1, and the answer is given by the value of a at the end of the process. In
+   general, the technique of defining an invariant quantity that remains
+   unchanged from state to state is a powerful way to think about the design of
+   iterative algorithms.)
+
+#+begin_src racket
+(define (fast-expt b n)
+
+  (define (fast-expt-iter acc b n)
+    (cond [(= n 0) acc]
+          [(even? n) (fast-expt-iter acc (square b) (/ n 2))]
+          [else (fast-expt-iter (* b acc) b (- n 1))]))
+
+  (fast-expt-iter 1 b n))
+#+end_src
+
+** Exercise 1.17:
+
+   The exponentiation algorithms in this section are based on performing
+   exponentiation by means of repeated multiplication. In a similar way, one can
+   perform integer multiplication by means of repeated addition. e following
+   multiplication procedure (in which it is assumed that our language can only
+   add, not multiply) is analogous to the ~expt~ procedure:
+
+#+begin_src racket
+(define (* a b)
+  (if (= b 0)
+      0
+      (+ a (* a (- b 1)))))
+#+end_src
+
+   This algorithm takes a number of steps that is linear in b. Now suppose we
+   include, together with addition, operations double, which doubles an
+   integer, and halve, which divides an (even) integer by 2. Using these, design
+   a multiplication procedure analogous to ~fast-expt~ that uses a logarithmic
+   number of steps.
+
+#+begin_src racket
+(define (double x) (+ x x))
+(define (halve x) (/ x 2))
+
+(define (* a b)
+  (cond [(= b 0) 0]
+        [(even? b) (double (* a (halve b)))]
+        [else (+ a (* a (- b 1)))]))
+#+end_src

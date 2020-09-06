@@ -166,7 +166,7 @@
   rug(mtcars$mpg, col="brown")
 #+end_src
 
-[[./images/chp06.4_plot.png]]n
+[[./images/chp06.4_plot.png]]
 
 #+begin_src R
   library(sm)

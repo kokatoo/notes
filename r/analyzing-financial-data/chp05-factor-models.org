@@ -870,7 +870,6 @@ F-statistic:  6.31 on 1 and 261 DF,  p-value: 0.01261
     auto.grid = FALSE,
     xlab = "Date",
     ylab = "Price ($)",
-    minor.ticks = "FALSE",
     main = paste(title1, "\n", title2)
   )
 #+end_src

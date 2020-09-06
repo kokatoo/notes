@@ -171,6 +171,12 @@
 
 *** 2.3.2 Importing data from a delimited text file
 
+    When reading large files, including the ~colClasses~ can speed up processing
+    considerably.
+
+    ~na.strings = c("-9", "?")~ converts each ~-9~ and ~?~ value to NA as the data
+    is read.
+
 #+begin_src R
   grades <- read.table("studentgrades.csv",
                        row.names = "StudentID",
