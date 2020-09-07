@@ -1,0 +1,163 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 1: Frequency Distributions: Tabulating and Displaying Data
+
+** Skewness and Kurtosis
+
+   As a rough guide, a skewness or kurtosis index that is more than twice the
+   value of its standard error can be interpreted as a departure from symmetry.
+
+** Data Transformation
+
+   ~k~ is a value from which each score is subtracted, such that the smallest
+   score = 1; ~k~ is set equal to the highest score value in the distribution ~+
+   1~
+
+| Problem                    | Type of Transformation       | Function       |
+|----------------------------+------------------------------+----------------|
+| Positive skew, moderate    | Square root                  | ~sqrt(x)~      |
+| Positive skew, substantial | Base 10 logarithmic          | ~log10(x)~     |
+| Positive skew, severe      | Inverse                      | ~1 / x~        |
+| Negative skew, moderate    | Reversed square root         | ~sqrt(k - x)~  |
+| Negative skew, substantial | Reversed base 10 logarithmic | ~log10(k - x)~ |
+| Negative skew, severe      | Reversed inverse             | ~1 / (k- x)~   |
+
+** Exercises
+
+*** Problem A1
+
+    Construct a frequency distribution for this set of data, showing the absolute
+    frequencies, relative frequencies, and cumulative relative frequencies.
+
+#+begin_src R
+mydata <- "0 3 4 1 0 2 0 1 2 0 1 0 0 1 2 5 0 1 0 1 0 2 1 0 1 1 3 2 1 0 1 3 1 1 0 4 6 1 0 1"
+
+mydata <- lapply(strsplit(mydata, " "), as.integer)[[1]]
+
+mytable <- table(mydata)
+
+mytable <-
+  rbind(
+    "Freq" = mytable,
+    "%" = prop.table(mytable) * 100,
+    "Cum %" = cumsum(prop.table(mytable)) * 100
+  )
+
+mytable <- rbind("Num of Falls" = as.integer(colnames(mytable)),
+                 mytable)
+
+falls <- as.data.frame(t(mytable))
+> falls
+  Num of Falls Freq    % Cum %
+0            0   13 32.5  32.5
+1            1   15 37.5  70.0
+2            2    5 12.5  82.5
+3            3    3  7.5  90.0
+4            4    2  5.0  95.0
+5            5    1  2.5  97.5
+6            6    1  2.5 100.0
+#+end_src
+
+*** Problem A2
+    
+    Using information from the frequency distribution for Exercise A1, answer
+    the following:
+
+    1. What percentage of the nursing home residents had at least one fall?
+
+#+begin_src R
+> sum(falls[falls[, "Num of Falls"] > 0, "%"]) 
+[1] 67.5
+#+end_src
+
+    2. What number of falls was the most frequent in this sample?
+
+#+begin_src R
+> falls[falls$Freq == max(falls[, "Freq"]), ]
+  Num of Falls Freq    % Cum %
+1            1   15 37.5    70
+#+end_src
+    
+    3. What number of falls was the least frequent in this sample?
+
+#+begin_src R
+> falls[falls$Freq == min(falls[, "Freq"]), ]
+  Num of Falls Freq   % Cum %
+5            5    1 2.5  97.5
+6            6    1 2.5 100.0
+#+end_src
+
+    4. What percentage of residents had two or fewer falls?
+
+#+begin_src R
+> sum(falls[falls["Num of Falls"] <= 2, "%"])
+[1] 82.5
+#+end_src
+
+    5. What is the total size of the sample?
+
+#+begin_src R
+> sum(falls[, "Freq"])
+[1] 40
+#+end_src
+
+    6. Are there any outliers in this dataset?
+    
+#+begin_src R
+> boxplot(mydata)$out
+[1] 6
+#+end_src
+    
+*** Problem A3
+
+    Draw a frequency histogram for the data shown in Exercise A1. Now
+    superimpose a frequency polygon on the histogram.
+
+#+begin_src R
+hist(
+  mydata,
+  breaks = -1:6,
+  xlab = "Num of Falls",
+  col = "red",
+  main = "Falls"
+)
+lines(seq(-0.5, 5.5), falls$Freq)
+#+end_src
+
+[[./images/chp01-plot1.png]]
+
+*** Problem A4
+
+    Describe the shape of the frequency distribution drawn in Exercise A3 in
+    terms of modality and skewness. Is the number of falls normally distributed?
+
+    Unimodal, positively skewed and not normally distributed.
+
+#+begin_src R
+> as.data.frame(psych::describe(mydata))[c("se", "skew", "kurtosis")]
+     se skew kurtosis
+X1 0.23 1.36     1.38
+#+end_src
+
+*** Problem A5
+
+    If you wanted to display information on patients’ age using the data in
+    Table 5, would you construct a histogram, bar graph, frequency polygon, or
+    pie chart? Defend your selection, and then construct such a graph.
+
+#+begin_src R
+age <- "
+25to34 35to44 45to54 55to64 greater65
+20 31 44 30 13
+"
+
+age <- read.table(text = age, header = TRUE)
+
+barplot(as.matrix(age),
+  xlab = "Age Group",
+  ylab = "Counts"
+)
+#+end_src
+
+[[./images/chp01-plot2.png]]

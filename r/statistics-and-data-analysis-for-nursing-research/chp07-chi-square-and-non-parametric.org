@@ -1,0 +1,157 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 7: Chi-square and Nonparametric Tests
+  
+** Exercises
+
+*** Problem A1
+
+    Calculate the chi-square statistic and degrees of freedom for the following
+    set of data for 300 elders exposed to different interventions to encourage
+    flu shots:
+
+| Flu Shot Status         | Group A | Group B | Group C | Total |
+|-------------------------+---------+---------+---------+-------|
+| Had a flu shot          |      20 |      45 |      25 |    90 |
+| Did not have a flu shot |      80 |      55 |      75 |   210 |
+| Total                   |     100 |     100 |     100 |   300 |
+
+    Is the value of chi-square statistically significant at the .05 level? Based
+    on the (O ⫺ E)2/E components contributing to chi-square, comment on the
+    nature of the relationship between groups and flu shot status.
+
+#+begin_src R
+mytable <- as.table(
+  matrix(c(20, 80, 45, 55, 25, 75),
+    nrow = 2,
+    dimnames = list(c("flu-shot", "no-flu-shot"),
+                    c("GroupA", "GroupB", "GroupC"))
+  )
+)
+
+fit <- chisq.test(mytable)
+> fit
+
+	Pearson's Chi-squared test
+
+data:  mytable
+X-squared = 16.667, df = 2, p-value = 0.0002404
+
+df <- (nrow(mytable) - 1) * (ncol(mytable) - 1)
+freq_ratios <- (fit$observed - fit$expected)^2 / fit$expected
+
+> freq_ratios
+               GroupA    GroupB    GroupC
+flu-shot    3.3333333 7.5000000 0.8333333
+no-flu-shot 1.4285714 3.2142857 0.3571429
+
+> sum(freq_ratios)
+[1] 16.66667
+
+> qchisq(0.95, df)
+[1] 5.991465
+#+end_src
+
+*** Problem A3
+
+    Using the statistical information from the first two exercises, write a
+    paragraph summarizing the results of the analyses.
+
+    The 3 groups differed significantly. For example, Groups B's rate of
+    obtaining a flu shot is substantially higher than expected.
+
+*** Problem A4
+
+    Given each of the following situations, determine whether the calculated
+    values of chi-square are statistically significant:
+
+    (a) chisq = 3.72, df = 1, alpha = .05
+    (b) chisq = 9.59, df = 4, alpha = .05 
+    (c) chisq = 10.67, df = 3, alpha = .01 
+    (d) chisq = 9.88, df = 2, alpha = .01
+
+#+begin_src R
+> 1 - pchisq(3.72, 1)
+[1] 0.05376437
+
+> 1 - pchisq(9.59, 4)
+[1] 0.04793044
+
+> 1 - pchisq(10.67, 3)
+[1] 0.01365094
+
+> 1 - pchisq(9.88, 1)
+[1] 0.001670849
+#+end_src
+    
+*** Problem A5
+
+    Assume that a researcher has conducted a pilot intervention study and wants
+    to use the pilot results to estimate the number of participants needed in a
+    full-scale study to achieve a power of .80 with alpha = .05. For each of the
+    hypothetical pilot results presented below, how many study participants in
+    each group would be needed in the larger study? (Note that in using Table 3,
+    it makes no difference which of two groups is considered Group 1 or Group
+    2.)
+
+    (a) Experimental group: 45%, Control group: 65%
+    (b) Experimental group: 15%, Control group: 5%
+    (c) Experimental group: 20%, Control group: 35%
+    (d) Experimental group: 60%, Control group: 75%
+
+#+begin_src R
+
+#+end_src
+
+*** Problem A6
+
+    Match each of the nonparametric tests in Column A with its parametric
+    counterpart in Column B:
+
+| Nonparametric Test         | Parametric Test           |
+|----------------------------+---------------------------|
+| Mann-Whitney U Test        | Independent groups t-test |
+| Friedman Test              | RM ANOVA                  |
+| Kruskal-Wallis Test        | One-way ANOVA             |
+| Wilcoxon Signed-Ranks Test | Paired t-test             |
+
+*** Problem A7
+
+    Using the information provided, indicate which test you think should be used
+    for each of the following situations:
+
+    (a) Independent variable: normal birthweight versus low birthweight infants;
+    dependent variable: 1-minute Apgar scores (0 to 10 scale); sample size:
+    eight infants per group
+
+    Mann-Whitney U test
+
+    (b) Independent variable: time of measurement (before, during, and after
+    surgery); dependent variable: heart rate; sample size: 80
+
+    RM-ANOVA
+
+    (c) Independent variable: time of measurement (before, during, and after
+    intervention); dependent variable: did versus did not exercise daily; sample
+    size: 30
+
+    Cochran's Q
+
+    (d) Independent variable: infertility treatment A versus infertility
+    treatment B versus control condition; dependent variable: did versus did
+    not become pregnant; sample size: 180
+
+    Chi-square test for independence
+
+    (e) Independent variable: Drug A versus Drug B versus placebo; dependent
+    variable: pain measured on a 0 to 10 scale; sample size: nine per group
+
+    Kruskal-Wallis test
+
+    (f) Independent variable: role (elderly parent versus adult child);
+    dependent variable: preference for nursing home placement versus home care
+    for parent
+
+    McNemar test
+

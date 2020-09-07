@@ -1,0 +1,192 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 3: Bivariate Description: Crosstabulation, Risk Indexes, and Correlation
+  
+** Exercises
+
+*** Problem A1
+
+    The following data designate whether or not patients com- plied with a
+    medication regimen (1=yes, 2=no), for an experimental group that
+    participated in a special intervention designed to promote perceived
+    mastery over health events, and a "usual care" control group:
+
+#+begin_src R
+experimental <- c(1, 2, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2)
+control <- c(2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 2, 2)
+
+data <- rbind(
+  data.frame(type = rep("experimental", length(experimental)), complied = experimental),
+  data.frame(type = rep("control", length(control)), complied = control)
+)
+
+data$complied <- ifelse(data$complied == 1, "No", "Yes")
+data$complied <- factor(data$complied, levels = c("Yes", "No"))
+data$type <- factor(data$type, levels = c("experimental", "control"))
+
+> mytable
+     
+      experimental control
+  Yes            6      10
+  No             9       5
+
+> prop.table(mytable, 1)
+      experimental control
+  Yes        0.375   0.625
+  No         0.643   0.357
+
+> prop.table(mytable, 2)
+      experimental control
+  Yes        0.400   0.667
+  No         0.600   0.333
+#+end_src
+
+*** Problem A2
+
+| Type of Infraction                     | Males n (%) | Females n (%) | Total N (%) |
+|----------------------------------------+-------------+---------------+-------------|
+| Drug abuse at work                     | 36 (30.3)   | 117 (23.0)    | 153 (24.2)  |
+| Drug abuse off work                    | 15 (12.6)   | 63 (12.4)     | 78 (12.4)   |
+| Violating a prior Board agreement      | 9 (7.6)     | 46 (9.1)      | 55 (8.8)    |
+| Working with lapsed license            | 2 (1.7)     | 36 (7.1)      | 38 (6.1)    |
+| Care errors                            | 4 (3.4)     | 32 (6.3)      | 36 (5.7)    |
+| Medication errors                      | 8 (6.7)     | 26 (5.1)      | 34 (5.4)    |
+| Providing care without physician order | 2 (1.7)     | 26 (5.1)      | 28 (4.5)    |
+| Documentation errors                   | 8 (6.7)     | 19 (3.7)      | 27 (4.3)    |
+| All other infractions                  | 35 (29.4)   | 143 (28.1)    | 178 (28.4)  |
+| Total                                  | 119 (100.0) | 508 (100.0)   | 627 (100.0) |
+
+#+begin_src R
+infractions <- c(
+  "Drug abuse at work",
+  "Drug abuse off work",
+  "Violating a prior Board agreement",
+  "Working with lapsed license",
+  "Care errors",
+  "Medication errors",
+  "Providing care without physician order",
+  "Documentation errors",
+  "All other infractions"
+)
+males <- c(36, 15, 9, 2, 4, 8, 2, 8, 35)
+females <- c(117, 63, 46, 36, 32, 26, 26, 19, 143)
+
+mytable <- as.matrix(cbind(males, females))
+dimnames(mytable) <- list(infractions, c("males", "females"))
+
+mytable <- as.table(mytable)
+> mytable
+                                       males females
+Drug abuse at work                        36     117
+Drug abuse off work                       15      63
+Violating a prior Board agreement          9      46
+Working with lapsed license                2      36
+Care errors                                4      32
+Medication errors                          8      26
+Providing care without physician order     2      26
+Documentation errors                       8      19
+All other infractions                     35     143
+#+end_src
+
+    (a) Are the percentages shown in this table row percentages or column
+    percentages?
+
+    Column percentages.
+
+    (b) Compute the percentages the opposite way, and then answer this question:
+    Given that males represent 7.5% of all licensed nurses in Missouri, which
+    (if any) infractions in the table were committed by males at a rate lower
+    than their representation among nurses in that state?
+
+#+begin_src R
+row_percent <- prop.table(mytable, 1)
+
+> row_percent[row_percent[, "males"] < 0.075, ]
+                                        males females
+Working with lapsed license            0.0526  0.9474
+Providing care without physician order 0.0714  0.9286
+#+end_src
+    
+    (c) Based on the recomputed percentages in Exercise A2b, for which
+    infraction were male nurses most notably overrepresented?
+
+#+begin_src R
+max_idx <- which.max(row_percent[, "females"])
+
+> names(max_idx)
+[1] "Documentation errors"
+
+> row_percent[max_idx, ]
+  males females 
+  0.296   0.704 
+#+end_src
+
+
+*** Problem A3
+
+    The contingency table below presents fictitious data regarding an
+    intervention to reduce pressure ulcers in nursing home residents. Using
+    these data, compute ARE, ARNE, ARR, RR, RRR, OR, and NNT.
+
+#+begin_src R
+## Absolute Risk (Exposure):
+> prop.table(mytable, 1)["Control", "Ulcer"]
+[1] 0.3
+
+## Absolute Risk (Non-Exposure):
+> prop.table(mytable, 1)["Experimental", "Ulcer"]
+[1] 0.1
+
+## Absolute Risk Reduction
+arr <- prop.table(mytable, 1)["Control", "Ulcer"] - prop.table(mytable, 1)["Experimental", "Ulcer"]
+> arr
+[1] 0.2
+
+## Relative Risk
+> prop.table(mytable, 1)["Control", "Ulcer"] / prop.table(mytable, 1)["Experimental", "Ulcer"]
+[1] 3
+
+## Relative Risk Reduction
+> arr / prop.table(mytable, 1)["Experimental", "Ulcer"
+[1] 2
+
+## Odds Ratio
+odds_exposed <- mytable["Control", "Ulcer"] / mytable["Control", "NoUlcer"]
+odds_nonexposed <- mytable["Experimental", "Ulcer"] / mytable["Experimental", "NoUlcer"]
+odds_ratio <- odds_exposed / odds_nonexposed
+> odds_ratio
+[1] 3.86
+
+## Numbers to Treat
+> 1 / arr
+[1] 5
+#+end_src
+
+*** Problem A4
+
+    Below are values for diastolic and systolic blood pressure for 10 people.
+    Construct a scatterplot that shows the relationship between the variables.
+    Verbally describe the direction and magnitude of the relationship.
+
+#+begin_src R
+diastolic <- c(90, 80, 90, 78, 76, 78, 80, 70, 76, 74)
+systolic <- c(130, 126, 140, 118, 114, 112, 120, 110, 114, 116)
+
+plot(diastolic, systolic)
+#+end_src
+
+[[./images/chp03-plot1.png]]
+
+*** Problem A5
+
+    Compute the correlation coefficient (Pearson’s r) to summarize the
+    relationship for the blood pressure data presented in question A4. How
+    accurate was your verbal description of the scatterplot, as compared to the
+    value of the coefficient?
+
+#+begin_src R
+> cor(diastolic, systolic)
+[1] 0.909
+#+end_src
+

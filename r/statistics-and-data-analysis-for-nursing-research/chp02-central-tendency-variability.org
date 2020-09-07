@@ -1,0 +1,103 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 2: Central Tendency, Variability, and Relative Standing
+
+  Outliers are often identified in relation to the value of a distribution’s
+  IQR. By convention, a mild outlier is a data value that lies between 1.5x and
+  3.0x the IQR below Q1 or above Q3. An extreme outlier is a data value that is
+  more that 3x the IQR below Q1 or above Q3.
+
+** Exercises
+
+*** Problem A1
+
+    The following numbers represent the scores of 30 psychi- atric inpatients on
+    a widely used measure of depression (the Center for Epidemiologic
+    Studies-Depression scale). What are the mean, the median, and the mode for
+    these data?
+
+    The data is slight skew to the right.
+
+#+begin_src R
+data <- c(41, 27, 32, 24, 21, 28, 22, 25, 35, 27, 31, 40, 23,
+          27, 29, 33, 42, 30, 26, 30, 27, 39, 26, 34, 28, 38,
+          29, 36, 24, 37)
+
+stats <- psych::describe(data)
+
+> stats$mean
+[1] 30.36667
+
+> stats$median
+[1] 29
+
+> as.numeric(names(which.max(table(data))))
+[1] 27
+#+end_src
+
+*** Problem A2
+
+    Find the medians for the following distributions:
+
+#+begin_src R
+> median(c(1, 5, 7, 8, 9))
+[1] 7
+> median(c(3, 5, 6, 8, 9, 10))
+[1] 7
+> median(c(3, 4, 4, 4, 6, 20))
+[1] 4
+> median(c(2, 4, 5, 5, 8, 9))
+[1] 5
+#+end_src
+
+*** Problem A3
+
+    For which distribution in question A2 would the median be preferred to the
+    mean as the index of central tendency? Why?
+
+    Distribution c has an extreme value of 20.
+
+#+begin_src R
+> boxplot(c(3, 4, 4, 4, 6, 20))$out
+[1] 20
+#+end_src
+
+*** Problem A4
+
+    The following ten data values are systolic blood pressure readings. Compute
+    the mean, the range, the SD, and the variance for these data.
+
+#+begin_src R
+data <- c(130, 110, 160, 120, 170, 120, 150, 140, 160, 140)
+
+> as.data.frame(psych::describe(data.frame(data)))[c("mean", "range", "sd")]
+   mean range sd
+X1  140    60 20
+
+> var(data)
+[1] 400
+#+end_src
+
+*** Problem A5
+
+    For each blood pressure value in question A4, compute a z score. Then,
+    transform these z scores to standard scores with a mean of 500 and an SD
+    of 100.
+
+#+begin_src R
+zscores <- scale(data)[, 1]
+
+> cbind(data, zscores, transformed = zscores * 100 + 500)
+      data zscores transformed
+ [1,]  130    -0.5         450
+ [2,]  110    -1.5         350
+ [3,]  160     1.0         600
+ [4,]  120    -1.0         400
+ [5,]  170     1.5         650
+ [6,]  120    -1.0         400
+ [7,]  150     0.5         550
+ [8,]  140     0.0         500
+ [9,]  160     1.0         600
+[10,]  140     0.0         500
+#+end_src

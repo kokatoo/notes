@@ -1,0 +1,141 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 4: Statistical Inference
+  
+** Exercises
+
+*** Problem A1
+
+    What is the probability of drawing a spade from a normal, shuffled deck of
+    52 cards? What is the probability of drawing five spades in a row (i.e., the
+    probability of getting a flush in five-card poker)?
+
+#+begin_src R
+## Prob of drawing a spade
+1 / 4
+
+## Prob of drawing 5 spades
+> 0.25^5
+[1] 0.000977
+#+end_src
+
+*** Problem A3
+
+    Given a normal distribution of scores with a mean of 100 and an SD of 10,
+    compute z scores for the following score values: 95, 115, 80, and 130.
+
+#+begin_src R
+scores <- c(95, 115, 80, 130)
+
+> (scores - 100) / 10
+[1] -0.5  1.5 -2.0  3.0
+#+end_src
+
+*** Problem A4
+
+    Based on Figure 2, which shows a normal distribution of children’s heights
+    with a mean of 60.0 and an SD of 5.0, approximately what is the probability
+    of randomly selecting a child whose height is less than 50 inches?
+
+#+begin_src R
+> pnorm(50, mean = 60, sd = 5)
+[1] 0.0228
+
+> pnorm((50 - 60) / 5)
+[1] 0.0228
+#+end_src
+
+*** Problem A5
+
+    If a sampling distribution of the mean had an SEM equal to 0.0, what would
+    this suggest about the sample means drawn from the population and about the
+    scores in the population?
+
+    The sample means will all be the same and scores will be infinity.
+
+*** Problem A6
+
+    Compute the mean, the standard deviation, and the estimated standard error
+    of the mean for the following sample data: 3, 3, 4, 4, 4, 5, 5, 5, 5, 5,
+    5, 6, 6, 6, 7, and 7.
+
+#+begin_src R
+> mean(data)
+[1] 5
+
+> sd(data)
+[1] 1.21
+
+> sd(data) / sqrt(length(data) - 1)
+[1] 0.313
+#+end_src
+
+*** Problem A7
+
+    Population A and Population B both have a mean height of 70.0 inches with an
+    SD of 6.0. A random sample of 30 people is selected from Population A, and a
+    random sample of 50 people is selected from Population B. Which sample mean
+    will probably yield a more accurate estimate of its population mean? Why?
+
+#+begin_src R
+> 6 / sqrt(30)
+[1] 1.1
+
+> 6 / sqrt(50)
+[1] 0.849
+#+end_src
+
+*** Problem A8
+
+    Suppose we obtained data on vein size after application of a nitroglycerin
+    ointment in a sample of 60 patients. The mean vein size is found to be 7.8
+    mm with an SD of 2.5. Using the t distribution, what are the confidence
+    limits for a 95% CI around the mean? What are the confidence limits for a
+    99% CI?
+
+#+begin_src R
+> 7.8 + qt(0.025, 60) * 2.5 / sqrt(60)
+[1] 7.15
+
+> 7.8 + qt(0.975, 60) * 2.5 / sqrt(60)
+[1] 8.45
+
+> 7.8 + qt(0.005, 60) * 2.5 / sqrt(60)
+[1] 6.94
+
+> 7.8 + qt(0.995, 60) * 2.5 / sqrt(60)
+[1] 8.66
+#+end_src
+
+*** Problem A9
+
+    Suppose you wanted to test the hypothesis that the average speed on a
+    highway where the maximum legal speed is 55 mph is not equal to 55 mph
+    (i.e., H0: mu=55; H1: mu!=55). Speed guns are used to measure the speed of
+    50 drivers, and the mean is found to be 57.0, SD=8.0. What is the
+    calculated value of t for a one sample t test? With a alpha=.05 for a
+    two-tailed test, is the sample mean of 57.0 significantly different from the
+    hypothesized mean of 55.0 (i.e., can the null hypothesis be rejected)?
+
+    Fail to reject the null hypothesis because ~1.77 > 2.01~
+#+begin_src R
+> (57 - 55) / (8 / sqrt(50))
+[1] 1.77
+
+> qt(0.975, 50 - 1)
+[1] 2.01
+#+end_src
+
+*** Problem A10
+
+    For the problem in Question A9, would the obtained re- sult be statistically
+    significant with alpha=.05 for a one-tailed test (i.e., for H1: m 55)?
+
+    Yes.
+
+#+begin_src R
+> qt(0.95, 50 - 1)
+[1] 1.68
+#+end_src
+

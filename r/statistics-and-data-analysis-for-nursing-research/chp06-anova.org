@@ -1,0 +1,395 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 6: ANOVA
+
+  The assumptions for using ANOVA are also similar to those for the t test.
+  First, it is assumed that the groups being compared were randomly sampled.
+  Second, the dependent variable is assumed to be normally distributed in the
+  populations. Third, the populations from which the groups are drawn are
+  assumed to have equal variances, an assumption that allows variability from
+  each group to be pooled into a single estimate of population variance. ANOVA
+  is robust with regard to these last two assumptions. ANOVA tends to yield
+  accurate results even if the population distributions depart from normality,
+  especially if the number of cases in a group is fairly large (at least 20 per
+  group) and group sizes are about equal. ANOVA also yields accu- rate results
+  if the population variances are not homogeneous, provided that the population
+  variance for one group is no more than three times the variance for the other,
+  especially if the number of groups being compared is small and sample sizes
+  are about equal.
+
+  One further assumption is relevant for between-subjects designs: It is assumed
+  that the people in the groups have been independently sampled. In other words,
+  for a simple analysis of variance it is assumed that the participants in the
+  groups are not the same people, nor matched with individuals who are in the
+  other groups. If the same people are exposed to three or more different
+  conditions, or measured at three or more points in time, a repeated measures
+  analysis of variance (analogous to the dependent groups t test) can be used.
+  
+  ~F = Between-group variability / Within-group variability~
+
+  ~F = (Effect of independent variable + Sampling error) / Sampling error~
+
+  ANOVA can actually be used when there are only two groups, although the t
+  test is usually used in such situations. In fact, for two independent groups,
+  the F and the t distributions are mathematically related such that ~F = t^2~.
+
+  
+** Exercises
+
+*** Problem A1
+
+    For each of the following situations, indicate whether ANOVA is appropriate;
+    if not appropriate, the reason why not; and, if appropriate, the type of
+    ANOVA that would be used (i.e., one-way, repeated measures, etc.):
+
+    (a) The independent variable (IV) is age group—people in their 60s, 70s, and
+    80s; the dependent variable (DV) is health-related hardiness, as measured on
+    a 20-item scale.
+
+    One-way ANOVA.
+
+    (b) The IVs are ethnicity (white, African American, Hispanic, Asian) and
+    birthweight status (< 2,500 grams versus 2,500 grams); the DV is serum
+    bilirubin levels.
+
+    Two-way ANOVA.
+
+    (c) The IV is maternal breastfeeding status (breastfeeds versus does not
+    breastfeed); the DV is maternal bonding with infant, as measured on a
+    10-item self-report scale.
+
+    Independent t test.
+
+    (d) The IV is exposure to a special intervention (before versus after
+    exposure); the DV is myocardial oxygen consumption. 
+
+    Dependent t test.
+
+    (e) The IV is length of gestation (preterm versus term versus postterm
+    birth); the DV is epidural anesthesia during labor (yes versus no).
+
+    DV is nominal.
+
+    (f) The IV is time since diagnosis of multiple sclerosis (1 month versus 6
+    months versus 2 years); the DV is psychological adaptation to the disease,
+    as measure by the Purpose-in-Life test.
+
+    RM-ANOVA if the same people are measured 3 times or more.
+
+*** Problem A2
+
+    Suppose we wanted to compare the somatic complaints (as measured on a scale
+    known as the Physical Symptom Survey or PSS) of three groups of people:
+    nonsmokers, smokers, and people who recently quit smoking. Using the
+    following data for PSS scores, do a one-way ANOVA to test the hypothesis
+    that the population means are equal:
+
+    What are the means for the three groups? Compute the sums of squares,
+    degrees of freedom, and mean squares for these data. What is the value of F?
+    Using an alpha of .05, is the F statistically significant?
+
+#+begin_src R
+nonsmokers <- c(19, 23, 17, 20, 26)
+smokers <- c(26, 29, 22, 30, 23)
+quitters <- c(37, 32, 27, 41, 38)
+
+data <- data.frame(nonsmokers, smokers, quitters)
+data <- as.matrix(data)
+
+> apply(data, 2, mean)
+nonsmokers    smokers   quitters 
+        21         26         35
+
+> mean(data)
+[1] 27.33333
+#+end_src
+
+#+begin_src R
+n <- length(data)
+sum_squares_total <- sum(data^2) - sum(data)^2 / n
+> sum_squares_total
+[1] 725.3333
+
+sum_squares_within <- sum(apply(data^2, 2, sum) - (apply(data, 2, sum)^2 / nrow(data)))
+> sum_squares_within
+[1] 222
+
+sum_squares_between <- sum((apply(data, 2, mean) - mean(data))^2 * nrow(data))
+> sum_squares_between
+[1] 503.3333
+
+df_between <- ncol(data) - 1
+> df_between
+[1] 2
+
+df_within <- n - df_between - 1
+> df_within
+[1] 12
+
+mean_squares_between <- sum_squares_between / df_between
+> mean_squares_between
+[1] 251.6667
+
+mean_squares_within <- sum_squares_within / df_within
+> mean_squares_within
+[1] 18.5
+
+f_ratio <- mean_squares_between / mean_squares_within
+> f_ratio
+[1] 13.6036
+
+> 1 - pf(f_ratio, df1 = df_between, df2 = df_within)
+[1] 0.0008220383
+#+end_src
+
+    Using ~aov()~:
+
+#+begin_src R
+data <- reshape2::melt(data)[, -1]
+names(data) <- c("Group", "Score")
+> data
+        Group Score
+1  nonsmokers    19
+2  nonsmokers    23
+3  nonsmokers    17
+4  nonsmokers    20
+5  nonsmokers    26
+6     smokers    26
+7     smokers    29
+8     smokers    22
+9     smokers    30
+10    smokers    23
+11   quitters    37
+12   quitters    32
+13   quitters    27
+14   quitters    41
+15   quitters    38
+
+fit <- aov(Score ~ Group, data = data)
+> summary(fit)
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+Group        2  503.3   251.7    13.6 0.000822 ***
+Residuals   12  222.0    18.5                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#+end_src
+
+*** Problem A3
+
+    Using the data from question A2, compute three protected t tests to
+    compare all possible pairs of means. Also, for alpha = .05, what is the value of
+    LSD? Which pairs are significantly different from one another, using this
+    multiple comparison procedure?
+
+#+begin_src R
+t_alpha <- qt(0.975, df = df_within)
+lsd <- t_alpha * sqrt(mean_squares_within * 2 / 5)
+
+> lsd
+[1] 5.927012
+
+> (mean(data[, "smokers"]) - mean(data[, "nonsmokers"])) / sqrt(mean_squares_within * (1 / 5 + 1 / 5))
+[1] 1.838037
+> (mean(data[, "quitters"]) - mean(data[, "nonsmokers"])) / sqrt(mean_squares_within * (1 / 5 + 1 / 5))
+[1] 5.146502
+> (mean(data[, "smokers"]) - mean(data[, "quitters"])) / sqrt(mean_squares_within * (1 / 5 + 1 / 5))
+[1] -3.308466
+
+library(agricolae)
+out <- LSD.test(fit, "Group", group = FALSE)
+> out$statistics
+  MSerror Df     Mean       CV  t.value      LSD
+     18.5 12 27.33333 15.73596 2.178813 5.927012
+
+> out$comparison
+                      difference pvalue signif.        LCL        UCL
+nonsmokers - quitters        -14 0.0002     *** -19.927012 -8.0729883
+nonsmokers - smokers          -5 0.0909       . -10.927012  0.9270117
+quitters - smokers             9 0.0062      **   3.072988 14.9270117
+#+end_src
+    
+*** Problem A4
+
+    For the data in question A2, what is the value of eta^2? What is the
+    approximate estimated power for this ANOVA? Explain what the eta^2 and
+    estimated power indicate.
+
+    There is a strong relationship between smoking status and somatic complaints
+    and the risk of Type II error is negligible.
+#+begin_src R
+eta2 <- sum_squares_between / sum_squares_total
+> eta2
+[1] 0.6939338
+
+> stats::power.anova.test(
+    groups = 3,
+    n = 5,
+    between.var = sum_squares_between,
+    within.var = sum_squares_within
+  )
+     Balanced one-way analysis of variance power calculation 
+
+         groups = 3
+              n = 5
+    between.var = 503.3333
+     within.var = 222
+      sig.level = 0.05
+          power = 0.9693651
+
+NOTE: n is number in each group
+#+end_src
+    
+*** Problem A5
+
+    Write a few sentences that could be used to describe the results of the
+    analyses from questions 2–4.
+
+    ANOVA results indicated that there is a difference among the number of
+    somatic complaints for the 3 groups of people. Quitters are significantly
+    different from both nonsmokers and smokers but smokers are not significantly
+    different from nonsmokers.
+    
+*** Problem A6
+
+    For each of the following F values, indicate whether the F is statistically
+    significant, at the specified alpha level: 
+
+    (a) F = 2.80, df = 4, 40, alpha = .01
+    (b) F = 5.02, df = 3, 60, alpha = .001 
+    (c) F = 3.45, df = 3, 27, alpha = .05 
+    (d) F = 4.99, df = 2, 150, alpha = .01 
+    (e) F = 2.09, df = 2, 250, alpha = .05
+
+#+begin_src R
+> 1 - pf(2.80, 4, 40)
+[1] 0.03856373
+
+> 1 - pf(5.02, 3, 60)
+[1] 0.003593511
+
+> 1 - pf(3.45, 3, 27)
+[1] 0.0304177
+
+> 1 - pf(4.99, 2, 150)
+[1] 0.007978431
+
+> 1 - pf(2.09, 2, 250)
+[1] 0.125843
+#+end_src
+
+*** Problem A7
+
+    Suppose we were interested in studying the self-esteem of men versus women
+    (Factor A) in two exercise status groups—nonexercisers versus exercisers,
+    Factor B—with 20 people in each of the four groups. Use the following in-
+    formation to compute three F tests, and determine which, if any, is
+    statistically significant at the .05 level:
+
+    Means:
+
+    | Male exercisers      |  39.0 |
+    | Male nonexercisers   |  37.0 |
+    | Female exercisers    |  34.0 |
+    | Female nonexercisers |  29.0 |
+    | All exercisers       |  36.5 |
+    | All nonexercisers    |  33.0 |
+    | All males            |  38.0 |
+    | All females          | 31.5  |
+
+    Sums of Squares:
+
+    | SST  | 1,190.50 |
+    | SSW  | 1,025.0  |
+    | SSA  | 74.50    |
+    | SSB  | 37.0     |
+    | SSAB | 54.00    |
+
+#+begin_src R
+n <- 4 * 20
+mean_squares_A <- 74.5 / (2 - 1)
+> mean_squares_A
+[1] 74.5
+
+mean_squares_B <- 37.0 / (2 - 1)
+> mean_squares_B
+[1] 37
+
+mean_squares_AB <- 54 / (2 - 1) * (2 - 1)
+> mean_squares_AB
+[1] 54
+
+mean_squares_within <- 1025.0 / (n - (1 + 1 + 1 + 1))
+> mean_squares_within
+[1] 13.48684
+
+> 1 - pf(mean_squares_A / mean_squares_within, df1 = 1, df2 = n - 3)
+[1] 0.02132018
+
+> 1 - pf(mean_squares_B / mean_squares_within, df1 = 1, df2 = n - 3)
+[1] 0.1017257
+
+> 1 - pf(mean_squares_AB / mean_squares_within, df1 = 1, df2 = n - 3)
+[1] 0.04891928
+
+> ((74.5 + 37 + 54) / 3) / mean_squares_within
+[1] 4.090407
+
+> ((1190.5 - 1025) / 3) / mean_squares_within
+[1] 4.090407
+#+end_src
+
+*** Problem A8
+
+    Interpret the meaning of the F tests from question A7. (Note: higher scores
+    on the self-esteem scale mean higher self-esteem.) Write a few sentences
+    summarizing the results.
+
+    The F tests for sex differences and the intereaction for sex and exercising
+    are significant.
+
+*** Problem A9
+
+    Suppose we used a crossover design to test for differences in bruising from
+    subcutaneous sodium heparin injections at three sites (arm, leg, and
+    abdomen) in a sample of 15 medical–surgical patients. Surface area of the
+    bruises (in mm2) is measured 72 hours after each injection, which are
+    administered to sites in random order at 8-hour intervals. Use the
+    following information to compute the F statistic to determine if there
+    were significant differences in bruising by site, at the .05 level:
+
+    Means:
+
+    | Arm     | 212.0 mm2 |
+    | Leg     | 99.0 mm2  |
+    | Abdomen | 93.0 mm2  |
+
+    Sums of Squares:
+
+    | SSsite  | 17,993.00  |
+    | SSerror | 48,349.00  |
+
+#+begin_src R
+n <- 15
+df_site <- 3 - 1
+df_subjects <- n - 1
+df_error <- df_site * df_subjects
+> df_error
+[1] 28
+
+mean_squares_subject <- 17993 / df_site
+> mean_squares_subject
+[1] 8996.5
+
+mean_squares_error <- 48349 / df_error
+> mean_squares_error
+[1] 5.210077
+
+f_ratio <- mean_squares_subject / mean_squares_error
+> f_ratio
+[1] 0.01192299
+
+
+> 1 - pf(f_ratio, df_site, df_error)
+
+#+end_src

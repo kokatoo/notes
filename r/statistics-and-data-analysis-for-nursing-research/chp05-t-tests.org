@@ -1,0 +1,294 @@
+#+STARTUP: showeverything
+#+title: Statistics and Data Analysis for Nursing Research
+
+* Chapter 5: t Tests
+  
+** Exercises
+
+*** Problem A1
+
+    For which of the following situations is the independent groups t test
+    appropriate (if inappropriate, indicate why)? 
+
+    (a) The independent variable (IV) is a type of stimulation for premature
+    infants (auditory versus visual versus tactile); the dependent variable
+    (DV) is cardiac responsiveness.
+
+    Inappropriate. There are 3 groups not 2.
+
+    (b) The IV is parental role within couples (mother versus father); the DV is
+    degree of bonding with the infant.
+
+    Inappropriate. Dependent groups t test (paired) should be used.
+
+    (c) The IV is infant birthweight (low birthweight versus normal
+    birthweight); the DV is number of days absent from school in first grade.
+
+    Appropriate.
+
+    (d) The IV is sex (men versus women); the DV is compliance versus
+    noncompliance with a medication regimen.
+
+    Inappropriate. The DV is nominal.
+
+    (e) The IV is radiation treatments (before versus after treatment); the DV
+    is cancer patients’ perceived self-efficacy.
+
+    Inapproripate. The dependent groups t test should be used.
+    
+*** Problem A2
+
+    For which of the following situations is the dependent groups t test
+    appropriate (if inappropriate, indicate why)?
+
+    (a) The independent variable (IV) is presence or absence of conversation
+    directed to comatose patients; the dependent variable (DV) is the patients'
+    intracranial pressure.
+
+    Appropriate if the same person is in each group.
+
+    (b) The IV is role (patient versus the patient's nurse); the DV is perceived
+    functional ability of the patient 48 hours after surgery.
+
+    Appropriate.
+
+    (c) The IV is time since incarceration (1 month versus 3 months versus 6
+    months); the DV is body weight.
+
+    Inappropriate. There are 3 time periods.
+
+    (d) The IV is age group (teenagers versus young adults); the DV is attitudes
+    toward condom use.
+
+    Inappropriate as the groups are independent.
+
+    (e) The IV is nap therapy for narcoleptics (before versus after treatment);
+    the DV is unplanned naps the following week (had an unplanned nap versus
+    did not have an unplanned nap).
+
+    Inappropriate. The DV is nominal.
+
+*** Problem A3
+
+    Suppose we wanted to test the hypothesis that a control group of cancer
+    patients (Group 1) would report higher mean pain ratings than an
+    experimental group receiving special massage treatments (Group 2). Using the
+    following information, compute a t statistic for independent groups:
+
+    X1 = 78.5 SD^2 = 42.1 n1 = 25
+    X2 = 72.1 SD^2 = 39.7 n2 = 25
+
+    What are the degrees of freedom and the value of t? Using a alpha=.05 for a
+    two-tailed test, is this t statistically significant?
+
+#+begin_src R
+x1 <- 78.5
+x2 <- 72.1
+
+var1 <- 42.1
+var2 <- 39.7
+
+n <- 25
+
+d1 <- ((n - 1) * var1 + (n - 1) * var2) / (n + n - 2)
+d2 <- (1 / n + 1 / n)
+
+t <- (x1 - x2) / sqrt(d1 * d2)
+> t
+[1] 3.538126
+
+df <- n + n - 2
+> df
+[1] 48
+
+> qt(0.975, df)
+[1] 2.010635
+#+end_src
+
+#+begin_src R
+data1 <- rt(n, df) * sqrt(var1) + x1
+data2 <- rt(n, df) * sqrt(var2) + x2
+
+> t.test(data1, data2)
+	Welch Two Sample t-test
+
+data:  data1 and data2
+t = 2.6578, df = 47.583, p-value = 0.01068
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 1.045947 7.550746
+sample estimates:
+mean of x mean of y 
+ 77.75472  73.45637 
+
+#+end_src
+
+*** Problem A4
+
+    Write one or two sentences that could be used to report the results obtained
+    for the t test in question A3.
+
+    A two-tailed t test for independent groups was used to test for differences
+    in pain ratings among cancer patients in the experimental and control
+    groups. The t test revealed that the mean pain ratings of
+    patients in the experimental group (M = 72.1) was significantly
+    different from that of patient in the control group (M = 78.5), t(48) =
+    3.54, p < .05.”
+
+*** Problem A5
+
+    For question A3, assume that the pooled SD for the two groups is 7.05.
+    Calculate the value of d. Given the result, approximately what was the power
+    of the statistical test and conversely, approximately what is the
+    probability of a Type II error (Beta)?
+
+#+begin_src R
+d <- (x1 - x2) / 7.05
+d
+
+res <- pwr::pwr.t.test(n = n, d = d, sig.level = 0.05)
+> res
+     Two-sample t test power calculation 
+
+              n = 25
+              d = 0.9078014
+      sig.level = 0.05
+          power = 0.881943
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+
+> res$power
+[1] 0.881943
+
+> 1 - res$power
+[1] 0.118057
+#+end_src
+
+*** Problem A6
+
+    For each of the following t values, indicate whether the t is statistically
+    significant for a two-tailed test, at the specified alpha: 
+
+    (a) t = 2.40, df = 25, alpha = .01 
+    (b) t = 2.40, df = 25, alpha = .05 
+    (c) t = 5.52, df = 10, alpha = .01
+    (d) t = 2.02, df = 150, alpha = .05
+
+#+begin_src R
+> 1 - pt(2.40, 25)
+[1] 0.01208314
+
+> 1 - pt(5.52, 10)
+[1] 0.0001272769
+
+> 1 - pt(2.02, 150)
+[1] 0.0225818
+#+end_src
+
+*** Problem A7
+
+    State the critical (tabled) value of t that would be used to reject the null
+    hypothesis of equality of population means, for an independent groups t test
+    under each of the following conditions: 
+
+    (a) H1: mu1 != mu2; n1 = 20, n2 = 20; alpha = .05
+    (b) H1: mu1 > mu2; n1 = 30, n2 = 30; alpha = .01 
+    (c) H1: mu1 != mu2; n1 = 10, n2 = 10; alpha = .01 
+    (d) H1: mu1 > mu2;  n1 = 60, n2 = 60; alpha = .05 
+    (e) H1: mu1 != mu2; n1 = 15, n2 = 10; alpha = .01
+
+#+begin_src R
+> qt(0.975, 20 + 20 - 2)
+[1] 2.024394
+
+> qt(0.99, 30 + 30 - 2)
+[1] 2.392377
+
+> qt(0.995, 10 + 10 - 2)
+[1] 2.87844
+
+> qt(0.95, 60 + 60 - 2)
+[1] 1.65787
+
+> qt(0.995, 15 + 10 - 2)
+[1] 2.807336
+#+end_src
+
+*** Problem A8
+
+    For a post hoc power analysis, assume that d = .60, alpha = .05 for a two-tailed
+    t test, and the number of people in each of two groups = 30. What was the
+    approximate power of the t test, and what was the risk of a Type II error?
+
+#+begin_src R
+res <- pwr::pwr.t.test(n = 30, d = 0.6, sig.level = 0.05)
+
+> res$power
+[1] 0.6275046
+
+> 1 - res$power
+[1] 0.3724954
+#+end_src
+    
+    For the same effect size (.60), approximately what n per group would be
+    needed to achieve power = .80?
+
+#+begin_src R
+res <- pwr::pwr.t.test(power = 0.8, d = 0.6, sig.level = 0.05)
+
+> res$n
+[1] 44.58577
+#+end_src
+
+*** Problem A9
+
+    The following are data for subcutaneous oxygen tension (PSCO2, measured in
+    mmHg) 12 hours after the start of two protocols, administered to the same 10
+    healthy subjects in random order a bed rest protocol and a high activity
+    protocol.
+
+    Compute the t statistic for dependent groups and the df for these data.
+    Using alpha = .05 for a two-tailed test, is this t statistically significant?
+
+#+begin_src R
+> t.test(bed_rest, high_activity, paired = TRUE)
+
+	Paired t-test
+
+data:  bed_rest and high_activity
+t = 4.5826, df = 9, p-value = 0.001323
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 1.417799 4.182201
+sample estimates:
+mean of the differences 
+                    2.8 
+#+end_src
+
+*** Problem A10
+
+    Suppose we wanted to test whether the number of hours in labor was different
+    for women in their 20s and women in their 30s. Here is the basic information
+    needed to compute t: 
+
+    X1 = 12.5 SD1^2 = 4.41 n1 = 20
+    X2 = 13.2 SD2^2 = 15.21 n2 = 50 
+
+    Which formula for computing t (pooled variance estimate versus separate
+    variance estimate) should probably be used? Why? Compute the value of t and
+    df, using the appropriate formula, and indicate whether the group difference
+    is statistically significant for alpha = .05 for a two-tailed test.
+
+#+begin_src R
+t <- (x1 - x2) / sqrt(var1 / n1 + var2 / n2)
+> t
+[1] -0.9663679
+
+df <- n1 + n2 - 2
+>df
+[1] 68
+
+> pt(t, df)
+[1] 0.1686423
+#+end_src
