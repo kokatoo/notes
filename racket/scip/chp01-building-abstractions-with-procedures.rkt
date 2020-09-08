@@ -254,6 +254,8 @@
   (expt-iter 1 n))
 
 (define (fast-expt b n)
+  (display n)
+  (newline)
   (cond ((= n 0) 1)
         ((even? n) (square (fast-expt b (/ n 2))))
         (else (* b (fast-expt b (- n 1))))))
@@ -280,7 +282,146 @@
 
 (define (* a b)
   (cond [(= b 0) 0]
-        [(even? b) (double (* a (halve b)))]
+        [(even? b) (* (double a) (halve b))]
         [else (+ a (* a (- b 1)))]))
 
+;; Exercise 1.18
+(define (* a b)
+  (define (multi-iter acc a b)
+    (cond [(= b 0) acc]
+          [(even? b) (multi-iter acc (double a) (halve b))]
+          [else (multi-iter (+ acc a) a (- b 1))]))
 
+  (multi-iter 0 a b))
+
+(* 120 2)
+
+;; Exercise 1.1
+
+(define (fib n)
+
+  (define (fib-iter a b p q i)
+    (cond [(= i 0) b]
+          [(even? i)
+           (fib-iter a
+                     b
+                     (+ (* p p) (* q q))
+                     (+ (* 2 q p) (* q q))
+                     (/ i 2))]
+          [else
+           (fib-iter (+ (* b q)
+                        (* a q)
+                        (* a p))
+                     (+ (* b p)
+                        (* a q))
+                     p
+                     q
+                     (- i 1))]))
+
+  (fib-iter 1 0 0 1 n))
+
+;; 1.2.5 Greatest Common Divisors
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+(require racket/trace)
+(untrace gcd)
+
+(gcd 206 40)
+(gcd 40 6)
+(gcd 6 4)
+(gcd 4 2)
+
+;; 1.2.6 Example: Testing for Primality
+(define (square x)
+  (* x x))
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+;; The Fermat test
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m)) m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m)) m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n)
+         (fast-prime? n (- times 1)))
+        (else false)))
+(fermat-test 198)
+
+;; Exercise 1.21
+(smallest-divisor 199)
+(smallest-divisor 1999)
+(smallest-divisor 19999)
+
+;; Exercise 1.22
+(define (runtime) (current-inexact-milliseconds))
+(define (timed-prime-test n)
+  (start-prime-test n (runtime)))
+
+(define (start-prime-test n start-time)
+  (if (prime? n)
+      (begin
+        (report-prime n (- (runtime) start-time))
+        #t)
+      #f))
+
+(define (report-prime n elapsed-time)
+  (display n)
+  (display " *** ")
+  (display elapsed-time)
+  (newline))
+
+(timed-prime-test 7)
+
+(define (search-for-primes start-range [i 0])
+  (cond [(= i 3)
+         (newline)
+         (display "done")]
+        [(even? start-range)
+         (search-for-primes (+ 1 start-range) i)]
+        [else
+         (if (timed-prime-test start-range)
+             (search-for-primes (+ 2 start-range) (+ i 1))
+             (search-for-primes (+ 2 start-range) i))]))
+
+(search-for-primes 100000000)
+(search-for-primes 1000000000)
+(search-for-primes 10000000000 0)
+
+;; Exercise 1.23
+(define (next n)
+  (if (= n 2)
+      3
+      (+ n 2)))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next test-divisor)))))
+
+(search-for-primes 100000000)
+(search-for-primes 1000000000)
+(search-for-primes 10000000000)
