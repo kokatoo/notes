@@ -365,11 +365,10 @@
   (try-it (+ 1 (random (- n 1)))))
 
 (define (fast-prime? n times)
-  (cond ((= times 0) true)
+  (cond ((= times 0) #t)
         ((fermat-test n)
          (fast-prime? n (- times 1)))
-        (else false)))
-(fermat-test 198)
+        (else #f)))
 
 ;; Exercise 1.21
 (smallest-divisor 199)
@@ -425,3 +424,214 @@
 (search-for-primes 100000000)
 (search-for-primes 1000000000)
 (search-for-primes 10000000000)
+
+;; Exercise 1.24
+(define (start-prime-test n start-time)
+  (if (fast-prime? n 12)
+      (begin
+        (report-prime n (- (runtime) start-time))
+        #t)
+      #f))
+
+(search-for-primes 10000000)
+(search-for-primes 100000000)
+(search-for-primes 1000000000)
+
+;; Exercise 1.25
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m)) m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m)) m))))
+
+(define (fast-expt b n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+(define (expmod base exp m)
+  (remainder (fast-expt base exp) m))
+
+(expmod 3 6 7)
+
+(remainder (expt 2 4) 7)
+(remainder (square (expt 2 2)) 7)
+(remainder (square (remainder (square (expt 2 1)) 7)) 7)
+
+;; Exercise 1.26
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (* (expmod base (/ exp 2) m)
+                       (expmod base (/ exp 2) m))
+                    m))
+        (else (remainder (* base
+                            (expmod base (- exp 1) m))
+                         m))))
+
+;; Exercise 1.27
+(define (carmichael? n)
+  (define (try-it n a)
+    (cond [(= a 1) #t]
+          [(not (= (expmod a n n) a)) #f]
+          [else (try-it n (- a 1))]))
+
+  (try-it n (- n 1)))
+
+(carmichael? 561)
+(carmichael? 1105)
+(carmichael? 1729)
+(carmichael? 2465)
+(carmichael? 2821)
+(carmichael? 6601)
+
+;; Exercise 1.28
+(define (miller-rabin-test n)
+  (define (try-it a)
+    (= (expmod2 a (- n 1) n) 1))
+
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (expmod2 base exp m)
+  (cond [(= exp 0) 1]
+        [(even? exp)
+         (check-remainder (expmod2 base (/ exp 2) m) m)]
+        [else (remainder (* base (expmod2 base (- exp 1) m)) m)]))
+
+(define (check-remainder x m)
+  (cond [(or (= x 1)
+             (= x (- m 1)))
+         (remainder (square x) m)]
+        [(= (remainder (square x) m) 1)
+         0]
+        [else (remainder (square x) m)]))
+
+(miller-rabin-test 561)
+(miller-rabin-test 1105)
+(miller-rabin-test 1729)
+(miller-rabin-test 2465)
+(miller-rabin-test 2821)
+(miller-rabin-test 6601)
+
+;; Exercise 1.29
+(define (cube x)
+  (* x x x))
+
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a) (sum term (next a) next b))))
+
+(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b) dx))
+
+(integral cube 0 1 0.01)
+
+(define (simpson-integral f a b n)
+  (let* ([h (/ (- b a) n)]
+         [add-2h (lambda (x) (+ x h h))])
+    (* (+ (f a)
+          (* 2 (sum f a add-2h b))
+          (* 4 (sum f (+ a h) add-2h b))
+          (f b))
+       (/ h 3))))
+
+(integral cube 0 1.0 0.01)
+(simpson-integral cube 0 1.0 100)
+
+(integral cube 0 1.0 0.001)
+(simpson-integral cube 0 1.0 1000)
+
+;; Exercise 1.30
+(define (sum term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (+ (term a) result))))
+
+  (iter a 0))
+
+;; Exercise 1.31
+(define (product term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (* (term a) result))))
+
+  (iter a 1))
+
+(define (factorial n)
+  (product (lambda (x) x) 1 (lambda (x) (+ x 1)) n))
+
+(define (wallis-product n)
+  (define (term n)
+    (* (/ (* 2 n)
+          (- (* 2 n) 1))
+       (/ (* 2 n)
+          (+ (* 2 n) 1))))
+  (product term 1.0 (lambda (x) (+ x 1)) n))
+
+(require racket/math)
+(* (wallis-product 10000) 2)
+pi
+
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a) (product term (next a) next b))))
+
+;; Exercise 1.32
+(define (accumulate combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner
+       (term a)
+       (accumulate combiner null-value term (next a) next b))))
+
+(define (accumulate combiner null-value term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (combiner (term a) result))))
+  (iter a null-value))
+
+(define (factorial n)
+  (accumulate * 1 (lambda (x) x) 1 (lambda (x) (+ x 1)) n))
+(factorial 3)
+
+;; Exercise 1.33
+(define (filtered-accumulate pred? combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner
+       (if (pred? a) (term a) null-value)
+       (filtered-accumulate
+        pred?
+        combiner
+        null-value
+        term
+        (next a)
+        next b))))
+
+(define (sum-of-squares-prime a b)
+  (filtered-accumulate
+   prime?
+   +
+   0
+   square
+   a
+   (lambda (x) (+ x 1))
+   b))
+
+(define (product-relative-prime n)
+  (define (relative-prime? i)
+    (= (gcd i n) 1))
+  (filtered-accumulate
+   relative-prime?
+   *
+   1
+   (lambda (x) x)
+   1
+   (lambda (x) (+ x 1) n)))

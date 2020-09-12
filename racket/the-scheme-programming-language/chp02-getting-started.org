@@ -156,5 +156,520 @@ cons (quote cons)
                  (cdr x2))))))
 #+end_src
 
+** Exercise 2.5.1
+
+   Determine the values of the expressions below.
+
+#+begin_src racket
+(let ([f (lambda (x) x)])
+  (f 'a))
+(let ([f (lambda x x)])
+  (f 'a))
+(let ([f (lambda (x . y) x)])
+  (f 'a))
+(let ([f (lambda (x . y) y)])
+  (f 'a))
+#+end_src
+
+#+begin_src racket
+'a
+'(a)
+'a
+'()
+#+end_src
+
+** Exercise 2.5.2
+
+   How might the primitive procedure list be defined?
+
+#+begin_src racket
+(define list (lambda x x))
+#+end_src
+
+** Exercise 2.5.3
+
+   List the variables that occur free in each of the lambda expressions below.
+   Do not omit variables that name primitive procedures such as ~+~ or ~cons~.
+
+#+begin_src racket
+;; no free variables
+(lambda (f x)
+  (f x))
+
+;; +
+(lambda (x)
+  (+ x x))
+
+;; f
+(lambda (x y)
+  (f x y))
+
+;; cons, f, y
+(lambda (x)
+  (cons x (f x y)))
+
+;; cons, y
+(lambda (x)
+  (let ([z (cons x y)])
+    (x y z)))
+
+;;cons, y, z
+(lambda (x)
+  (let ([y (cons x y)])
+    (x y z)))
+#+end_src
+
+** Exercise 2.6.1
+
+   What would happen if you were to type (double-any double-any double-any)
+   given the definition of double-any from the beginning of this section?
+
+   It will loop indefinitely.
+
+#+begin_src racket
+(define doubler
+  (lambda (f)
+    (lambda (x) (f x x))))
+
+(define double-any
+  (lambda (f x)
+    ((doubler f) x)))
+
+(double-any double-any double-any)
+#+end_src
+
+** Exercise 2.6.2
+
+   A more elegant (though possibly less efficient) way to define cadr and cddr
+   than given in this section is to define a procedure that composes two
+   procedures to create a third. Write the procedure compose, such that
+   ~(compose p1 p2)~ is the composition of ~p1~ and ~p2~ (assuming both take one argument).
+   That is, ~(compose p1 p2)~ should return a new procedure of one argument that
+   applies ~p1~ to the result of applying ~p2~ to the argument. Use compose to
+   define ~cadr~ and ~cddr~.
+
+#+begin_src racket
+(define (compose p1 p2)
+  (lambda (x)
+    (p1 (p2 x))))
+
+(define cadr (compose car cdr))
+(define cddr (compose cdr cdr))
+#+end_src
+
+** Exercise 2.6.3
+
+   Scheme also provides ~caar~, ~cdar~, ~caaar~, ~caadr~, and so on, with any
+   combination of up to four a's (representing ~car~) and d's (representing ~cdr~)
+   between the c and the r (see Section 6.3). Define each of these with the
+   compose procedure of the preceding exercise.
+
+#+begin_src racket
+(define caar (compose car car))
+(define cadr (compose car cdr))
+
+(define cdar (compose cdr car))
+(define cddr (compose cdr cdr))
+
+(define caaar (compose car caar))
+(define caadr (compose car cadr))
+(define cadar (compose car cdar))
+(define caddr (compose car cddr))
+(define cdaar (compose cdr caar))
+(define cdadr (compose cdr cadr))
+(define cddar (compose cdr cdar))
+(define cdddr (compose cdr cddr))
+
+(define caaaar (compose caar caar))
+(define caaadr (compose caar cadr))
+(define caadar (compose caar cdar))
+(define caaddr (compose caar cddr))
+(define cadaar (compose cadr caar))
+(define cadadr (compose cadr cadr))
+(define caddar (compose cadr cdar))
+(define cadddr (compose cadr cddr))
+(define cdaaar (compose cdar caar))
+(define cdaadr (compose cdar cadr))
+(define cdadar (compose cdar cdar))
+(define cdaddr (compose cdar cddr))
+(define cddaar (compose cddr caar))
+(define cddadr (compose cddr cadr))
+(define cdddar (compose cddr cdar))
+(define cddddr (compose cddr cddr))
+#+end_src
+
+** Exercise 2.7.1
+
+   Define the predicate ~atom?~, which returns true if its argument is not a pair
+   and false if it is.
+
+#+begin_src racket
+(define (atom? x)
+  (not (pair? x)))
+#+end_src
+
+** Exercise 2.7.2
+
+   The procedure length returns the length of its argument, which
+   must be a list. For example, ~(length '(a b c))~ is 3. Using ~length~, define the
+   procedure ~shorter~, which returns the shorter of two list arguments. Have it
+   return the first list if they have the same length.
+
+#+begin_src racket
+(define (shorter x y)
+  (if (<= (length x) (length y))
+      x
+      y))
+#+end_src
+
+** Exercise 2.8.1
+   
+   Describe what would happen if you switched the order of the arguments to ~cons~
+   in the definition of ~tree-copy~.
+
+   It will be a mirror image. Note that in racket the printing of ~pairs~ when
+   the second element is a list.
+
+#+begin_src racket
+(define tree-copy
+  (lambda (tr)
+    (if (not (pair? tr))
+        tr
+        (cons (tree-copy (car tr))
+              (tree-copy (cdr tr))))))
+
+(define tree-copy-reverse
+  (lambda (tr)
+    (if (not (pair? tr))
+        tr
+        (cons (tree-copy-reverse (cdr tr))
+              (tree-copy-reverse (car tr))))))
+
+(tree-copy '((a . b) . c))
+(tree-copy-reverse '((a . b) . c))
+#+end_src
+
+** Exercise 2.8.2 
+
+   Consult Section 6.3 for the description of ~append~ and define a two-argument
+   version of it. What would happen if you switched the order of the arguments
+   in the call to ~append~ within your definition of ~append~?
+
+#+begin_src racket
+(define (append list1 list2)
+  (if (null? list1)
+      list2
+      (cons (car list1) (append (cdr list1) list2))))
+(append '(1 2 3) '(4 5 6))
+#+end_src
+
+** Exercise 2.8.3
+
+   Define the procedure ~make-list~, which takes a nonnegative integer ~n~ and
+   an object and returns a new list, ~n~ long, each element of which is the
+   object. ~(make-list 7 '()) (() () () () () () ())~
+
+#+begin_src racket
+(define (make-list n obj)
+  (if (= n 0)
+      '()
+      (cons obj (make-list (- n 1) obj))))
+
+> (make-list 7 '())
+'(() () () () () () ())
+#+end_src
+
+** Exercise 2.8.4
+
+   The procedures ~list-ref~ and ~list-tail~ return the nth element and nth tail
+   of a list ~ls~.
+
+#+begin_src racket
+(define (list-ref ls n)
+  (if (= n 0)
+      (car ls)
+      (list-ref (cdr ls) (- n 1))))
+
+(define (list-tail ls n)
+  (if (= n 0)
+      ls
+      (list-tail (cdr ls) (- n 1))))
+
+> (list-ref '(1 2 3 4) 0)
+1
+
+> (list-tail '(1 2 3 4) 0)
+'(1 2 3 4)
+
+> (list-ref '(a short (nested) list) 2)
+'(nested)
+
+> (list-tail '(a short (nested) list) 2)
+'((nested) list)
+#+end_src
+
+** Exercise 2.8.5
+
+   Exercise 2.7.2 had you use ~length~ in the definition of ~shorter~, which
+   returns the shorter of its two list arguments, or the first if the two have
+   the same length. Write ~shorter~ without using length. [Hint: Define a
+   recursive helper, ~shorter?~, and use it in place of the length comparison.]
+
+#+begin_src racket
+(define (shorter x y)
+  (define (shorter? ls1 ls2)
+    (cond [(null? ls1) #t]
+          [(null? ls2) #f]
+          [else (shorter? (cdr ls1) (cdr ls2))]))
+
+  (if (shorter? x y)
+      x
+      y))
+
+> (shorter '(a b) '(c d e))
+'(a b)
+> (shorter '(a b) '(c d))
+'(a b)
+> (shorter '(a b) '(c))
+'(c)
+#+end_src
+
+** Exercise 2.8.6
+
+   All of the recursive procedures shown so far have been directly recursive.
+   That is, each procedure directly applies itself to a new argument. It is also
+   possible to write two procedures that use each other, resulting in indirect
+   recursion. Define the procedures ~odd?~ and ~even?~, each in terms of the
+   other. [Hint: What should each return when its argument is 0?]
+
+#+begin_src racket
+(define (even? x)
+  (cond [(= x 0) #t]
+        [(= x 1) #f]
+        [else (even? (- x 2))]))
+(define (odd? x)
+  (not (even? x)))
+#+end_src
+
+** Exercise 2.8.7
+
+   Use ~map~ to define a procedure, ~transpose~, that takes a list of pairs and
+   returns a pair of lists as follows.   
+
+   [Hint: ~((a b c) 1 2 3)~ is the same as ~((a b c) . (1 2 3))~.]
+
+#+begin_src racket
+(define (transpose lst)
+  (cons (map car lst) (map cdr lst)))
+
+> (transpose '((a . 1) (b . 2) (c . 3)))
+'((a b c) 1 2 3)
+#+end_src
+
+** Exercise 2.9.1
+
+   Modify ~make-counter~ to take two arguments: an initial value for the counter
+   to use in place of 0 and an amount to increment the counter by each time.
+
+#+begin_src racket
+(define (make-counter initial incr)
+  (lambda ()
+    (let ([next init])
+      (lambda ()
+        (let ([v next])
+          (set! next (+ next incr))
+          v)))))
+#+end_src
+
+** Exercise 2.9.2 
+
+   Look up the description of case in Section 5.3. Replace the cond expression
+   in ~make-stack~ with an equivalent case expression. Add ~mt?~ as a second name
+   for the ~empty?~ message.
+
+#+begin_src racket
+(define (make-stack)
+  (let ([ls '()])
+    (lambda (msg . args)
+      (case msg
+        [(empty? mt?) (null? ls)]
+        [(push!) (set! ls (cons (car args) ls))]
+        [(top) (car ls)]
+        [(pop!) (set! ls (cdr ls))]
+        [else "oops"]))))
+#+end_src
+
+** Exercise 2.9.3
+
+   Modify the ~stack~ object to allow the two messages ~ref~ and ~set!~. ~(stack
+   'ref i)~ should return the ith element from the top of the stack; ~(stack 'ref 0)~
+   should be equivalent to ~(stack 'top)~. ~(stack 'set! i v)~ should change the ith
+   element from the top of the stack to ~v~.
+
+#+begin_src racket
+(define (make-stack)
+  (let ([ls '()])
+    (lambda (msg . args)
+      (case msg
+        [(empty? mt?) (null? ls)]
+        [(push!) (set! ls (cons (car args) ls))]
+        [(top) (car ls)]
+        [(pop!) (set! ls (cdr ls))]
+        [(ref) (list-ref ls (car args))]
+        [(set!) (set-car! (list-tail ls (car args)) (cadr args))]
+        [else "oops"]))))
+#+end_src
+
+** Exercise 2.9.4
+
+   Scheme supports vectors as well as lists. Like lists, vectors are aggregate
+   objects that contain other objects. Unlike lists, vectors have a fixed size
+   and are laid out in one flat block of memory, typically with a header
+   containing the length of the vector.
+
+   This makes vectors more suitable for applications needing fast access to any
+   element of the aggregate but less suitable for applications needing data
+   structures that grow and shrink as needed.
+
+#+begin_src racket
+(define (make-stack n)
+  (let ([v (make-vector n)]
+        [i -1])
+    (lambda (msg . args)
+      (case msg
+        [(empty? mt?) (= i -1)]
+        [(push!)
+         (set+ i (+ i 1))
+         (vector-set! v i (car args))]
+        [(top)
+         (vector-ref v i)]
+        [(pop!)
+         (set! i (- i 1))]
+        [(ref)
+         (vector-ref v (- i (car args)))]
+        [(set!)
+         (vector-set! v (- i (car args)) (cadr args))]
+        [else "oops"]))))
+#+end_src
+
+** Exercise 2.9.5
+
+   Define a predicate, ~emptyq?~, for determining if a queue is empty. Modify ~getq~
+   and ~delq!~ to raise an exception when an empty queue is found, using
+   ~assertion-violation~.
+
+#+begin_src racket
+(define (make-queue)
+  (let ([end (mcons 'ignored '())])
+    (mcons end end)))
+
+(define (putq! q v)
+  (let ([end (mcons 'ignored '())])
+    (set-mcar! (mcdr q) v)
+    (set-mcdr! (mcdr q) end)
+    (set-mcdr! q end)))
+
+(define (getq q)
+  (mcar (mcar q)))
+
+(define (delq! q)
+  (set-mcar! q (mcdr (mcar q))))
+
+(define (emptyq? q)
+  (eq? (mcar q) (mcdr q)))
+
+(define (getq q)
+  (if (emptyq? q)
+      (error 'getq "the queue is empty")
+      (mcar (mcar q))))
+
+(define (delq! q)
+  (if (emptyq? q)
+      (error 'delq! "the queue is empty")
+      (set-mcar! q (mcdr (mcar q)))))
+#+end_src
+
+** Exercise 2.9.6
+
+   In the queue implementation, the last pair in the encapsulated list is a
+   placeholder, i.e., it never holds anything useful. Recode the queue operators
+   to avoid this wasted pair. Make sure that the series of queue operations
+   given earlier works with the new implementation. Which implementation do you
+   prefer?
+
+#+begin_src racket
+(define (make-queue)
+  (mcons '() '()))
+
+(define (putq! q v)
+  (let ([p (mcons v '())])
+    (if (null? (mcar q))
+        (begin (set-mcar! q p)
+               (set-mcdr! q p))
+        (begin (set-mcdr! (mcdr q) p)
+               (set-mcdr! q p)))))
+
+(define (getq q)
+  (if (emptyq? q)
+      (error 'getq "the queue is empty")
+      (mcar (mcar q))))
+
+(define (delq! q)
+  (cond [(emptyq? q)
+         (error 'getq "the queue is empty")]
+        [(eq? (mcar q) (mcdr q))
+         (begin (set-mcar! q '())
+                (set-mcdr! q '()))]
+        [else (set-mcar! q (mcdr (mcar q)))]))
+
+#+end_src
+
+** Exercise 2.9.7
+
+   Using ~set-cdr!~, it is possible to create cyclic lists. For example, the
+   following expression evaluates to a list whose ~car~ is the symbol ~a~ and whose
+   ~cdr~ is the list itself.
+
+#+begin_src racket
+(define ls (mcons 'a '()))
+(set-mcdr! ls ls)
+
+(require compatibility/mlist)
+(mlength ls)
+#+end_src
+
+   When asked to print a cyclic structure, some implementations print a
+   representation of the output that reflects its cyclic structure. Other
+   implementations do not detect the cycle and produce either no output or an
+   infinite stream of output. When length is passed a cyclic list, an exception
+   is raised, likely with a message indicating that the list is not proper. The
+   definition of length on page 42 will, however, simply loop indefinitely.
+
+** Exercise 2.9.8
+
+   Define the predicate ~list?~, which returns ~#t~ if its argument is a proper list
+   and ~#f~ otherwise (see Section 6.3). It should return ~#f~ for cyclic lists as
+   well as for lists terminated by objects other than ~()~.
+
+#+begin_src racket
+(define (race hare tortoise)
+  (if (mpair? hare)
+      (let ([hare (mcdr hare)])
+        (if (mpair? hare)
+            (and (not (eq? hare tortoise))
+                 (race (mcdr hare) (mcdr tortoise)))
+            (null? hare)))
+      (null? hare)))
+
+(define (list? x)
+  (race x x))
+
+(list? '())
+(list? (list->mlist '(1 2 3)))
+(list? '(a . b))
+(list? (let ([ls (mcons 'a '())])
+         (set-mcdr! ls ls)
+         ls))
+#+end_src
 
 
