@@ -160,6 +160,8 @@
 
 [[./images/chp09-plot2.png]]
 
+    Groups that have the same letter don't have significantly different means.
+
 #+begin_src R
   library(multcomp)
 
@@ -181,7 +183,6 @@
     really are many values of Y for each value of X (each group), and there
     really are only a few groups (say, four or fewer), go ahead and check
     normality separately for each group.
-
 
     But if you have many groups (a 2x2x3 ANOVA has 12 groups) or if there are
     few observations per group (it’s hard to check normality on only 20 data

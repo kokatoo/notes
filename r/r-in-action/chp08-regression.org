@@ -152,12 +152,14 @@
     Using the ~scatterplot()~ function:
 
 #+begin_src R
-  library(car)
-
-  scatterplot(weight ~ height, data=women,
-              spread=FALSE, smoother.args=list(lty=2), 
-              pch=19, main="Women Age 30-39",
-              xlab="Height (inches)", ylab="Weight (lbs.)")
+car::scatterplot(
+  weight ~ height,
+  data = women,
+  pch = 19,
+  main = "Women Age 30-30",
+  xlab = "Height (in inches)",
+  ylab = "Weight (in pounds)"
+)
 #+end_src
 
 [[./images/chp08-plot1.png]]
@@ -184,9 +186,10 @@
     Income     -0.2300776  0.2082276 -0.4370752  1.0000000  0.2262822
     Frost      -0.5388834 -0.3321525 -0.6719470  0.2262822  1.0000000
 
-  scatterplotMatrix(states, spread = FALSE, 
-                    smoother.args = list(lty = 2),
-                    main="Scatter Plot Matrix")
+  car::scatterplotMatrix(
+    states,
+    main = "Scatter Plot Matrix"
+  )
 #+end_src
 
 [[./images/chp08-plot2.png]]
